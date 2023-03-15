@@ -19,12 +19,12 @@ autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complet
 command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
-command! -bang NotesiumList
+command! -bang -nargs=* NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
   \ call fzf#vim#grep(
-  \   'notesium list --sort=title', 0,
+  \   'notesium list '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
-nnoremap <Leader>nl :NotesiumList<CR>
+nnoremap <Leader>nl :NotesiumList --sort=title<CR>
 ```
