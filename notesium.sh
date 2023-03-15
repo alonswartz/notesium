@@ -12,7 +12,8 @@ Commands:
   home              Print path to notes directory 
   list              Print list of notes
     --sort=title    Sort the list by title
-    --sort=mtime    Sort the list by modified time
+    --sort=mtime    Sort the list by modification time
+    --include=mtime Include the modification date
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -21,12 +22,28 @@ EOF
 exit 1
 }
 
+
+_list() { awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $@; }
+_list_include_mtime() { awk -v fname_col=8 '{fname=$fname_col; getline firstline < fname; print fname ":1:", $6, substr(firstline,3)}'; }
+
 notesium_list() {
-    case $1 in
-        "")             awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md;;
-        --sort=title)   awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md | sort -k2;;
-        --sort=mtime)   awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $(ls -t *.md);;
-        *)              fatal "unrecognized option: $1";;
+    while [ "$1" != "" ]; do
+        case $1 in
+            --sort=title)       Sort="SortTitle";;
+            --sort=mtime)       Sort="SortMtime";;
+            --include=mtime)    Include="IncludeMtime";;
+            *)                  fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case List${Include}${Sort} in
+        List)                           _list *.md;;
+        ListSortTitle)                  _list *.md | sort -k2;;
+        ListSortMtime)                  _list $(ls -t *.md);;
+        ListIncludeMtime)               ls -l  --time-style=long-iso *.md | _list_include_mtime;;
+        ListIncludeMtimeSortMtime)      ls -lt --time-style=long-iso *.md | _list_include_mtime;;
+        ListIncludeMtimeSortTitle)      ls -l  --time-style=long-iso *.md | _list_include_mtime | sort -k3;;
+        *)                              fatal "unsupported option grouping";;
     esac
 }
 
