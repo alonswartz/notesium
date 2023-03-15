@@ -11,7 +11,8 @@ Commands:
   new               Print path for a new note
   home              Print path to notes directory 
   list              Print list of notes
-    --sort          Sort the list by title
+    --sort=title    Sort the list by title
+    --sort=mtime    Sort the list by modified time
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -22,9 +23,10 @@ exit 1
 
 notesium_list() {
     case $1 in
-        "")     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md;;
-        --sort) awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md | sort -k2;;
-        *)      fatal "unrecognized option: $1";;
+        "")             awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md;;
+        --sort=title)   awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md | sort -k2;;
+        --sort=mtime)   awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $(ls -t *.md);;
+        *)              fatal "unrecognized option: $1";;
     esac
 }
 

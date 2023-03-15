@@ -11,7 +11,7 @@
 let $NOTESIUM_DIR = trim(system("notesium home"))
 
 autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
-  \ 'source':  'notesium list --sort',
+  \ 'source':  'notesium list --sort=title',
   \ 'options': '--with-nth 2..',
   \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
   \ 'window': {'width': 0.85, 'height': 0.85}})
@@ -22,7 +22,7 @@ command! -bang NotesiumNew
 command! -bang NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
   \ call fzf#vim#grep(
-  \   'notesium list --sort', 0,
+  \   'notesium list --sort=title', 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
