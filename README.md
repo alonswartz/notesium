@@ -4,6 +4,7 @@
 - completely flat folder structure (no nested folders).
 - filenames are 8 random hex chars, with `.md` extension (`xxxxxxxx.md`).
 - first line of note is the title in h1 format (`# this is the title`).
+- one word titles are considered a label.
 
 ## vim
 
@@ -26,6 +27,6 @@ command! -bang -nargs=* NotesiumList
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
-nnoremap <Leader>nl :NotesiumList --sort=title<CR>
-nnoremap <Leader>nm :NotesiumList --sort=mtime --include=mtime --color<CR>
+nnoremap <Leader>nl :NotesiumList --include=label --sort=title --color<CR>
+nnoremap <Leader>nm :NotesiumList --include=mtime --sort=mtime --color<CR>
 ```
