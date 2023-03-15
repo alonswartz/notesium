@@ -27,5 +27,5 @@ command! -bang -nargs=* NotesiumList
 
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nl :NotesiumList --sort=title<CR>
-nnoremap <Leader>nm :NotesiumList --sort=mtime --include=mtime<CR>
+nnoremap <Leader>nm :NotesiumList --sort=mtime --include=mtime --color<CR>
 ```
