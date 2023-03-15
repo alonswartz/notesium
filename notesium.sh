@@ -5,18 +5,27 @@ fatal() { echo "Fatal: $*" 1>&2; exit 1; }
 
 usage() {
 cat<<EOF
-Usage: $(basename "$0") COMMAND
+Usage: $(basename "$0") COMMAND [OPTIONS]
 
 Commands:
   new               Print path for a new note
   home              Print path to notes directory 
   list              Print list of notes
+    --sort          Sort the list by title
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
 
 EOF
 exit 1
+}
+
+notesium_list() {
+    case $1 in
+        "")     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md;;
+        --sort) awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md | sort -k2;;
+        *)      fatal "unrecognized option: $1";;
+    esac
 }
 
 main() {
@@ -30,7 +39,7 @@ main() {
     case $1 in
         new)    echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)   echo "$NOTESIUM_DIR";;
-        list)   awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' *.md;;
+        list)   shift; notesium_list $@;;
         *)      fatal "unrecognized command: $1";;
     esac
 }
