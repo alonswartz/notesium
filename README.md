@@ -14,7 +14,7 @@ command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
 command! -bang NotesiumList
-  \ let spec = {'dir': $NOTESIUM_DIR} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
   \ call fzf#vim#grep(
   \   'notesium list', 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
