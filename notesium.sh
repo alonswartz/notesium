@@ -61,9 +61,8 @@ _match() {
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
 }
 _orphans() {
-    for f in $(grep --files-without-match '[[:alnum:]]\{8\}\.md' $@); do
-        [ "$(grep --only-matching -e $f *.md)" ] || echo "$f"
-    done
+    existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
+    _list $(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
 }
 
 notesium_list() {
@@ -127,9 +126,9 @@ notesium_orphans() {
         shift
     done
     case Orphan${Sort} in
-        Orphan)             _list $(_orphans *.md);;
-        OrphanSortTitle)    _list $(_orphans *.md) | sort -k2;;
-        OrphanSortMtime)    _list $(_orphans $(ls -t *.md));;
+        Orphan)             _orphans *.md;;
+        OrphanSortTitle)    _orphans *.md | sort -k2;;
+        OrphanSortMtime)    _orphans $(ls -t *.md);;
         *)                  fatal "unsupported option grouping";;
     esac
 }
