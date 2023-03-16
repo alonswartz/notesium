@@ -22,6 +22,10 @@ Commands:
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
 
+  orphans           Print list of notes without forward or back links
+    --sort=title    Sort the list by title
+    --sort=mtime    Sort the list by modification time
+
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
 
@@ -55,6 +59,11 @@ _match() {
     pattern="$1"; shift
     grep --line-number --only-matching $pattern $@ | \
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
+}
+_orphans() {
+    for f in $(grep --files-without-match '[[:alnum:]]\{8\}\.md' $@); do
+        [ "$(grep --only-matching -e $f *.md)" ] || echo "$f"
+    done
 }
 
 notesium_list() {
@@ -108,6 +117,23 @@ notesium_match() {
     esac
 }
 
+notesium_orphans() {
+    while [ "$1" != "" ]; do
+        case $1 in
+            --sort=title)   Sort="SortTitle";;
+            --sort=mtime)   Sort="SortMtime";;
+            *)              fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case Orphan${Sort} in
+        Orphan)             _list $(_orphans *.md);;
+        OrphanSortTitle)    _list $(_orphans *.md) | sort -k2;;
+        OrphanSortMtime)    _list $(_orphans $(ls -t *.md));;
+        *)                  fatal "unsupported option grouping";;
+    esac
+}
+
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -117,11 +143,12 @@ main() {
     cd $NOTESIUM_DIR
 
     case $1 in
-        new)    echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
-        home)   echo "$NOTESIUM_DIR";;
-        list)   shift; notesium_list $@;;
-        match)  shift; notesium_match $@;;
-        *)      fatal "unrecognized command: $1";;
+        new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
+        home)       echo "$NOTESIUM_DIR";;
+        list)       shift; notesium_list $@;;
+        match)      shift; notesium_match $@;;
+        orphans)    shift; notesium_orphans $@;;
+        *)          fatal "unrecognized command: $1";;
     esac
 }
 
