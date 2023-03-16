@@ -22,9 +22,14 @@ Commands:
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
 
+  labels            Print list of notes considered labels (one word title)
+    --sort=title    Sort the list by title
+    --sort=mtime    Sort the list by modification time
+
   orphans           Print list of notes without forward or back links
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
+
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -59,6 +64,9 @@ _match() {
     pattern="$1"; shift
     grep --line-number --only-matching $pattern $@ | \
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
+}
+_labels() {
+    awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' $@
 }
 _orphans() {
     existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
@@ -116,6 +124,23 @@ notesium_match() {
     esac
 }
 
+notesium_labels() {
+    while [ "$1" != "" ]; do
+        case $1 in
+            --sort=title)   Sort="SortTitle";;
+            --sort=mtime)   Sort="SortMtime";;
+            *)              fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case Label${Sort} in
+        Label)              _labels *.md;;
+        LabelSortTitle)     _labels *.md | sort -k2;;
+        LabelSortMtime)     _labels $(ls -t *.md);;
+        *)                  fatal "unsupported option grouping";;
+    esac
+}
+
 notesium_orphans() {
     while [ "$1" != "" ]; do
         case $1 in
@@ -146,6 +171,7 @@ main() {
         home)       echo "$NOTESIUM_DIR";;
         list)       shift; notesium_list $@;;
         match)      shift; notesium_match $@;;
+        labels)     shift; notesium_labels $@;;
         orphans)    shift; notesium_orphans $@;;
         *)          fatal "unrecognized command: $1";;
     esac
