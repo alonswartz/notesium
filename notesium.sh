@@ -5,17 +5,22 @@ fatal() { echo "Fatal: $*" 1>&2; exit 1; }
 
 usage() {
 cat<<EOF
-Usage: $(basename "$0") COMMAND [OPTIONS]
+Usage: $(basename "$0") COMMAND [ARGS] [OPTS]
 
 Commands:
   new               Print path for a new note
   home              Print path to notes directory 
+
   list              Print list of notes
     --color         Color code include using ansi escape sequences
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
     --include=label Include the label (label == one word title)
     --include=mtime Include the modification date
+
+  match PATTERN     Print list of notes where pattern appears (eg. backlinks)
+    --sort=title    Sort the list by title
+    --sort=mtime    Sort the list by modification time
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -45,6 +50,11 @@ _list_include_label() {
 _list_nolabel() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     _list $(grep --files-without-match $labels $@)
+}
+_match() {
+    pattern="$1"; shift
+    grep --line-number --only-matching $pattern $@ | \
+        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
 }
 
 notesium_list() {
@@ -79,6 +89,25 @@ notesium_list() {
     esac
 }
 
+notesium_match() {
+    unset pattern
+    while [ "$1" != "" ]; do
+        case $1 in
+            --sort=title)   Sort="SortTitle";;
+            --sort=mtime)   Sort="SortMtime";;
+            *)              if [ -n "$pattern" ]; then fatal "unrecognized option: $1"; else pattern=$1; fi;;
+        esac
+        shift
+    done
+    [ "$pattern" ] || fatal "pattern not specified"
+    case Match${Sort} in
+        Match)              _match $pattern *.md;;
+        MatchSortTitle)     _match $pattern *.md | sort -k2;;
+        MatchSortMtime)     _match $pattern $(ls -t *.md);;
+        *)                  fatal "unsupported option grouping";;
+    esac
+}
+
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -91,6 +120,7 @@ main() {
         new)    echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)   echo "$NOTESIUM_DIR";;
         list)   shift; notesium_list $@;;
+        match)  shift; notesium_match $@;;
         *)      fatal "unrecognized command: $1";;
     esac
 }
