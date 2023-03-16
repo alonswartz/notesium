@@ -31,7 +31,7 @@ command! -bang -nargs=* NotesiumBacklinks
   \ let prompt = '--prompt "NotesiumBacklinks> "' |
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2.. '.prompt} |
   \ call fzf#vim#grep(
-  \   'notesium match '.shellescape(<q-args>.' '.']('.expand("%:t").')'), 0,
+  \   'notesium list '.shellescape(<q-args>.' '.'--match=]('.expand("%:t").')'), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>

@@ -10,7 +10,6 @@ Usage: $(basename "$0") COMMAND [ARGS] [OPTS]
 Commands:
   new               Print path for a new note
   home              Print path to notes directory 
-
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --sort=title    Sort the list by title
@@ -18,11 +17,8 @@ Commands:
     --prefix=label  Prefix title with linked labels
     --prefix=mtime  Prefix title with the modification date
     --labels        Limit list to only label notes (ie. one word title)
-    --orphans       Limit list to to notes without forward or back links
-
-  match PATTERN     Print list of notes where pattern appears (eg. backlinks)
-    --sort=title    Sort the list by title
-    --sort=mtime    Sort the list by modification time
+    --orphans       Limit list to notes without forward or back links
+    --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -53,8 +49,9 @@ _list_nolabel() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     _list $(grep --files-without-match $labels $@)
 }
-_match() {
+_list_match() {
     pattern="$1"; shift
+    [ "$pattern" ] || fatal "pattern not specified"
     grep --line-number --only-matching $pattern $@ | \
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
 }
@@ -76,6 +73,7 @@ notesium_list() {
             --prefix=mtime)     Prefix="PrefixMtime";;
             --labels)           Limit="LimitLabels";;
             --orphans)          Limit="LimitOrphans";;
+            --match=*)          Limit="LimitMatch"; match_pattern="${1##*=}";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
@@ -102,26 +100,10 @@ notesium_list() {
         ListLimitOrphans)               _list_orphans *.md;;
         ListLimitOrphansSortTitle)      _list_orphans *.md | sort -k2;;
         ListLimitOrphansSortMtime)      _list_orphans $(ls -t *.md);;
+        ListLimitMatch)                 _list_match $match_pattern *.md;;
+        ListLimitMatchSortTitle)        _list_match $match_pattern *.md | sort -k2;;
+        ListLimitMatchSortMtime)        _list_match $match_pattern $(ls -t *.md);;
         *)                              fatal "unsupported option grouping";;
-    esac
-}
-
-notesium_match() {
-    unset pattern
-    while [ "$1" != "" ]; do
-        case $1 in
-            --sort=title)   Sort="SortTitle";;
-            --sort=mtime)   Sort="SortMtime";;
-            *)              if [ -n "$pattern" ]; then fatal "unrecognized option: $1"; else pattern=$1; fi;;
-        esac
-        shift
-    done
-    [ "$pattern" ] || fatal "pattern not specified"
-    case Match${Sort} in
-        Match)              _match $pattern *.md;;
-        MatchSortTitle)     _match $pattern *.md | sort -k2;;
-        MatchSortMtime)     _match $pattern $(ls -t *.md);;
-        *)                  fatal "unsupported option grouping";;
     esac
 }
 
@@ -137,7 +119,6 @@ main() {
         new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)       echo "$NOTESIUM_DIR";;
         list)       shift; notesium_list $@;;
-        match)      shift; notesium_match $@;;
         *)          fatal "unrecognized command: $1";;
     esac
 }
