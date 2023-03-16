@@ -15,21 +15,14 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
-    --prefix=label  Prefix title with linked labels (label == one word title)
+    --prefix=label  Prefix title with linked labels
     --prefix=mtime  Prefix title with the modification date
+    --labels        Limit list to only label notes (ie. one word title)
+    --orphans       Limit list to to notes without forward or back links
 
   match PATTERN     Print list of notes where pattern appears (eg. backlinks)
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
-
-  labels            Print list of notes considered labels (one word title)
-    --sort=title    Sort the list by title
-    --sort=mtime    Sort the list by modification time
-
-  orphans           Print list of notes without forward or back links
-    --sort=title    Sort the list by title
-    --sort=mtime    Sort the list by modification time
-
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -65,10 +58,10 @@ _match() {
     grep --line-number --only-matching $pattern $@ | \
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
 }
-_labels() {
+_list_labels() {
     awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' $@
 }
-_orphans() {
+_list_orphans() {
     existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
     _list $(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
 }
@@ -81,11 +74,13 @@ notesium_list() {
             --sort=mtime)       Sort="SortMtime";;
             --prefix=label)     Prefix="PrefixLabel";;
             --prefix=mtime)     Prefix="PrefixMtime";;
+            --labels)           Limit="LimitLabels";;
+            --orphans)          Limit="LimitOrphans";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case List${Prefix}${Sort}${Color} in
+    case List${Limit}${Prefix}${Sort}${Color} in
         List)                           _list *.md;;
         ListSortTitle)                  _list *.md | sort -k2;;
         ListSortMtime)                  _list $(ls -t *.md);;
@@ -101,6 +96,12 @@ notesium_list() {
         ListPrefixMtimeSortTitleColor)  _list_prefix_mtime | sort -k3 | _colorcol 2;;
         ListPrefixMtimeSortMtime)       _list_prefix_mtime -t;;
         ListPrefixMtimeSortMtimeColor)  _list_prefix_mtime -t | _colorcol 2;;
+        ListLimitLabels)                _list_labels *.md;;
+        ListLimitLabelsSortTitle)       _list_labels *.md | sort -k2;;
+        ListLimitLabelsSortMtime)       _list_labels $(ls -t *.md);;
+        ListLimitOrphans)               _list_orphans *.md;;
+        ListLimitOrphansSortTitle)      _list_orphans *.md | sort -k2;;
+        ListLimitOrphansSortMtime)      _list_orphans $(ls -t *.md);;
         *)                              fatal "unsupported option grouping";;
     esac
 }
@@ -124,40 +125,6 @@ notesium_match() {
     esac
 }
 
-notesium_labels() {
-    while [ "$1" != "" ]; do
-        case $1 in
-            --sort=title)   Sort="SortTitle";;
-            --sort=mtime)   Sort="SortMtime";;
-            *)              fatal "unrecognized option: $1";;
-        esac
-        shift
-    done
-    case Label${Sort} in
-        Label)              _labels *.md;;
-        LabelSortTitle)     _labels *.md | sort -k2;;
-        LabelSortMtime)     _labels $(ls -t *.md);;
-        *)                  fatal "unsupported option grouping";;
-    esac
-}
-
-notesium_orphans() {
-    while [ "$1" != "" ]; do
-        case $1 in
-            --sort=title)   Sort="SortTitle";;
-            --sort=mtime)   Sort="SortMtime";;
-            *)              fatal "unrecognized option: $1";;
-        esac
-        shift
-    done
-    case Orphan${Sort} in
-        Orphan)             _orphans *.md;;
-        OrphanSortTitle)    _orphans *.md | sort -k2;;
-        OrphanSortMtime)    _orphans $(ls -t *.md);;
-        *)                  fatal "unsupported option grouping";;
-    esac
-}
-
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -171,8 +138,6 @@ main() {
         home)       echo "$NOTESIUM_DIR";;
         list)       shift; notesium_list $@;;
         match)      shift; notesium_match $@;;
-        labels)     shift; notesium_labels $@;;
-        orphans)    shift; notesium_orphans $@;;
         *)          fatal "unrecognized command: $1";;
     esac
 }
