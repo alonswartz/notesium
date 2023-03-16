@@ -35,7 +35,7 @@ command! -bang -nargs=* NotesiumBacklinks
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
-nnoremap <Leader>nl :NotesiumList --include=label --sort=title --color<CR>
-nnoremap <Leader>nm :NotesiumList --include=mtime --sort=mtime --color<CR>
+nnoremap <Leader>nl :NotesiumList --prefix=label --sort=title --color<CR>
+nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nb :NotesiumBacklinks --sort=title<CR>
 ```

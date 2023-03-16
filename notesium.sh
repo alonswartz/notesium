@@ -12,11 +12,11 @@ Commands:
   home              Print path to notes directory 
 
   list              Print list of notes
-    --color         Color code include using ansi escape sequences
+    --color         Color code prefix using ansi escape sequences
     --sort=title    Sort the list by title
     --sort=mtime    Sort the list by modification time
-    --include=label Include the label (label == one word title)
-    --include=mtime Include the modification date
+    --prefix=label  Prefix title with linked labels (label == one word title)
+    --prefix=mtime  Prefix title with the modification date
 
   match PATTERN     Print list of notes where pattern appears (eg. backlinks)
     --sort=title    Sort the list by title
@@ -37,11 +37,11 @@ _colorcol() {
 _list() {
     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $@
 }
-_list_include_mtime() {
+_list_prefix_mtime() {
     ls -l $1 --time-style=long-iso *.md \ |
         awk -v fname_col=8 '{fname=$fname_col; getline firstline < fname; print fname ":1:", $6, substr(firstline,3)}'
 }
-_list_include_label() {
+_list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     grep --only-matching $labels $@ | \
         awk -F ":" -v fname_col=2 '{fname=$fname_col; getline firstline < fname; print $1 ":" substr(firstline,3); close(fname)}' | \
@@ -63,28 +63,28 @@ notesium_list() {
             --color)            Color="Color";;
             --sort=title)       Sort="SortTitle";;
             --sort=mtime)       Sort="SortMtime";;
-            --include=label)    Include="IncludeLabel";;
-            --include=mtime)    Include="IncludeMtime";;
+            --prefix=label)     Prefix="PrefixLabel";;
+            --prefix=mtime)     Prefix="PrefixMtime";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case List${Include}${Sort}${Color} in
+    case List${Prefix}${Sort}${Color} in
         List)                           _list *.md;;
         ListSortTitle)                  _list *.md | sort -k2;;
         ListSortMtime)                  _list $(ls -t *.md);;
-        ListIncludeLabel)               _list_include_label *.md; _list_nolabel *.md;;
-        ListIncludeLabelColor)          _list_include_label *.md | _colorcol 2; _list_nolabel *.md;;
-        ListIncludeLabelSortTitle)      _list_include_label *.md | sort -k2; _list_nolabel *.md | sort -k2;;
-        ListIncludeLabelSortTitleColor) _list_include_label *.md | sort -k2 | _colorcol 2; _list_nolabel *.md | sort -k2;;
-        ListIncludeLabelSortMtime)      _list_include_label $(ls -t *.md); _list_nolabel $(ls -t *.md);;
-        ListIncludeLabelSortMtimeColor) _list_include_label $(ls -t *.md) | _colorcol 2; _list_nolabel $(ls -t *.md);;
-        ListIncludeMtime)               _list_include_mtime;;
-        ListIncludeMtimeColor)          _list_include_mtime | _colorcol 2;;
-        ListIncludeMtimeSortTitle)      _list_include_mtime | sort -k3;;
-        ListIncludeMtimeSortTitleColor) _list_include_mtime | sort -k3 | _colorcol 2;;
-        ListIncludeMtimeSortMtime)      _list_include_mtime -t;;
-        ListIncludeMtimeSortMtimeColor) _list_include_mtime -t | _colorcol 2;;
+        ListPrefixLabel)                _list_prefix_label *.md; _list_nolabel *.md;;
+        ListPrefixLabelColor)           _list_prefix_label *.md | _colorcol 2; _list_nolabel *.md;;
+        ListPrefixLabelSortTitle)       _list_prefix_label *.md | sort -k2; _list_nolabel *.md | sort -k2;;
+        ListPrefixLabelSortTitleColor)  _list_prefix_label *.md | sort -k2 | _colorcol 2; _list_nolabel *.md | sort -k2;;
+        ListPrefixLabelSortMtime)       _list_prefix_label $(ls -t *.md); _list_nolabel $(ls -t *.md);;
+        ListPrefixLabelSortMtimeColor)  _list_prefix_label $(ls -t *.md) | _colorcol 2; _list_nolabel $(ls -t *.md);;
+        ListPrefixMtime)                _list_prefix_mtime;;
+        ListPrefixMtimeColor)           _list_prefix_mtime | _colorcol 2;;
+        ListPrefixMtimeSortTitle)       _list_prefix_mtime | sort -k3;;
+        ListPrefixMtimeSortTitleColor)  _list_prefix_mtime | sort -k3 | _colorcol 2;;
+        ListPrefixMtimeSortMtime)       _list_prefix_mtime -t;;
+        ListPrefixMtimeSortMtimeColor)  _list_prefix_mtime -t | _colorcol 2;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
