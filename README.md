@@ -34,8 +34,16 @@ command! -bang -nargs=* NotesiumBacklinks
   \   'notesium list '.shellescape(<q-args>.' '.'--match=]('.expand("%:t").')'), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
 
+command! -bang -nargs=* NotesiumSearch
+  \ let prompt = '--prompt "NotesiumSearch> "' |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': ' --with-nth 2.. '.prompt} |
+  \ call fzf#vim#grep(
+  \   'notesium lines '.shellescape(<q-args>), 0,
+  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
+
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=title --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nb :NotesiumBacklinks --sort=title<CR>
+nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 ```

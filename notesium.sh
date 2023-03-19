@@ -5,20 +5,21 @@ fatal() { echo "Fatal: $*" 1>&2; exit 1; }
 
 usage() {
 cat<<EOF
-Usage: $(basename "$0") COMMAND [ARGS] [OPTS]
+Usage: $(basename "$0") COMMAND [OPTIONS]
 
 Commands:
   new               Print path for a new note
   home              Print path to notes directory 
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
-    --sort=title    Sort the list by title
-    --sort=mtime    Sort the list by modification time
-    --prefix=label  Prefix title with linked labels
-    --prefix=mtime  Prefix title with the modification date
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without forward or back links
     --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
+    --sort=WORD     Sort list by title or modification time (mtime|title)
+    --prefix=WORD   Include linked labels or modification date (mtime|label)
+  lines             Print all lines of notes (ie. fulltext search)
+    --color         Color code prefix using ansi escape sequences
+    --prefix=title  Include note title as prefix of each line
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -62,6 +63,18 @@ _list_orphans() {
     existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
     _list $(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
 }
+_lines() {
+    awk 'NF {print FILENAME ":" FNR ":" $0}' $@
+}
+_lines_prefix_title() {
+    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
+        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s: %s\n", $1, $2, substr(firstline,3), $3; close(fname)}'
+}
+_lines_prefix_title_color() {
+    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
+        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3; close(fname)}'
+}
+
 
 notesium_list() {
     while [ "$1" != "" ]; do
@@ -107,6 +120,23 @@ notesium_list() {
     esac
 }
 
+notesium_lines() {
+    while [ "$1" != "" ]; do
+        case $1 in
+            --color)            Color="Color";;
+            --prefix=title)     Prefix="PrefixTitle";;
+            *)                  fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case Lines${Prefix}${Color} in
+        Lines)                          _lines *.md;;
+        LinesPrefixTitle)               _lines_prefix_title *.md;;
+        LinesPrefixTitleColor)          _lines_prefix_title_color *.md;;
+        *)                              fatal "unsupported option grouping";;
+    esac
+}
+
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -119,6 +149,7 @@ main() {
         new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)       echo "$NOTESIUM_DIR";;
         list)       shift; notesium_list $@;;
+        lines)      shift; notesium_lines $@;;
         *)          fatal "unrecognized command: $1";;
     esac
 }
