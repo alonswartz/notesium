@@ -102,15 +102,15 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 
 ### Fzf search syntax
 
-| Token       | Match Type                 | Comment
-| ----------- | ----------                 | -------
-| `sbtrkt`    | fuzzy-match                | Items that fuzzy match `sbtrkt`
-| `'word`     | exact-match                | Items that include `word`
-| `^word`     | prefix exact-match         | Items that start with `word`
-| `word$`     | suffix exact-match         | Items that end with `word`
-| `!word`     | inverse exact-match        | Items that do not include `word`
-| `!^word`    | inverse prefix exact-match | Items that do not start with `word`
-| `!word$`    | inverse suffix exact-match | Items that do not end with `word`
-| `foo bar`   | multiple exact match (AND) | Items that include both `foo` AND `bar`
-| `foo | bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
+| Token        | Match Type                 | Comment
+| ------------ | ----------                 | -------
+| `sbtrkt`     | fuzzy-match                | Items that fuzzy match `sbtrkt`
+| `'word`      | exact-match                | Items that include `word`
+| `^word`      | prefix exact-match         | Items that start with `word`
+| `word$`      | suffix exact-match         | Items that end with `word`
+| `!word`      | inverse exact-match        | Items that do not include `word`
+| `!^word`     | inverse prefix exact-match | Items that do not start with `word`
+| `!word$`     | inverse suffix exact-match | Items that do not end with `word`
+| `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
+| `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
 
