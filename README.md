@@ -1,12 +1,48 @@
-## design / assumptions
+## Design / Assumptions
 
-- notes are written in pure markdown.
-- completely flat folder structure (no nested folders).
-- filenames are 8 random hex chars, with `.md` extension (`xxxxxxxx.md`).
-- first line of note is the title in h1 format (`# this is the title`).
-- one word titles are considered a label.
+- BYOE (bring your own editor): [Vim](#vim).
+- Notes are written in pure markdown, and stored locally.
+- Completely flat folder structure (no nested folders).
+- Filenames are 8 random hex chars, with `.md` extension (`xxxxxxxx.md`).
+- First line of note is the title in h1 format (`# this is the title`).
+- One word note titles are considered a label.
 
-## vim
+## CLI
+
+```
+$ notesium help
+Usage: notesium COMMAND [OPTIONS]
+
+Commands:
+  new               Print path for a new note
+  home              Print path to notes directory
+  list              Print list of notes
+    --color         Color code prefix using ansi escape sequences
+    --labels        Limit list to only label notes (ie. one word title)
+    --orphans       Limit list to notes without forward or back links
+    --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
+    --sort=WORD     Sort list by title or modification time (mtime|title)
+    --prefix=WORD   Include linked labels or modification date (mtime|label)
+  lines             Print all lines of notes (ie. fulltext search)
+    --color         Color code prefix using ansi escape sequences
+    --prefix=title  Include note title as prefix of each line
+
+Environment:
+  NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
+```
+
+## Vim
+
+Notesium is not a Vim plugin, it is up to the user to write their own
+Vim commands and configure keybindings. That said, below are some fairly
+generic commands, with preferences configured in the keybindings.
+
+- Dependencies: [fzf](https://github.com/junegunn/fzf) and [fzf.vim](https://github.com/junegunn/fzf.vim).
+- Recommended: [bat](https://github.com/sharkdp/bat) for syntax highlighting in the preview.
+- Recommended: [vim-markdown](https://github.com/preservim/vim-markdown) for general markdown goodness.
+- Recommended: [goyo.vim](https://github.com/junegunn/goyo.vim) and [lightlight.vim](https://github.com/junegunn/limelight.vim) for distraction free writing.
+
+### Example integration
 
 ```vim
 let $NOTESIUM_DIR = trim(system("notesium home"))
@@ -47,3 +83,34 @@ nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nb :NotesiumBacklinks --sort=title<CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 ```
+
+### Keybindings
+
+| Mode   | Binding           | Comment
+| ----   | --------          | -------
+| insert | `[[`              | Opens note list, insert selection as markdown formatted link
+| normal | `<Leader>nn`      | Opens new note for editing
+| normal | `<Leader>nl`      | List with prefixed label, sorted by title
+| normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
+| normal | `<Leader>nb`      | List of notes linking to this note, sorted by title
+| normal | `<Leader>ns`      | Full text search
+| fzf    | `C-k` `C-j`       | Move up and down in fzf window
+| fzf    | `enter`           | Open selection
+| fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
+| fzf    | `C-/`             | Toggle preview
+| normal | `ge`              | Open the link under the cursor (vim-markdown)
+
+### Fzf search syntax
+
+| Token       | Match Type                 | Comment
+| ----------- | ----------                 | -------
+| `sbtrkt`    | fuzzy-match                | Items that fuzzy match `sbtrkt`
+| `'word`     | exact-match                | Items that include `word`
+| `^word`     | prefix exact-match         | Items that start with `word`
+| `word$`     | suffix exact-match         | Items that end with `word`
+| `!word`     | inverse exact-match        | Items that do not include `word`
+| `!^word`    | inverse prefix exact-match | Items that do not start with `word`
+| `!word$`    | inverse suffix exact-match | Items that do not end with `word`
+| `foo bar`   | multiple exact match (AND) | Items that include both `foo` AND `bar`
+| `foo | bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
+
