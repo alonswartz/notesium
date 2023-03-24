@@ -17,6 +17,8 @@ Commands:
     --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
     --sort=WORD     Sort list by title or modification time (mtime|title)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
+  links             Print list of links
+    --color         Color code using ansi escape sequences
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -62,6 +64,17 @@ _list_labels() {
 _list_orphans() {
     existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
     _list $(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
+}
+_links() {
+    grep --with-filename --line-number --only-match '\([[:alnum:]]\{8\}\.md\)' $@ | \
+        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3; close(fname)}' | \
+        awk -F ";;" -v fname_col=3 '{fname=$fname_col; getline firstline < fname; print $1, $2, "→", substr(firstline,3); close(fname)}'
+}
+_links_color() {
+    grep --with-filename --line-number --only-match '\([[:alnum:]]\{8\}\.md\)' $@ | \
+        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3; close(fname)}' | \
+        awk -F ";;" -v fname_col=3 'BEGIN{C="\033[0;36m";R="\033[0m"}
+            {fname=$fname_col; getline firstline < fname; print $1, C $2 R, "→", substr(firstline,3); close(fname)}'
 }
 _lines() {
     awk 'NF {print FILENAME ":" FNR ":" $0}' $@
@@ -120,6 +133,21 @@ notesium_list() {
     esac
 }
 
+notesium_links() {
+    while [ "$1" != "" ]; do
+        case $1 in
+            --color)            Color="Color";;
+            *)                  fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case Links${Color} in
+        Links)                          _links *.md | sort -k2;;
+        LinksColor)                     _links_color *.md | sort -k2;;
+        *)                              fatal "unsupported option grouping";;
+    esac
+}
+
 notesium_lines() {
     while [ "$1" != "" ]; do
         case $1 in
@@ -149,6 +177,7 @@ main() {
         new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)       echo "$NOTESIUM_DIR";;
         list)       shift; notesium_list $@;;
+        links)      shift; notesium_links $@;;
         lines)      shift; notesium_lines $@;;
         *)          fatal "unrecognized command: $1";;
     esac
