@@ -175,6 +175,9 @@ notesium_links() {
         esac
         shift
     done
+    case ${Type} in
+        Outgoing|Incoming)      Color="";;
+    esac
     case Links${Type}${Color} in
         Links)                          _links *.md | sort -k2;;
         LinksColor)                     _links_color *.md | sort -k2;;
