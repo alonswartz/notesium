@@ -189,7 +189,8 @@ notesium_links() {
         LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         LinksOutgoing)                  _links_outgoing $filename;;
         LinksIncoming)                  _links_incoming $filename | sort -k2;;
-        LinksOutgoingIncoming)          _links_outgoing $filename; _links_incoming $filename | sort -k2;;
+        LinksOutgoingIncoming)          _links_outgoing $filename | awk '{$1=$1" outgoing"}1';
+                                        _links_incoming $filename | awk '{$1=$1" incoming"}1' | sort -k3;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
