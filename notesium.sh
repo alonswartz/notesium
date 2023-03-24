@@ -123,15 +123,15 @@ _lines_prefix_title_color() {
 notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)            Color="Color";;
-            --sort=title)       Sort="SortTitle";;
-            --sort=mtime)       Sort="SortMtime";;
-            --prefix=label)     Prefix="PrefixLabel";;
-            --prefix=mtime)     Prefix="PrefixMtime";;
-            --labels)           Limit="LimitLabels";;
-            --orphans)          Limit="LimitOrphans";;
-            --match=*)          Limit="LimitMatch"; match_pattern="${1##*=}";;
-            *)                  fatal "unrecognized option: $1";;
+            --color)                    Color="Color";;
+            --sort=title)               Sort="SortTitle";;
+            --sort=mtime)               Sort="SortMtime";;
+            --prefix=label)             Prefix="PrefixLabel";;
+            --prefix=mtime)             Prefix="PrefixMtime";;
+            --labels)                   Limit="LimitLabels";;
+            --orphans)                  Limit="LimitOrphans";;
+            --match=*)                  Limit="LimitMatch"; match_pattern="${1##*=}";;
+            *)                          fatal "unrecognized option: $1";;
         esac
         shift
     done
@@ -167,16 +167,16 @@ notesium_list() {
 notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)            Color="Color";;
-            --dangling)         Type="Dangling";;
-            --outgoing=*)       Type="Outgoing"; filename="${1##*=}";;
-            --incoming=*)       Type="Incoming"; filename="${1##*=}";;
-            *)                  fatal "unrecognized option: $1";;
+            --color)                    Color="Color";;
+            --dangling)                 Type="Dangling";;
+            --outgoing=*)               Type="Outgoing"; filename="${1##*=}";;
+            --incoming=*)               Type="Incoming"; filename="${1##*=}";;
+            *)                          fatal "unrecognized option: $1";;
         esac
         shift
     done
     case ${Type} in
-        Outgoing|Incoming)      Color="";;
+        Outgoing|Incoming)              Color="";;
     esac
     case Links${Type}${Color} in
         Links)                          _links *.md | sort -k2;;
@@ -192,9 +192,9 @@ notesium_links() {
 notesium_lines() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)            Color="Color";;
-            --prefix=title)     Prefix="PrefixTitle";;
-            *)                  fatal "unrecognized option: $1";;
+            --color)                    Color="Color";;
+            --prefix=title)             Prefix="PrefixTitle";;
+            *)                          fatal "unrecognized option: $1";;
         esac
         shift
     done
