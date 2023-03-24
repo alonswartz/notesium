@@ -14,13 +14,14 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without forward or back links
-    --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
+    --match=PATTERN Limit list to notes where pattern appears
     --sort=WORD     Sort list by title or modification time (mtime|title)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
   links             Print list of links
     --color         Color code using ansi escape sequences
     --dangling      Limit list to broken links
     --outgoing=FILE Limit list to outgoing links
+    --incoming=FILE Limit list to incoming links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -101,6 +102,11 @@ _links_outgoing() {
     [ "$outgoing" ] || return 0
     _list $outgoing
 }
+_links_incoming() {
+    [ "$1" ] || fatal "filename not specified"
+    [ -e "$1" ] || fatal "filename does not exist: $1"
+    _list_match ]\($1\) *.md
+}
 _lines() {
     awk 'NF {print FILENAME ":" FNR ":" $0}' $@
 }
@@ -164,6 +170,7 @@ notesium_links() {
             --color)            Color="Color";;
             --dangling)         Type="Dangling";;
             --outgoing=*)       Type="Outgoing"; filename="${1##*=}";;
+            --incoming=*)       Type="Incoming"; filename="${1##*=}";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
@@ -174,6 +181,7 @@ notesium_links() {
         LinksDangling)                  _links_dangling *.md | sort -k2;;
         LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         LinksOutgoing)                  _links_outgoing $filename;;
+        LinksIncoming)                  _links_incoming $filename | sort -k2;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
