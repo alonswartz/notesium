@@ -20,8 +20,9 @@ Commands:
   links             Print list of links
     --color         Color code using ansi escape sequences
     --dangling      Limit list to broken links
-    --outgoing=FILE Limit list to outgoing links
-    --incoming=FILE Limit list to incoming links
+    --outgoing      Limit list to outgoing links
+    --incoming      Limit list to incoming links
+    --filename=FILE Limit list to links related to filename
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -97,14 +98,12 @@ _links_dangling_color() {
 }
 _links_outgoing() {
     [ "$1" ] || fatal "filename not specified"
-    [ -e "$1" ] || fatal "filename does not exist: $1"
     outgoing="$(grep --only-matching '\([[:alnum:]]\{8\}\.md\)' $1)"
     [ "$outgoing" ] || return 0
     _list $outgoing
 }
 _links_incoming() {
     [ "$1" ] || fatal "filename not specified"
-    [ -e "$1" ] || fatal "filename does not exist: $1"
     _list_match ]\($1\) *.md
 }
 _lines() {
@@ -168,23 +167,28 @@ notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
             --color)                    Color="Color";;
-            --dangling)                 Type="Dangling";;
-            --outgoing=*)               Type="Outgoing"; filename="${1##*=}";;
-            --incoming=*)               Type="Incoming"; filename="${1##*=}";;
+            --dangling)                 Dangling="Dangling";;
+            --outgoing)                 Outgoing="Outgoing";;
+            --incoming)                 Incoming="Incoming";;
+            --filename=*)               filename="${1##*=}"; [ -e "$filename" ] || fatal "does not exist: $filename";;
             *)                          fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case ${Type} in
-        Outgoing|Incoming)              Color="";;
-    esac
-    case Links${Type}${Color} in
+    if [ "$filename" ]; then
+        case ${Dangling}${Outgoing}${Incoming} in
+            Dangling*)                  fatal "dangling does not support filename";;
+            Outgoing*|Incoming)         Color="";;
+        esac
+    fi
+    case Links${Dangling}${Outgoing}${Incoming}${Color} in
         Links)                          _links *.md | sort -k2;;
         LinksColor)                     _links_color *.md | sort -k2;;
         LinksDangling)                  _links_dangling *.md | sort -k2;;
         LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         LinksOutgoing)                  _links_outgoing $filename;;
         LinksIncoming)                  _links_incoming $filename | sort -k2;;
+        LinksOutgoingIncoming)          _links_outgoing $filename; _links_incoming $filename | sort -k2;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
