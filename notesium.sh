@@ -19,6 +19,7 @@ Commands:
     --prefix=WORD   Include linked labels or modification date (mtime|label)
   links             Print list of links
     --color         Color code using ansi escape sequences
+    --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -75,6 +76,22 @@ _links_color() {
         awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3; close(fname)}' | \
         awk -F ";;" -v fname_col=3 'BEGIN{C="\033[0;36m";R="\033[0m"}
             {fname=$fname_col; getline firstline < fname; print $1, C $2 R, "→", substr(firstline,3); close(fname)}'
+}
+_links_dangling() {
+    notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
+    dangling="$(grep --no-filename --only-match '\([[:alnum:]]\{8\}\.md\)' *.md | sort | uniq | grep -v $notelist | awk '{printf "-e %s ", $0}')"
+    [ "$dangling" ] || return 0
+    grep --with-filename --line-number --only-matching $dangling $@ | \
+        awk -F ":" -v fname_col=1 '
+            {fname=$fname_col; getline firstline < fname; print fname ":" $2 ":", substr(firstline,3), "→" , $3; close(fname)}'
+}
+_links_dangling_color() {
+    notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
+    dangling="$(grep --no-filename --only-match '\([[:alnum:]]\{8\}\.md\)' *.md | sort | uniq | grep -v $notelist | awk '{printf "-e %s ", $0}')"
+    [ "$dangling" ] || return 0
+    grep --with-filename --line-number --only-matching $dangling $@ | \
+        awk -F ":" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
+            {fname=$fname_col; getline firstline < fname; print fname ":" $2 ":", C substr(firstline,3) R, "→" , $3; close(fname)}'
 }
 _lines() {
     awk 'NF {print FILENAME ":" FNR ":" $0}' $@
@@ -137,13 +154,16 @@ notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
             --color)            Color="Color";;
+            --dangling)         Type="Dangling";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case Links${Color} in
+    case Links${Type}${Color} in
         Links)                          _links *.md | sort -k2;;
         LinksColor)                     _links_color *.md | sort -k2;;
+        LinksDangling)                  _links_dangling *.md | sort -k2;;
+        LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
