@@ -20,6 +20,7 @@ Commands:
   links             Print list of links
     --color         Color code using ansi escape sequences
     --dangling      Limit list to broken links
+    --outgoing=FILE Limit list to outgoing links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -93,6 +94,13 @@ _links_dangling_color() {
         awk -F ":" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
             {fname=$fname_col; getline firstline < fname; print fname ":" $2 ":", C substr(firstline,3) R, "→" , $3; close(fname)}'
 }
+_links_outgoing() {
+    [ "$1" ] || fatal "filename not specified"
+    [ -e "$1" ] || fatal "filename does not exist: $1"
+    outgoing="$(grep --only-matching '\([[:alnum:]]\{8\}\.md\)' $1)"
+    [ "$outgoing" ] || return 0
+    _list $outgoing
+}
 _lines() {
     awk 'NF {print FILENAME ":" FNR ":" $0}' $@
 }
@@ -155,6 +163,7 @@ notesium_links() {
         case $1 in
             --color)            Color="Color";;
             --dangling)         Type="Dangling";;
+            --outgoing=*)       Type="Outgoing"; filename="${1##*=}";;
             *)                  fatal "unrecognized option: $1";;
         esac
         shift
@@ -164,6 +173,7 @@ notesium_links() {
         LinksColor)                     _links_color *.md | sort -k2;;
         LinksDangling)                  _links_dangling *.md | sort -k2;;
         LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
+        LinksOutgoing)                  _links_outgoing $filename;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
