@@ -179,6 +179,7 @@ notesium_links() {
         case ${Dangling}${Outgoing}${Incoming} in
             Dangling*)                  fatal "dangling does not support filename";;
             Outgoing*|Incoming)         Color="";;
+            "")                         Color=""; Outgoing="Outgoing"; Incoming="Incoming";;
         esac
     fi
     case Links${Dangling}${Outgoing}${Incoming}${Color} in
