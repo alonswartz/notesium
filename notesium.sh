@@ -17,12 +17,11 @@ Commands:
     --match=PATTERN Limit list to notes where pattern appears
     --sort=WORD     Sort list by title or modification time (mtime|title)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
-  links             Print list of links
+  links [filename]  Print list of links
     --color         Color code using ansi escape sequences
     --dangling      Limit list to broken links
-    --outgoing      Limit list to outgoing links
-    --incoming      Limit list to incoming links
-    --filename=FILE Limit list to links related to filename
+    --outgoing      Limit list to outgoing links related to filename
+    --incoming      Limit list to incoming links related to filename
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -170,8 +169,7 @@ notesium_links() {
             --dangling)                 Dangling="Dangling";;
             --outgoing)                 Outgoing="Outgoing";;
             --incoming)                 Incoming="Incoming";;
-            --filename=*)               filename="${1##*=}"; [ -e "$filename" ] || fatal "does not exist: $filename";;
-            *)                          fatal "unrecognized option: $1";;
+            *)                          [ "$filename" ] && fatal "unrecognized option: $1"; [ -e "$1" ] || fatal "does not exist: $1"; filename=$1;;
         esac
         shift
     done
