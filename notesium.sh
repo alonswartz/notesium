@@ -178,8 +178,7 @@ notesium_links() {
     if [ "$filename" ]; then
         case ${Dangling}${Outgoing}${Incoming} in
             Dangling*)                  fatal "dangling does not support filename";;
-            Outgoing*|Incoming)         Color="";;
-            "")                         Color=""; Outgoing="Outgoing"; Incoming="Incoming";;
+            "")                         Outgoing="Outgoing"; Incoming="Incoming";;
         esac
     fi
     case Links${Dangling}${Outgoing}${Incoming}${Color} in
@@ -188,9 +187,13 @@ notesium_links() {
         LinksDangling)                  _links_dangling *.md | sort -k2;;
         LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         LinksOutgoing)                  _links_outgoing $filename;;
+        LinksOutgoingColor)             _links_outgoing $filename;;
         LinksIncoming)                  _links_incoming $filename | sort -k2;;
+        LinksIncomingColor)             _links_incoming $filename | sort -k2;;
         LinksOutgoingIncoming)          _links_outgoing $filename | awk '{$1=$1" outgoing"}1';
                                         _links_incoming $filename | awk '{$1=$1" incoming"}1' | sort -k3;;
+        LinksOutgoingIncomingColor)     _links_outgoing $filename | awk '{$1=$1" outgoing"}1' | _colorcol 2;
+                                        _links_incoming $filename | awk '{$1=$1" incoming"}1' | sort -k3 | _colorcol 2;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
