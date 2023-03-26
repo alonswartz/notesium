@@ -20,9 +20,14 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without forward or back links
-    --match=PATTERN Limit list to notes where pattern appears (eg. backlinks)
+    --match=PATTERN Limit list to notes where pattern appears
     --sort=WORD     Sort list by title or modification time (mtime|title)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
+  links [filename]  Print list of links
+    --color         Color code using ansi escape sequences
+    --incoming      Limit list to incoming links related to filename
+    --outgoing      Limit list to outgoing links related to filename
+    --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -61,14 +66,14 @@ command! -bang -nargs=* NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2.. '.prompt} |
   \ call fzf#vim#grep(
   \   'notesium list '.shellescape(<q-args>), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
+  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
-command! -bang -nargs=* NotesiumBacklinks
-  \ let prompt = '--prompt "NotesiumBacklinks> "' |
+command! -bang -nargs=* NotesiumLinks
+  \ let prompt = '--prompt "NotesiumLinks> "' |
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2.. '.prompt} |
   \ call fzf#vim#grep(
-  \   'notesium list '.shellescape(<q-args>.' '.'--match=]('.expand("%:t").')'), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(spec) : spec, <bang>0)
+  \   'notesium links '.shellescape(<q-args>), 0,
+  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumSearch
   \ let prompt = '--prompt "NotesiumSearch> "' |
@@ -80,7 +85,8 @@ command! -bang -nargs=* NotesiumSearch
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=title --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
-nnoremap <Leader>nb :NotesiumBacklinks --sort=title<CR>
+nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
+nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 ```
 
@@ -92,7 +98,8 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | normal | `<Leader>nn`      | Opens new note for editing
 | normal | `<Leader>nl`      | List with prefixed label, sorted by title
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
-| normal | `<Leader>nb`      | List of notes linking to this note, sorted by title
+| normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
+| normal | `<Leader>nk`      | List all links related to this note
 | normal | `<Leader>ns`      | Full text search
 | fzf    | `C-k` `C-j`       | Move up and down in fzf window
 | fzf    | `enter`           | Open selection

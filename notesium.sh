@@ -9,7 +9,7 @@ Usage: $(basename "$0") COMMAND [OPTIONS]
 
 Commands:
   new               Print path for a new note
-  home              Print path to notes directory 
+  home              Print path to notes directory
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
@@ -19,9 +19,9 @@ Commands:
     --prefix=WORD   Include linked labels or modification date (mtime|label)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
-    --dangling      Limit list to broken links
     --outgoing      Limit list to outgoing links related to filename
     --incoming      Limit list to incoming links related to filename
+    --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
@@ -166,9 +166,9 @@ notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
             --color)                    Color="Color";;
-            --dangling)                 Dangling="Dangling";;
             --outgoing)                 Outgoing="Outgoing";;
             --incoming)                 Incoming="Incoming";;
+            --dangling)                 Dangling="Dangling";;
             *)                          [ "$filename" ] && fatal "unrecognized option: $1"; [ -e "$1" ] || fatal "does not exist: $1"; filename=$1;;
         esac
         shift
