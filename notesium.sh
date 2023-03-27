@@ -108,11 +108,11 @@ _links_incoming() {
     _list_match ]\($1\) *.md
 }
 _lines() {
-    awk 'NF {print FILENAME ":" FNR ":" $0}' $@
+    awk 'NF {print FILENAME ":" FNR ": " $0}' $@
 }
 _lines_prefix_title() {
     awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
-        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s: %s\n", $1, $2, substr(firstline,3), $3; close(fname)}'
+        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s %s\n", $1, $2, substr(firstline,3), $3; close(fname)}'
 }
 _lines_prefix_title_color() {
     awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
