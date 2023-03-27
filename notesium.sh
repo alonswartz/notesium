@@ -66,7 +66,9 @@ _list_labels() {
 }
 _list_orphans() {
     existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
-    _list $(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
+    orphans=$(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
+    [ "$orphans" ] || return 0
+    _list $orphans
 }
 _links() {
     grep --with-filename --line-number --only-match '\([[:alnum:]]\{8\}\.md\)' $@ | \
