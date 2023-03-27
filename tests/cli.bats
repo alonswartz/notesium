@@ -35,3 +35,10 @@ setup_file() {
     [ "${lines[0]}" == 'Fatal: unrecognized command: non-existent' ]
 }
 
+@test "cli: non-existent option fatal error" {
+    run notesium.sh --non-existent
+    echo "$output"
+    [ $status -eq 1 ]
+    [ "${lines[0]}" == 'Fatal: unrecognized option: --non-existent' ]
+}
+

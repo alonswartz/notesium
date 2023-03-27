@@ -227,6 +227,7 @@ main() {
         list)       shift; notesium_list $@;;
         links)      shift; notesium_links $@;;
         lines)      shift; notesium_lines $@;;
+        -*)         fatal "unrecognized option: $1";;
         *)          fatal "unrecognized command: $1";;
     esac
 }
