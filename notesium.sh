@@ -42,7 +42,7 @@ _list() {
     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $@
 }
 _list_prefix_mtime() {
-    ls -l $1 --time-style=long-iso *.md \ |
+    ls -l $1 --time-style=long-iso *.md | \
         awk -v fname_col=8 '{fname=$fname_col; getline firstline < fname; print fname ":1:", $6, substr(firstline,3)}'
 }
 _list_prefix_label() {
