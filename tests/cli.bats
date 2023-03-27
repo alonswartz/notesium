@@ -1,7 +1,14 @@
 #!/usr/bin/env bats
 
 setup_file() {
+    [ -e "/tmp/notesium-test-corpus" ] && exit 1
+    run mkdir /tmp/notesium-test-corpus
+    export NOTESIUM_DIR="/tmp/notesium-test-corpus"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
+}
+
+teardown_file() {
+    run rmdir /tmp/notesium-test-corpus
 }
 
 @test "cli: print usage if no arguments specified" {
@@ -40,5 +47,29 @@ setup_file() {
     echo "$output"
     [ $status -eq 1 ]
     [ "${lines[0]}" == 'Fatal: unrecognized option: --non-existent' ]
+}
+
+@test "cli: home error if NOTESIUM_DIR does not exist" {
+    export NOTESIUM_DIR="/tmp/notesium-test-foo"
+    run notesium.sh home
+    echo "$output"
+    [ $status -eq 1 ]
+    [ "${lines[0]}" == "Fatal: NOTESIUM_DIR does not exist: $NOTESIUM_DIR" ]
+}
+
+@test "cli: home prints default NOTESIUM_DIR if not set" {
+    [ -e "$HOME/notes" ] || skip "$HOME/notes does not exist"
+    unset NOTESIUM_DIR
+    run notesium.sh home
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "$(realpath $HOME/notes)" ]
+}
+
+@test "cli: home prints NOTESIUM_DIR upon successful verification" {
+    run notesium.sh home
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "/tmp/notesium-test-corpus" ]
 }
 
