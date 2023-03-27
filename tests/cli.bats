@@ -73,3 +73,17 @@ teardown_file() {
     [ "${lines[0]}" == "/tmp/notesium-test-corpus" ]
 }
 
+@test "cli: new dirname equal to NOTESIUM_DIR realpath" {
+    run notesium.sh new
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "$(dirname $output)" == "/tmp/notesium-test-corpus" ]
+}
+
+@test "cli: new basename is 8 chars plus .md extension" {
+    run notesium.sh new
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "$(basename $output | tr -d '\n' | wc -c)" == "11" ]
+    [ "$(basename --suffix=.md $output | tr -d '\n' | wc -c)" == "8" ]
+}
