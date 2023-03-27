@@ -59,7 +59,7 @@ _list_match() {
     pattern="$1"; shift
     [ "$pattern" ] || fatal "pattern not specified"
     grep --line-number --only-matching $pattern $@ | \
-        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}'
+        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}' | uniq
 }
 _list_labels() {
     awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' $@
