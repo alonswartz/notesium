@@ -6,6 +6,7 @@
 - Filenames are 8 random hex chars, with `.md` extension (`xxxxxxxx.md`).
 - First line of note is the title in h1 format (`# this is the title`).
 - One word note titles are considered a label.
+- Links are inline (`[link text](xxxxxxxx.md)`).
 
 ## CLI
 
@@ -120,4 +121,26 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | `!word$`     | inverse suffix exact-match | Items that do not end with `word`
 | `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
 | `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
+
+## Regression tests
+
+Test suites for all commands and their options (except for `--color`)
+are included in the `tests/` directory, along with `fixtures` acting as
+a notes corpus. The tests are dependent on [bats-core](https://github.com/bats-core/bats-core).
+
+Some tests are dependent on the modification datetime of the notes
+(sorting and prefixing), in which case the test suite will duplicate the
+corpus to a temporary directory and modify the `mtime` deterministically
+based on the note hexadecimal ID.
+
+```
+# run all test suites
+bats tests
+
+# run a specific test suite
+bats tests/list.bats
+
+# run a subset of tests within a specific test suite
+bats tests/list.bats --filter "mtime"
+```
 
