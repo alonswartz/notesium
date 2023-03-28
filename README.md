@@ -133,6 +133,9 @@ Some tests are dependent on the modification datetime of the notes
 corpus to a temporary directory and modify the `mtime` deterministically
 based on the note hexadecimal ID.
 
+These test suites can be paused prior to teardown for manual inspection
+and additional testing by setting the `PAUSE` environmental variable.
+
 ```
 # run all test suites
 bats tests
@@ -142,5 +145,8 @@ bats tests/list.bats
 
 # run a subset of tests within a specific test suite
 bats tests/list.bats --filter "mtime"
+
+# run a specific test suite, but pause prior to teardown (--tap recommended)
+PAUSE=y bats tests/list.bats --tap
 ```
 

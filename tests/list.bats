@@ -20,6 +20,11 @@ setup_file() {
 }
 
 teardown_file() {
+    if [ "$PAUSE" ]; then
+        echo "# NOTESIUM_DIR=$NOTESIUM_DIR" >&3
+        echo "# PAUSED: Press enter to continue with teardown... " >&3
+        run read -p "paused: " choice
+    fi
     run rm /tmp/notesium-test-corpus/*.md
     run rmdir /tmp/notesium-test-corpus
 }
