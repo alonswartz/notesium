@@ -124,17 +124,11 @@ _lines() {
     awk 'NF {print FILENAME ":" FNR ": " $0}' $@
 }
 _lines_prefix_title() {
-    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
-        {fname=$fname_col; getline firstline < fname;
-        printf "%s:%s: %s %s\n", $1, $2, substr(firstline,3), $3;
-        close(fname)}'
-}
-_lines_prefix_title_color() {
-    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
-        BEGIN{C="\033[0;36m";R="\033[0m"}
-        {fname=$fname_col; getline firstline < fname;
-        printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3;
-        close(fname)}'
+    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | \
+        awk -F ";" -v fname_col=1 -v C=$C -v R=$R '
+            {fname=$fname_col; getline firstline < fname;
+            printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3;
+            close(fname)}'
 }
 
 
@@ -212,16 +206,15 @@ notesium_links() {
 notesium_lines() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="Color";;
+            --color)                    C="\033[0;36m"; R="\033[0m";;
             --prefix=title)             Prefix="PrefixTitle";;
             *)                          fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case Lines${Prefix}${Color} in
+    case Lines${Prefix} in
         Lines)                          _lines *.md;;
         LinesPrefixTitle)               _lines_prefix_title *.md;;
-        LinesPrefixTitleColor)          _lines_prefix_title_color *.md;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
