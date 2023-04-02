@@ -88,15 +88,11 @@ _links() {
 }
 _links_dangling() {
     re='[[:alnum:]]\{8\}\.md'
-    notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
-    dangling="$(grep --no-filename --only-match $re *.md | sort | uniq | \
-                grep -v $notelist | awk '{printf "-e %s ", $0}')"
-    [ "$dangling" ] || return 0
-    grep --with-filename --line-number --only-matching $dangling $@ | \
-        awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
-            {fname=$fname_col; getline firstline < fname;
-            print fname ":" $2 ":", C substr(firstline,3) R, "→", $3;
-            close(fname)}'
+    grep --with-filename --line-number --only-match $re $@ | \
+        awk -F ":" -v C=$Color -v R=$Reset '
+            {getline source < $1; close($1)}
+            {if (getline < $3 < 0)
+                print $1 ":" $2 ":", C substr(source,3) R, "→", $3}'
 }
 _links_outgoing() {
     [ "$1" ] || fatal "filename not specified"
