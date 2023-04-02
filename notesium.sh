@@ -87,20 +87,7 @@ _links() {
             {fname=$fname_col; getline firstline < fname;
             print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
             close(fname)}' | \
-            awk -F ";;" -v fname_col=3 '
-                {fname=$fname_col; getline firstline < fname;
-                print $1, $2, "→", substr(firstline,3);
-                close(fname)}'
-}
-_links_color() {
-    re='[[:alnum:]]\{8\}\.md'
-    grep --with-filename --line-number --only-match $re $@ | \
-        awk -F ":" -v fname_col=1 '
-            {fname=$fname_col; getline firstline < fname;
-            print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
-            close(fname)}' | \
-            awk -F ";;" -v fname_col=3 '
-                BEGIN{C="\033[0;36m";R="\033[0m"}
+            awk -F ";;" -v fname_col=3 -v C=$C -v R=$R '
                 {fname=$fname_col; getline firstline < fname;
                 print $1, C $2 R, "→", substr(firstline,3);
                 close(fname)}'
@@ -112,20 +99,7 @@ _links_dangling() {
                 grep -v $notelist | awk '{printf "-e %s ", $0}')"
     [ "$dangling" ] || return 0
     grep --with-filename --line-number --only-matching $dangling $@ | \
-        awk -F ":" -v fname_col=1 '
-            {fname=$fname_col; getline firstline < fname;
-            print fname ":" $2 ":", substr(firstline,3), "→", $3;
-            close(fname)}'
-}
-_links_dangling_color() {
-    re='[[:alnum:]]\{8\}\.md'
-    notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
-    dangling="$(grep --no-filename --only-match $re *.md | sort | uniq | \
-                grep -v $notelist | awk '{printf "-e %s ", $0}')"
-    [ "$dangling" ] || return 0
-    grep --with-filename --line-number --only-matching $dangling $@ | \
-        awk -F ":" -v fname_col=1 '
-            BEGIN{C="\033[0;36m";R="\033[0m"}
+        awk -F ":" -v fname_col=1 -v C=$C -v R=$R '
             {fname=$fname_col; getline firstline < fname;
             print fname ":" $2 ":", C substr(firstline,3) R, "→", $3;
             close(fname)}'
@@ -139,6 +113,12 @@ _links_outgoing() {
 _links_incoming() {
     [ "$1" ] || fatal "filename not specified"
     _list_match ]\($1\) *.md
+}
+_links_outgoing_prefix() {
+    _links_outgoing $1 | awk -v C=$C -v R=$R '{$1=$1 " " C "outgoing" R}1'
+}
+_links_incoming_prefix() {
+    _links_incoming $1 | awk -v C=$C -v R=$R '{$1=$1 " " C "incoming" R}1'
 }
 _lines() {
     awk 'NF {print FILENAME ":" FNR ": " $0}' $@
@@ -205,7 +185,7 @@ notesium_list() {
 notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="Color";;
+            --color)                    C="\033[0;36m"; R="\033[0m";;
             --outgoing)                 Outgoing="Outgoing";;
             --incoming)                 Incoming="Incoming";;
             --dangling)                 Dangling="Dangling";;
@@ -219,19 +199,12 @@ notesium_links() {
             "")                         Outgoing="Outgoing"; Incoming="Incoming";;
         esac
     fi
-    case Links${Dangling}${Outgoing}${Incoming}${Color} in
+    case Links${Dangling}${Outgoing}${Incoming} in
         Links)                          _links *.md | sort -k2;;
-        LinksColor)                     _links_color *.md | sort -k2;;
         LinksDangling)                  _links_dangling *.md | sort -k2;;
-        LinksDanglingColor)             _links_dangling_color *.md | sort -k2;;
         LinksOutgoing)                  _links_outgoing $filename;;
-        LinksOutgoingColor)             _links_outgoing $filename;;
         LinksIncoming)                  _links_incoming $filename | sort -k2;;
-        LinksIncomingColor)             _links_incoming $filename | sort -k2;;
-        LinksOutgoingIncoming)          _links_outgoing $filename | awk '{$1=$1" outgoing"}1';
-                                        _links_incoming $filename | awk '{$1=$1" incoming"}1' | sort -k3;;
-        LinksOutgoingIncomingColor)     _links_outgoing $filename | awk '{$1=$1" outgoing"}1' | _colorcol 2;
-                                        _links_incoming $filename | awk '{$1=$1" incoming"}1' | sort -k3 | _colorcol 2;;
+        LinksOutgoingIncoming)          _links_outgoing_prefix $filename; _links_incoming_prefix $filename | sort -k3;;
         *)                              fatal "unsupported option grouping";;
     esac
 }
