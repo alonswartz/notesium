@@ -84,14 +84,10 @@ _list_orphans() {
 _links() {
     re='[[:alnum:]]\{8\}\.md'
     grep --with-filename --line-number --only-match $re $@ | \
-        awk -F ":" -v fname_col=1 '
-            {fname=$fname_col; getline firstline < fname;
-            print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
-            close(fname)}' | \
-            awk -F ";;" -v fname_col=3 -v C=$Color -v R=$Reset '
-                {fname=$fname_col; getline firstline < fname;
-                print $1, C $2 R, "→", substr(firstline,3);
-                close(fname)}'
+        awk -F ":" -v C=$Color -v R=$Reset '
+            {getline source < $1; close($1)}
+            {getline target < $3; close($3)}
+            {print $1 ":" $2 ":", C substr(source,3) R, "→", substr(target,3)}'
 }
 _links_dangling() {
     re='[[:alnum:]]\{8\}\.md'
