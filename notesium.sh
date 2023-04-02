@@ -44,19 +44,16 @@ _list_prefix_mtime() {
             print fname ":1:", C $6 R, substr(firstline,3)}'
 }
 _list_prefix_label_awk() {
-    awk -F ":" -v fname_col=2 '
-        {fname=$fname_col; getline firstline < fname;
-        print $1 ":" substr(firstline,3); close(fname)}' | \
-        awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
-            {fname=$fname_col; getline firstline < fname;
-            print fname ":1:", C $2 R, substr(firstline,3); close(fname)}'
+    awk -F ":" -v C=$Color -v R=$Reset '
+        {getline title < $1; close($1)}
+        {getline label < $2; close($2)}
+        {print $1 ":1:", C substr(label,3) R, substr(title,3)}'
 }
 _list_prefix_label_sort() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     grep --only-matching $labels $@ | _list_prefix_label_awk | sort -k2
     _list $(grep --files-without-match $labels $@) | sort -k2
 }
-
 _list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     grep --only-matching $labels $@ | _list_prefix_label_awk
