@@ -43,13 +43,19 @@ _list() {
 }
 _list_prefix_mtime() {
     ls -l $1 --time-style=long-iso *.md | \
-        awk -v fname_col=8 '{fname=$fname_col; getline firstline < fname; print fname ":1:", $6, substr(firstline,3)}'
+        awk -v fname_col=8 '
+            {fname=$fname_col; getline firstline < fname;
+            print fname ":1:", $6, substr(firstline,3)}'
 }
 _list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
     grep --only-matching $labels $@ | \
-        awk -F ":" -v fname_col=2 '{fname=$fname_col; getline firstline < fname; print $1 ":" substr(firstline,3); close(fname)}' | \
-        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print fname ":1:", $2, substr(firstline,3); close(fname)}'
+        awk -F ":" -v fname_col=2 '
+            {fname=$fname_col; getline firstline < fname;
+            print $1 ":" substr(firstline,3); close(fname)}' | \
+            awk -F ":" -v fname_col=1 '
+                {fname=$fname_col; getline firstline < fname;
+                print fname ":1:", $2, substr(firstline,3); close(fname)}'
 }
 _list_nolabel() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
@@ -59,43 +65,70 @@ _list_match() {
     pattern="$1"; shift
     [ "$pattern" ] || fatal "pattern not specified"
     grep --line-number --only-matching $pattern $@ | \
-        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":", substr(firstline,3); close(fname)}' | uniq
+        awk -F ":" -v fname_col=1 '
+            {fname=$fname_col; getline firstline < fname;
+            print $1 ":" $2 ":", substr(firstline,3); close(fname)}' | uniq
 }
 _list_labels() {
     awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' $@
 }
 _list_orphans() {
-    existing_links="$(grep --no-filename --only-match '[[:alnum:]]\{8\}\.md' *.md | awk '{printf "-e %s ", $0}')"
-    orphans=$(grep --files-without-match '\([[:alnum:]]\{8\}\.md\)' $@ | grep -v $existing_links)
+    re='[[:alnum:]]\{8\}\.md'
+    existing_links="$(grep --no-filename --only-match $re *.md | \
+                      awk '{printf "-e %s ", $0}')"
+    orphans=$(grep --files-without-match $re $@ | grep -v $existing_links)
     [ "$orphans" ] || return 0
     _list $orphans
 }
 _links() {
-    grep --with-filename --line-number --only-match '\([[:alnum:]]\{8\}\.md\)' $@ | \
-        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3; close(fname)}' | \
-        awk -F ";;" -v fname_col=3 '{fname=$fname_col; getline firstline < fname; print $1, $2, "→", substr(firstline,3); close(fname)}'
+    re='[[:alnum:]]\{8\}\.md'
+    grep --with-filename --line-number --only-match $re $@ | \
+        awk -F ":" -v fname_col=1 '
+            {fname=$fname_col; getline firstline < fname;
+            print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
+            close(fname)}' | \
+            awk -F ";;" -v fname_col=3 '
+                {fname=$fname_col; getline firstline < fname;
+                print $1, $2, "→", substr(firstline,3);
+                close(fname)}'
 }
 _links_color() {
-    grep --with-filename --line-number --only-match '\([[:alnum:]]\{8\}\.md\)' $@ | \
-        awk -F ":" -v fname_col=1 '{fname=$fname_col; getline firstline < fname; print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3; close(fname)}' | \
-        awk -F ";;" -v fname_col=3 'BEGIN{C="\033[0;36m";R="\033[0m"}
-            {fname=$fname_col; getline firstline < fname; print $1, C $2 R, "→", substr(firstline,3); close(fname)}'
+    re='[[:alnum:]]\{8\}\.md'
+    grep --with-filename --line-number --only-match $re $@ | \
+        awk -F ":" -v fname_col=1 '
+            {fname=$fname_col; getline firstline < fname;
+            print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
+            close(fname)}' | \
+            awk -F ";;" -v fname_col=3 '
+                BEGIN{C="\033[0;36m";R="\033[0m"}
+                {fname=$fname_col; getline firstline < fname;
+                print $1, C $2 R, "→", substr(firstline,3);
+                close(fname)}'
 }
 _links_dangling() {
+    re='[[:alnum:]]\{8\}\.md'
     notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
-    dangling="$(grep --no-filename --only-match '\([[:alnum:]]\{8\}\.md\)' *.md | sort | uniq | grep -v $notelist | awk '{printf "-e %s ", $0}')"
+    dangling="$(grep --no-filename --only-match $re *.md | sort | uniq | \
+                grep -v $notelist | awk '{printf "-e %s ", $0}')"
     [ "$dangling" ] || return 0
     grep --with-filename --line-number --only-matching $dangling $@ | \
         awk -F ":" -v fname_col=1 '
-            {fname=$fname_col; getline firstline < fname; print fname ":" $2 ":", substr(firstline,3), "→" , $3; close(fname)}'
+            {fname=$fname_col; getline firstline < fname;
+            print fname ":" $2 ":", substr(firstline,3), "→", $3;
+            close(fname)}'
 }
 _links_dangling_color() {
+    re='[[:alnum:]]\{8\}\.md'
     notelist="$(ls *.md | awk '{printf "-e %s ", $0}')"
-    dangling="$(grep --no-filename --only-match '\([[:alnum:]]\{8\}\.md\)' *.md | sort | uniq | grep -v $notelist | awk '{printf "-e %s ", $0}')"
+    dangling="$(grep --no-filename --only-match $re *.md | sort | uniq | \
+                grep -v $notelist | awk '{printf "-e %s ", $0}')"
     [ "$dangling" ] || return 0
     grep --with-filename --line-number --only-matching $dangling $@ | \
-        awk -F ":" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
-            {fname=$fname_col; getline firstline < fname; print fname ":" $2 ":", C substr(firstline,3) R, "→" , $3; close(fname)}'
+        awk -F ":" -v fname_col=1 '
+            BEGIN{C="\033[0;36m";R="\033[0m"}
+            {fname=$fname_col; getline firstline < fname;
+            print fname ":" $2 ":", C substr(firstline,3) R, "→", $3;
+            close(fname)}'
 }
 _links_outgoing() {
     [ "$1" ] || fatal "filename not specified"
@@ -112,11 +145,16 @@ _lines() {
 }
 _lines_prefix_title() {
     awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
-        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s %s\n", $1, $2, substr(firstline,3), $3; close(fname)}'
+        {fname=$fname_col; getline firstline < fname;
+        printf "%s:%s: %s %s\n", $1, $2, substr(firstline,3), $3;
+        close(fname)}'
 }
 _lines_prefix_title_color() {
-    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 'BEGIN{C="\033[0;36m";R="\033[0m"}
-        {fname=$fname_col; getline firstline < fname; printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3; close(fname)}'
+    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | awk -F ";" -v fname_col=1 '
+        BEGIN{C="\033[0;36m";R="\033[0m"}
+        {fname=$fname_col; getline firstline < fname;
+        printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3;
+        close(fname)}'
 }
 
 
@@ -130,7 +168,7 @@ notesium_list() {
             --prefix=mtime)             Prefix="PrefixMtime";;
             --labels)                   Limit="LimitLabels";;
             --orphans)                  Limit="LimitOrphans";;
-            --match=*)                  Limit="LimitMatch"; match_pattern="${1##*=}";;
+            --match=*)                  Limit="LimitMatch"; pattern="${1##*=}";;
             *)                          fatal "unrecognized option: $1";;
         esac
         shift
@@ -157,9 +195,9 @@ notesium_list() {
         ListLimitOrphans)               _list_orphans *.md;;
         ListLimitOrphansSortTitle)      _list_orphans *.md | sort -k2;;
         ListLimitOrphansSortMtime)      _list_orphans $(ls -t *.md);;
-        ListLimitMatch)                 _list_match $match_pattern *.md;;
-        ListLimitMatchSortTitle)        _list_match $match_pattern *.md | sort -k2;;
-        ListLimitMatchSortMtime)        _list_match $match_pattern $(ls -t *.md);;
+        ListLimitMatch)                 _list_match $pattern *.md;;
+        ListLimitMatchSortTitle)        _list_match $pattern *.md | sort -k2;;
+        ListLimitMatchSortMtime)        _list_match $pattern $(ls -t *.md);;
         *)                              fatal "unsupported option grouping";;
     esac
 }
