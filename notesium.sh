@@ -72,9 +72,8 @@ _list_labels() {
 }
 _list_orphans() {
     re='[[:alnum:]]\{8\}\.md'
-    existing_links="$(grep --no-filename --only-match $re *.md | \
-                      awk '{printf "-e %s ", $0}')"
-    orphans=$(grep --files-without-match $re $@ | grep -v $existing_links)
+    links=$(grep --only-match $re $@ | awk -F ":" '{printf "-e %s ", $2}')
+    orphans=$(grep --files-without-match $re $@ | grep -v $links)
     [ "$orphans" ] || return 0
     _list $orphans
 }
