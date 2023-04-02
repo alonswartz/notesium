@@ -39,9 +39,9 @@ _list() {
 }
 _list_prefix_mtime() {
     ls -l $1 --time-style=long-iso *.md | \
-        awk -v fname_col=8 -v C=$Color -v R=$Reset '
-            {fname=$fname_col; getline firstline < fname;
-            print fname ":1:", C $6 R, substr(firstline,3)}'
+        awk -v C=$Color -v R=$Reset '
+            {getline title < $8; close($8)}
+            {print $8 ":1:", C $6 R, substr(title,3)}'
 }
 _list_prefix_label_awk() {
     awk -F ":" -v C=$Color -v R=$Reset '
@@ -63,9 +63,9 @@ _list_match() {
     pattern="$1"; shift
     [ "$pattern" ] || fatal "pattern not specified"
     grep --line-number --only-matching $pattern $@ | \
-        awk -F ":" -v fname_col=1 '
-            {fname=$fname_col; getline firstline < fname;
-            print $1 ":" $2 ":", substr(firstline,3); close(fname)}' | uniq
+        awk -F ":" '
+            {getline title < $1; close($1)}
+            {print $1 ":" $2 ":", substr(title,3)}' | uniq
 }
 _list_labels() {
     awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' $@
