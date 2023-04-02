@@ -34,18 +34,14 @@ exit 1
 }
 
 
-_colorcol() {
-    column=$1
-    echo "$(cat - | sed "s/[^[:blank:]]\{1,\}/\\\e[0;36m&\\\e[0m/$column")"
-}
 _list() {
     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' $@
 }
 _list_prefix_mtime() {
     ls -l $1 --time-style=long-iso *.md | \
-        awk -v fname_col=8 '
+        awk -v fname_col=8 -v C=$C -v R=$R '
             {fname=$fname_col; getline firstline < fname;
-            print fname ":1:", $6, substr(firstline,3)}'
+            print fname ":1:", C $6 R, substr(firstline,3)}'
 }
 _list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
@@ -53,9 +49,9 @@ _list_prefix_label() {
         awk -F ":" -v fname_col=2 '
             {fname=$fname_col; getline firstline < fname;
             print $1 ":" substr(firstline,3); close(fname)}' | \
-            awk -F ":" -v fname_col=1 '
+            awk -F ":" -v fname_col=1 -v C=$C -v R=$R '
                 {fname=$fname_col; getline firstline < fname;
-                print fname ":1:", $2, substr(firstline,3); close(fname)}'
+                print fname ":1:", C $2 R, substr(firstline,3); close(fname)}'
 }
 _list_nolabel() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
@@ -135,7 +131,7 @@ _lines_prefix_title() {
 notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="Color";;
+            --color)                    C="\033[0;36m"; R="\033[0m";;
             --sort=title)               Sort="SortTitle";;
             --sort=mtime)               Sort="SortMtime";;
             --prefix=label)             Prefix="PrefixLabel";;
@@ -147,22 +143,16 @@ notesium_list() {
         esac
         shift
     done
-    case List${Limit}${Prefix}${Sort}${Color} in
+    case List${Limit}${Prefix}${Sort} in
         List)                           _list *.md;;
         ListSortTitle)                  _list *.md | sort -k2;;
         ListSortMtime)                  _list $(ls -t *.md);;
         ListPrefixLabel)                _list_prefix_label *.md; _list_nolabel *.md;;
-        ListPrefixLabelColor)           _list_prefix_label *.md | _colorcol 2; _list_nolabel *.md;;
         ListPrefixLabelSortTitle)       _list_prefix_label *.md | sort -k2; _list_nolabel *.md | sort -k2;;
-        ListPrefixLabelSortTitleColor)  _list_prefix_label *.md | sort -k2 | _colorcol 2; _list_nolabel *.md | sort -k2;;
         ListPrefixLabelSortMtime)       _list_prefix_label $(ls -t *.md); _list_nolabel $(ls -t *.md);;
-        ListPrefixLabelSortMtimeColor)  _list_prefix_label $(ls -t *.md) | _colorcol 2; _list_nolabel $(ls -t *.md);;
         ListPrefixMtime)                _list_prefix_mtime;;
-        ListPrefixMtimeColor)           _list_prefix_mtime | _colorcol 2;;
         ListPrefixMtimeSortTitle)       _list_prefix_mtime | sort -k3;;
-        ListPrefixMtimeSortTitleColor)  _list_prefix_mtime | sort -k3 | _colorcol 2;;
         ListPrefixMtimeSortMtime)       _list_prefix_mtime -t;;
-        ListPrefixMtimeSortMtimeColor)  _list_prefix_mtime -t | _colorcol 2;;
         ListLimitLabels)                _list_labels *.md;;
         ListLimitLabelsSortTitle)       _list_labels *.md | sort -k2;;
         ListLimitLabelsSortMtime)       _list_labels $(ls -t *.md);;
