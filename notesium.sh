@@ -43,18 +43,23 @@ _list_prefix_mtime() {
             {fname=$fname_col; getline firstline < fname;
             print fname ":1:", C $6 R, substr(firstline,3)}'
 }
+_list_prefix_label_awk() {
+    awk -F ":" -v fname_col=2 '
+        {fname=$fname_col; getline firstline < fname;
+        print $1 ":" substr(firstline,3); close(fname)}' | \
+        awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
+            {fname=$fname_col; getline firstline < fname;
+            print fname ":1:", C $2 R, substr(firstline,3); close(fname)}'
+}
+_list_prefix_label_sort() {
+    labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
+    grep --only-matching $labels $@ | _list_prefix_label_awk | sort -k2
+    _list $(grep --files-without-match $labels $@) | sort -k2
+}
+
 _list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
-    grep --only-matching $labels $@ | \
-        awk -F ":" -v fname_col=2 '
-            {fname=$fname_col; getline firstline < fname;
-            print $1 ":" substr(firstline,3); close(fname)}' | \
-            awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
-                {fname=$fname_col; getline firstline < fname;
-                print fname ":1:", C $2 R, substr(firstline,3); close(fname)}'
-}
-_list_nolabel() {
-    labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
+    grep --only-matching $labels $@ | _list_prefix_label_awk
     _list $(grep --files-without-match $labels $@)
 }
 _list_match() {
@@ -149,12 +154,9 @@ notesium_list() {
         List)                       _list *.md;;
         ListSortTitle)              _list *.md | sort -k2;;
         ListSortMtime)              _list $(ls -t *.md);;
-        ListPrefixLabel)            _list_prefix_label *.md;
-                                    _list_nolabel *.md;;
-        ListPrefixLabelSortTitle)   _list_prefix_label *.md | sort -k2;
-                                    _list_nolabel *.md | sort -k2;;
-        ListPrefixLabelSortMtime)   _list_prefix_label $(ls -t *.md);
-                                    _list_nolabel $(ls -t *.md);;
+        ListPrefixLabel)            _list_prefix_label *.md;;
+        ListPrefixLabelSortTitle)   _list_prefix_label_sort *.md;;
+        ListPrefixLabelSortMtime)   _list_prefix_label $(ls -t *.md);;
         ListPrefixMtime)            _list_prefix_mtime;;
         ListPrefixMtimeSortTitle)   _list_prefix_mtime | sort -k3;;
         ListPrefixMtimeSortMtime)   _list_prefix_mtime -t;;
