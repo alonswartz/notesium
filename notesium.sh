@@ -127,11 +127,9 @@ _lines() {
     awk 'NF {print FILENAME ":" FNR ": " $0}' $@
 }
 _lines_prefix_title() {
-    awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | \
-        awk -F ";" -v fname_col=1 -v C=$Color -v R=$Reset '
-            {fname=$fname_col; getline firstline < fname;
-            printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3;
-            close(fname)}'
+    awk -v C=$Color -v R=$Reset '
+        FNR == 1 { title=substr($0,3) }
+        NF {print FILENAME ":" FNR ":", C title R, $0}' $@
 }
 
 
