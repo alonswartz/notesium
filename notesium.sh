@@ -133,81 +133,91 @@ _lines_prefix_title() {
 notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
-            --sort=title)               Sort="SortTitle";;
-            --sort=mtime)               Sort="SortMtime";;
-            --prefix=label)             Prefix="PrefixLabel";;
-            --prefix=mtime)             Prefix="PrefixMtime";;
-            --labels)                   Limit="LimitLabels";;
-            --orphans)                  Limit="LimitOrphans";;
-            --match=*)                  Limit="LimitMatch"; pattern="${1##*=}";;
-            *)                          fatal "unrecognized option: $1";;
+            --color)                Color="\033[0;36m"; Reset="\033[0m";;
+            --sort=title)           Sort="SortTitle";;
+            --sort=mtime)           Sort="SortMtime";;
+            --prefix=label)         Prefix="PrefixLabel";;
+            --prefix=mtime)         Prefix="PrefixMtime";;
+            --labels)               Limit="LimitLabels";;
+            --orphans)              Limit="LimitOrphans";;
+            --match=*)              Limit="LimitMatch"; pattern="${1##*=}";;
+            *)                      fatal "unrecognized option: $1";;
         esac
         shift
     done
     case List${Limit}${Prefix}${Sort} in
-        List)                           _list *.md;;
-        ListSortTitle)                  _list *.md | sort -k2;;
-        ListSortMtime)                  _list $(ls -t *.md);;
-        ListPrefixLabel)                _list_prefix_label *.md; _list_nolabel *.md;;
-        ListPrefixLabelSortTitle)       _list_prefix_label *.md | sort -k2; _list_nolabel *.md | sort -k2;;
-        ListPrefixLabelSortMtime)       _list_prefix_label $(ls -t *.md); _list_nolabel $(ls -t *.md);;
-        ListPrefixMtime)                _list_prefix_mtime;;
-        ListPrefixMtimeSortTitle)       _list_prefix_mtime | sort -k3;;
-        ListPrefixMtimeSortMtime)       _list_prefix_mtime -t;;
-        ListLimitLabels)                _list_labels *.md;;
-        ListLimitLabelsSortTitle)       _list_labels *.md | sort -k2;;
-        ListLimitLabelsSortMtime)       _list_labels $(ls -t *.md);;
-        ListLimitOrphans)               _list_orphans *.md;;
-        ListLimitOrphansSortTitle)      _list_orphans *.md | sort -k2;;
-        ListLimitOrphansSortMtime)      _list_orphans $(ls -t *.md);;
-        ListLimitMatch)                 _list_match $pattern *.md;;
-        ListLimitMatchSortTitle)        _list_match $pattern *.md | sort -k2;;
-        ListLimitMatchSortMtime)        _list_match $pattern $(ls -t *.md);;
-        *)                              fatal "unsupported option grouping";;
+        List)                       _list *.md;;
+        ListSortTitle)              _list *.md | sort -k2;;
+        ListSortMtime)              _list $(ls -t *.md);;
+        ListPrefixLabel)            _list_prefix_label *.md;
+                                    _list_nolabel *.md;;
+        ListPrefixLabelSortTitle)   _list_prefix_label *.md | sort -k2;
+                                    _list_nolabel *.md | sort -k2;;
+        ListPrefixLabelSortMtime)   _list_prefix_label $(ls -t *.md);
+                                    _list_nolabel $(ls -t *.md);;
+        ListPrefixMtime)            _list_prefix_mtime;;
+        ListPrefixMtimeSortTitle)   _list_prefix_mtime | sort -k3;;
+        ListPrefixMtimeSortMtime)   _list_prefix_mtime -t;;
+        ListLimitLabels)            _list_labels *.md;;
+        ListLimitLabelsSortTitle)   _list_labels *.md | sort -k2;;
+        ListLimitLabelsSortMtime)   _list_labels $(ls -t *.md);;
+        ListLimitOrphans)           _list_orphans *.md;;
+        ListLimitOrphansSortTitle)  _list_orphans *.md | sort -k2;;
+        ListLimitOrphansSortMtime)  _list_orphans $(ls -t *.md);;
+        ListLimitMatch)             _list_match $pattern *.md;;
+        ListLimitMatchSortTitle)    _list_match $pattern *.md | sort -k2;;
+        ListLimitMatchSortMtime)    _list_match $pattern $(ls -t *.md);;
+        *)                          fatal "unsupported option grouping";;
     esac
 }
 
 notesium_links() {
+    unset fname
+    _set_fname() {
+        [ "$fname" ] && fatal "unrecognized option: $1"
+        [ -e "$1" ] || fatal "does not exist: $1"
+        fname=$1
+    }
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
-            --outgoing)                 Outgoing="Outgoing";;
-            --incoming)                 Incoming="Incoming";;
-            --dangling)                 Dangling="Dangling";;
-            *)                          [ "$filename" ] && fatal "unrecognized option: $1"; [ -e "$1" ] || fatal "does not exist: $1"; filename=$1;;
+            --color)                Color="\033[0;36m"; Reset="\033[0m";;
+            --outgoing)             Outgoing="Outgoing";;
+            --incoming)             Incoming="Incoming";;
+            --dangling)             Dangling="Dangling";;
+            *)                      _set_fname $1;
         esac
         shift
     done
-    if [ "$filename" ]; then
+    if [ "$fname" ]; then
         case ${Dangling}${Outgoing}${Incoming} in
-            Dangling*)                  fatal "dangling does not support filename";;
-            "")                         Outgoing="Outgoing"; Incoming="Incoming";;
+            Dangling*)              fatal "dangling filename not supported";;
+            "")                     Outgoing="Outgoing"; Incoming="Incoming";;
         esac
     fi
     case Links${Dangling}${Outgoing}${Incoming} in
-        Links)                          _links *.md | sort -k2;;
-        LinksDangling)                  _links_dangling *.md | sort -k2;;
-        LinksOutgoing)                  _links_outgoing $filename;;
-        LinksIncoming)                  _links_incoming $filename | sort -k2;;
-        LinksOutgoingIncoming)          _links_outgoing_prefix $filename; _links_incoming_prefix $filename | sort -k3;;
-        *)                              fatal "unsupported option grouping";;
+        Links)                      _links *.md | sort -k2;;
+        LinksDangling)              _links_dangling *.md | sort -k2;;
+        LinksOutgoing)              _links_outgoing $fname;;
+        LinksIncoming)              _links_incoming $fname | sort -k2;;
+        LinksOutgoingIncoming)      _links_outgoing_prefix $fname;
+                                    _links_incoming_prefix $fname | sort -k3;;
+        *)                          fatal "unsupported option grouping";;
     esac
 }
 
 notesium_lines() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
-            --prefix=title)             Prefix="PrefixTitle";;
-            *)                          fatal "unrecognized option: $1";;
+            --color)                Color="\033[0;36m"; Reset="\033[0m";;
+            --prefix=title)         Prefix="PrefixTitle";;
+            *)                      fatal "unrecognized option: $1";;
         esac
         shift
     done
     case Lines${Prefix} in
-        Lines)                          _lines *.md;;
-        LinesPrefixTitle)               _lines_prefix_title *.md;;
-        *)                              fatal "unsupported option grouping";;
+        Lines)                      _lines *.md;;
+        LinesPrefixTitle)           _lines_prefix_title *.md;;
+        *)                          fatal "unsupported option grouping";;
     esac
 }
 
@@ -216,7 +226,8 @@ main() {
 
     NOTESIUM_DIR="${NOTESIUM_DIR:=$HOME/notes}"
     NOTESIUM_DIR="$(realpath $NOTESIUM_DIR)"
-    [ -d "$NOTESIUM_DIR" ] || fatal "NOTESIUM_DIR does not exist: $NOTESIUM_DIR"
+    [ -d "$NOTESIUM_DIR" ] || \
+        fatal "NOTESIUM_DIR does not exist: $NOTESIUM_DIR"
     cd $NOTESIUM_DIR
 
     case $1 in

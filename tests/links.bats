@@ -75,7 +75,7 @@ setup_file() {
     run notesium.sh links --dangling 5c13e273.md
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == "Fatal: dangling does not support filename" ]
+    [ "${lines[0]}" == "Fatal: dangling filename not supported" ]
 }
 
 @test "links: dangling without filename" {
