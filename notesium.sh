@@ -39,7 +39,7 @@ _list() {
 }
 _list_prefix_mtime() {
     ls -l $1 --time-style=long-iso *.md | \
-        awk -v fname_col=8 -v C=$C -v R=$R '
+        awk -v fname_col=8 -v C=$Color -v R=$Reset '
             {fname=$fname_col; getline firstline < fname;
             print fname ":1:", C $6 R, substr(firstline,3)}'
 }
@@ -49,7 +49,7 @@ _list_prefix_label() {
         awk -F ":" -v fname_col=2 '
             {fname=$fname_col; getline firstline < fname;
             print $1 ":" substr(firstline,3); close(fname)}' | \
-            awk -F ":" -v fname_col=1 -v C=$C -v R=$R '
+            awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
                 {fname=$fname_col; getline firstline < fname;
                 print fname ":1:", C $2 R, substr(firstline,3); close(fname)}'
 }
@@ -83,7 +83,7 @@ _links() {
             {fname=$fname_col; getline firstline < fname;
             print $1 ":" $2 ":" ";;" substr(firstline,3) ";;" $3;
             close(fname)}' | \
-            awk -F ";;" -v fname_col=3 -v C=$C -v R=$R '
+            awk -F ";;" -v fname_col=3 -v C=$Color -v R=$Reset '
                 {fname=$fname_col; getline firstline < fname;
                 print $1, C $2 R, "→", substr(firstline,3);
                 close(fname)}'
@@ -95,7 +95,7 @@ _links_dangling() {
                 grep -v $notelist | awk '{printf "-e %s ", $0}')"
     [ "$dangling" ] || return 0
     grep --with-filename --line-number --only-matching $dangling $@ | \
-        awk -F ":" -v fname_col=1 -v C=$C -v R=$R '
+        awk -F ":" -v fname_col=1 -v C=$Color -v R=$Reset '
             {fname=$fname_col; getline firstline < fname;
             print fname ":" $2 ":", C substr(firstline,3) R, "→", $3;
             close(fname)}'
@@ -111,17 +111,19 @@ _links_incoming() {
     _list_match ]\($1\) *.md
 }
 _links_outgoing_prefix() {
-    _links_outgoing $1 | awk -v C=$C -v R=$R '{$1=$1 " " C "outgoing" R}1'
+    _links_outgoing $1 | \
+        awk -v C=$Color -v R=$Reset '{$1=$1 " " C "outgoing" R}1'
 }
 _links_incoming_prefix() {
-    _links_incoming $1 | awk -v C=$C -v R=$R '{$1=$1 " " C "incoming" R}1'
+    _links_incoming $1 | \
+        awk -v C=$Color -v R=$Reset '{$1=$1 " " C "incoming" R}1'
 }
 _lines() {
     awk 'NF {print FILENAME ":" FNR ": " $0}' $@
 }
 _lines_prefix_title() {
     awk 'NF {print FILENAME ";" FNR ";" $0}' $@ | \
-        awk -F ";" -v fname_col=1 -v C=$C -v R=$R '
+        awk -F ";" -v fname_col=1 -v C=$Color -v R=$Reset '
             {fname=$fname_col; getline firstline < fname;
             printf "%s:%s: %s%s%s %s\n", $1, $2, C, substr(firstline,3), R, $3;
             close(fname)}'
@@ -131,7 +133,7 @@ _lines_prefix_title() {
 notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    C="\033[0;36m"; R="\033[0m";;
+            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
             --sort=title)               Sort="SortTitle";;
             --sort=mtime)               Sort="SortMtime";;
             --prefix=label)             Prefix="PrefixLabel";;
@@ -169,7 +171,7 @@ notesium_list() {
 notesium_links() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    C="\033[0;36m"; R="\033[0m";;
+            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
             --outgoing)                 Outgoing="Outgoing";;
             --incoming)                 Incoming="Incoming";;
             --dangling)                 Dangling="Dangling";;
@@ -196,7 +198,7 @@ notesium_links() {
 notesium_lines() {
     while [ "$1" != "" ]; do
         case $1 in
-            --color)                    C="\033[0;36m"; R="\033[0m";;
+            --color)                    Color="\033[0;36m"; Reset="\033[0m";;
             --prefix=title)             Prefix="PrefixTitle";;
             *)                          fatal "unrecognized option: $1";;
         esac
