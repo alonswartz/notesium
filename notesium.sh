@@ -51,11 +51,13 @@ _list_prefix_label_awk() {
 }
 _list_prefix_label_sort() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
+    if [ -z "$labels" ]; then _list $@ | sort -k2; return 0; fi
     grep --only-matching $labels $@ | _list_prefix_label_awk | sort -k2
     _list $(grep --files-without-match $labels $@) | sort -k2
 }
 _list_prefix_label() {
     labels="$(awk 'FNR==1 && NF==2 {printf "-e %s ", FILENAME}' *.md)"
+    if [ -z "$labels" ]; then _list $@; return 0; fi
     grep --only-matching $labels $@ | _list_prefix_label_awk
     _list $(grep --files-without-match $labels $@)
 }
@@ -73,6 +75,7 @@ _list_labels() {
 _list_orphans() {
     re='[[:alnum:]]\{8\}\.md'
     links=$(grep --only-match $re $@ | awk -F ":" '{printf "-e %s ", $2}')
+    if [ -z "$links" ]; then _list $@; return 0; fi
     orphans=$(grep --files-without-match $re $@ | grep -v $links)
     [ "$orphans" ] || return 0
     _list $orphans
