@@ -68,6 +68,7 @@ setup_file() {
 @test "links: incoming and outgoing without filename" {
     run notesium.sh links --incoming --outgoing
     echo "$output"
+    [ $status -eq 1 ]
     [ "${lines[0]}" == "Fatal: filename not specified" ]
 }
 

@@ -94,13 +94,11 @@ _links_dangling() {
                 print $1 ":" $2 ":", C substr(source,3) R, "→", $3}'
 }
 _links_outgoing() {
-    [ "$1" ] || fatal "filename not specified"
-    outgoing="$(grep --only-matching '\([[:alnum:]]\{8\}\.md\)' $1)"
+    outgoing="$(grep --only-matching '\([[:alnum:]]\{8\}\.md\)' $1 || true)"
     [ "$outgoing" ] || return 0
     _list $outgoing
 }
 _links_incoming() {
-    [ "$1" ] || fatal "filename not specified"
     _list_match ]\($1\) *.md
 }
 _links_outgoing_prefix() {
@@ -181,6 +179,8 @@ notesium_links() {
             Dangling*)              fatal "dangling filename not supported";;
             "")                     Outgoing="Outgoing"; Incoming="Incoming";;
         esac
+    else
+        [ "${Outgoing}${Incoming}" ] && fatal "filename not specified"
     fi
     case Links${Dangling}${Outgoing}${Incoming} in
         Links)                      _links *.md | sort -k2;;
