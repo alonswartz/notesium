@@ -16,6 +16,8 @@ It aspires and is designed to:
 ## Table of contents
 
 - [CLI](#cli)
+    - [Installation](#installation)
+    - [Usage](#usage)
 - [Vim](#vim)
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings)
@@ -31,6 +33,18 @@ It aspires and is designed to:
 
 ## CLI
 
+Notesium is currently implemented as a simple shell script leveraging
+basic UNIX utilities. It has only been tested on Linux.
+
+### Installation
+
+```bash
+git clone https://github.com/alonswartz/notesium.git
+ln -s $(pwd)/notesium/notesium.sh $HOME/.local/bin/notesium
+```
+
+### Usage
+
 ```
 $ notesium help
 Usage: notesium COMMAND [OPTIONS]
@@ -41,14 +55,14 @@ Commands:
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
-    --orphans       Limit list to notes without forward or back links
+    --orphans       Limit list to notes without outgoing or incoming links
     --match=PATTERN Limit list to notes where pattern appears
     --sort=WORD     Sort list by title or modification time (mtime|title)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
-    --incoming      Limit list to incoming links related to filename
     --outgoing      Limit list to outgoing links related to filename
+    --incoming      Limit list to incoming links related to filename
     --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
