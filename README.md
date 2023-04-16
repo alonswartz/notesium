@@ -167,6 +167,7 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
 | fzf    | `C-/`             | Toggle preview
 | normal | `ge`              | Open the link under the cursor (vim-markdown)
+| normal | `[[` `]]`         | Jump back and forward between headings (vim-markdown)
 
 ### Fzf search syntax
 
@@ -186,9 +187,21 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 
 ```vim
 " junegunn/fzf.vim
+let $FZF_DEFAULT_OPTS="--reverse --filepath-word "
 let g:fzf_buffers_jump = 1
 let g:fzf_layout = { 'window': { 'width': 0.85, 'height': 0.85 } }
-let $FZF_DEFAULT_OPTS="--reverse --filepath-word "
+let g:fzf_colors = {
+    \ 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'] }
 
 " preservim/vim-markdown
 let g:vim_markdown_folding_style_pythonic = 1
