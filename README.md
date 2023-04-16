@@ -20,6 +20,7 @@ It aspires and is designed to:
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings)
     - [Fzf search syntax](#fzf-search-syntax)
+    - [Related Vim settings](#related-vim-settings)
 - [Design assumptions and rationale](#design-assumptions-and-rationale)
     - [Filenames are 8 random hexidecimal digits](#filenames-are-8-random-hexidecimal-digits)
     - [Completely flat directory structure](#completely-flat-directory-structure)
@@ -142,6 +143,28 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
 | `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
 
+### Related Vim settings
+
+```vim
+" junegunn/fzf.vim
+let g:fzf_buffers_jump = 1
+let g:fzf_layout = { 'window': { 'width': 0.85, 'height': 0.85 } }
+let $FZF_DEFAULT_OPTS="--reverse --filepath-word "
+
+" preservim/vim-markdown
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_folding_level = 2
+let g:vim_markdown_frontmatter = 1
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_toc_autofit = 1
+let g:vim_markdown_conceal_code_blocks = 0
+
+let g:markdown_fenced_languages = ['json', 'sh', 'shell=bash']
+hi def link mkdHeading htmlH1
+autocmd FileType markdown setlocal conceallevel=2
+```
+
 ## Design assumptions and rationale
 
 ### Filenames are 8 random hexidecimal digits
@@ -241,6 +264,9 @@ organically, and may even help you see unexpected connections which may
 Notesium assumes note links use the inline markdown syntax, for example:
 `[link text](7f1c52df.md)`. This makes it easier to parse, and simple to
 insert links with a keybinding.
+
+Even though links are short, for an improved reading experience in Vim
+consider enabling `conceallevel` (see [Related Vim settings](#related-vim-settings)).
 
 ## Regression tests
 
