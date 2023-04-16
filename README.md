@@ -31,6 +31,7 @@ It aspires and is designed to:
     - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
     - [Links are inline](#links-are-inline)
 - [Regression tests](#regression-tests)
+- [Inspiration and thanks](#inspiration-and-thanks)
 
 ## Features
 
@@ -319,7 +320,7 @@ based on the note hexadecimal ID.
 These test suites can be paused prior to teardown for manual inspection
 and additional testing by setting the `PAUSE` environmental variable.
 
-```
+```bash
 # run all test suites
 bats tests
 
@@ -332,4 +333,13 @@ bats tests/list.bats --filter "mtime"
 # run a specific test suite, but pause prior to teardown (--tap recommended)
 PAUSE=y bats tests/list.bats --tap
 ```
+
+## Inspiration and thanks
+
+- Niklas Luhmann: Zettelkasten method.
+- Andy Matuschak: Insightful notes.
+- Sonke Ahrens: How to take smart notes (book).
+- Junegunn Choi: Fzf and Vim plugins.
+- The people behind Vim and Neovim.
+- Projects such as Obsidian, Logseq, Roam Research, and countless others...
 
