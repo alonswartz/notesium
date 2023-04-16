@@ -1,12 +1,32 @@
-## Design / Assumptions
+Notesium (pronounced *no-tes-ee-im*), is an opiniated, simplistic yet
+powerful system for creating, storing and accessing knowledge by means
+of *notes*.
 
-- BYOE (bring your own editor): [Vim](#vim).
-- Notes are written in pure markdown, and stored locally.
-- Completely flat folder structure (no nested folders).
-- Filenames are 8 random hex chars, with `.md` extension (`xxxxxxxx.md`).
-- First line of note is the title in h1 format (`# this is the title`).
-- One word note titles are considered a label.
-- Links are inline (`[link text](xxxxxxxx.md)`).
+It aspires and is designed to:
+
+- Do one thing, and do it well - per the unix philosophy.
+- Support the concepts of [Evergreen notes](https://notes.andymatuschak.org/z4SDCZQeRo4xFEQ8H4qrSqd68ucpgE6LU155C) and [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten).
+- Be used with your own text editor (e.g., [Vim integration](#vim)).
+- Be used with a local folder of markdown files.
+- Be as close to zero friction as possible.
+- Be lightweight and fast.
+
+> Warning: Experimental, proof-of-concept. Here be dragons!
+
+## Table of contents
+
+- [CLI](#cli)
+- [Vim](#vim)
+    - [Example integration](#example-integration)
+    - [Keybindings](#keybindings)
+    - [Fzf search syntax](#fzf-search-syntax)
+- [Design assumptions](#design-assumptions)
+    - [Filenames are 8 random hexidecimal digits](#filenames-are-8-random-hexidecimal-digits)
+    - [Completely flat directory structure](#completely-flat-directory-structure)
+    - [Titles are inferred from the first line](#titles-are-inferred-from-the-first-line)
+    - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
+    - [Links are inline](#links-are-inline)
+- [Regression tests](#regression-tests)
 
 ## CLI
 
@@ -121,6 +141,47 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | `!word$`     | inverse suffix exact-match | Items that do not end with `word`
 | `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
 | `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
+
+## Design assumptions
+
+### Filenames are 8 random hexidecimal digits
+
+Notesium assumes filenames are made up of 8 random hexidecimal digits,
+with the `.md` extension, for example: `7f1c52df.md`. Given there are 16
+hexidecimal digits (0-9, a-f), the total number of permutations is
+`16^8`, resulting in over 4.2 billon unique filenames.
+
+```python
+>>> print "{:,}".format(len('0123456789abcdef') ** 8)
+4,294,967,296
+```
+
+The `.md` extension is required so external tools can easily identify
+the filetype for syntax highlighting, as well as limit the processing of
+files by the parser.
+
+### Completely flat directory structure
+
+Notesium assumes a flat directory structure, having all notes be
+siblings to one another, in one directory. Utilizing bi-directional
+links allows for the structure to emerge over time.
+
+### Titles are inferred from the first line
+
+Notesium assumes note titles are on the first line of the note, in
+markdown H1 format, for example: `# this is the title of a note`.
+
+### Notes with one-word titles are considered labels
+
+Notesium supports the concept of *labels*, but there is no special label
+syntax. Instead, a *label* is just a regular note, and only considered a
+label if its title is one-word.
+
+### Links are inline
+
+Notesium assumes note links use the inline markdown syntax, for example:
+`[link text](7f1c52df.md)`. This makes it easier to parse, and simple to
+insert links with a keybinding.
 
 ## Regression tests
 
