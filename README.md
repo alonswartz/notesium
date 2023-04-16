@@ -20,7 +20,7 @@ It aspires and is designed to:
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings)
     - [Fzf search syntax](#fzf-search-syntax)
-- [Design assumptions](#design-assumptions)
+- [Design assumptions and rationale](#design-assumptions-and-rationale)
     - [Filenames are 8 random hexidecimal digits](#filenames-are-8-random-hexidecimal-digits)
     - [Completely flat directory structure](#completely-flat-directory-structure)
     - [Titles are inferred from the first line](#titles-are-inferred-from-the-first-line)
@@ -142,9 +142,39 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
 | `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
 
-## Design assumptions
+## Design assumptions and rationale
 
 ### Filenames are 8 random hexidecimal digits
+
+> There are only two hard things in Computer Science: cache invalidation
+> and naming things. ~ Phil Karlton
+
+Naming is hard. Should a convention be used? If so, which should be
+used? Should it include metadata? Should it set an expectation? Should
+it be consistent or free form? Should it be meaningful or random. How
+long should it be. What about collisions?
+
+With regards to notes, common conventions are to use the current date,
+or note title, or both in concatenated form.
+
+- **Dates**: The current date seems only meaningful in a journal type
+  scenario. In others, it just results in long filenames and doesn't add
+  much or any value. Additionally, if importing old content into the
+  note system what date should be used? The date the content was
+  originally written, when it was last updated, or when it was imported?
+  In situations where the date created or modified is useful, they can
+  be gleaned from the filesystem and/or a revision control system such
+  as git.
+
+- **Titles**: Considering notes evolve, it is likely not to be certain
+  exactly what the note will encompass. And even if it is, having to
+  decide on a title can paralyze or cause cognitive overload prior to
+  writing the content. Existing and future collisions also need to be
+  accounted for. If a better title is thought of later, or the context
+  of the note changes, renaming the file would break existing links.
+
+Given the above, the ideal would be for the filename to not matter at
+all, instead opting for something short, random and unique.
 
 Notesium assumes filenames are made up of 8 random hexidecimal digits,
 with the `.md` extension, for example: `7f1c52df.md`. Given there are 16
@@ -162,22 +192,51 @@ files by the parser.
 
 ### Completely flat directory structure
 
+It is better to [prefer associative ontologies to hierarchical taxonomies](https://notes.andymatuschak.org/z29hLZHiVt7W2uss2uMpSZquAX5T6vaeSF6Cy).
+
+Folders are often thought of as categories, but notes don't always fit
+neatly into just one category, which could result in decision paralysis
+when creating a new note, and can prematurely constrain what may emerge.
+
+Links would also be broken when renaming a folder or moving a note from
+one folder to another.
+
 Notesium assumes a flat directory structure, having all notes be
 siblings to one another, in one directory. Utilizing bi-directional
-links allows for the structure to emerge over time.
+links allows for the structure to emerge over time. Additionally, the
+[label convention](#notes-with-one-word-titles-are-considered-labels) allows for a meta-hierarchical taxonomy to be created
+which can be useful in certain circumstances.
 
 ### Titles are inferred from the first line
+
+[Note titles are like APIs](https://notes.andymatuschak.org/z3XP5GRmd9z1D2qCE7pxUvbeSVeQuMiqz9x1C), and when titled well they become an
+abstraction.
 
 Notesium assumes note titles are on the first line of the note, in
 markdown H1 format, for example: `# this is the title of a note`.
 
 ### Notes with one-word titles are considered labels
 
-Notesium supports the concept of *labels*, but there is no special label
-syntax. Instead, a *label* is just a regular note, and only considered a
-label if its title is one-word.
+Even though [tags are an ineffective association structure](https://notes.andymatuschak.org/z3MzhvmesiD2htMaEFQJif7gJgyaHAQvKH49Z), Notesium
+supports the concept of *labels*, but there is no special label syntax.
+Instead, a *label* is just a regular note, and only considered a label
+if its title is one-word.
+
+This becomes useful, for example, when issuing the following `list`
+command, each note title will be prefixed with its associated label
+(multiple times for each associated label), color coded, and sorted
+alphabetically, effectively creating a hierarchical taxonomy listing,
+which can further be filtered and searched.
+
+```bash
+notesium list --prefix=label --sort=title --color
+```
 
 ### Links are inline
+
+[Notes should be densely linked](https://notes.andymatuschak.org/z2HUE4ABbQjUNjrNemvkTCsLa1LPDRuwh1tXC), allowing for structure to emerge
+organically, and may even help you see unexpected connections which may
+[surprise you](https://notes.andymatuschak.org/z4KZ9973AoHhvM9Pj5Qrds48JXNbMEwVJmVRw).
 
 Notesium assumes note links use the inline markdown syntax, for example:
 `[link text](7f1c52df.md)`. This makes it easier to parse, and simple to
