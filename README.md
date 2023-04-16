@@ -15,6 +15,7 @@ It aspires and is designed to:
 
 ## Table of contents
 
+- [Features](#features)
 - [CLI](#cli)
     - [Installation](#installation)
     - [Usage](#usage)
@@ -30,6 +31,28 @@ It aspires and is designed to:
     - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
     - [Links are inline](#links-are-inline)
 - [Regression tests](#regression-tests)
+
+## Features
+
+- Blazingly fast and powerful fuzzy search (fzf).
+- Preview notes and links, line highlight where relevant (bat).
+- No need to think what to name the file, or which folder to save it in.
+- Instantly create a new note with a keybinding.
+- Structure emerges organically by use of bi-directional links.
+- Creating, listing, previewing and following links is frictionless.
+- List: Display a list of all notes in the entire system.
+- List: Sort the list alphabetically by title or modification time.
+- List: Prefix titles with associated labels or modification date.
+- List: Limit the list to label notes (one-word titles).
+- List: Limit the list to orphan notes (no incoming or outgoing links).
+- Links: Quickly search and insert an automatically formatted link.
+- Links: Display a list of all links in the entire system.
+- Links: Display a list of all related links to the current note.
+- Links: Limit the list to incoming links to the current note.
+- Links: Limit the list to outgoing links from the current note.
+- Links: Display a list of broken links and jump there instantly.
+- Lines: Full text search across all notes in the entire system.
+- No caching or preprocessing: Everything is computed on the fly.
 
 ## CLI
 
