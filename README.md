@@ -32,6 +32,7 @@ It aspires and is designed to:
     - [Links are inline](#links-are-inline)
 - [Regression tests](#regression-tests)
 - [Inspiration and thanks](#inspiration-and-thanks)
+- [License](#license)
 
 ## Features
 
@@ -343,3 +344,8 @@ PAUSE=y bats tests/list.bats --tap
 - The people behind Vim and Neovim.
 - Projects such as Obsidian, Logseq, Roam Research, and countless others...
 
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2023 Alon Swartz
