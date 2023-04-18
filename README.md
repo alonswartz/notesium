@@ -166,6 +166,7 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | fzf    | `enter`           | Open selection
 | fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
 | fzf    | `C-/`             | Toggle preview
+| fzf    | `Shift-Tab`       | Multiple selection
 | normal | `ge`              | Open the link under the cursor (vim-markdown)
 | normal | `[[` `]]`         | Jump back and forward between headings (vim-markdown)
 
