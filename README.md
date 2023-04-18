@@ -117,7 +117,7 @@ autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complet
   \ 'source': 'notesium list --sort=mtime',
   \ 'options': '--with-nth 2.. --prompt "NotesiumInsertLink> "',
   \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
-  \ 'window': {'width': 0.85, 'height': 0.85}})
+  \ 'window': {'width': 0.5, 'height': 0.5}})
 
 command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
