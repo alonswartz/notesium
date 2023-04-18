@@ -150,22 +150,19 @@ command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
 command! -bang -nargs=* NotesiumList
-  \ let prompt = '--prompt "NotesiumList> "' |
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2.. '.prompt} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
   \ call fzf#vim#grep(
   \   'notesium list '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumLinks
-  \ let prompt = '--prompt "NotesiumLinks> "' |
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2.. '.prompt} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
   \ call fzf#vim#grep(
   \   'notesium links '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumSearch
-  \ let prompt = '--prompt "NotesiumSearch> "' |
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': ' --with-nth 2.. '.prompt} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': ' --with-nth 2..'} |
   \ call fzf#vim#grep(
   \   'notesium lines '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
