@@ -16,6 +16,7 @@ It aspires and is designed to:
 ## Table of contents
 
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [CLI](#cli)
     - [Installation](#installation)
     - [Usage](#usage)
@@ -55,6 +56,32 @@ It aspires and is designed to:
 - Links: Display a list of broken links and jump there instantly.
 - Lines: Full text search across all notes in the entire system.
 - No caching or preprocessing: Everything is computed on the fly.
+
+## Screenshots
+
+*List: prefixed with associated labels and sorted alphabetically*
+![image: prefixed label](https://www.notesium.com/images/screenshot-1681733208.png)
+<br/>
+
+*List: prefixed with modification date and sorted per modification time*
+![image: prefixed mtime](https://www.notesium.com/images/screenshot-1681733355.png)
+<br/>
+
+*Links: display all links*
+![image: links all](https://www.notesium.com/images/screenshot-1681733482.png)
+<br/>
+
+*Links: display links related to the current note*
+![image: links related](https://www.notesium.com/images/screenshot-1681733712.png)
+<br/>
+
+*Links: link insertion triggered by `[[`*
+![image: link insertion](https://www.notesium.com/images/screenshot-1681734183.png)
+<br/>
+
+*Lines: full text search (light theme)*
+![image: full text search light](https://www.notesium.com/images/screenshot-1681734555.png)
+<br/>
 
 ## CLI
 
