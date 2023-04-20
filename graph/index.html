@@ -17,9 +17,10 @@
   <body>
     <div id="forcegraph"></div>
     <script type="text/javascript">
+      const dataArr = dataCsv.split("\n\n");
       const data = {
-        "nodes": d3.csvParse(nodesCsv),
-        "links": d3.csvParse(linksCsv)
+        "nodes": d3.csvParse(dataArr[0]),
+        "links": d3.csvParse(dataArr[1])
       };
       initialize_forcegraph(data, '#forcegraph');
     </script>
