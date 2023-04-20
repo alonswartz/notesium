@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notesium Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="forcegraph.js"></script>
+    <style>
+      #forcegraph { margin: auto; width: 97vw; height: 97vh;}
+      #forcegraph .node { fill: #ff7f0e; }
+      #forcegraph .link { stroke: #e5e7eb; stroke-width: 0.5; }
+      #forcegraph .label { fill: #475569; font-size: 4px; }
+    </style>
+  </head>
+  <body>
+    <div id="forcegraph"></div>
+    <script type="text/javascript">
+      const linksPromise = d3.csv("links.csv");
+      const nodesPromise = d3.csv("nodes.csv");
+
+      Promise.all([linksPromise, nodesPromise])
+        .then(([linksData, nodesData]) => {
+          const data = {"links": linksData, "nodes": nodesData};
+          initialize_forcegraph(data, '#forcegraph');
+        })
+        .catch((error) => {
+          console.error("error loading csv data:", error);
+        });
+    </script>
+  </body>
+</html>
+
