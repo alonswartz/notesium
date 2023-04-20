@@ -22,6 +22,13 @@
         "nodes": d3.csvParse(dataArr[0]),
         "links": d3.csvParse(dataArr[1])
       };
+
+      // dangling links
+      const nodes = data.nodes.map(n => n.id);
+      const targets = data.links.map(l => l.target);
+      const dangling = targets.filter(id => !nodes.includes(id));
+      dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling'}));
+
       initialize_forcegraph(data, '#forcegraph');
     </script>
   </body>

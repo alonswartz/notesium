@@ -5,7 +5,7 @@ GRAPH_DIR="$(dirname $(realpath $0))"
 FIXTURES_DIR="$(dirname $GRAPH_DIR)/tests/fixtures"
 
 _data_csv() {
-    NOTESIUM_DIR=$FIXTURES_DIR notesium graph | grep -v xxxxxxxx.md
+    NOTESIUM_DIR=$FIXTURES_DIR notesium graph
 }
 
 _data_csv_js() {
