@@ -120,7 +120,13 @@ _lines_prefix_title() {
         FNR == 1 { title=substr($0,3) }
         NF {print FILENAME ":" FNR ":", C title R, $0}' "$@"
 }
-
+_graph_csv() {
+    echo "id,title"
+    awk -vOFS="," 'FNR==1{print FILENAME, substr($0,3)}' "$@"
+    echo "\nsource,target"
+    grep --with-filename --only-match '\([[:alnum:]]\{8\}\.md\)' "$@" | \
+        awk -F ":" -vOFS="," '{print $1, $2}'
+}
 
 notesium_list() {
     while [ "$1" != "" ]; do
@@ -212,6 +218,16 @@ notesium_lines() {
     esac
 }
 
+notesium_graph() {
+    while [ "$1" != "" ]; do
+        case $1 in
+            *)                      fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    _graph_csv *.md
+}
+
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -227,6 +243,7 @@ main() {
         list)       shift; notesium_list $@;;
         links)      shift; notesium_links $@;;
         lines)      shift; notesium_lines $@;;
+        graph)      shift; notesium_graph $@;;
         -*)         fatal "unrecognized option: $1";;
         *)          fatal "unrecognized command: $1";;
     esac
