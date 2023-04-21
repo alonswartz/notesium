@@ -9,6 +9,7 @@
     <style>
       #forcegraph { margin: auto; width: 97vw; height: 97vh;}
       #forcegraph .node { fill: #ff7f0e; }
+      #forcegraph .node-lbl { fill: #1f77b4; }
       #forcegraph .link { stroke: #e5e7eb; stroke-width: 0.5; }
       #forcegraph .label { fill: #475569; font-size: 4px; }
     </style>
@@ -29,7 +30,7 @@
       const nodes = data.nodes.map(n => n.id);
       const targets = data.links.map(l => l.target);
       const dangling = targets.filter(id => !nodes.includes(id));
-      dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling'}));
+      dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
 
       initialize_forcegraph(data, '#forcegraph');
     </script>

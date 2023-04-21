@@ -26,8 +26,8 @@ function initialize_forcegraph(data, graphdiv) {
     .data(nodes)
     .join("circle")
     .attr("r", 2)
-    .attr("class", "node")
-    .attr("fill-opacity", d => (d.title === 'dangling') ? 0.3 : 1)
+    .attr("class", d => (d.title.split(" ").length == 1) ? "node-lbl" : "node")
+    .attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
     .call(drag(simulation));
 
   const title = node.append("title")
@@ -40,7 +40,7 @@ function initialize_forcegraph(data, graphdiv) {
     .append("text")
     .attr("class", "label")
     .attr("alignment-baseline", "middle")
-    .text(node => (node.title == 'dangling') ? '' : node.title);
+    .text(node => (node.title == 'dangling link') ? '' : node.title);
 
   simulation.on("tick", () => {
     link
