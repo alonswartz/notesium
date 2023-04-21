@@ -124,9 +124,11 @@ _lines_prefix_title() {
 }
 _graph_csv() {
     echo "$NOTESIUM_DIR"
-    echo "\nid,title"
+    echo "-----"
+    echo "id,title"
     awk -vOFS="," 'FNR==1{print FILENAME, substr($0,3)}' "$@"
-    echo "\nsource,target"
+    echo "-----"
+    echo "source,target"
     grep --with-filename --only-match '\([[:alnum:]]\{8\}\.md\)' "$@" | \
         awk -F ":" -vOFS="," '{print $1, $2}'
 }
