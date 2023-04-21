@@ -42,6 +42,11 @@ function initialize_forcegraph(data, graphdiv) {
     .attr("alignment-baseline", "middle")
     .text(node => (node.title == 'dangling link') ? '' : node.title);
 
+  const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
+    svg.selectAll('g').attr('transform', event.transform);
+  });
+  svg.call(zoom);
+
   simulation.on("tick", () => {
     link
       .attr("x1", d => d.source.x)
