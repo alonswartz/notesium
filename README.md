@@ -39,6 +39,7 @@ It aspires and is designed to:
 
 - Blazingly fast and powerful fuzzy search (fzf).
 - Preview notes and links, line highlight where relevant (bat).
+- Explore notes, their links and clusters with the force graph view (D3.js).
 - No need to think what to name the file, or which folder to save it in.
 - Instantly create a new note with a keybinding.
 - Structure emerges organically by use of bi-directional links.
@@ -55,9 +56,16 @@ It aspires and is designed to:
 - Links: Limit the list to outgoing links from the current note.
 - Links: Display a list of broken links and jump there instantly.
 - Lines: Full text search across all notes in the entire system.
+- Graph: Generate raw data or encoded url for browsing the graph.
+- Graph: Drag, pan or zoom the graph for a better view or focus.
+- Graph: Click on note title to open read-only in the browser.
 - No caching or preprocessing: Everything is computed on the fly.
 
 ## Screenshots
+
+*Graph: display all notes and links in a force graph view*
+![image: force graph](https://www.notesium.com/images/screenshot-1682073180.png)
+<br/>
 
 *List: prefixed with associated labels and sorted alphabetically*
 ![image: prefixed label](https://www.notesium.com/images/screenshot-1681733208.png)
@@ -119,6 +127,8 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
+  graph             Print graph data
+    --encoded-url   Encode graph data in base64 and append to graph file url
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
@@ -146,8 +156,11 @@ autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complet
   \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
   \ 'window': {'width': 0.5, 'height': 0.5}})
 
-command! -bang NotesiumNew
-  \ execute ":e" system("notesium new")
+command! -bang NotesiumNew execute
+  \ ":e" system("notesium new")
+
+command! -bang NotesiumGraph execute
+  \ ":silent !notesium graph --encoded-url | xargs -r -n 1 x-www-browser "
 
 command! -bang -nargs=* NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
@@ -173,6 +186,7 @@ nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
+nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
 ```
 
 ### Keybindings
@@ -181,6 +195,7 @@ nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 | ----   | --------          | -------
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
+| normal | `<Leader>ng`      | Opens browser with graph view
 | normal | `<Leader>nl`      | List with prefixed label, sorted by title
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
@@ -380,6 +395,7 @@ PAUSE=y bats tests/list.bats --tap
 - Sonke Ahrens: How to take smart notes (book).
 - Junegunn Choi: Fzf and Vim plugins.
 - The people behind Vim and Neovim.
+- The people behind D3.js.
 - Projects such as Obsidian, Logseq, Roam Research, and countless others...
 
 ## License
