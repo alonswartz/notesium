@@ -20,7 +20,7 @@
     <script type="text/javascript">
       const dataB64 = new URLSearchParams(location.search).get('data');
       const dataStr = atob(dataB64);
-      const dataArr = dataStr.split("\n\n");
+      const dataArr = dataStr.split("-----\n");
 
       const data = {
         "urlprefix": dataArr[0],
