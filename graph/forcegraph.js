@@ -37,6 +37,8 @@ function initialize_forcegraph(data, graphdiv) {
     .selectAll("circle")
     .data(nodes)
     .enter()
+    .append('a')
+    .attr("href", node => data.urlprefix + '/' + node.id)
     .append("text")
     .attr("class", "label")
     .attr("alignment-baseline", "middle")

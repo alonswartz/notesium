@@ -123,7 +123,8 @@ _lines_prefix_title() {
         NF {print FILENAME ":" FNR ":", C title R, $0}' "$@"
 }
 _graph_csv() {
-    echo "id,title"
+    echo "$NOTESIUM_DIR"
+    echo "\nid,title"
     awk -vOFS="," 'FNR==1{print FILENAME, substr($0,3)}' "$@"
     echo "\nsource,target"
     grep --with-filename --only-match '\([[:alnum:]]\{8\}\.md\)' "$@" | \

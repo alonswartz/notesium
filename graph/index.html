@@ -12,6 +12,7 @@
       #forcegraph .node-lbl { fill: #1f77b4; }
       #forcegraph .link { stroke: #e5e7eb; stroke-width: 0.5; }
       #forcegraph .label { fill: #475569; font-size: 4px; }
+      #forcegraph .label:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
@@ -22,8 +23,9 @@
       const dataArr = dataStr.split("\n\n");
 
       const data = {
-        "nodes": d3.csvParse(dataArr[0]),
-        "links": d3.csvParse(dataArr[1])
+        "urlprefix": dataArr[0],
+        "nodes": d3.csvParse(dataArr[1]),
+        "links": d3.csvParse(dataArr[2])
       };
 
       // dangling links
