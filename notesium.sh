@@ -237,7 +237,7 @@ notesium_graph() {
     fi
     case Graph${Format} in
         Graph)                      _graph_csv *.md;;
-        GraphEncodedUrl)            echo -n "file://${graph_index}?data=";
+        GraphEncodedUrl)            printf "file://%s?data=" "$graph_index";
                                     _graph_csv *.md | base64 --wrap 0;;
         *)                          fatal "unsupported option grouping";;
     esac
