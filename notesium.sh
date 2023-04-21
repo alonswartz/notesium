@@ -26,7 +26,7 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
   graph             Print graph data
-    --encoded-url   Encode graph data in base64 and append graph file url
+    --encoded-url   Encode graph data in base64 and append to graph file url
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
