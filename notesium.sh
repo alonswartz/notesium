@@ -25,6 +25,8 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
+  graph             Print graph data
+    --encoded-url   Encode graph data in base64 and append graph file url
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -221,11 +223,21 @@ notesium_lines() {
 notesium_graph() {
     while [ "$1" != "" ]; do
         case $1 in
+            --encoded-url)          Format="EncodedUrl";;
             *)                      fatal "unrecognized option: $1";;
         esac
         shift
     done
-    _graph_csv *.md
+    if [ "$Format" = "EncodedUrl" ]; then
+        graph_index="$(dirname $(realpath $0))/graph/index.html"
+        [ -e "$graph_index" ] || fatal "$graph_index does not exist"
+    fi
+    case Graph${Format} in
+        Graph)                      _graph_csv *.md;;
+        GraphEncodedUrl)            echo -n "file://${graph_index}?data=";
+                                    _graph_csv *.md | base64 --wrap 0;;
+        *)                          fatal "unsupported option grouping";;
+    esac
 }
 
 main() {
