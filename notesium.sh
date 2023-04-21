@@ -232,7 +232,7 @@ notesium_graph() {
         shift
     done
     if [ "$Format" = "EncodedUrl" ]; then
-        graph_index="$(dirname $(realpath $0))/graph/index.html"
+        graph_index="$(dirname "$(realpath "$0")")/graph/index.html"
         [ -e "$graph_index" ] || fatal "$graph_index does not exist"
     fi
     case Graph${Format} in

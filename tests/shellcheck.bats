@@ -21,9 +21,9 @@ setup_file() {
     run _shellcheck_count
     echo "$output"
     [ "${lines[0]}" == "      1 [SC2012]" ]
-    [ "${lines[1]}" == "     23 [SC2035]" ]
+    [ "${lines[1]}" == "     25 [SC2035]" ]
     [ "${lines[2]}" == "      7 [SC2046]" ]
-    [ "${lines[3]}" == "      5 [SC2068]" ]
+    [ "${lines[3]}" == "      6 [SC2068]" ]
     [ "${lines[4]}" == "      9 [SC2086]" ]
     [ "${lines[5]}" == "" ]
 }
