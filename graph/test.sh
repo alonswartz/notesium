@@ -1,17 +1,9 @@
 #!/bin/sh
 set -e
 
+# ./test.sh | xargs -r -n 1 x-www-browser
+
 GRAPH_DIR="$(dirname $(realpath $0))"
-FIXTURES_DIR="$(dirname $GRAPH_DIR)/tests/fixtures"
+GRAPH_B64="$(notesium graph | base64 --wrap 0)"
+echo "file://${GRAPH_DIR}/index.html?data=$GRAPH_B64"
 
-_data_csv() {
-    NOTESIUM_DIR=$FIXTURES_DIR notesium graph
-}
-
-_data_csv_js() {
-    echo "var dataCsv = \`$(_data_csv)\n\`"
-}
-
-_data_csv_js > $GRAPH_DIR/data.csv.js
-echo "* $GRAPH_DIR/data.csv.js"
-echo "* file://${GRAPH_DIR}/index.html"

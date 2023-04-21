@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Notesium Graph</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="data.csv.js"></script>
     <script src="forcegraph.js"></script>
     <style>
       #forcegraph { margin: auto; width: 97vw; height: 97vh;}
@@ -17,7 +16,10 @@
   <body>
     <div id="forcegraph"></div>
     <script type="text/javascript">
-      const dataArr = dataCsv.split("\n\n");
+      const dataB64 = new URLSearchParams(location.search).get('data');
+      const dataStr = atob(dataB64);
+      const dataArr = dataStr.split("\n\n");
+
       const data = {
         "nodes": d3.csvParse(dataArr[0]),
         "links": d3.csvParse(dataArr[1])
