@@ -17,6 +17,7 @@ function initialize_forcegraph(data, graphdiv) {
 
   const link = svg.append("g")
     .attr("class", "link")
+    .attr("stroke", "currentColor")
     .selectAll("line")
     .data(links)
     .join("line");
@@ -26,6 +27,7 @@ function initialize_forcegraph(data, graphdiv) {
     .data(nodes)
     .join("circle")
     .attr("r", 2)
+    .attr("nid", d => d.id)
     .attr("class", d => (d.title.split(" ").length == 1) ? "node-lbl" : "node")
     .attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
     .call(drag(simulation));
@@ -61,6 +63,43 @@ function initialize_forcegraph(data, graphdiv) {
     label
       .attr('x', d => d.x + 4).attr('y', d => d.y);
   });
+
+  // emphasize or de-emphasize nodes, links and labels
+  const emphasizeNodesArr = [];
+  svg.on("click", function(d) {
+    switch (d.target.localName) {
+      case "circle":
+        nid = d.target.attributes.nid.value;
+        emphasizeNodesArr.includes(nid) ?
+          emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
+          emphasizeNodesArr.push(nid);
+        emphasizeNodes();
+        break;
+      case "svg":
+        emphasizeNodesArr.splice(0);
+        emphasizeNodes();
+        break;
+    }
+  });
+  function emphasizeNodes() {
+    if (emphasizeNodesArr.length > 0) {
+      const _linkedIds = data.links.filter(l => emphasizeNodesArr.includes(l.source) || emphasizeNodesArr.includes(l.target));
+      const linkedIds = Array.from(new Set(_linkedIds.flatMap(l => [l.source, l.target])));
+      node.attr("fill-opacity", "0.1");
+      node.filter(n => linkedIds.includes(n.id)).attr("fill-opacity", 0.3)
+      node.filter(n => emphasizeNodesArr.includes(n.id)).attr("fill-opacity", 1)
+      label.attr("fill-opacity", "0.3");
+      label.filter(l => linkedIds.includes(l.id)).attr("fill-opacity", 1)
+      link.attr("stroke", "currentColor");
+      link.attr("stroke-opacity", "0.5");
+      link.filter(l => emphasizeNodesArr.includes(l.source.id) || emphasizeNodesArr.includes(l.target.id)).attr("stroke","steelblue").attr("stock-opacity",1);
+    } else {
+      node.attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
+      label.attr("fill-opacity", 1);
+      link.attr("stroke", "currentColor");
+      link.attr("stroke-opacity", 1);
+    }
+  }
 
   // dynamic circle radius based on links count
   d3.select("#forcegraph-dynamic-radius").on("change", dynamicRadius);
