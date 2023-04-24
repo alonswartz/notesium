@@ -58,7 +58,7 @@ It aspires and is designed to:
 - Lines: Full text search across all notes in the entire system.
 - Graph: Generate raw data or encoded url for browsing the graph.
 - Graph: Drag, pan or zoom the graph for a better view or focus.
-- Graph: Click on note title to open read-only in the browser.
+- Graph: Customizable node link format for opening notes.
 - No caching or preprocessing: Everything is computed on the fly.
 
 ## Screenshots
@@ -129,6 +129,7 @@ Commands:
     --prefix=title  Include note title as prefix of each line
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
+    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)

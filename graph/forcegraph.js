@@ -38,7 +38,7 @@ function initialize_forcegraph(data, graphdiv) {
     .data(nodes)
     .enter()
     .append('a')
-    .attr("href", node => data.urlprefix + '/' + node.id)
+    .attr("href", node => data.href.replace(/%:t/g, node.id))
     .append("text")
     .attr("class", "label")
     .attr("alignment-baseline", "middle")

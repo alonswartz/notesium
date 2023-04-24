@@ -27,6 +27,7 @@ Commands:
     --prefix=title  Include note title as prefix of each line
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
+    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -123,7 +124,7 @@ _lines_prefix_title() {
         NF {print FILENAME ":" FNR ":", C title R, $0}' "$@"
 }
 _graph_csv() {
-    echo "$NOTESIUM_DIR"
+    echo "$1" | sed "s|\%:p:h|$NOTESIUM_DIR|"; shift
     echo "-----"
     echo "id,title"
     awk -vOFS="," 'FNR==1{print FILENAME, substr($0,3)}' "$@"
@@ -224,21 +225,23 @@ notesium_lines() {
 }
 
 notesium_graph() {
+    Href="file://%:p:h/%:t"
     while [ "$1" != "" ]; do
         case $1 in
-            --encoded-url)          Format="EncodedUrl";;
+            --encoded-url)          Output="EncodedUrl";;
+            --href=*)               Href="${1##*=}";;
             *)                      fatal "unrecognized option: $1";;
         esac
         shift
     done
-    if [ "$Format" = "EncodedUrl" ]; then
+    if [ "$Output" = "EncodedUrl" ]; then
         graph_index="$(dirname "$(realpath "$0")")/graph/index.html"
         [ -e "$graph_index" ] || fatal "$graph_index does not exist"
     fi
-    case Graph${Format} in
-        Graph)                      _graph_csv *.md;;
+    case Graph${Output} in
+        Graph)                      _graph_csv "$Href" *.md;;
         GraphEncodedUrl)            printf "file://%s?data=" "$graph_index";
-                                    _graph_csv *.md | base64 --wrap 0;;
+                                    _graph_csv "$Href" *.md | base64 --wrap 0;;
         *)                          fatal "unsupported option grouping";;
     esac
 }
