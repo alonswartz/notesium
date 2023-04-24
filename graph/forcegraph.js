@@ -62,6 +62,15 @@ function initialize_forcegraph(data, graphdiv) {
       .attr('x', d => d.x + 4).attr('y', d => d.y);
   });
 
+  d3.select("#forcegraph-labels").on("change", toggleLabels);
+  function toggleLabels() {
+    if(d3.select("#forcegraph-labels").property("checked")){
+      svg.selectAll('.label').transition().style("display", "block");
+    } else {
+      svg.selectAll('.label').transition().style("display", "none");
+    }
+  }
+
   function drag(simulation) {
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();

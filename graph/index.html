@@ -16,6 +16,12 @@
     </style>
   </head>
   <body>
+    <div id="forcegraph-settings">
+      <div>
+        <label for="forcegraph-labels">labels</label>
+        <input id="forcegraph-labels" type="checkbox" checked>
+      </div>
+    </div>
     <div id="forcegraph"></div>
     <script type="text/javascript">
       const dataB64 = new URLSearchParams(location.search).get('data');
