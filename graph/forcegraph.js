@@ -64,23 +64,8 @@ function initialize_forcegraph(data, graphdiv) {
       .attr('x', d => d.x + 4).attr('y', d => d.y);
   });
 
-  // emphasize or de-emphasize nodes, links and labels
-  const emphasizeNodesArr = [];
-  svg.on("click", function(d) {
-    switch (d.target.localName) {
-      case "circle":
-        nid = d.target.attributes.nid.value;
-        emphasizeNodesArr.includes(nid) ?
-          emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
-          emphasizeNodesArr.push(nid);
-        emphasizeNodes();
-        break;
-      case "svg":
-        emphasizeNodesArr.splice(0);
-        emphasizeNodes();
-        break;
-    }
-  });
+  // emphasize or de-emphasize nodes and their links and labels
+  var emphasizeNodesArr = [];
   function emphasizeNodes() {
     if (emphasizeNodesArr.length > 0) {
       const _linkedIds = data.links.filter(l => emphasizeNodesArr.includes(l.source) || emphasizeNodesArr.includes(l.target));
@@ -99,7 +84,36 @@ function initialize_forcegraph(data, graphdiv) {
       link.attr("stroke", "currentColor");
       link.attr("stroke-opacity", 1);
     }
-  }
+  };
+
+  // emphasize or de-emphasize when nodes are clicked
+  svg.on("click", function(d) {
+    switch (d.target.localName) {
+      case "circle":
+        nid = d.target.attributes.nid.value;
+        emphasizeNodesArr.includes(nid) ?
+          emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
+          emphasizeNodesArr.push(nid);
+        emphasizeNodes();
+        break;
+      case "svg":
+        if (d3.select("#forcegraph-filter").property("value")) break;
+        emphasizeNodesArr.splice(0);
+        emphasizeNodes();
+        break;
+    }
+  });
+
+  // emphasize or de-emphasize when node titles match the filter
+  d3.select('#forcegraph-filter').on('keyup', function() {
+    if (this.value) {
+      emphasizeNodesArr = [...data.nodes.filter(n => n.title.includes(this.value)).map(n => n.id)];
+      emphasizeNodes();
+    } else {
+      emphasizeNodesArr.splice(0);
+      emphasizeNodes();
+    }
+  });
 
   // dynamic circle radius based on links count
   d3.select("#forcegraph-dynamic-radius").on("change", dynamicRadius);
