@@ -25,6 +25,9 @@ It aspires and is designed to:
     - [Keybindings](#keybindings)
     - [Fzf search syntax](#fzf-search-syntax)
     - [Related Vim settings](#related-vim-settings)
+- [Custom URI protocol](#custom-uri-protocol)
+    - [Example integration](#example-integration)
+    - [Handler registration](#handler-registration)
 - [Design assumptions and rationale](#design-assumptions-and-rationale)
     - [Filenames are 8 random hexidecimal digits](#filenames-are-8-random-hexidecimal-digits)
     - [Completely flat directory structure](#completely-flat-directory-structure)
@@ -256,6 +259,48 @@ let g:vim_markdown_conceal_code_blocks = 0
 let g:markdown_fenced_languages = ['json', 'sh', 'shell=bash']
 hi def link mkdHeading htmlH1
 autocmd FileType markdown setlocal conceallevel=2
+```
+
+## Custom URI protocol
+
+Notesium does not support handling the custom URI protocol `notesium://`
+itself directly, as this is very dependent on user preference. It is up
+to the user to write their own script.
+
+### Example integration
+
+An example integration can been found in `contrib/xdg-urxvt-nvim.sh`,
+which supports opening the notes listing as well as opening a note for
+editing - in a new urxvt terminal window and neovim instance.
+
+```bash
+xdg-open notesium:///home/user/notes
+xdg-open notesium:///home/user/notes/7f1c52df.md
+```
+
+Opening the listing is useful when integrated with a launcher or desktop
+keybinding. Opening a note for editing is useful, for example, when
+integrated with the `graph`:
+
+```vim
+command! -bang NotesiumGraph execute
+  \ ":silent !notesium graph --encoded-url --href='notesium://\\%:p:h/\\%:t' | xargs -r -n 1 x-www-browser "
+```
+
+### Handler registration
+
+To register the `x-scheme-handler` with the desktop environment, create the
+file `$HOME/.local/share/applications/notesium.desktop` with contents
+similar to the following (don't forget to update the `Exec` path):
+
+```
+[Desktop Entry]
+Name=Notesium
+Exec=/home/github/alonswartz/notesium/contrib/xdg-urxvt-nvim.sh %u
+MimeType=x-scheme-handler/notesium;
+Type=Application
+Terminal=false
+NoDisplay=true
 ```
 
 ## Design assumptions and rationale
