@@ -23,7 +23,7 @@
       const dataArr = dataStr.split("-----\n");
 
       const data = {
-        "urlprefix": dataArr[0],
+        "href": dataArr[0],
         "nodes": d3.csvParse(dataArr[1]),
         "links": d3.csvParse(dataArr[2])
       };

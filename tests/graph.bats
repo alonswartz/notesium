@@ -9,7 +9,7 @@ setup_file() {
     run notesium.sh graph
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "$NOTESIUM_DIR" ]
+    [ "${lines[0]}" == "file://$NOTESIUM_DIR/%:t" ]
     [ "${lines[1]}" == "-----" ]
     [ "${lines[2]}" == "id,title" ]
     [ "${lines[3]}" == "0c8bea98.md,book" ]
@@ -29,6 +29,13 @@ setup_file() {
     [ "${lines[17]}" == "5c13e273.md,xxxxxxxx.md" ]
     [ "${lines[18]}" == "b0457228.md,572878f1.md" ]
     [ "${lines[19]}" == "b0457228.md,ce5f6bd5.md" ]
+}
+
+@test "graph: href" {
+    run notesium.sh graph --href='notesium://%:p:h/%:t'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "notesium://$NOTESIUM_DIR/%:t" ]
 }
 
 @test "graph: encoded url" {
