@@ -62,6 +62,17 @@ function initialize_forcegraph(data, graphdiv) {
       .attr('x', d => d.x + 4).attr('y', d => d.y);
   });
 
+  // dynamic circle radius based on links count
+  d3.select("#forcegraph-dynamic-radius").on("change", dynamicRadius);
+  function dynamicRadius() {
+    if(d3.select("#forcegraph-dynamic-radius").property("checked")){
+      node.attr("r", (d) => data.links.reduce((i, l) => (l.source === d.id || l.target === d.id) ? i + 0.1 : i, 1));
+    } else {
+      node.attr("r", 2);
+    }
+  }
+
+  // toggle labels
   d3.select("#forcegraph-labels").on("change", toggleLabels);
   function toggleLabels() {
     if(d3.select("#forcegraph-labels").property("checked")){
