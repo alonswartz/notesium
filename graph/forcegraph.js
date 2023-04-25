@@ -48,6 +48,9 @@ function initialize_forcegraph(data, graphdiv) {
 
   const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
     svg.selectAll('g').attr('transform', event.transform);
+    if (d3.select("#forcegraph-scale-labels").property("checked")) {
+      scaleLabels(event);
+    }
   });
   svg.call(zoom);
 
@@ -131,10 +134,27 @@ function initialize_forcegraph(data, graphdiv) {
   d3.select("#forcegraph-labels").on("change", toggleLabels);
   function toggleLabels() {
     if(d3.select("#forcegraph-labels").property("checked")){
-      svg.selectAll('.label').transition().style("display", "block");
+      svg.selectAll('.label').transition().style("opacity", "1");
     } else {
-      svg.selectAll('.label').transition().style("display", "none");
+      svg.selectAll('.label').transition().style("opacity", "0");
     }
+  }
+
+  // scale labels
+  d3.select("#forcegraph-scale-labels").on("change", scaleLabels);
+  function scaleLabels(event) {
+    let k = 1;
+    let labelSize = 5;
+    switch (event.type) {
+      case "zoom":
+        k = event.transform.k;
+        break;
+      case "change":
+        if (event.target.checked) k = d3.zoomTransform(svg.node()).k;
+        break;
+    }
+    labelSize = k > 0.9 ? labelSize - k : 0;
+    svg.selectAll('.label').transition().style("font-size", labelSize + "px");
   }
 
   function drag(simulation) {
