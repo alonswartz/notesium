@@ -15,14 +15,15 @@
       #forcegraph .label { fill: #475569; font-size: 4px; }
       #forcegraph .label:hover { text-decoration: underline; }
       #forcegraph-settings { position: absolute; }
+      #forcegraph-filter-results { padding: 0; }
     </style>
   </head>
   <body>
     <div id="forcegraph-settings">
       <div>
         <input id="forcegraph-filter" placeholder="filter" type="text" autofocus>
+        <ul id="forcegraph-filter-results"></ul>
       </div>
-      <br/>
       <div>
         <label for="forcegraph-labels">labels</label>
         <input id="forcegraph-labels" type="checkbox" checked>
