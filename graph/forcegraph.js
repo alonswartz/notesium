@@ -151,6 +151,27 @@ function initialize_forcegraph(data, graphdiv) {
     svg.selectAll('.label').transition().style("font-size", labelSize + "px");
   }
 
+  // repel force strength
+  d3.select("#forcegraph-force-strength").on("change", function() {
+    d3.select("#forcegraph-force-strength-value").text(this.value);
+    simulation.force("charge", d3.forceManyBody().strength(this.value));
+    simulation.alpha(1).restart();
+  });
+
+  // collide radius
+  d3.select("#forcegraph-collide-radius").on("change", function() {
+    d3.select("#forcegraph-collide-radius-value").text(this.value);
+    simulation.force("collide").radius(this.value);
+    simulation.alpha(1).restart();
+  });
+
+  // collide strength
+  d3.select("#forcegraph-collide-strength").on("change", function() {
+    d3.select("#forcegraph-collide-strength-value").text(this.value);
+    simulation.force("collide").strength(this.value);
+    simulation.alpha(1).restart();
+  });
+
   function drag(simulation) {
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
