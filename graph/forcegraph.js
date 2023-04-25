@@ -73,15 +73,14 @@ function initialize_forcegraph(data, graphdiv) {
     if (emphasizeNodesArr.length > 0) {
       const _linkedIds = data.links.filter(l => emphasizeNodesArr.includes(l.source) || emphasizeNodesArr.includes(l.target));
       const linkedIds = Array.from(new Set(_linkedIds.flatMap(l => [l.source, l.target])));
-      node.attr("fill-opacity", "0.1");
+      node.attr("fill-opacity", 0.1);
       node.filter(n => linkedIds.includes(n.id)).attr("fill-opacity", 0.3)
       node.filter(n => emphasizeNodesArr.includes(n.id)).attr("fill-opacity", 1)
-      label.attr("fill-opacity", "0.3").attr("font-weight", "normal");
+      label.attr("fill-opacity", 0.3).attr("font-weight", "normal");
       label.filter(l => linkedIds.includes(l.id)).attr("fill-opacity", 1)
       label.filter(l => emphasizeNodesArr.includes(l.id)).attr("fill-opacity", 1).attr("font-weight", "bold")
-      link.attr("stroke", "currentColor");
-      link.attr("stroke-opacity", "0.5");
-      link.filter(l => emphasizeNodesArr.includes(l.source.id) || emphasizeNodesArr.includes(l.target.id)).attr("stroke","steelblue").attr("stock-opacity",1);
+      link.attr("stroke", "currentColor").attr("stroke-opacity", 0.3);
+      link.filter(l => emphasizeNodesArr.includes(l.source.id) || emphasizeNodesArr.includes(l.target.id)).attr("stroke-opacity", 1);
     } else {
       node.attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
       label.attr("fill-opacity", 1).attr("font-weight", "normal");
