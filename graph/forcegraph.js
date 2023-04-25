@@ -87,21 +87,12 @@ function initialize_forcegraph(data, graphdiv) {
   };
 
   // emphasize or de-emphasize when nodes are clicked
-  svg.on("click", function(d) {
-    switch (d.target.localName) {
-      case "circle":
-        nid = d.target.attributes.nid.value;
-        emphasizeNodesArr.includes(nid) ?
-          emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
-          emphasizeNodesArr.push(nid);
-        emphasizeNodes();
-        break;
-      case "svg":
-        if (d3.select("#forcegraph-filter").property("value")) break;
-        emphasizeNodesArr.splice(0);
-        emphasizeNodes();
-        break;
-    }
+  node.on("click", function(d) {
+    const nid = d.target.attributes.nid.value;
+    emphasizeNodesArr.includes(nid) ?
+      emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
+      emphasizeNodesArr.push(nid);
+    emphasizeNodes();
   });
 
   // emphasize or de-emphasize when node titles match the filter
