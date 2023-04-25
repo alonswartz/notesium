@@ -16,7 +16,7 @@ function initialize_forcegraph(data, graphdiv) {
     .force("y", d3.forceY());
 
   const link = svg.append("g")
-    .attr("class", "link")
+    .classed("link", true)
     .attr("stroke", "currentColor")
     .selectAll("line")
     .data(links)
@@ -28,8 +28,9 @@ function initialize_forcegraph(data, graphdiv) {
     .join("circle")
     .attr("r", 2)
     .attr("nid", d => d.id)
-    .attr("class", d => (d.title.split(" ").length == 1) ? "node-lbl" : "node")
-    .attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
+    .classed("node", true)
+    .classed("node-oneword", d => (d.title.split(" ").length == 1))
+    .classed("node-dangling", d => (d.title === 'dangling link'))
     .call(drag(simulation));
 
   const title = node.append("title")
@@ -42,7 +43,7 @@ function initialize_forcegraph(data, graphdiv) {
     .append('a')
     .attr("href", node => data.href.replace(/%:t/g, node.id))
     .append("text")
-    .attr("class", "label")
+    .classed("label", true)
     .attr("alignment-baseline", "middle")
     .text(node => (node.title == 'dangling link') ? '' : node.title);
 
@@ -82,7 +83,7 @@ function initialize_forcegraph(data, graphdiv) {
       link.attr("stroke", "currentColor").attr("stroke-opacity", 0.3);
       link.filter(l => emphasizeNodesArr.includes(l.source.id) || emphasizeNodesArr.includes(l.target.id)).attr("stroke-opacity", 1);
     } else {
-      node.attr("fill-opacity", d => (d.title === 'dangling link') ? 0.3 : 1)
+      node.attr("fill-opacity", 1)
       label.attr("fill-opacity", 1).attr("font-weight", "normal");
       link.attr("stroke", "currentColor").attr("stroke-opacity", 1);
     }
