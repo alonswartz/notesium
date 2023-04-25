@@ -98,7 +98,17 @@ function initialize_forcegraph(data, graphdiv) {
     emphasizeNodes();
   });
 
-  // search node titles word-wise
+  // filter: filtered list
+  function filteredList(results) {
+    const resultsDom = d3.select("#forcegraph-filter-results");
+    const resultsSorted = results.sort((a, b) => a.title.localeCompare(b.title));
+    resultsDom.html("");
+    resultsSorted.forEach(n => {
+      resultsDom.append("li").append("a").attr("href", data.href.replace(/%:t/g, n.id)).text(n.title)
+    });
+  }
+
+  // filter: search node titles word-wise
   function searchNodes(searchStr) {
     const searchWords = searchStr.toLowerCase().split(" ");
     return data.nodes.filter(n => {
@@ -108,12 +118,15 @@ function initialize_forcegraph(data, graphdiv) {
     });
   }
 
-  // emphasize or de-emphasize when node titles match the filter
+  // filter: list and graph emphasis when node titles match
   d3.select('#forcegraph-filter').on('keyup', function() {
     if (this.value) {
-      emphasizeNodesArr = [...searchNodes(this.value).map(n => n.id)];
+      const results = searchNodes(this.value);
+      filteredList(results);
+      emphasizeNodesArr = [...results.map(n => n.id)];
       emphasizeNodes();
     } else {
+      filteredList([]);
       emphasizeNodesArr.splice(0);
       emphasizeNodes();
     }
