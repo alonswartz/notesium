@@ -90,14 +90,13 @@ function initialize_forcegraph(data, graphdiv) {
   };
 
   // emphasize or de-emphasize when nodes are clicked
-  node.on("click", function(d) {
-    const nid = d.target.attributes.nid.value;
+  node.on("click", function(event) {
+    const nid = event.target.attributes.nid.value;
     emphasizeNodesArr.includes(nid) ?
       emphasizeNodesArr.splice(emphasizeNodesArr.indexOf(nid), 1) :
       emphasizeNodesArr.push(nid);
     emphasizeNodes();
   });
-
 
   // search node titles word-wise
   function searchNodes(searchStr) {
@@ -121,24 +120,19 @@ function initialize_forcegraph(data, graphdiv) {
   });
 
   // dynamic circle radius based on links count
-  d3.select("#forcegraph-dynamic-radius").on("change", dynamicRadius);
-  function dynamicRadius() {
-    if(d3.select("#forcegraph-dynamic-radius").property("checked")){
+  d3.select("#forcegraph-dynamic-radius").on("change", function() {
+    if (this.checked) {
       node.attr("r", (d) => data.links.reduce((i, l) => (l.source === d.id || l.target === d.id) ? i + 0.1 : i, 1));
     } else {
       node.attr("r", 2);
     }
-  }
+  });
 
   // toggle labels
-  d3.select("#forcegraph-labels").on("change", toggleLabels);
-  function toggleLabels() {
-    if(d3.select("#forcegraph-labels").property("checked")){
-      svg.selectAll('.label').transition().style("opacity", "1");
-    } else {
-      svg.selectAll('.label').transition().style("opacity", "0");
-    }
-  }
+  d3.select("#forcegraph-labels").on("change", function() {
+    let opacity = this.checked ? 1 : 0;
+    svg.selectAll('.label').transition().style("opacity", opacity);
+  });
 
   // scale labels
   d3.select("#forcegraph-scale-labels").on("change", scaleLabels);
