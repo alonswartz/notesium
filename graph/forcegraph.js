@@ -95,10 +95,21 @@ function initialize_forcegraph(data, graphdiv) {
     emphasizeNodes();
   });
 
+
+  // search node titles word-wise
+  function searchNodes(searchStr) {
+    const searchWords = searchStr.toLowerCase().split(" ");
+    return data.nodes.filter(n => {
+      return searchWords.every(searchWord =>
+        n.title.toLowerCase().includes(searchWord)
+      );
+    });
+  }
+
   // emphasize or de-emphasize when node titles match the filter
   d3.select('#forcegraph-filter').on('keyup', function() {
     if (this.value) {
-      emphasizeNodesArr = [...data.nodes.filter(n => n.title.includes(this.value)).map(n => n.id)];
+      emphasizeNodesArr = [...searchNodes(this.value).map(n => n.id)];
       emphasizeNodes();
     } else {
       emphasizeNodesArr.splice(0);
