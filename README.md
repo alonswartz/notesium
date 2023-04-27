@@ -60,14 +60,22 @@ It aspires and is designed to:
 - Links: Display a list of broken links and jump there instantly.
 - Lines: Full text search across all notes in the entire system.
 - Graph: Generate raw data or encoded url for browsing the graph.
-- Graph: Drag, pan or zoom the graph for a better view or focus.
 - Graph: Customizable node link format for opening notes.
+- Graph: Dynamic node size relative to bi-directional link count.
+- Graph: Emphasize nodes and their links using search filter or node click.
+- Graph: Tweak forces such as repel force, collide radius and strength.
+- Graph: Drag, pan or zoom the graph for a better view or focus.
+- Graph: Customize labels visibility or automatically scaled per zoom level.
 - No caching or preprocessing: Everything is computed on the fly.
 
 ## Screenshots
 
 *Graph: display all notes and links in a force graph view*
-![image: force graph](https://www.notesium.com/images/screenshot-1682073180.png)
+![image: force graph](https://www.notesium.com/images/screenshot-1682577852.png)
+<br/>
+
+*Graph: filter notes with emphasized matches in force graph view*
+![image: force graph filtered](https://www.notesium.com/images/screenshot-1682579228.png)
 <br/>
 
 *List: prefixed with associated labels and sorted alphabetically*
