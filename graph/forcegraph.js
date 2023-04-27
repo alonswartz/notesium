@@ -143,8 +143,7 @@ function initialize_forcegraph(data, graphdiv) {
 
   // toggle labels
   d3.select("#forcegraph-labels").on("change", function() {
-    let opacity = this.checked ? 1 : 0;
-    svg.selectAll('.label').transition().style("opacity", opacity);
+    svg.selectAll('.label').classed("hidden", !this.checked);
   });
 
   // scale labels
