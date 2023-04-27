@@ -5,29 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Notesium Graph</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="forcegraph.js"></script>
     <style>
-      #forcegraph { margin: auto; width: 97vw; height: 97vh; color: #e2e8f0; }
+      #forcegraph { margin: auto; width: 97vw; height: 97vh; }
       #forcegraph .node { fill: #ff7f0e; cursor: pointer; }
       #forcegraph .node-oneword { fill: #1f77b4; }
       #forcegraph .node-dangling { fill-opacity: 0.3; }
       #forcegraph .link { stroke-width: 0.5; }
       #forcegraph .label { fill: #475569; font-size: 4px; }
       #forcegraph .label:hover { text-decoration: underline; }
+      .dark #forcegraph .label { fill: #94a3b8; }
       #forcegraph-filter-results li { margin-bottom: 3px; }
       #forcegraph-filter-results a:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
-    <div class="absolute w-44 space-y-2 text-xs text-gray-600 border border-gray-200 rounded-lg px-2 py-1.5 m-2 backdrop-blur-sm bg-white/30">
+    <div class="h-screen bg-slate-50 dark:bg-slate-800 dark:text-white">
+    <div class="absolute w-44 space-y-2 text-xs text-gray-600 border border-gray-200 rounded-lg px-2 py-1.5 m-2 backdrop-blur-sm bg-white/30
+                dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900/50">
       <div class="pt-1 pb-3">
-        <input id="forcegraph-filter" placeholder="filter..." type="text" autofocus class="w-full px-2 py-1 border focus:outline-none rounded-md">
+        <input id="forcegraph-filter" placeholder="filter..." type="text" autofocus
+               class="w-full px-2 py-1 border focus:outline-none rounded-md dark:bg-slate-900 dark:border-slate-700">
         <ul id="forcegraph-filter-results" class="my-2 text-xs"></ul>
       </div>
 
-      <p class="text-sm text-gray-900">display</p>
-      <ul role="list" class="divide-y divide-gray-200 my-4">
+      <p class="text-sm text-gray-900 dark:text-slate-200">display</p>
+      <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
+        <li class="flex items-center justify-between py-3">
+          <span>dark mode</span>
+          <div class="flex h-5 items-center">
+            <input id="darkmode" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+          </div>
+        </li>
         <li class="flex items-center justify-between py-3">
           <span>show labels</span>
           <div class="flex h-5 items-center">
@@ -48,8 +59,8 @@
         </li>
       </ul>
 
-      <p class="text-sm text-gray-900">forces</p>
-      <ul role="list" class="divide-y divide-gray-200 my-4">
+      <p class="text-sm text-gray-900 dark:text-slate-200">forces</p>
+      <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
         <li class="py-3 space-y-1">
           <div class="flex items-center justify-between">
             <span>repel force</span>
@@ -74,7 +85,8 @@
       </ul>
     </div>
 
-    <div id="forcegraph"></div>
+    <div id="forcegraph" class="text-gray-300/70 dark:text-slate-700"></div>
+    </div>
     <script type="text/javascript">
       const dataB64 = new URLSearchParams(location.search).get('data');
       const dataStr = atob(dataB64);
@@ -93,6 +105,11 @@
       dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
 
       initialize_forcegraph(data, '#forcegraph');
+
+      // toggle darkmode
+      d3.select("#darkmode").on("change", function() {
+        d3.select("body").classed("dark", this.checked);
+      });
     </script>
   </body>
 </html>
