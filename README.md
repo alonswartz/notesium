@@ -179,19 +179,19 @@ command! -bang NotesiumGraph execute
   \ ":silent !notesium graph --encoded-url | xargs -r -n 1 x-www-browser "
 
 command! -bang -nargs=* NotesiumList
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium list '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumLinks
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 2..'} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium links '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumSearch
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': ' --with-nth 2..'} |
+  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '--with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium lines '.shellescape(<q-args>), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
