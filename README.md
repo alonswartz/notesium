@@ -243,7 +243,7 @@ nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
 
 ```vim
 " junegunn/fzf.vim
-let $FZF_DEFAULT_OPTS="--reverse --filepath-word "
+let $FZF_DEFAULT_OPTS="--reverse --filepath-word --no-separator --no-scrollbar "
 let g:fzf_buffers_jump = 1
 let g:fzf_layout = { 'window': { 'width': 0.85, 'height': 0.85 } }
 let g:fzf_colors = {
