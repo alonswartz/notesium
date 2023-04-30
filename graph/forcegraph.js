@@ -102,9 +102,12 @@ function initialize_forcegraph(data, graphdiv) {
   function filteredList(results) {
     const resultsDom = d3.select("#forcegraph-filter-results");
     const resultsSorted = results.sort((a, b) => a.title.localeCompare(b.title));
+    const searchWords = d3.select("#forcegraph-filter").node().value.toLowerCase().split(" ").filter(n => n.replace(/\W/g, ''));
+    const searchExp = new RegExp(`(${searchWords.join('|')})`, 'ig');
     resultsDom.html("");
     resultsSorted.forEach(n => {
-      resultsDom.append("li").append("a").attr("href", data.href.replace(/%:t/g, n.id)).text(n.title)
+      var title = n.title.replace(searchExp, '<b>$1</b>');
+      resultsDom.append("li").append("a").attr("href", data.href.replace(/%:t/g, n.id)).html(title)
     });
   }
 
