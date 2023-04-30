@@ -28,7 +28,7 @@
     <div class="absolute w-44 space-y-2 text-xs text-gray-600 border border-gray-200 rounded-lg px-2 py-1.5 m-2 backdrop-blur-sm bg-white/30
                 dark:text-slate-400 dark:border-slate-700 dark:bg-slate-900/50">
       <div class="flex items-center justify-between pt-1 pb-3">
-        <input id="forcegraph-filter" placeholder="filter..." type="text" autofocus
+        <input id="forcegraph-filter" placeholder="filter..." type="text" autocomplete="off" spellcheck="false"
                class="w-full px-2 py-1 border focus:outline-none rounded-md dark:bg-slate-900 dark:border-slate-700">
           <div class="flex h-5 items-center">
             <input id="forcegraph-filter-results-toggle" type="checkbox" checked class="h-4 w-4 ml-2 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
@@ -118,6 +118,15 @@
       // toggle filtered results list
       d3.select("#forcegraph-filter-results-toggle").on("change", function() {
         d3.select("#forcegraph-filter-results").classed("hidden", !this.checked);
+      });
+
+      // capture keypress events
+      d3.select("body").on('keyup', function() {
+        if (event.code === 'Slash' && document.activeElement.id != 'forcegraph-filter') {
+          d3.select("#forcegraph-filter").node().focus();
+          event.preventDefault();
+          return;
+        }
       });
     </script>
   </body>
