@@ -119,7 +119,7 @@ function initialize_forcegraph(data, graphdiv) {
   }
 
   // filter: list and graph emphasis when node titles match
-  d3.select('#forcegraph-filter').on('keyup', function() {
+  d3.select('#forcegraph-filter').on('keyup change', function() {
     if (this.value) {
       const results = searchNodes(this.value);
       filteredList(results);

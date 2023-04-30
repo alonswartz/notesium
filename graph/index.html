@@ -127,6 +127,13 @@
           event.preventDefault();
           return;
         }
+        if (event.code === 'Escape' && document.activeElement.id === 'forcegraph-filter') {
+          d3.select("#forcegraph-filter").node().value = '';
+          d3.select("#forcegraph-filter").node().blur();
+          d3.select("#forcegraph-filter").dispatch("change");
+          event.preventDefault();
+          return;
+        }
       });
     </script>
   </body>
