@@ -90,26 +90,50 @@
         </ul>
       </div>
 
+      <div id="fileloader" class="hidden fixed inset-0 z-50 mt-20" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 backdrop-blur-sm" aria-hidden="true"></div>
+        <div class="text-center text-xs transform">
+          <input id="fileloaderInput" type="file" onchange="loadFile()" />
+        </div>
+      </div>
+
       <div id="forcegraph" class="text-gray-300/70 dark:text-slate-700"></div>
     </div>
     <script type="text/javascript">
+      function loadData(dataStr) {
+        const dataArr = dataStr.split("-----\n");
+
+        const data = {
+          "href": dataArr[0],
+          "nodes": d3.csvParse(dataArr[1]),
+          "links": d3.csvParse(dataArr[2])
+        };
+
+        // dangling links
+        const nodes = data.nodes.map(n => n.id);
+        const targets = data.links.map(l => l.target);
+        const dangling = targets.filter(id => !nodes.includes(id));
+        dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
+
+        initialize_forcegraph(data, '#forcegraph');
+      }
+
+      function loadFile() {
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+            d3.select("#fileloader").classed("hidden", true);
+            loadData(reader.result);
+        }, false);
+        const [dataFile] = document.getElementById("fileloaderInput").files;
+        if (dataFile) reader.readAsText(dataFile);
+      }
+
       const dataB64 = new URLSearchParams(location.search).get('data');
-      const dataStr = atob(dataB64);
-      const dataArr = dataStr.split("-----\n");
-
-      const data = {
-        "href": dataArr[0],
-        "nodes": d3.csvParse(dataArr[1]),
-        "links": d3.csvParse(dataArr[2])
-      };
-
-      // dangling links
-      const nodes = data.nodes.map(n => n.id);
-      const targets = data.links.map(l => l.target);
-      const dangling = targets.filter(id => !nodes.includes(id));
-      dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
-
-      initialize_forcegraph(data, '#forcegraph');
+      if (dataB64) {
+        loadData(atob(dataB64));
+      } else {
+        d3.select("#fileloader").classed("hidden", false);
+      }
 
       // toggle darkmode
       d3.select("#darkmode").on("change", function() {
