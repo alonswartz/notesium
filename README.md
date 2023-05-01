@@ -79,7 +79,7 @@ It aspires and is designed to:
 <br/>
 
 *Graph: force graph view dark mode enabled*
-![image: force graph darkmode](https://www.notesium.com/images/screenshot-1682597120.png)
+![image: force graph darkmode](https://www.notesium.com/images/screenshot-1682941869.png)
 <br/>
 
 *List: prefixed with associated labels and sorted alphabetically*
