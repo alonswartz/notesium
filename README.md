@@ -128,7 +128,6 @@ Usage: notesium COMMAND [OPTIONS]
 Commands:
   new               Print path for a new note
   home              Print path to notes directory
-  stats             Print statistics
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
@@ -144,6 +143,10 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
+  stats             Print statistics
+    --color         Color code using ansi escape sequences
+    --table         Format as table with whitespace delimited columns
+    --fmtnum        Format counts with thousands separator using a comma
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
