@@ -59,6 +59,7 @@ It aspires and is designed to:
 - Links: Limit the list to outgoing links from the current note.
 - Links: Display a list of broken links and jump there instantly.
 - Lines: Full text search across all notes in the entire system.
+- Stats: Counts of notes, labels, orphans, links, lines, words, etc.
 - Graph: Generate raw data or encoded url for browsing the graph.
 - Graph: Customizable node link format for opening notes.
 - Graph: Dynamic node size relative to bi-directional link count.
@@ -127,6 +128,7 @@ Usage: notesium COMMAND [OPTIONS]
 Commands:
   new               Print path for a new note
   home              Print path to notes directory
+  stats             Print statistics
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)

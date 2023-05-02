@@ -10,6 +10,7 @@ Usage: $(basename "$0") COMMAND [OPTIONS]
 Commands:
   new               Print path for a new note
   home              Print path to notes directory
+  stats             Print statistics
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
@@ -246,6 +247,17 @@ notesium_graph() {
     esac
 }
 
+notesium_stats() {
+    echo "notes $(_list *.md | wc -l)"
+    echo "labels $(_list_labels *.md | wc -l)"
+    echo "orphans $(_list_orphans *.md | wc -l)"
+    echo "links $(_links *.md | wc -l)"
+    echo "dangling $(_links_dangling *.md | wc -l)"
+    echo "lines $(awk 'NF {print $0}' *.md | wc -l)"
+    echo "words $(awk 'NF {print $0}' *.md | wc --words)"
+    echo "chars $(awk 'NF {print $0}' *.md | wc --chars)"
+}
+
 main() {
     case $1 in ""|-h|--help|help) usage;; esac
 
@@ -261,6 +273,7 @@ main() {
         list)       shift; notesium_list $@;;
         links)      shift; notesium_links $@;;
         lines)      shift; notesium_lines $@;;
+        stats)      shift; notesium_stats $@;;
         graph)      shift; notesium_graph $@;;
         -*)         fatal "unrecognized option: $1";;
         *)          fatal "unrecognized command: $1";;
