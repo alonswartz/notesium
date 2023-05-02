@@ -26,6 +26,7 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
   stats             Print statistics
+    --table         Format as table with whitespace delimited columns
     --fmtnum        Format counts with thousands separator using a comma
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
@@ -240,14 +241,17 @@ notesium_stats() {
     _fmtnum() { sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'; }
     while [ "$1" != "" ]; do
         case $1 in
+            --table)                Output="Table";;
             --fmtnum)               FmtNum="FmtNum";;
             *)                      fatal "unrecognized option: $1";;
         esac
         shift
     done
-    case Stats${FmtNum} in
+    case Stats${Output}${FmtNum} in
         Stats)                      _stats *.md;;
+        StatsTable)                 _stats *.md | column -t;;
         StatsFmtNum)                _stats *.md | _fmtnum;;
+        StatsTableFmtNum)           _stats *.md | column -t | _fmtnum;;
         *)                          fatal "unsupported option grouping";;
     esac
 }

@@ -26,3 +26,20 @@ setup_file() {
     [ "${lines[0]}" == "notes 8" ]
     [ "${lines[7]}" == "chars 1,410" ]
 }
+
+@test "stats: table" {
+    run notesium.sh stats --table
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "notes     8" ]
+    [ "${lines[7]}" == "chars     1410" ]
+}
+
+@test "stats: table fmtnum" {
+    run notesium.sh stats --table --fmtnum
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "notes     8" ]
+    [ "${lines[7]}" == "chars     1,410" ]
+}
+
