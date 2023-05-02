@@ -26,6 +26,7 @@ Commands:
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
   stats             Print statistics
+    --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
     --fmtnum        Format counts with thousands separator using a comma
   graph             Print graph data
@@ -238,9 +239,11 @@ notesium_lines() {
 }
 
 notesium_stats() {
-    _fmtnum() { sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'; }
+    _color() { awk -v C="$Color" -v R="$Reset" '{print C $1 R, $2}'; }
+    _comma() { sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'; }
     while [ "$1" != "" ]; do
         case $1 in
+            --color)                Color="\033[0;36m"; Reset="\033[0m";;
             --table)                Output="Table";;
             --fmtnum)               FmtNum="FmtNum";;
             *)                      fatal "unrecognized option: $1";;
@@ -248,10 +251,10 @@ notesium_stats() {
         shift
     done
     case Stats${Output}${FmtNum} in
-        Stats)                      _stats *.md;;
-        StatsTable)                 _stats *.md | column -t;;
-        StatsFmtNum)                _stats *.md | _fmtnum;;
-        StatsTableFmtNum)           _stats *.md | column -t | _fmtnum;;
+        Stats)                      _stats *.md | _color;;
+        StatsTable)                 _stats *.md | _color | column -t;;
+        StatsFmtNum)                _stats *.md | _color | _comma;;
+        StatsTableFmtNum)           _stats *.md | _color | column -t | _comma;;
         *)                          fatal "unsupported option grouping";;
     esac
 }
