@@ -10,7 +10,6 @@ Usage: $(basename "$0") COMMAND [OPTIONS]
 Commands:
   new               Print path for a new note
   home              Print path to notes directory
-  stats             Print statistics
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
@@ -26,6 +25,8 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Include note title as prefix of each line
+  stats             Print statistics
+    --fmtnum        Format counts with thousands separator using a comma
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
@@ -123,6 +124,16 @@ _lines_prefix_title() {
     awk -v C="$Color" -v R="$Reset" '
         FNR == 1 { title=substr($0,3) }
         NF {print FILENAME ":" FNR ":", C title R, $0}' "$@"
+}
+_stats() {
+    echo "notes $(_list "$@" | wc -l)"
+    echo "labels $(_list_labels "$@" | wc -l)"
+    echo "orphans $(_list_orphans "$@" | wc -l)"
+    echo "links $(_links "$@" | wc -l)"
+    echo "dangling $(_links_dangling "$@" | wc -l)"
+    echo "lines $(awk 'NF {print $0}' "$@" | wc -l)"
+    echo "words $(awk 'NF {print $0}' "$@" | wc --words)"
+    echo "chars $(awk 'NF {print $0}' "$@" | wc --chars)"
 }
 _graph_csv() {
     echo "$1" | sed "s|\%:p:h|$NOTESIUM_DIR|"; shift
@@ -225,6 +236,22 @@ notesium_lines() {
     esac
 }
 
+notesium_stats() {
+    _fmtnum() { sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'; }
+    while [ "$1" != "" ]; do
+        case $1 in
+            --fmtnum)               FmtNum="FmtNum";;
+            *)                      fatal "unrecognized option: $1";;
+        esac
+        shift
+    done
+    case Stats${FmtNum} in
+        Stats)                      _stats *.md;;
+        StatsFmtNum)                _stats *.md | _fmtnum;;
+        *)                          fatal "unsupported option grouping";;
+    esac
+}
+
 notesium_graph() {
     Href="file://%:p:h/%:t"
     while [ "$1" != "" ]; do
@@ -245,17 +272,6 @@ notesium_graph() {
                                     _graph_csv "$Href" *.md | base64 --wrap 0;;
         *)                          fatal "unsupported option grouping";;
     esac
-}
-
-notesium_stats() {
-    echo "notes $(_list *.md | wc -l)"
-    echo "labels $(_list_labels *.md | wc -l)"
-    echo "orphans $(_list_orphans *.md | wc -l)"
-    echo "links $(_links *.md | wc -l)"
-    echo "dangling $(_links_dangling *.md | wc -l)"
-    echo "lines $(awk 'NF {print $0}' *.md | wc -l)"
-    echo "words $(awk 'NF {print $0}' *.md | wc --words)"
-    echo "chars $(awk 'NF {print $0}' *.md | wc --chars)"
 }
 
 main() {
