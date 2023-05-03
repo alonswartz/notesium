@@ -16,7 +16,7 @@ setup_file() {
     [ "${lines[4]}" == "dangling 1" ]
     [ "${lines[5]}" == "lines 28" ]
     [ "${lines[6]}" == "words 213" ]
-    [ "${lines[7]}" == "chars 1410" ]
+    [ "${lines[7]}" == "chars 1424" ]
 }
 
 @test "stats: fmtnum" {
@@ -24,7 +24,7 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes 8" ]
-    [ "${lines[7]}" == "chars 1,410" ]
+    [ "${lines[7]}" == "chars 1,424" ]
 }
 
 @test "stats: table" {
@@ -32,7 +32,7 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]
-    [ "${lines[7]}" == "chars     1410" ]
+    [ "${lines[7]}" == "chars     1424" ]
 }
 
 @test "stats: table fmtnum" {
@@ -40,6 +40,6 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]
-    [ "${lines[7]}" == "chars     1,410" ]
+    [ "${lines[7]}" == "chars     1,424" ]
 }
 
