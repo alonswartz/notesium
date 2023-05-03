@@ -80,31 +80,28 @@ _list_labels() {
     awk 'FNR==1 && NF==2 {print FILENAME ":1:", substr($0,3)}' "$@"
 }
 _list_orphans() {
-    re='[[:alnum:]]\{8\}\.md'
-    links=$(grep --only-match $re "$@" | awk -F ":" '{printf "-e %s ", $2}')
+    links=$(grep -oP "$link_re" "$@" | awk -F ":" '{printf "-e %s ", $2}')
     if [ -z "$links" ]; then _list "$@"; return 0; fi
-    orphans=$(grep --files-without-match "$re" "$@" | grep -v $links)
+    orphans=$(grep --files-without-match -P "$link_re" "$@" | grep -v $links)
     [ "$orphans" ] || return 0
     _list $orphans
 }
 _links() {
-    re='[[:alnum:]]\{8\}\.md'
-    grep --with-filename --line-number --only-match "$re" "$@" | \
+    grep --with-filename --line-number -oP "$link_re" "$@" | \
         awk -F ":" -v C="$Color" -v R="$Reset" '
             {getline source < $1; close($1)}
             {getline target < $3; close($3)}
             {print $1 ":" $2 ":", C substr(source,3) R, "→", substr(target,3)}'
 }
 _links_dangling() {
-    re='[[:alnum:]]\{8\}\.md'
-    grep --with-filename --line-number --only-match "$re" "$@" | \
+    grep --with-filename --line-number -oP "$link_re" "$@" | \
         awk -F ":" -v C="$Color" -v R="$Reset" '
             {getline source < $1; close($1)}
             {if (getline < $3 < 0)
                 print $1 ":" $2 ":", C substr(source,3) R, "→", $3}'
 }
 _links_outgoing() {
-    outgoing="$(grep --only-matching '\([[:alnum:]]\{8\}\.md\)' "$1" || true)"
+    outgoing="$(grep -oP "$link_re" "$1" || true)"
     [ "$outgoing" ] || return 0
     _list $outgoing
 }
@@ -144,7 +141,7 @@ _graph_csv() {
     awk -vOFS="," 'FNR==1{print FILENAME, substr($0,3)}' "$@"
     echo "-----"
     echo "source,target"
-    grep --with-filename --only-match '\([[:alnum:]]\{8\}\.md\)' "$@" | \
+    grep --with-filename -oP "$link_re" "$@" | \
         awk -F ":" -vOFS="," '{print $1, $2}'
 }
 
@@ -289,6 +286,9 @@ main() {
     [ -d "$NOTESIUM_DIR" ] || \
         fatal "NOTESIUM_DIR does not exist: $NOTESIUM_DIR"
     cd "$NOTESIUM_DIR"
+
+    # PCRE regular expression for link format
+    link_re='(?<=\]\()\b[[:xdigit:]]{8}\.md\b(?=\))'
 
     case $1 in
         new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
