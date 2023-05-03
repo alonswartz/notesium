@@ -26,7 +26,7 @@ setup_file() {
     [ "${lines[14]}" == "406c52f1.md,ce5f6bd5.md" ]
     [ "${lines[15]}" == "5c13e273.md,0c8bea98.md" ]
     [ "${lines[16]}" == "5c13e273.md,406c52f1.md" ]
-    [ "${lines[17]}" == "5c13e273.md,xxxxxxxx.md" ]
+    [ "${lines[17]}" == "5c13e273.md,12345678.md" ]
     [ "${lines[18]}" == "b0457228.md,572878f1.md" ]
     [ "${lines[19]}" == "b0457228.md,ce5f6bd5.md" ]
 }
