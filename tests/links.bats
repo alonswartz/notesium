@@ -83,5 +83,5 @@ setup_file() {
     run notesium.sh links --dangling
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "5c13e273.md:3: surely you're joking mr. feynman → xxxxxxxx.md" ]
+    [ "${lines[0]}" == "5c13e273.md:3: surely you're joking mr. feynman → 12345678.md" ]
 }
