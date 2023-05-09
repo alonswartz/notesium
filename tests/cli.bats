@@ -87,3 +87,12 @@ teardown_file() {
     [ "$(basename $output | tr -d '\n' | wc -c)" == "11" ]
     [ "$(basename --suffix=.md $output | tr -d '\n' | wc -c)" == "8" ]
 }
+
+@test "cli: new basename is hex for now epoch (within 10s range)" {
+    run notesium.sh new
+    echo "$output"
+    [ $status -eq 0 ]
+    epoch="$(printf '%d' 0x$(basename --suffix=.md $output))"
+    [ "$epoch" -gt "$(date -d "-5 seconds" +%s)" ]
+    [ "$epoch" -lt "$(date -d "+5 seconds" +%s)" ]
+}

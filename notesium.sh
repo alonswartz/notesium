@@ -145,6 +145,12 @@ _graph_csv() {
         awk -F ":" -vOFS="," '{print $1, $2}'
 }
 
+notesium_new() {
+    epoch_int="$(date +%s)"
+    epoch_hex="$(printf '%x' "$epoch_int")"
+    echo "$NOTESIUM_DIR/$epoch_hex.md"
+}
+
 notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
@@ -291,8 +297,8 @@ main() {
     link_re='(?<=\]\()\b[[:xdigit:]]{8}\.md\b(?=\))'
 
     case $1 in
-        new)        echo "$NOTESIUM_DIR/$(mcookie | head -c8).md";;
         home)       echo "$NOTESIUM_DIR";;
+        new)        shift; notesium_new $@;;
         list)       shift; notesium_list $@;;
         links)      shift; notesium_links $@;;
         lines)      shift; notesium_lines $@;;
