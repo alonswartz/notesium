@@ -1,13 +1,14 @@
 #!/usr/bin/env bats
 
 _set_deterministic_mtimes() {
-    for md in $(ls /tmp/notesium-test-corpus/*.md); do
-        hex="$(basename --suffix=.md $md)"
-        dec=$(printf "%u\n" "0x${hex//-/}")
-        int=$((dec % 30 + 1))
-        day=$(printf "%02d\n" "$int")
-        touch -m -t 202301${day}0505 $md
-    done
+    touch -m -t 202301250505 "/tmp/notesium-test-corpus/64218088.md"
+    touch -m -t 202301240505 "/tmp/notesium-test-corpus/64217712.md"
+    touch -m -t 202301240504 "/tmp/notesium-test-corpus/642146c7.md"
+    touch -m -t 202301220505 "/tmp/notesium-test-corpus/642176a6.md"
+    touch -m -t 202301220504 "/tmp/notesium-test-corpus/64214930.md"
+    touch -m -t 202301180505 "/tmp/notesium-test-corpus/64218087.md"
+    touch -m -t 202301160505 "/tmp/notesium-test-corpus/64214a1d.md"
+    touch -m -t 202301130505 "/tmp/notesium-test-corpus/6421460b.md"
 }
 
 setup_file() {
@@ -138,13 +139,13 @@ teardown_file() {
     run notesium.sh list --prefix=mtime
     echo "$output"
     [ "${lines[0]}" == "6421460b.md:1: 2023-01-13 book" ]
-    [ "${lines[1]}" == "642176a6.md:1: 2023-01-22 lorem ipsum" ]
-    [ "${lines[2]}" == "64217712.md:1: 2023-01-24 empty note" ]
+    [ "${lines[1]}" == "642146c7.md:1: 2023-01-24 physicist" ]
+    [ "${lines[2]}" == "64214930.md:1: 2023-01-22 quantum mechanics" ]
     [ "${lines[3]}" == "64214a1d.md:1: 2023-01-16 richard feynman" ]
-    [ "${lines[4]}" == "642146c7.md:1: 2023-01-24 physicist" ]
-    [ "${lines[5]}" == "64218087.md:1: 2023-01-18 surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
-    [ "${lines[7]}" == "64214930.md:1: 2023-01-22 quantum mechanics" ]
+    [ "${lines[4]}" == "642176a6.md:1: 2023-01-22 lorem ipsum" ]
+    [ "${lines[5]}" == "64217712.md:1: 2023-01-24 empty note" ]
+    [ "${lines[6]}" == "64218087.md:1: 2023-01-18 surely you're joking mr. feynman" ]
+    [ "${lines[7]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
 }
 
 @test "list: prefix mtime and sort by title" {
