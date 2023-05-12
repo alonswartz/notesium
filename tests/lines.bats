@@ -10,8 +10,9 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: # book" ]
-    [ "${lines[1]}" == "642176a6.md:1: # lorem ipsum" ]
-    [ "${lines[3]}" == "642176a6.md:4: tempor incididunt ut labore et dolore magna aliqua." ]
+    [ "${lines[1]}" == "642146c7.md:1: # physicist" ]
+    [ "${lines[3]}" == "64214930.md:3: a fundamental theory in physics that provides a description of the" ]
+    [ "${lines[5]}" == "64214930.md:5: particles." ]
 }
 
 @test "lines: prefix title" {
@@ -19,5 +20,6 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: book # book" ]
-    [ "${lines[1]}" == "642176a6.md:1: lorem ipsum # lorem ipsum" ]
+    [ "${lines[1]}" == "642146c7.md:1: physicist # physicist" ]
+    [ "${lines[3]}" == "64214930.md:3: quantum mechanics a fundamental theory in physics that provides a description of the" ]
 }
