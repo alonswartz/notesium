@@ -33,187 +33,187 @@ teardown_file() {
     run notesium.sh list
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[1]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[2]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[3]}" == "406c52f1.md:1: richard feynman" ]
-    [ "${lines[4]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[5]}" == "5c13e273.md:1: surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "b0457228.md:1: albert einstein" ]
-    [ "${lines[7]}" == "ce5f6bd5.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "6421460b.md:1: book" ]
+    [ "${lines[1]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[2]}" == "64217712.md:1: empty note" ]
+    [ "${lines[3]}" == "64214a1d.md:1: richard feynman" ]
+    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[5]}" == "64218087.md:1: surely you're joking mr. feynman" ]
+    [ "${lines[6]}" == "64218088.md:1: albert einstein" ]
+    [ "${lines[7]}" == "64214930.md:1: quantum mechanics" ]
 }
 
 @test "list: sort by title" {
     run notesium.sh list --sort=title
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "b0457228.md:1: albert einstein" ]
-    [ "${lines[1]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[2]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[3]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[4]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[5]}" == "ce5f6bd5.md:1: quantum mechanics" ]
-    [ "${lines[6]}" == "406c52f1.md:1: richard feynman" ]
-    [ "${lines[7]}" == "5c13e273.md:1: surely you're joking mr. feynman" ]
+    [ "${lines[0]}" == "64218088.md:1: albert einstein" ]
+    [ "${lines[1]}" == "6421460b.md:1: book" ]
+    [ "${lines[2]}" == "64217712.md:1: empty note" ]
+    [ "${lines[3]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[5]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[6]}" == "64214a1d.md:1: richard feynman" ]
+    [ "${lines[7]}" == "64218087.md:1: surely you're joking mr. feynman" ]
 }
 
 @test "list: sort by mtime" {
     run notesium.sh list --sort=mtime
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "b0457228.md:1: albert einstein" ]
-    [ "${lines[1]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[2]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[3]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[4]}" == "ce5f6bd5.md:1: quantum mechanics" ]
-    [ "${lines[5]}" == "5c13e273.md:1: surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "406c52f1.md:1: richard feynman" ]
-    [ "${lines[7]}" == "0c8bea98.md:1: book" ]
+    [ "${lines[0]}" == "64218088.md:1: albert einstein" ]
+    [ "${lines[1]}" == "64217712.md:1: empty note" ]
+    [ "${lines[2]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[3]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[4]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[5]}" == "64218087.md:1: surely you're joking mr. feynman" ]
+    [ "${lines[6]}" == "64214a1d.md:1: richard feynman" ]
+    [ "${lines[7]}" == "6421460b.md:1: book" ]
 }
 
 @test "list: labels" {
     run notesium.sh list --labels
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[1]}" == "572878f1.md:1: physicist" ]
+    [ "${lines[0]}" == "6421460b.md:1: book" ]
+    [ "${lines[1]}" == "642146c7.md:1: physicist" ]
 }
 
 @test "list: labels and sort by title" {
     run notesium.sh list --labels --sort=title
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[1]}" == "572878f1.md:1: physicist" ]
+    [ "${lines[0]}" == "6421460b.md:1: book" ]
+    [ "${lines[1]}" == "642146c7.md:1: physicist" ]
 }
 
 @test "list: labels and sort by mtime" {
     run notesium.sh list --labels --sort=mtime
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[1]}" == "0c8bea98.md:1: book" ]
+    [ "${lines[0]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[1]}" == "6421460b.md:1: book" ]
 }
 
 @test "list: prefix label" {
     run notesium.sh list --prefix=label
     echo "$output"
-    [ "${lines[0]}" == "406c52f1.md:1: physicist richard feynman" ]
-    [ "${lines[1]}" == "5c13e273.md:1: book surely you're joking mr. feynman" ]
-    [ "${lines[2]}" == "b0457228.md:1: physicist albert einstein" ]
-    [ "${lines[3]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[4]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[5]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[6]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[7]}" == "ce5f6bd5.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "64214a1d.md:1: physicist richard feynman" ]
+    [ "${lines[1]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
+    [ "${lines[2]}" == "64218088.md:1: physicist albert einstein" ]
+    [ "${lines[3]}" == "6421460b.md:1: book" ]
+    [ "${lines[4]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[5]}" == "64217712.md:1: empty note" ]
+    [ "${lines[6]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[7]}" == "64214930.md:1: quantum mechanics" ]
 }
 
 @test "list: prefix label and sort by title" {
     run notesium.sh list --prefix=label --sort=title
     echo "$output"
-    [ "${lines[0]}" == "5c13e273.md:1: book surely you're joking mr. feynman" ]
-    [ "${lines[1]}" == "b0457228.md:1: physicist albert einstein" ]
-    [ "${lines[2]}" == "406c52f1.md:1: physicist richard feynman" ]
-    [ "${lines[3]}" == "0c8bea98.md:1: book" ]
-    [ "${lines[4]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[5]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[6]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[7]}" == "ce5f6bd5.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
+    [ "${lines[1]}" == "64218088.md:1: physicist albert einstein" ]
+    [ "${lines[2]}" == "64214a1d.md:1: physicist richard feynman" ]
+    [ "${lines[3]}" == "6421460b.md:1: book" ]
+    [ "${lines[4]}" == "64217712.md:1: empty note" ]
+    [ "${lines[5]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[6]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[7]}" == "64214930.md:1: quantum mechanics" ]
 }
 
 @test "list: prefix label and sort by mtime" {
     run notesium.sh list --prefix=label --sort=mtime
     echo "$output"
-    [ "${lines[0]}" == "b0457228.md:1: physicist albert einstein" ]
-    [ "${lines[1]}" == "5c13e273.md:1: book surely you're joking mr. feynman" ]
-    [ "${lines[2]}" == "406c52f1.md:1: physicist richard feynman" ]
-    [ "${lines[3]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[4]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[5]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[6]}" == "ce5f6bd5.md:1: quantum mechanics" ]
-    [ "${lines[7]}" == "0c8bea98.md:1: book" ]
+    [ "${lines[0]}" == "64218088.md:1: physicist albert einstein" ]
+    [ "${lines[1]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
+    [ "${lines[2]}" == "64214a1d.md:1: physicist richard feynman" ]
+    [ "${lines[3]}" == "64217712.md:1: empty note" ]
+    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[5]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[6]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[7]}" == "6421460b.md:1: book" ]
 }
 
 @test "list: prefix mtime" {
     run notesium.sh list --prefix=mtime
     echo "$output"
-    [ "${lines[0]}" == "0c8bea98.md:1: 2023-01-13 book" ]
-    [ "${lines[1]}" == "26f89821.md:1: 2023-01-22 lorem ipsum" ]
-    [ "${lines[2]}" == "3ec9906f.md:1: 2023-01-24 empty note" ]
-    [ "${lines[3]}" == "406c52f1.md:1: 2023-01-16 richard feynman" ]
-    [ "${lines[4]}" == "572878f1.md:1: 2023-01-24 physicist" ]
-    [ "${lines[5]}" == "5c13e273.md:1: 2023-01-18 surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "b0457228.md:1: 2023-01-25 albert einstein" ]
-    [ "${lines[7]}" == "ce5f6bd5.md:1: 2023-01-22 quantum mechanics" ]
+    [ "${lines[0]}" == "6421460b.md:1: 2023-01-13 book" ]
+    [ "${lines[1]}" == "642176a6.md:1: 2023-01-22 lorem ipsum" ]
+    [ "${lines[2]}" == "64217712.md:1: 2023-01-24 empty note" ]
+    [ "${lines[3]}" == "64214a1d.md:1: 2023-01-16 richard feynman" ]
+    [ "${lines[4]}" == "642146c7.md:1: 2023-01-24 physicist" ]
+    [ "${lines[5]}" == "64218087.md:1: 2023-01-18 surely you're joking mr. feynman" ]
+    [ "${lines[6]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
+    [ "${lines[7]}" == "64214930.md:1: 2023-01-22 quantum mechanics" ]
 }
 
 @test "list: prefix mtime and sort by title" {
     run notesium.sh list --prefix=mtime --sort=title
     echo "$output"
-    [ "${lines[0]}" == "b0457228.md:1: 2023-01-25 albert einstein" ]
-    [ "${lines[1]}" == "0c8bea98.md:1: 2023-01-13 book" ]
-    [ "${lines[2]}" == "3ec9906f.md:1: 2023-01-24 empty note" ]
-    [ "${lines[3]}" == "26f89821.md:1: 2023-01-22 lorem ipsum" ]
-    [ "${lines[4]}" == "572878f1.md:1: 2023-01-24 physicist" ]
-    [ "${lines[5]}" == "ce5f6bd5.md:1: 2023-01-22 quantum mechanics" ]
-    [ "${lines[6]}" == "406c52f1.md:1: 2023-01-16 richard feynman" ]
-    [ "${lines[7]}" == "5c13e273.md:1: 2023-01-18 surely you're joking mr. feynman" ]
+    [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
+    [ "${lines[1]}" == "6421460b.md:1: 2023-01-13 book" ]
+    [ "${lines[2]}" == "64217712.md:1: 2023-01-24 empty note" ]
+    [ "${lines[3]}" == "642176a6.md:1: 2023-01-22 lorem ipsum" ]
+    [ "${lines[4]}" == "642146c7.md:1: 2023-01-24 physicist" ]
+    [ "${lines[5]}" == "64214930.md:1: 2023-01-22 quantum mechanics" ]
+    [ "${lines[6]}" == "64214a1d.md:1: 2023-01-16 richard feynman" ]
+    [ "${lines[7]}" == "64218087.md:1: 2023-01-18 surely you're joking mr. feynman" ]
 }
 
 @test "list: prefix mtime and sort by mtime" {
     run notesium.sh list --prefix=mtime --sort=mtime
     echo "$output"
-    [ "${lines[0]}" == "b0457228.md:1: 2023-01-25 albert einstein" ]
-    [ "${lines[1]}" == "3ec9906f.md:1: 2023-01-24 empty note" ]
-    [ "${lines[2]}" == "572878f1.md:1: 2023-01-24 physicist" ]
-    [ "${lines[3]}" == "26f89821.md:1: 2023-01-22 lorem ipsum" ]
-    [ "${lines[4]}" == "ce5f6bd5.md:1: 2023-01-22 quantum mechanics" ]
-    [ "${lines[5]}" == "5c13e273.md:1: 2023-01-18 surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "406c52f1.md:1: 2023-01-16 richard feynman" ]
-    [ "${lines[7]}" == "0c8bea98.md:1: 2023-01-13 book" ]
+    [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
+    [ "${lines[1]}" == "64217712.md:1: 2023-01-24 empty note" ]
+    [ "${lines[2]}" == "642146c7.md:1: 2023-01-24 physicist" ]
+    [ "${lines[3]}" == "642176a6.md:1: 2023-01-22 lorem ipsum" ]
+    [ "${lines[4]}" == "64214930.md:1: 2023-01-22 quantum mechanics" ]
+    [ "${lines[5]}" == "64218087.md:1: 2023-01-18 surely you're joking mr. feynman" ]
+    [ "${lines[6]}" == "64214a1d.md:1: 2023-01-16 richard feynman" ]
+    [ "${lines[7]}" == "6421460b.md:1: 2023-01-13 book" ]
 }
 
 @test "list: match" {
     run notesium.sh list --match="quantum"
     echo "$output"
-    [ "${lines[0]}" == "406c52f1.md:5: richard feynman" ]
-    [ "${lines[1]}" == "b0457228.md:7: albert einstein" ]
-    [ "${lines[2]}" == "ce5f6bd5.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "64214a1d.md:5: richard feynman" ]
+    [ "${lines[1]}" == "64218088.md:7: albert einstein" ]
+    [ "${lines[2]}" == "64214930.md:1: quantum mechanics" ]
 }
 
 @test "list: match and sort by title" {
     run notesium.sh list --match="quantum" --sort=title
     echo "$output"
-    [ "${lines[0]}" == "b0457228.md:7: albert einstein" ]
-    [ "${lines[1]}" == "ce5f6bd5.md:1: quantum mechanics" ]
-    [ "${lines[2]}" == "406c52f1.md:5: richard feynman" ]
+    [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
+    [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[2]}" == "64214a1d.md:5: richard feynman" ]
 }
 
 @test "list: match and sort by mtime" {
     run notesium.sh list --match="quantum" --sort=mtime
     echo "$output"
-    [ "${lines[0]}" == "b0457228.md:7: albert einstein" ]
-    [ "${lines[1]}" == "ce5f6bd5.md:1: quantum mechanics" ]
-    [ "${lines[2]}" == "406c52f1.md:5: richard feynman" ]
+    [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
+    [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[2]}" == "64214a1d.md:5: richard feynman" ]
 }
 
 @test "list: orphans" {
     run notesium.sh list --orphans
     echo "$output"
-    [ "${lines[0]}" == "26f89821.md:1: lorem ipsum" ]
-    [ "${lines[1]}" == "3ec9906f.md:1: empty note" ]
+    [ "${lines[0]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[1]}" == "64217712.md:1: empty note" ]
 }
 
 @test "list: orphans and sort by title" {
     run notesium.sh list --orphans --sort=title
     echo "$output"
-    [ "${lines[0]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[1]}" == "26f89821.md:1: lorem ipsum" ]
+    [ "${lines[0]}" == "64217712.md:1: empty note" ]
+    [ "${lines[1]}" == "642176a6.md:1: lorem ipsum" ]
 }
 
 @test "list: orphans and sort by mtime" {
     run notesium.sh list --orphans --sort=mtime
     echo "$output"
-    [ "${lines[0]}" == "3ec9906f.md:1: empty note" ]
-    [ "${lines[1]}" == "26f89821.md:1: lorem ipsum" ]
+    [ "${lines[0]}" == "64217712.md:1: empty note" ]
+    [ "${lines[1]}" == "642176a6.md:1: lorem ipsum" ]
 }
