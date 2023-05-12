@@ -9,30 +9,30 @@ setup_file() {
     run notesium.sh links
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "b0457228.md:3: albert einstein → physicist" ]
-    [ "${lines[1]}" == "b0457228.md:7: albert einstein → quantum mechanics" ]
-    [ "${lines[2]}" == "406c52f1.md:3: richard feynman → physicist" ]
-    [ "${lines[3]}" == "406c52f1.md:5: richard feynman → quantum mechanics" ]
-    [ "${lines[4]}" == "5c13e273.md:3: surely you're joking mr. feynman → book" ]
-    [ "${lines[5]}" == "5c13e273.md:3: surely you're joking mr. feynman → richard feynman" ]
-    [ "${lines[6]}" == "5c13e273.md:3: surely you're joking mr. feynman → richard feynman" ]
+    [ "${lines[0]}" == "64218088.md:3: albert einstein → physicist" ]
+    [ "${lines[1]}" == "64218088.md:7: albert einstein → quantum mechanics" ]
+    [ "${lines[2]}" == "64214a1d.md:3: richard feynman → physicist" ]
+    [ "${lines[3]}" == "64214a1d.md:5: richard feynman → quantum mechanics" ]
+    [ "${lines[4]}" == "64218087.md:3: surely you're joking mr. feynman → book" ]
+    [ "${lines[5]}" == "64218087.md:3: surely you're joking mr. feynman → richard feynman" ]
+    [ "${lines[6]}" == "64218087.md:3: surely you're joking mr. feynman → richard feynman" ]
 }
 
 @test "links: default with filename" {
-    run notesium.sh links 406c52f1.md
+    run notesium.sh links 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "572878f1.md:1: outgoing physicist" ]
-    [ "${lines[1]}" == "ce5f6bd5.md:1: outgoing quantum mechanics" ]
-    [ "${lines[2]}" == "5c13e273.md:3: incoming surely you're joking mr. feynman" ]
+    [ "${lines[0]}" == "642146c7.md:1: outgoing physicist" ]
+    [ "${lines[1]}" == "64214930.md:1: outgoing quantum mechanics" ]
+    [ "${lines[2]}" == "64218087.md:3: incoming surely you're joking mr. feynman" ]
 }
 
 @test "links: outgoing with filename" {
-    run notesium.sh links --outgoing 406c52f1.md
+    run notesium.sh links --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "572878f1.md:1: physicist" ]
-    [ "${lines[1]}" == "ce5f6bd5.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
 }
 
 @test "links: outgoing without filename" {
@@ -43,11 +43,11 @@ setup_file() {
 }
 
 @test "links: incoming with filename" {
-    run notesium.sh links --incoming 572878f1.md
+    run notesium.sh links --incoming 642146c7.md
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "b0457228.md:3: albert einstein" ]
-    [ "${lines[1]}" == "406c52f1.md:3: richard feynman" ]
+    [ "${lines[0]}" == "64218088.md:3: albert einstein" ]
+    [ "${lines[1]}" == "64214a1d.md:3: richard feynman" ]
 }
 
 @test "links: incoming without filename" {
@@ -57,12 +57,12 @@ setup_file() {
 }
 
 @test "links: incoming and outgoing with filename" {
-    run notesium.sh links --incoming --outgoing 406c52f1.md
+    run notesium.sh links --incoming --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "572878f1.md:1: outgoing physicist" ]
-    [ "${lines[1]}" == "ce5f6bd5.md:1: outgoing quantum mechanics" ]
-    [ "${lines[2]}" == "5c13e273.md:3: incoming surely you're joking mr. feynman" ]
+    [ "${lines[0]}" == "642146c7.md:1: outgoing physicist" ]
+    [ "${lines[1]}" == "64214930.md:1: outgoing quantum mechanics" ]
+    [ "${lines[2]}" == "64218087.md:3: incoming surely you're joking mr. feynman" ]
 }
 
 @test "links: incoming and outgoing without filename" {
@@ -73,7 +73,7 @@ setup_file() {
 }
 
 @test "links: dangling with filename" {
-    run notesium.sh links --dangling 5c13e273.md
+    run notesium.sh links --dangling 64218087.md
     echo "$output"
     [ $status -eq 1 ]
     [ "${lines[0]}" == "Fatal: dangling filename not supported" ]
@@ -83,5 +83,5 @@ setup_file() {
     run notesium.sh links --dangling
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "5c13e273.md:3: surely you're joking mr. feynman → 12345678.md" ]
+    [ "${lines[0]}" == "64218087.md:3: surely you're joking mr. feynman → 12345678.md" ]
 }
