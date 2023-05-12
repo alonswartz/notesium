@@ -34,13 +34,13 @@ teardown_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: book" ]
-    [ "${lines[1]}" == "642176a6.md:1: lorem ipsum" ]
-    [ "${lines[2]}" == "64217712.md:1: empty note" ]
+    [ "${lines[1]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[2]}" == "64214930.md:1: quantum mechanics" ]
     [ "${lines[3]}" == "64214a1d.md:1: richard feynman" ]
-    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
-    [ "${lines[5]}" == "64218087.md:1: surely you're joking mr. feynman" ]
-    [ "${lines[6]}" == "64218088.md:1: albert einstein" ]
-    [ "${lines[7]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[4]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[5]}" == "64217712.md:1: empty note" ]
+    [ "${lines[6]}" == "64218087.md:1: surely you're joking mr. feynman" ]
+    [ "${lines[7]}" == "64218088.md:1: albert einstein" ]
 }
 
 @test "list: sort by title" {
@@ -102,10 +102,10 @@ teardown_file() {
     [ "${lines[1]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
     [ "${lines[2]}" == "64218088.md:1: physicist albert einstein" ]
     [ "${lines[3]}" == "6421460b.md:1: book" ]
-    [ "${lines[4]}" == "642176a6.md:1: lorem ipsum" ]
-    [ "${lines[5]}" == "64217712.md:1: empty note" ]
-    [ "${lines[6]}" == "642146c7.md:1: physicist" ]
-    [ "${lines[7]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[5]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[6]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[7]}" == "64217712.md:1: empty note" ]
 }
 
 @test "list: prefix label and sort by title" {
@@ -176,9 +176,9 @@ teardown_file() {
 @test "list: match" {
     run notesium.sh list --match="quantum"
     echo "$output"
-    [ "${lines[0]}" == "64214a1d.md:5: richard feynman" ]
-    [ "${lines[1]}" == "64218088.md:7: albert einstein" ]
-    [ "${lines[2]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[0]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[1]}" == "64214a1d.md:5: richard feynman" ]
+    [ "${lines[2]}" == "64218088.md:7: albert einstein" ]
 }
 
 @test "list: match and sort by title" {
