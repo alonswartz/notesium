@@ -15,8 +15,8 @@ Commands:
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without outgoing or incoming links
     --match=PATTERN Limit list to notes where pattern appears
-    --sort=WORD     Sort list alphabetically or date (alpha|mtime|ctime)
-    --prefix=WORD   Include linked labels or modification date (mtime|label)
+    --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
+    --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
     --outgoing      Limit list to outgoing links related to filename
@@ -24,7 +24,7 @@ Commands:
     --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
-    --prefix=title  Include note title as prefix of each line
+    --prefix=title  Prefix each line with note title
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
@@ -49,6 +49,14 @@ _list_prefix_mtime() {
         awk -v C="$Color" -v R="$Reset" '
             {getline title < $8; close($8)}
             {print $8 ":1:", C $6 R, substr(title,3)}'
+}
+_list_prefix_ctime() {
+    ls $1 *.md | awk -F "." '{printf "@%d\n", "0x" $1}' | \
+        date --file=- "+%s %F" | \
+        awk -v C="$Color" -v R="$Reset" '
+            {filename=sprintf("%x.md", $1)}
+            {getline title < filename; close(filename)}
+            {print filename ":1:", C $2 R, substr(title,3)}'
 }
 _list_prefix_label_awk() {
     awk -F ":" -v C="$Color" -v R="$Reset" '
@@ -160,6 +168,7 @@ notesium_list() {
             --sort=ctime)           Sort="SortCtime";;
             --prefix=label)         Prefix="PrefixLabel";;
             --prefix=mtime)         Prefix="PrefixMtime";;
+            --prefix=ctime)         Prefix="PrefixCtime";;
             --labels)               Limit="LimitLabels";;
             --orphans)              Limit="LimitOrphans";;
             --match=*)              Limit="LimitMatch"; pattern="${1##*=}";;
@@ -180,6 +189,10 @@ notesium_list() {
         ListPrefixMtimeSortAlpha)   _list_prefix_mtime | sort -k3;;
         ListPrefixMtimeSortMtime)   _list_prefix_mtime -t;;
         ListPrefixMtimeSortCtime)   _list_prefix_mtime -r;;
+        ListPrefixCtime)            _list_prefix_ctime;;
+        ListPrefixCtimeSortAlpha)   _list_prefix_ctime | sort -k3;;
+        ListPrefixCtimeSortMtime)   _list_prefix_ctime -t;;
+        ListPrefixCtimeSortCtime)   _list_prefix_ctime -r;;
         ListLimitLabels)            _list_labels *.md;;
         ListLimitLabelsSortAlpha)   _list_labels *.md | sort -k2;;
         ListLimitLabelsSortMtime)   _list_labels $(ls -t *.md);;
