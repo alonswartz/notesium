@@ -222,6 +222,12 @@ teardown_file() {
     [ "${lines[7]}" == "6421460b.md:1: 2023-01-13 book" ]
 }
 
+@test "list: prefix mtime with custom date format" {
+    run notesium.sh list --prefix=mtime --date=%Y/Week%U
+    echo "$output"
+    [ "${lines[0]}" == "6421460b.md:1: 2023/Week02 book" ]
+}
+
 @test "list: prefix ctime" {
     run notesium.sh list --prefix=ctime
     echo "$output"
@@ -272,6 +278,12 @@ teardown_file() {
     [ "${lines[5]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
     [ "${lines[6]}" == "642146c7.md:1: 2023-03-27 physicist" ]
     [ "${lines[7]}" == "6421460b.md:1: 2023-03-27 book" ]
+}
+
+@test "list: prefix ctime with custom date format" {
+    run notesium.sh list --prefix=ctime --date=%Y/Week%U
+    echo "$output"
+    [ "${lines[0]}" == "6421460b.md:1: 2023/Week13 book" ]
 }
 
 @test "list: match" {
