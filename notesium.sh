@@ -15,7 +15,7 @@ Commands:
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without outgoing or incoming links
     --match=PATTERN Limit list to notes where pattern appears
-    --sort=WORD     Sort list by title or date (title|mtime|ctime)
+    --sort=WORD     Sort list alphabetically or date (alpha|mtime|ctime)
     --prefix=WORD   Include linked labels or modification date (mtime|label)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
@@ -155,7 +155,7 @@ notesium_list() {
     while [ "$1" != "" ]; do
         case $1 in
             --color)                Color="\033[0;36m"; Reset="\033[0m";;
-            --sort=title)           Sort="SortTitle";;
+            --sort=alpha)           Sort="SortAlpha";;
             --sort=mtime)           Sort="SortMtime";;
             --sort=ctime)           Sort="SortCtime";;
             --prefix=label)         Prefix="PrefixLabel";;
@@ -169,27 +169,27 @@ notesium_list() {
     done
     case List${Limit}${Prefix}${Sort} in
         List)                       _list *.md;;
-        ListSortTitle)              _list *.md | sort -k2;;
+        ListSortAlpha)              _list *.md | sort -k2;;
         ListSortMtime)              _list $(ls -t *.md);;
         ListSortCtime)              _list $(ls -r *.md);;
         ListPrefixLabel)            _list_prefix_label *.md;;
-        ListPrefixLabelSortTitle)   _list_prefix_label_sort *.md;;
+        ListPrefixLabelSortAlpha)   _list_prefix_label_sort *.md;;
         ListPrefixLabelSortMtime)   _list_prefix_label $(ls -t *.md);;
         ListPrefixLabelSortCtime)   _list_prefix_label $(ls -r *.md);;
         ListPrefixMtime)            _list_prefix_mtime;;
-        ListPrefixMtimeSortTitle)   _list_prefix_mtime | sort -k3;;
+        ListPrefixMtimeSortAlpha)   _list_prefix_mtime | sort -k3;;
         ListPrefixMtimeSortMtime)   _list_prefix_mtime -t;;
         ListPrefixMtimeSortCtime)   _list_prefix_mtime -r;;
         ListLimitLabels)            _list_labels *.md;;
-        ListLimitLabelsSortTitle)   _list_labels *.md | sort -k2;;
+        ListLimitLabelsSortAlpha)   _list_labels *.md | sort -k2;;
         ListLimitLabelsSortMtime)   _list_labels $(ls -t *.md);;
         ListLimitLabelsSortCtime)   _list_labels $(ls -r *.md);;
         ListLimitOrphans)           _list_orphans *.md;;
-        ListLimitOrphansSortTitle)  _list_orphans *.md | sort -k2;;
+        ListLimitOrphansSortAlpha)  _list_orphans *.md | sort -k2;;
         ListLimitOrphansSortMtime)  _list_orphans $(ls -t *.md);;
         ListLimitOrphansSortCtime)  _list_orphans $(ls -r *.md);;
         ListLimitMatch)             _list_match "$pattern" *.md;;
-        ListLimitMatchSortTitle)    _list_match "$pattern" *.md | sort -k2;;
+        ListLimitMatchSortAlpha)    _list_match "$pattern" *.md | sort -k2;;
         ListLimitMatchSortMtime)    _list_match "$pattern" $(ls -t *.md);;
         ListLimitMatchSortCtime)    _list_match "$pattern" $(ls -r *.md);;
         *)                          fatal "unsupported option grouping";;

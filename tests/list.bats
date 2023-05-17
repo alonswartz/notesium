@@ -44,8 +44,8 @@ teardown_file() {
     [ "${lines[7]}" == "64218088.md:1: albert einstein" ]
 }
 
-@test "list: sort by title" {
-    run notesium.sh list --sort=title
+@test "list: sort alphabetically" {
+    run notesium.sh list --sort=alpha
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218088.md:1: albert einstein" ]
@@ -94,8 +94,8 @@ teardown_file() {
     [ "${lines[1]}" == "642146c7.md:1: physicist" ]
 }
 
-@test "list: labels and sort by title" {
-    run notesium.sh list --labels --sort=title
+@test "list: labels and sort alphabetically" {
+    run notesium.sh list --labels --sort=alpha
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: book" ]
@@ -131,8 +131,8 @@ teardown_file() {
     [ "${lines[7]}" == "64217712.md:1: empty note" ]
 }
 
-@test "list: prefix label and sort by title" {
-    run notesium.sh list --prefix=label --sort=title
+@test "list: prefix label and sort alphabetically" {
+    run notesium.sh list --prefix=label --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
     [ "${lines[1]}" == "64218088.md:1: physicist albert einstein" ]
@@ -183,8 +183,8 @@ teardown_file() {
     [ "${lines[7]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
 }
 
-@test "list: prefix mtime and sort by title" {
-    run notesium.sh list --prefix=mtime --sort=title
+@test "list: prefix mtime and sort alphabetically" {
+    run notesium.sh list --prefix=mtime --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
     [ "${lines[1]}" == "6421460b.md:1: 2023-01-13 book" ]
@@ -230,8 +230,8 @@ teardown_file() {
     [ "${lines[2]}" == "64218088.md:7: albert einstein" ]
 }
 
-@test "list: match and sort by title" {
-    run notesium.sh list --match="quantum" --sort=title
+@test "list: match and sort alphabetically" {
+    run notesium.sh list --match="quantum" --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
     [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
@@ -261,8 +261,8 @@ teardown_file() {
     [ "${lines[1]}" == "64217712.md:1: empty note" ]
 }
 
-@test "list: orphans and sort by title" {
-    run notesium.sh list --orphans --sort=title
+@test "list: orphans and sort alphabetically" {
+    run notesium.sh list --orphans --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
     [ "${lines[1]}" == "642176a6.md:1: lorem ipsum" ]
