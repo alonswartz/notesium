@@ -17,6 +17,7 @@ Commands:
     --match=PATTERN Limit list to notes where pattern appears
     --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
+    --date=FORMAT   Date format for ctime/mtime prefix (default: %F)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
     --outgoing      Limit list to outgoing links related to filename
@@ -45,14 +46,14 @@ _list() {
     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' "$@"
 }
 _list_prefix_mtime() {
-    ls -l $1 --time-style=long-iso *.md | \
+    ls -l $1 --time-style="+$DateFmt" *.md | \
         awk -v C="$Color" -v R="$Reset" '
-            {getline title < $8; close($8)}
-            {print $8 ":1:", C $6 R, substr(title,3)}'
+            {getline title < $7; close($7)}
+            {print $7 ":1:", C $6 R, substr(title,3)}'
 }
 _list_prefix_ctime() {
     ls $1 *.md | awk -F "." '{printf "@%d\n", "0x" $1}' | \
-        date --file=- "+%s %F" | \
+        date --file=- "+%s $DateFmt" | \
         awk -v C="$Color" -v R="$Reset" '
             {filename=sprintf("%x.md", $1)}
             {getline title < filename; close(filename)}
@@ -160,6 +161,7 @@ notesium_new() {
 }
 
 notesium_list() {
+    DateFmt="%F"
     while [ "$1" != "" ]; do
         case $1 in
             --color)                Color="\033[0;36m"; Reset="\033[0m";;
@@ -172,6 +174,7 @@ notesium_list() {
             --labels)               Limit="LimitLabels";;
             --orphans)              Limit="LimitOrphans";;
             --match=*)              Limit="LimitMatch"; pattern="${1##*=}";;
+            --date=*)               DateFmt="${1##*=}";;
             *)                      fatal "unrecognized option: $1";;
         esac
         shift
