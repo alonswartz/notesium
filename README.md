@@ -26,10 +26,10 @@ It aspires and is designed to:
     - [Fzf search syntax](#fzf-search-syntax)
     - [Related Vim settings](#related-vim-settings)
 - [Custom URI protocol](#custom-uri-protocol)
-    - [Example integration](#example-integration)
+    - [Example integration](#example-integration-1)
     - [Handler registration](#handler-registration)
 - [Design assumptions and rationale](#design-assumptions-and-rationale)
-    - [Filenames are 8 random hexidecimal digits](#filenames-are-8-random-hexidecimal-digits)
+    - [Filenames are 8 hexidecimal digits](#filenames-are-8-hexidecimal-digits)
     - [Completely flat directory structure](#completely-flat-directory-structure)
     - [Titles are inferred from the first line](#titles-are-inferred-from-the-first-line)
     - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
@@ -48,8 +48,9 @@ It aspires and is designed to:
 - Structure emerges organically by use of bi-directional links.
 - Creating, listing, previewing and following links is frictionless.
 - List: Display a list of all notes in the entire system.
-- List: Sort the list alphabetically by title or modification time.
-- List: Prefix titles with associated labels or modification date.
+- List: Sort the list alphabetically, by date created or date modified.
+- List: Prefix titles with associated labels, date created or date modified.
+- List: Customizable date format for prefixed date created or date modified.
 - List: Limit the list to label notes (one-word titles).
 - List: Limit the list to orphan notes (no incoming or outgoing links).
 - Links: Quickly search and insert an automatically formatted link.
@@ -133,8 +134,9 @@ Commands:
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without outgoing or incoming links
     --match=PATTERN Limit list to notes where pattern appears
-    --sort=WORD     Sort list by title or modification time (mtime|title)
-    --prefix=WORD   Include linked labels or modification date (mtime|label)
+    --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
+    --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
+    --date=FORMAT   Date format for ctime/mtime prefix (default: %F)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
     --outgoing      Limit list to outgoing links related to filename
@@ -142,7 +144,7 @@ Commands:
     --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
-    --prefix=title  Include note title as prefix of each line
+    --prefix=title  Prefix each line with note title
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
@@ -202,8 +204,9 @@ command! -bang -nargs=* NotesiumSearch
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
-nnoremap <Leader>nl :NotesiumList --prefix=label --sort=title --color<CR>
+nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
+nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=%Y/Week%U<CR>
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
@@ -217,8 +220,9 @@ nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
 | normal | `<Leader>ng`      | Opens browser with graph view
-| normal | `<Leader>nl`      | List with prefixed label, sorted by title
+| normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
+| normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
 | normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
 | normal | `<Leader>nk`      | List all links related to this note
 | normal | `<Leader>ns`      | Full text search
@@ -292,7 +296,7 @@ editing - in a new urxvt terminal window and neovim instance.
 
 ```bash
 xdg-open notesium:///home/user/notes
-xdg-open notesium:///home/user/notes/7f1c52df.md
+xdg-open notesium:///home/user/notes/625d563f.md
 ```
 
 Opening the listing is useful when integrated with a launcher or desktop
@@ -322,27 +326,13 @@ NoDisplay=true
 
 ## Design assumptions and rationale
 
-### Filenames are 8 random hexidecimal digits
+### Filenames are 8 hexidecimal digits
 
 > There are only two hard things in Computer Science: cache invalidation
 > and naming things. ~ Phil Karlton
 
-Naming is hard. Should a convention be used? If so, which should be
-used? Should it include metadata? Should it set an expectation? Should
-it be consistent or free form? Should it be meaningful or random. How
-long should it be. What about collisions?
-
-With regards to notes, common conventions are to use the current date,
-or note title, or both in concatenated form.
-
-- **Dates**: The current date seems only meaningful in a journal type
-  scenario. In others, it just results in long filenames and doesn't add
-  much or any value. Additionally, if importing old content into the
-  note system what date should be used? The date the content was
-  originally written, when it was last updated, or when it was imported?
-  In situations where the date created or modified is useful, they can
-  be gleaned from the filesystem and/or a revision control system such
-  as git.
+Naming is hard. With regards to notes, common conventions are to use the
+current date, or note title, or both in concatenated form.
 
 - **Titles**: Considering notes evolve, it is likely not to be certain
   exactly what the note will encompass. And even if it is, having to
@@ -351,18 +341,15 @@ or note title, or both in concatenated form.
   accounted for. If a better title is thought of later, or the context
   of the note changes, renaming the file would break existing links.
 
-Given the above, the ideal would be for the filename to not matter at
-all, instead opting for something short, random and unique.
+- **Dates**: The current timestamp seems like a good choice, but depending
+  on the format used, it could result in overly long filenames, especially
+  considering the uniqueness requirement. Additionally, timezones and
+  daylight saving could result in collisions and interfere with sorting.
 
-Notesium assumes filenames are made up of 8 random hexidecimal digits,
-with the `.md` extension, for example: `7f1c52df.md`. Given there are 16
-hexidecimal digits (0-9, a-f), the total number of permutations is
-`16^8`, resulting in over 4.2 billon unique filenames.
-
-```python
->>> print "{:,}".format(len('0123456789abcdef') ** 8)
-4,294,967,296
-```
+Notesium addresses this by using the UNIX epoch time, and further
+encoding it in hexidecimal, resulting in 8 characters for the identifier
+(e.g., `625d563f.md`). This can later be easily decoded and formatted
+depending on the use case.
 
 The `.md` extension is required so external tools can easily identify
 the filetype for syntax highlighting, as well as limit the processing of
@@ -407,7 +394,7 @@ alphabetically, effectively creating a hierarchical taxonomy listing,
 which can further be filtered and searched.
 
 ```bash
-notesium list --prefix=label --sort=title --color
+notesium list --prefix=label --sort=alpha --color
 ```
 
 ### Links are inline
@@ -417,7 +404,7 @@ organically, and may even help you see unexpected connections which may
 [surprise you](https://notes.andymatuschak.org/z4KZ9973AoHhvM9Pj5Qrds48JXNbMEwVJmVRw).
 
 Notesium assumes note links use the inline markdown syntax, for example:
-`[link text](7f1c52df.md)`. This makes it easier to parse, and simple to
+`[link text](625d563f.md)`. This makes it easier to parse, and simple to
 insert links with a keybinding.
 
 Even though links are short, for an improved reading experience in Vim
@@ -431,8 +418,7 @@ a notes corpus. The tests are dependent on [bats-core](https://github.com/bats-c
 
 Some tests are dependent on the modification datetime of the notes
 (sorting and prefixing), in which case the test suite will duplicate the
-corpus to a temporary directory and modify the `mtime` deterministically
-based on the note hexadecimal ID.
+corpus to a temporary directory and modify the `mtime` deterministically.
 
 These test suites can be paused prior to teardown for manual inspection
 and additional testing by setting the `PAUSE` environmental variable.
