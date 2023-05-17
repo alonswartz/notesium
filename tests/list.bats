@@ -222,6 +222,58 @@ teardown_file() {
     [ "${lines[7]}" == "6421460b.md:1: 2023-01-13 book" ]
 }
 
+@test "list: prefix ctime" {
+    run notesium.sh list --prefix=ctime
+    echo "$output"
+    [ "${lines[0]}" == "6421460b.md:1: 2023-03-27 book" ]
+    [ "${lines[1]}" == "642146c7.md:1: 2023-03-27 physicist" ]
+    [ "${lines[2]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
+    [ "${lines[3]}" == "64214a1d.md:1: 2023-03-27 richard feynman" ]
+    [ "${lines[4]}" == "642176a6.md:1: 2023-03-27 lorem ipsum" ]
+    [ "${lines[5]}" == "64217712.md:1: 2023-03-27 empty note" ]
+    [ "${lines[6]}" == "64218087.md:1: 2023-03-27 surely you're joking mr. feynman" ]
+    [ "${lines[7]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
+}
+
+@test "list: prefix ctime and sort alphabetically" {
+    run notesium.sh list --prefix=ctime --sort=alpha
+    echo "$output"
+    [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
+    [ "${lines[1]}" == "6421460b.md:1: 2023-03-27 book" ]
+    [ "${lines[2]}" == "64217712.md:1: 2023-03-27 empty note" ]
+    [ "${lines[3]}" == "642176a6.md:1: 2023-03-27 lorem ipsum" ]
+    [ "${lines[4]}" == "642146c7.md:1: 2023-03-27 physicist" ]
+    [ "${lines[5]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
+    [ "${lines[6]}" == "64214a1d.md:1: 2023-03-27 richard feynman" ]
+    [ "${lines[7]}" == "64218087.md:1: 2023-03-27 surely you're joking mr. feynman" ]
+}
+
+@test "list: prefix ctime and sort by mtime" {
+    run notesium.sh list --prefix=ctime --sort=mtime
+    echo "$output"
+    [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
+    [ "${lines[1]}" == "64217712.md:1: 2023-03-27 empty note" ]
+    [ "${lines[2]}" == "642146c7.md:1: 2023-03-27 physicist" ]
+    [ "${lines[3]}" == "642176a6.md:1: 2023-03-27 lorem ipsum" ]
+    [ "${lines[4]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
+    [ "${lines[5]}" == "64218087.md:1: 2023-03-27 surely you're joking mr. feynman" ]
+    [ "${lines[6]}" == "64214a1d.md:1: 2023-03-27 richard feynman" ]
+    [ "${lines[7]}" == "6421460b.md:1: 2023-03-27 book" ]
+}
+
+@test "list: prefix ctime and sort by ctime" {
+    run notesium.sh list --prefix=ctime --sort=ctime
+    echo "$output"
+    [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
+    [ "${lines[1]}" == "64218087.md:1: 2023-03-27 surely you're joking mr. feynman" ]
+    [ "${lines[2]}" == "64217712.md:1: 2023-03-27 empty note" ]
+    [ "${lines[3]}" == "642176a6.md:1: 2023-03-27 lorem ipsum" ]
+    [ "${lines[4]}" == "64214a1d.md:1: 2023-03-27 richard feynman" ]
+    [ "${lines[5]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
+    [ "${lines[6]}" == "642146c7.md:1: 2023-03-27 physicist" ]
+    [ "${lines[7]}" == "6421460b.md:1: 2023-03-27 book" ]
+}
+
 @test "list: match" {
     run notesium.sh list --match="quantum"
     echo "$output"
