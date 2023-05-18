@@ -20,11 +20,11 @@ setup_file() {
     command -v shellcheck >/dev/null || skip "not found"
     run _shellcheck_count
     echo "$output"
-    [ "${lines[0]}" == "      1 [SC2012]" ]
-    [ "${lines[1]}" == "     29 [SC2035]" ]
-    [ "${lines[2]}" == "      7 [SC2046]" ]
-    [ "${lines[3]}" == "      7 [SC2068]" ]
-    [ "${lines[4]}" == "      8 [SC2086]" ]
+    [ "${lines[0]}" == "      2 [SC2012]" ]
+    [ "${lines[1]}" == "     35 [SC2035]" ]
+    [ "${lines[2]}" == "     12 [SC2046]" ]
+    [ "${lines[3]}" == "      8 [SC2068]" ]
+    [ "${lines[4]}" == "      9 [SC2086]" ]
     [ "${lines[5]}" == "" ]
 }
 
