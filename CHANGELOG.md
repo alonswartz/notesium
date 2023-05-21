@@ -1,3 +1,11 @@
+## 0.2.1
+
+Added:
+
+- Changelog going back to initial public release.
+- Version command utilizing `git describe`.
+- Readme versioning section.
+
 ## 0.2.0
 
 This version includes **backwards incompatible changes**.
