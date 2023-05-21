@@ -153,6 +153,7 @@ Commands:
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+  version           Print version
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)

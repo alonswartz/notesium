@@ -35,6 +35,20 @@ teardown_file() {
     [ "${lines[0]}" == 'Usage: notesium.sh COMMAND [OPTIONS]' ]
 }
 
+@test "cli: version command sniff test" {
+    run notesium.sh -v
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run notesium.sh --version
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run notesium.sh version
+    echo "$output"
+    [ $status -eq 0 ]
+}
+
 @test "cli: non-existent command fatal error" {
     run notesium.sh non-existent
     echo "$output"
