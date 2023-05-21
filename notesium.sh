@@ -33,6 +33,7 @@ Commands:
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+  version           Print version
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: \$HOME/notes)
@@ -41,6 +42,20 @@ EOF
 exit 1
 }
 
+version() {
+    command -v git >/dev/null || fatal "git not installed"
+    GIT_DIR="$(dirname "$(realpath "$0")")/.git"
+    [ -d "$GIT_DIR" ] || fatal "$GIT_DIR does not exist"
+    export GIT_DIR
+    if git describe > /dev/null 2>&1; then
+        git describe | sed 's/^v//; s/-/+/'
+    else
+        count="$(git rev-list HEAD --count --)"
+        commit="$(git describe --always --abbrev=8 --)"
+        echo "0.0.0+${count}-g${commit}"
+    fi
+    exit 0
+}
 
 _list() {
     awk 'FNR==1{print FILENAME ":1:", substr($0,3)}' "$@"
@@ -308,7 +323,10 @@ notesium_graph() {
 }
 
 main() {
-    case $1 in ""|-h|--help|help) usage;; esac
+    case $1 in
+        ""|-h|--help|help)          usage;;
+        -v|--version|version)       version;;
+    esac
 
     NOTESIUM_DIR="${NOTESIUM_DIR:=$HOME/notes}"
     NOTESIUM_DIR="$(realpath "$NOTESIUM_DIR")"
