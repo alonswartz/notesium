@@ -34,6 +34,7 @@ It aspires and is designed to:
     - [Titles are inferred from the first line](#titles-are-inferred-from-the-first-line)
     - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
     - [Links are inline](#links-are-inline)
+- [Versioning](#versioning)
 - [Regression tests](#regression-tests)
 - [Inspiration and thanks](#inspiration-and-thanks)
 - [License](#license)
@@ -415,6 +416,12 @@ insert links with a keybinding.
 
 Even though links are short, for an improved reading experience in Vim
 consider enabling `conceallevel` (see [Related Vim settings](#related-vim-settings)).
+
+## Versioning
+
+Versions are specified using git tags, based on [semantic versioning](https://semver.org),
+and use the format **MAJOR.MINOR.PATCH**. While the MAJOR version is 0,
+MINOR version bumps are considered MAJOR bumps per the semver spec.
 
 ## Regression tests
 
