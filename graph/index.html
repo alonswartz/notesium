@@ -74,9 +74,21 @@
             </div>
           </li>
           <li class="flex items-center justify-between py-3">
-            <span>creation date</span>
+            <span>creation day</span>
             <div class="flex h-5 items-center">
-              <input name="cluster" type="radio" onchange="clusterDates()" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+              <input name="cluster" type="radio" onchange="clusterDates(format='YYYY-MM-DD')" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
+          </li>
+          <li class="flex items-center justify-between py-3">
+            <span>creation week</span>
+            <div class="flex h-5 items-center">
+              <input name="cluster" type="radio" onchange="clusterDates(format='YYYY/WeekXX')" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
+          </li>
+          <li class="flex items-center justify-between py-3">
+            <span>creation month</span>
+            <div class="flex h-5 items-center">
+              <input name="cluster" type="radio" onchange="clusterDates(format='YYYY-MM')" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
             </div>
           </li>
         </ul>
@@ -124,7 +136,7 @@
         initialize_forcegraph(originalData, '#forcegraph');
       }
 
-      function clusterDates() {
+      function clusterDates(format="YYYY-MM-DD") {
         const data = {
           "href": originalData.href,
           "nodes": [ ...originalData.nodes ],
@@ -136,9 +148,21 @@
           let epoch = parseInt(node.id.slice(0, -3), 16);
           let dateTime = new Date(epoch * 1000);
           let year = dateTime.getFullYear();
-          let month = String(dateTime.getMonth() + 1).padStart(2, '0');
-          let day = String(dateTime.getDate()).padStart(2, '0');
-          let formattedDate = `${year}-${month}-${day}`;
+          switch (format) {
+            case 'YYYY-MM-DD':
+              month = String(dateTime.getMonth() + 1).padStart(2, '0');
+              day = String(dateTime.getDate()).padStart(2, '0');
+              formattedDate = `${year}-${month}-${day}`;
+              break;
+            case 'YYYY-MM':
+              month = String(dateTime.getMonth() + 1).padStart(2, '0');
+              formattedDate = `${year}-${month}`;
+              break;
+            case 'YYYY/WeekXX':
+              onejan = new Date(year, 0, 1);
+              week = Math.ceil(((dateTime - onejan) / 86400000 + onejan.getDay() + 1) / 7);
+              formattedDate = `${year}/Week${week}`;
+          }
           clusters.add(formattedDate);
           data.links.push({'source': node.id, 'target': formattedDate});
         })
