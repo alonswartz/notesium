@@ -189,6 +189,15 @@ function initialize_forcegraph(data, graphdiv) {
     simulation.alpha(1).restart();
   });
 
+  // trigger settings consistency upon initialization
+  d3.select('#forcegraph-filter').dispatch("change");
+  d3.select("#forcegraph-dynamic-radius").dispatch("change");
+  d3.select("#forcegraph-labels").dispatch("change");
+  d3.select("#forcegraph-scale-labels").dispatch("change");
+  d3.select("#forcegraph-force-strength").dispatch("change");
+  d3.select("#forcegraph-collide-radius").dispatch("change");
+  d3.select("#forcegraph-collide-strength").dispatch("change");
+
   function drag(simulation) {
     function dragstarted(event, d) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
