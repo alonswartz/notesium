@@ -12,6 +12,7 @@
       #forcegraph { margin: auto; width: 97vw; height: 97vh; }
       #forcegraph .node { fill: #ff7f0e; cursor: pointer; }
       #forcegraph .node-oneword { fill: #1f77b4; }
+      #forcegraph .node-ghost { fill: #a855f7; }
       #forcegraph .node-dangling { fill-opacity: 0.3; }
       #forcegraph .link { stroke-width: 0.5; }
       #forcegraph .label { fill: #475569; font-size: 4px; }
@@ -141,7 +142,7 @@
           clusters.add(formattedDate);
           data.links.push({'source': node.id, 'target': formattedDate});
         })
-        clusters.forEach(c => data.nodes.push({'id': c, 'title': c}));
+        clusters.forEach(c => data.nodes.push({'id': c, 'title': c, 'type': 'ghost'}));
 
         document.getElementById("forcegraph").innerHTML = "";
         initialize_forcegraph(data, '#forcegraph');
@@ -160,7 +161,7 @@
         const nodes = data.nodes.map(n => n.id);
         const targets = data.links.map(l => l.target);
         const dangling = targets.filter(id => !nodes.includes(id));
-        dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
+        dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link', 'type': 'ghost'}));
 
         originalData = data;
         clusterDefault();

@@ -31,17 +31,18 @@ function initialize_forcegraph(data, graphdiv) {
     .classed("node", true)
     .classed("node-oneword", d => (d.title.split(" ").length == 1))
     .classed("node-dangling", d => (d.title === 'dangling link'))
+    .classed("node-ghost", d => (d.type === 'ghost'))
     .call(drag(simulation));
 
   const title = node.append("title")
-    .text(d => d.id + ": " + d.title);
+    .text(d => (d.type === "ghost" ? "ghost: " + d.title : d.id + ": " + d.title));
 
   const label = svg.append("g")
     .selectAll("circle")
     .data(nodes)
     .enter()
     .append('a')
-    .attr("href", node => data.href.replace(/%:t/g, node.id))
+    .attr("href", node => (node.type === 'ghost' ? 'javascript: void(0)' : data.href.replace(/%:t/g, node.id)))
     .append("text")
     .classed("label", true)
     .attr("alignment-baseline", "middle")
@@ -107,7 +108,8 @@ function initialize_forcegraph(data, graphdiv) {
     resultsDom.html("");
     resultsSorted.forEach(n => {
       var title = n.title.replace(searchExp, '<b>$1</b>');
-      resultsDom.append("li").append("a").attr("href", data.href.replace(/%:t/g, n.id)).html(title)
+      var href = n.type === 'ghost' ? 'javascript: void(0)' : data.href.replace(/%:t/g, n.id);
+      resultsDom.append("li").append("a").attr("href", href).html(title)
     });
   }
 
