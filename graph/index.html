@@ -74,6 +74,12 @@
             </div>
           </li>
           <li class="flex items-center justify-between py-3">
+            <span>infer from titles</span>
+            <div class="flex h-5 items-center">
+              <input name="cluster" type="radio" onchange="clusterTitles()" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
+          </li>
+          <li class="flex items-center justify-between py-3">
             <span>creation day</span>
             <div class="flex h-5 items-center">
               <input name="cluster" type="radio" onchange="clusterDates(format='YYYY-MM-DD')" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
@@ -134,6 +140,26 @@
       function clusterDefault() {
         document.getElementById("forcegraph").innerHTML = "";
         initialize_forcegraph(originalData, '#forcegraph');
+      }
+
+      function clusterTitles() {
+        const data = {
+          "href": originalData.href,
+          "nodes": [ ...originalData.nodes ],
+          "links": []
+        };
+        const clusters = new Set();
+        data.nodes.forEach(node => {
+            const match = node.title.match(/^(\w+):/);
+            if (match) {
+              clusters.add(match[1]);
+              data.links.push({'source': node.id, 'target': match[1]});
+            }
+        });
+        clusters.forEach(c => data.nodes.push({'id': c, 'title': c, 'type': 'ghost'}));
+
+        document.getElementById("forcegraph").innerHTML = "";
+        initialize_forcegraph(data, '#forcegraph');
       }
 
       function clusterDates(format="YYYY-MM-DD") {
