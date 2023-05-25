@@ -64,6 +64,22 @@
           </li>
         </ul>
 
+        <p class="text-sm text-gray-900 dark:text-slate-200">cluster</p>
+        <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
+          <li class="flex items-center justify-between py-3">
+            <span>default</span>
+            <div class="flex h-5 items-center">
+              <input name="cluster" type="radio" onchange="clusterDefault()" checked class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
+          </li>
+          <li class="flex items-center justify-between py-3">
+            <span>creation date</span>
+            <div class="flex h-5 items-center">
+              <input name="cluster" type="radio" onchange="clusterDates()" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
+          </li>
+        </ul>
+
         <p class="text-sm text-gray-900 dark:text-slate-200">forces</p>
         <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
           <li class="py-3 space-y-1">
@@ -100,6 +116,37 @@
       <div id="forcegraph" class="text-gray-300/70 dark:text-slate-700"></div>
     </div>
     <script type="text/javascript">
+      var originalData = null;
+
+      function clusterDefault() {
+        document.getElementById("forcegraph").innerHTML = "";
+        initialize_forcegraph(originalData, '#forcegraph');
+      }
+
+      function clusterDates() {
+        const data = {
+          "href": originalData.href,
+          "nodes": [ ...originalData.nodes ],
+          "links": []
+        };
+
+        const clusters = new Set();
+        data.nodes.forEach(node => {
+          let epoch = parseInt(node.id.slice(0, -3), 16);
+          let dateTime = new Date(epoch * 1000);
+          let year = dateTime.getFullYear();
+          let month = String(dateTime.getMonth() + 1).padStart(2, '0');
+          let day = String(dateTime.getDate()).padStart(2, '0');
+          let formattedDate = `${year}-${month}-${day}`;
+          clusters.add(formattedDate);
+          data.links.push({'source': node.id, 'target': formattedDate});
+        })
+        clusters.forEach(c => data.nodes.push({'id': c, 'title': c}));
+
+        document.getElementById("forcegraph").innerHTML = "";
+        initialize_forcegraph(data, '#forcegraph');
+      }
+
       function loadData(dataStr) {
         const dataArr = dataStr.split("-----\n");
 
@@ -115,7 +162,8 @@
         const dangling = targets.filter(id => !nodes.includes(id));
         dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link'}));
 
-        initialize_forcegraph(data, '#forcegraph');
+        originalData = data;
+        clusterDefault();
       }
 
       function loadFile() {
