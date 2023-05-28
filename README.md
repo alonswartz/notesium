@@ -66,6 +66,7 @@ It aspires and is designed to:
 - Graph: Customizable node link format for opening notes.
 - Graph: Dynamic node size relative to bi-directional link count.
 - Graph: Emphasize nodes and their links using search filter or node click.
+- Graph: Cluster nodes per links, inferred from titles, or creation date.
 - Graph: Tweak forces such as repel force, collide radius and strength.
 - Graph: Drag, pan or zoom the graph for a better view or focus.
 - Graph: Customize labels visibility or automatically scaled per zoom level.
