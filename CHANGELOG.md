@@ -1,3 +1,16 @@
+## 0.2.2
+
+Added:
+
+- Graph clustering support by creation date (day, week, month).
+- Graph clustering support inferred from titles.
+- Graph settings persistence when changing clustering method.
+- Graph settings sections collapse/expand.
+
+Fixed:
+
+- Graph dangling links set as type ghost, void href links.
+
 ## 0.2.1
 
 Added:
