@@ -37,8 +37,13 @@
             </div>
         </div>
 
-        <p class="text-sm text-gray-900 dark:text-slate-200">display</p>
-        <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
+        <div onclick="toggleDiv('#settings-display')" class="flex items-center justify-between py-1 cursor-pointer">
+          <p class="text-sm text-gray-900 dark:text-slate-200">display</p>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <ul id="settings-display" hidden="true" role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
           <li class="flex items-center justify-between py-3">
             <span>dark mode</span>
             <div class="flex h-5 items-center">
@@ -65,8 +70,13 @@
           </li>
         </ul>
 
-        <p class="text-sm text-gray-900 dark:text-slate-200">cluster</p>
-        <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
+        <div onclick="toggleDiv('#settings-cluster')" class="flex items-center justify-between py-1 cursor-pointer">
+          <p class="text-sm text-gray-900 dark:text-slate-200">cluster</p>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <ul id="settings-cluster" hidden="true" role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
           <li class="flex items-center justify-between py-3">
             <span>default</span>
             <div class="flex h-5 items-center">
@@ -99,8 +109,13 @@
           </li>
         </ul>
 
-        <p class="text-sm text-gray-900 dark:text-slate-200">forces</p>
-        <ul role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
+        <div onclick="toggleDiv('#settings-forces')" class="flex items-center justify-between py-1 cursor-pointer">
+          <p class="text-sm text-gray-900 dark:text-slate-200">forces</p>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <ul id="settings-forces" hidden="true" role="list" class="my-4 divide-y divide-gray-200 dark:divide-slate-600">
           <li class="py-3 space-y-1">
             <div class="flex items-center justify-between">
               <span>repel force</span>
@@ -232,6 +247,13 @@
         loadData(atob(dataB64));
       } else {
         d3.select("#fileloader").classed("hidden", false);
+      }
+
+      // toggle settings section
+      function toggleDiv(settingsDiv) {
+        d3.select(settingsDiv).attr("hidden", function() {
+          return this.hasAttribute("hidden") ? null : true;
+        });
       }
 
       // toggle darkmode
