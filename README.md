@@ -184,7 +184,7 @@ let $NOTESIUM_DIR = trim(system("notesium home"))
 
 autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
   \ 'source': 'notesium list --sort=mtime',
-  \ 'options': '-d : --with-nth 3.. --prompt "NotesiumInsertLink> "',
+  \ 'options': '+s -d : --with-nth 3.. --prompt "NotesiumInsertLink> "',
   \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
   \ 'window': {'width': 0.5, 'height': 0.5}})
 
