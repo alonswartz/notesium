@@ -42,35 +42,41 @@ It aspires and is designed to:
 ## Features
 
 - Blazingly fast and powerful fuzzy search (fzf).
-- Preview notes and links, line highlight where relevant (bat).
-- Explore notes, their links and clusters with the force graph view (D3.js).
-- No need to think what to name the file, or which folder to save it in.
+- Preview notes and links, with line highlighting where relevant (bat).
+- Explore notes, their links, and clusters with the force graph view (D3.js).
+- No need to think about file names or folder locations.
 - Instantly create a new note with a keybinding.
-- Structure emerges organically by use of bi-directional links.
-- Creating, listing, previewing and following links is frictionless.
-- List: Display a list of all notes in the entire system.
-- List: Sort the list alphabetically, by date created or date modified.
-- List: Prefix titles with associated labels, date created or date modified.
-- List: Customizable date format for prefixed date created or date modified.
-- List: Limit the list to label notes (one-word titles).
-- List: Limit the list to orphan notes (no incoming or outgoing links).
-- Links: Quickly search and insert an automatically formatted link.
-- Links: Display a list of all links in the entire system.
-- Links: Display a list of all related links to the current note.
-- Links: Limit the list to incoming links to the current note.
-- Links: Limit the list to outgoing links from the current note.
-- Links: Display a list of broken links and jump there instantly.
-- Lines: Full text search across all notes in the entire system.
-- Stats: Counts of notes, labels, orphans, links, lines, words, etc.
-- Graph: Generate raw data or encoded url for browsing the graph.
-- Graph: Customizable node link format for opening notes.
-- Graph: Dynamic node size relative to bi-directional link count.
-- Graph: Emphasize nodes and their links using search filter or node click.
-- Graph: Cluster nodes per links, inferred from titles, or creation date.
-- Graph: Tweak forces such as repel force, collide radius and strength.
-- Graph: Drag, pan or zoom the graph for a better view or focus.
-- Graph: Customize labels visibility or automatically scaled per zoom level.
+- Structure emerges organically through bi-directional links.
+- Frictionless creation, listing, previewing, and following of links.
 - No caching or preprocessing: Everything is computed on the fly.
+- **List**
+    - Display a list of all notes in the entire system.
+    - Sort the list alphabetically, by date created, or date modified.
+    - Prefix titles with associated labels, date created, or date modified.
+    - Customize date format for prefixed date created or date modified.
+    - Limit the list to label notes (one-word titles).
+    - Limit the list to orphan notes (no incoming or outgoing links).
+- **Links**
+    - Quickly search and insert an automatically formatted link.
+    - Display a list of all links in the entire system.
+    - Display a list of all related links to the current note.
+    - Limit the list to incoming links to the current note.
+    - Limit the list to outgoing links from the current note.
+    - Display a list of broken links and jump there instantly.
+- **Lines**
+    - Perform a full text search across all notes in the entire system.
+    - Optionally prefix each line with the note title for context.
+- **Stats**
+    - View counts of notes, labels, orphans, links, lines, words, etc.
+- **Graph**
+    - Generate raw data or encoded URL for browsing the graph.
+    - Customize node link format for opening notes.
+    - Adjust node size dynamically based on bi-directional link count.
+    - Emphasize nodes and their links using search filter or node click.
+    - Cluster nodes based on links, inferred from titles or creation date.
+    - Tweak forces such as repel force, collide radius, and strength.
+    - Drag, pan, or zoom the graph for a better view or focus.
+    - Customize label visibility or automatically scale per zoom level.
 
 ## Screenshots
 
