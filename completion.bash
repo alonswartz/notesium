@@ -5,7 +5,9 @@ __notesium_cmds() {
 __notesium_opts() {
     notesium help 2>&1 | \
         awk '/^  [a-z]/ {cmd=$1}; /^    --/ {print cmd, $1}' | \
-        awk -v cmd="^$1\ " '$0 ~ cmd {print $2}'
+        awk -v cmd="^$1\ " '$0 ~ cmd {print $2}' | \
+        sed 's/--sort=WORD/--sort=ctime\n--sort=mtime\n--sort=alpha/' | \
+        sed 's/--prefix=WORD/--prefix=ctime\n--prefix=mtime\n--prefix=label/'
 }
 
 __notesium_complete() {
