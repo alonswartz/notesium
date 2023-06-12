@@ -16,6 +16,7 @@ __notesium_complete() {
         2) words="$(__notesium_cmds)";;
         *) words="$(__notesium_opts ${COMP_WORDS[1]})";;
     esac
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//[:=]}
     COMPREPLY=($(compgen -W "$words" -- "${COMP_WORDS[COMP_CWORD]}"))
 }
 
