@@ -16,7 +16,19 @@ __notesium_complete() {
         2) words="$(__notesium_cmds)";;
         *) words="$(__notesium_opts ${COMP_WORDS[1]})";;
     esac
-    COMP_WORDBREAKS=${COMP_WORDBREAKS//[:=]}
+
+    # handle options with equals. COMP_WORDBREAKS is global.
+    _get_comp_words_by_ref -n = cur prev
+    case ${cur} in
+        --prefix=*|--sort=*)
+            prev="${cur%%=*}="
+            cur="${cur#*=}"
+            words="$(echo "$words" | awk -F "=" -v p="^$prev" '$0 ~ p {print $2}')"
+            COMPREPLY=($(compgen -W "$words" -- "${cur}"))
+            return 0
+            ;;
+    esac
+
     COMPREPLY=($(compgen -W "$words" -- "${COMP_WORDS[COMP_CWORD]}"))
 }
 
