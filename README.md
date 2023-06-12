@@ -19,6 +19,7 @@ It aspires and is designed to:
 - [Screenshots](#screenshots)
 - [CLI](#cli)
     - [Installation](#installation)
+    - [Shell completion](#shell-completion)
     - [Usage](#usage)
 - [Vim](#vim)
     - [Example integration](#example-integration)
@@ -126,6 +127,13 @@ basic UNIX utilities. It has only been tested on Linux.
 ```bash
 git clone https://github.com/alonswartz/notesium.git
 ln -s $(pwd)/notesium/notesium.sh $HOME/.local/bin/notesium
+```
+
+### Shell completion
+
+```bash
+# add the following command to $HOME/.bashrc or similar location
+source $(dirname $(realpath notesium))/completion.bash
 ```
 
 ### Usage
