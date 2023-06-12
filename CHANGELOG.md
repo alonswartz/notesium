@@ -1,3 +1,13 @@
+## 0.2.3
+
+Added:
+
+- Bash shell completion for all commands and their options.
+
+Changed:
+
+- Readme link insertion Fzf example includes `+s` to retain user sorting.
+
 ## 0.2.2
 
 Added:
