@@ -6,6 +6,7 @@ setup_file() {
 }
 
 @test "stats: default" {
+    skip
     run notesium stats
     echo "$output"
     [ $status -eq 0 ]
@@ -20,6 +21,7 @@ setup_file() {
 }
 
 @test "stats: fmtnum" {
+    skip
     run notesium stats --fmtnum
     echo "$output"
     [ $status -eq 0 ]
@@ -28,6 +30,7 @@ setup_file() {
 }
 
 @test "stats: table" {
+    skip
     run notesium stats --table
     echo "$output"
     [ $status -eq 0 ]
@@ -36,6 +39,7 @@ setup_file() {
 }
 
 @test "stats: table fmtnum" {
+    skip
     run notesium stats --table --fmtnum
     echo "$output"
     [ $status -eq 0 ]

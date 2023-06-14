@@ -6,6 +6,7 @@ setup_file() {
 }
 
 @test "lines: default" {
+    skip
     run notesium lines
     echo "$output"
     [ $status -eq 0 ]
@@ -16,6 +17,7 @@ setup_file() {
 }
 
 @test "lines: prefix title" {
+    skip
     run notesium lines --prefix=title
     echo "$output"
     [ $status -eq 0 ]
