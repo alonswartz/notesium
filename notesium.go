@@ -14,6 +14,7 @@ import (
 type Note struct {
 	Filename string
 	Title    string
+	IsLabel  bool
 }
 
 var noteCache map[string]*Note
@@ -35,7 +36,11 @@ func main() {
 	case "new":
 		notesiumNew(notesiumDir)
 	case "list":
-		notesiumList(notesiumDir)
+		var limit string
+		if len(os.Args) > 2 && os.Args[2] == "--labels" {
+			limit = "labels"
+		}
+		notesiumList(notesiumDir, limit)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -47,8 +52,18 @@ func notesiumNew(dir string) {
 	fmt.Printf("%s/%s.md\n", dir, epochHex)
 }
 
-func notesiumList(dir string) {
+func notesiumList(dir string, limit string) {
 	populateCache(dir)
+
+	switch limit {
+	case "labels":
+		for _, note := range noteCache {
+			if note.IsLabel {
+				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+			}
+		}
+		return
+	}
 
 	for _, note := range noteCache {
 		fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
@@ -84,12 +99,14 @@ func readNote(dir string, filename string) (*Note, error) {
 	defer file.Close()
 
 	var title string
+	var isLabel bool
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
 		if title == "" {
 			title = strings.TrimPrefix(line, "# ")
+			isLabel = len(strings.Fields(title)) == 1
 			break
 		}
 	}
@@ -101,6 +118,7 @@ func readNote(dir string, filename string) (*Note, error) {
 	note := &Note{
 		Filename: filename,
 		Title:    title,
+		IsLabel:  isLabel,
 	}
 
 	return note, nil
@@ -146,6 +164,7 @@ Commands:
   new               Print path for a new note
   home              Print path to notes directory
   list              Print list of notes
+    --labels        Limit list to only label notes (ie. one word title)
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
