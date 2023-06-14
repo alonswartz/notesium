@@ -66,7 +66,6 @@ teardown_file() {
 }
 
 @test "cli: home error if NOTESIUM_DIR does not exist" {
-    skip
     export NOTESIUM_DIR="/tmp/notesium-test-foo"
     run notesium home
     echo "$output"
@@ -75,7 +74,6 @@ teardown_file() {
 }
 
 @test "cli: home prints default NOTESIUM_DIR if not set" {
-    skip
     [ -e "$HOME/notes" ] || skip "$HOME/notes does not exist"
     unset NOTESIUM_DIR
     run notesium home
@@ -85,7 +83,6 @@ teardown_file() {
 }
 
 @test "cli: home prints NOTESIUM_DIR upon successful verification" {
-    skip
     run notesium home
     echo "$output"
     [ $status -eq 0 ]
