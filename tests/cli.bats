@@ -12,7 +12,6 @@ teardown_file() {
 }
 
 @test "cli: print usage if no arguments specified" {
-    skip
     run notesium
     echo "$output"
     [ $status -eq 1 ]
@@ -53,7 +52,6 @@ teardown_file() {
 }
 
 @test "cli: non-existent command fatal error" {
-    skip
     run notesium non-existent
     echo "$output"
     [ $status -eq 1 ]
