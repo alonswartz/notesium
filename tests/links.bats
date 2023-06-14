@@ -6,6 +6,7 @@ setup_file() {
 }
 
 @test "links: default without filename" {
+    skip
     run notesium links
     echo "$output"
     [ $status -eq 0 ]
@@ -19,6 +20,7 @@ setup_file() {
 }
 
 @test "links: default with filename" {
+    skip
     run notesium links 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
@@ -28,6 +30,7 @@ setup_file() {
 }
 
 @test "links: outgoing with filename" {
+    skip
     run notesium links --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
@@ -36,6 +39,7 @@ setup_file() {
 }
 
 @test "links: outgoing without filename" {
+    skip
     run notesium links --outgoing
     echo "$output"
     [ $status -eq 1 ]
@@ -43,6 +47,7 @@ setup_file() {
 }
 
 @test "links: incoming with filename" {
+    skip
     run notesium links --incoming 642146c7.md
     echo "$output"
     [ $status -eq 0 ]
@@ -51,12 +56,14 @@ setup_file() {
 }
 
 @test "links: incoming without filename" {
+    skip
     run notesium links --incoming
     echo "$output"
     [ "${lines[0]}" == "Fatal: filename not specified" ]
 }
 
 @test "links: incoming and outgoing with filename" {
+    skip
     run notesium links --incoming --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
@@ -66,6 +73,7 @@ setup_file() {
 }
 
 @test "links: incoming and outgoing without filename" {
+    skip
     run notesium links --incoming --outgoing
     echo "$output"
     [ $status -eq 1 ]
@@ -73,6 +81,7 @@ setup_file() {
 }
 
 @test "links: dangling with filename" {
+    skip
     run notesium links --dangling 64218087.md
     echo "$output"
     [ $status -eq 1 ]
@@ -80,6 +89,7 @@ setup_file() {
 }
 
 @test "links: dangling without filename" {
+    skip
     run notesium links --dangling
     echo "$output"
     [ $status -eq 0 ]

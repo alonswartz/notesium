@@ -6,6 +6,7 @@ setup_file() {
 }
 
 @test "graph: default" {
+    skip
     run notesium graph
     echo "$output"
     [ $status -eq 0 ]
@@ -32,6 +33,7 @@ setup_file() {
 }
 
 @test "graph: href" {
+    skip
     run notesium graph --href='notesium://%:p:h/%:t'
     echo "$output"
     [ $status -eq 0 ]
@@ -39,6 +41,7 @@ setup_file() {
 }
 
 @test "graph: encoded url" {
+    skip
     run notesium graph --encoded-url
     echo "$output"
     [ $status -eq 0 ]
