@@ -19,7 +19,6 @@ teardown_file() {
 }
 
 @test "cli: print usage if -h --help help" {
-    skip
     run notesium -h
     echo "$output"
     [ $status -eq 1 ]

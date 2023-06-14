@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
+	helpFlags := map[string]bool{"-h": true, "--help": true, "help": true}
+	if len(os.Args) < 2 || helpFlags[os.Args[1]] {
 		usage()
 	}
 
