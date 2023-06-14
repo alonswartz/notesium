@@ -6,7 +6,7 @@ setup_file() {
 }
 
 @test "lines: default" {
-    run notesium.sh lines
+    run notesium lines
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: # book" ]
@@ -16,7 +16,7 @@ setup_file() {
 }
 
 @test "lines: prefix title" {
-    run notesium.sh lines --prefix=title
+    run notesium lines --prefix=title
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "6421460b.md:1: book # book" ]

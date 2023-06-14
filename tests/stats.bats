@@ -6,7 +6,7 @@ setup_file() {
 }
 
 @test "stats: default" {
-    run notesium.sh stats
+    run notesium stats
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes 8" ]
@@ -20,7 +20,7 @@ setup_file() {
 }
 
 @test "stats: fmtnum" {
-    run notesium.sh stats --fmtnum
+    run notesium stats --fmtnum
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes 8" ]
@@ -28,7 +28,7 @@ setup_file() {
 }
 
 @test "stats: table" {
-    run notesium.sh stats --table
+    run notesium stats --table
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]
@@ -36,7 +36,7 @@ setup_file() {
 }
 
 @test "stats: table fmtnum" {
-    run notesium.sh stats --table --fmtnum
+    run notesium stats --table --fmtnum
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]

@@ -6,7 +6,7 @@ setup_file() {
 }
 
 @test "links: default without filename" {
-    run notesium.sh links
+    run notesium links
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218088.md:3: albert einstein → physicist" ]
@@ -19,7 +19,7 @@ setup_file() {
 }
 
 @test "links: default with filename" {
-    run notesium.sh links 64214a1d.md
+    run notesium links 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "642146c7.md:1: outgoing physicist" ]
@@ -28,7 +28,7 @@ setup_file() {
 }
 
 @test "links: outgoing with filename" {
-    run notesium.sh links --outgoing 64214a1d.md
+    run notesium links --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "642146c7.md:1: physicist" ]
@@ -36,14 +36,14 @@ setup_file() {
 }
 
 @test "links: outgoing without filename" {
-    run notesium.sh links --outgoing
+    run notesium links --outgoing
     echo "$output"
     [ $status -eq 1 ]
     [ "${lines[0]}" == "Fatal: filename not specified" ]
 }
 
 @test "links: incoming with filename" {
-    run notesium.sh links --incoming 642146c7.md
+    run notesium links --incoming 642146c7.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218088.md:3: albert einstein" ]
@@ -51,13 +51,13 @@ setup_file() {
 }
 
 @test "links: incoming without filename" {
-    run notesium.sh links --incoming
+    run notesium links --incoming
     echo "$output"
     [ "${lines[0]}" == "Fatal: filename not specified" ]
 }
 
 @test "links: incoming and outgoing with filename" {
-    run notesium.sh links --incoming --outgoing 64214a1d.md
+    run notesium links --incoming --outgoing 64214a1d.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "642146c7.md:1: outgoing physicist" ]
@@ -66,21 +66,21 @@ setup_file() {
 }
 
 @test "links: incoming and outgoing without filename" {
-    run notesium.sh links --incoming --outgoing
+    run notesium links --incoming --outgoing
     echo "$output"
     [ $status -eq 1 ]
     [ "${lines[0]}" == "Fatal: filename not specified" ]
 }
 
 @test "links: dangling with filename" {
-    run notesium.sh links --dangling 64218087.md
+    run notesium links --dangling 64218087.md
     echo "$output"
     [ $status -eq 1 ]
     [ "${lines[0]}" == "Fatal: dangling filename not supported" ]
 }
 
 @test "links: dangling without filename" {
-    run notesium.sh links --dangling
+    run notesium links --dangling
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218087.md:3: surely you're joking mr. feynman → 12345678.md" ]
