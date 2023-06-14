@@ -6,7 +6,7 @@ setup_file() {
 }
 
 @test "graph: default" {
-    run notesium.sh graph
+    run notesium graph
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "file://$NOTESIUM_DIR/%:t" ]
@@ -32,14 +32,14 @@ setup_file() {
 }
 
 @test "graph: href" {
-    run notesium.sh graph --href='notesium://%:p:h/%:t'
+    run notesium graph --href='notesium://%:p:h/%:t'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notesium://$NOTESIUM_DIR/%:t" ]
 }
 
 @test "graph: encoded url" {
-    run notesium.sh graph --encoded-url
+    run notesium graph --encoded-url
     echo "$output"
     [ $status -eq 0 ]
 }

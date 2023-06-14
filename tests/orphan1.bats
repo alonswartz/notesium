@@ -14,84 +14,84 @@ teardown_file() {
 }
 
 @test "orphan1: list" {
-    run notesium.sh list
+    run notesium list
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
 }
 
 @test "orphan1: list labels" {
-    run notesium.sh list --labels
+    run notesium list --labels
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: list prefix label" {
-    run notesium.sh list --prefix=label
+    run notesium list --prefix=label
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
 }
 
 @test "orphan1: list orphans" {
-    run notesium.sh list --orphans
+    run notesium list --orphans
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '64217712.md:1: empty note' ]
 }
 
 @test "orphan1: list match" {
-    run notesium.sh list --match=foo
+    run notesium list --match=foo
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: links" {
-    run notesium.sh links
+    run notesium links
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: links file" {
-    run notesium.sh links 64217712.md
+    run notesium links 64217712.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: links outgoing" {
-    run notesium.sh links --outgoing 64217712.md
+    run notesium links --outgoing 64217712.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: links incoming" {
-    run notesium.sh links --incoming 64217712.md
+    run notesium links --incoming 64217712.md
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: links dangling" {
-    run notesium.sh links --dangling
+    run notesium links --dangling
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '' ]
 }
 
 @test "orphan1: lines" {
-    run notesium.sh lines
+    run notesium lines
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '64217712.md:1: # empty note' ]
 }
 
 @test "orphan1: lines prefix title" {
-    run notesium.sh lines --prefix=title
+    run notesium lines --prefix=title
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '64217712.md:1: empty note # empty note' ]
