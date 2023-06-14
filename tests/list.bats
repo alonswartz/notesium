@@ -11,6 +11,17 @@ _set_deterministic_mtimes() {
     touch -m -t 202301130505 "/tmp/notesium-test-corpus/6421460b.md"
 }
 
+flunk() {
+  if [[ "$#" -eq 0 ]]; then cat -; else echo "$*"; fi
+  return 1
+}
+
+assert_line() {
+  local line
+  for line in "${lines[@]}"; do [[ "$line" == "$1" ]] && return 0; done
+  flunk "expected line \"$1\""
+}
+
 setup_file() {
     [ -e "/tmp/notesium-test-corpus" ] && exit 1
     run mkdir /tmp/notesium-test-corpus
@@ -31,18 +42,18 @@ teardown_file() {
 }
 
 @test "list: default" {
-    skip
     run notesium list
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "6421460b.md:1: book" ]
-    [ "${lines[1]}" == "642146c7.md:1: physicist" ]
-    [ "${lines[2]}" == "64214930.md:1: quantum mechanics" ]
-    [ "${lines[3]}" == "64214a1d.md:1: richard feynman" ]
-    [ "${lines[4]}" == "642176a6.md:1: lorem ipsum" ]
-    [ "${lines[5]}" == "64217712.md:1: empty note" ]
-    [ "${lines[6]}" == "64218087.md:1: surely you're joking mr. feynman" ]
-    [ "${lines[7]}" == "64218088.md:1: albert einstein" ]
+    [ "${#lines[@]}" -eq 8 ]
+    assert_line "6421460b.md:1: book"
+    assert_line "642146c7.md:1: physicist"
+    assert_line "64214930.md:1: quantum mechanics"
+    assert_line "64214a1d.md:1: richard feynman"
+    assert_line "642176a6.md:1: lorem ipsum"
+    assert_line "64217712.md:1: empty note"
+    assert_line "64218087.md:1: surely you're joking mr. feynman"
+    assert_line "64218088.md:1: albert einstein"
 }
 
 @test "list: sort alphabetically" {
