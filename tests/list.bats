@@ -102,12 +102,12 @@ teardown_file() {
 }
 
 @test "list: labels" {
-    skip
     run notesium list --labels
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "6421460b.md:1: book" ]
-    [ "${lines[1]}" == "642146c7.md:1: physicist" ]
+    [ "${#lines[@]}" -eq 2 ]
+    assert_line "6421460b.md:1: book"
+    assert_line "642146c7.md:1: physicist"
 }
 
 @test "list: labels and sort alphabetically" {
