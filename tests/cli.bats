@@ -90,7 +90,6 @@ teardown_file() {
 }
 
 @test "cli: new dirname equal to NOTESIUM_DIR realpath" {
-    skip
     run notesium new
     echo "$output"
     [ $status -eq 0 ]
@@ -98,7 +97,6 @@ teardown_file() {
 }
 
 @test "cli: new basename is 8 chars plus .md extension" {
-    skip
     run notesium new
     echo "$output"
     [ $status -eq 0 ]
@@ -107,7 +105,6 @@ teardown_file() {
 }
 
 @test "cli: new basename is hex for now epoch (within 10s range)" {
-    skip
     run notesium new
     echo "$output"
     [ $status -eq 0 ]

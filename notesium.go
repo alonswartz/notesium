@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -12,17 +13,25 @@ func main() {
 		usage()
 	}
 
-	dir, err := getNotesiumDir()
+	notesiumDir, err := getNotesiumDir()
 	if err != nil {
 		fatal("%v", err)
 	}
 
 	switch os.Args[1] {
+	case "new":
+		notesiumNew(notesiumDir)
 	case "home":
-		fmt.Println(dir)
+		fmt.Println(notesiumDir)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
+}
+
+func notesiumNew(notesiumDir string) {
+	epochInt := time.Now().Unix()
+	epochHex := fmt.Sprintf("%x", epochInt)
+	fmt.Printf("%s/%s.md\n", notesiumDir, epochHex)
 }
 
 func getNotesiumDir() (string, error) {
@@ -62,6 +71,7 @@ func usage() {
 	fmt.Printf(`Usage: %s COMMAND [OPTIONS]
 
 Commands:
+  new               Print path for a new note
   home              Print path to notes directory
 
 Environment:
