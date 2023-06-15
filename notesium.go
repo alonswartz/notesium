@@ -15,8 +15,8 @@ import (
 )
 
 type Link struct {
-	LineNumber  int
-	Destination string
+	Filename   string
+	LineNumber int
 }
 
 type Note struct {
@@ -24,6 +24,7 @@ type Note struct {
 	Title         string
 	IsLabel       bool
 	OutgoingLinks []Link
+	IncomingLinks []Link
 	Ctime         time.Time
 	Mtime         time.Time
 }
@@ -69,6 +70,8 @@ func main() {
 			switch {
 			case arg == "--labels":
 				limit = "labels"
+			case arg == "--orphans":
+				limit = "orphans"
 			case strings.HasPrefix(arg, "--prefix="):
 				prefix = strings.TrimPrefix(arg, "--prefix=")
 			case strings.HasPrefix(arg, "--sort="):
@@ -105,6 +108,13 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 			}
 		}
 		return
+	case "orphans":
+		for _, note := range notes {
+			if len(note.OutgoingLinks) == 0 && len(note.IncomingLinks) == 0 {
+				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+			}
+		}
+		return
 	}
 
 	switch prefix {
@@ -114,7 +124,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 		for _, note := range notes {
 			labelLinked := false
 			for _, link := range note.OutgoingLinks {
-				if linkNote, exists := noteCache[link.Destination]; exists && linkNote.IsLabel {
+				if linkNote, exists := noteCache[link.Filename]; exists && linkNote.IsLabel {
 					fmt.Printf("%s:1: %s %s\n", note.Filename, linkNote.Title, note.Title)
 					labelLinked = true
 				}
@@ -151,9 +161,9 @@ func notesiumLinks(dir string, limit string) {
 	case "dangling":
 		for _, note := range noteCache {
 			for _, link := range note.OutgoingLinks {
-				_, exists := noteCache[link.Destination]
+				_, exists := noteCache[link.Filename]
 				if !exists {
-					fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, link.Destination)
+					fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, link.Filename)
 				}
 			}
 		}
@@ -162,8 +172,8 @@ func notesiumLinks(dir string, limit string) {
 
 	for _, note := range noteCache {
 		for _, link := range note.OutgoingLinks {
-			linkNote, exists := noteCache[link.Destination]
-			linkTitle := link.Destination
+			linkNote, exists := noteCache[link.Filename]
+			linkTitle := link.Filename
 			if exists {
 				linkTitle = linkNote.Title
 			}
@@ -188,6 +198,17 @@ func populateCache(dir string) {
 				log.Fatalf("Could not read note: %s\n", err)
 			}
 			noteCache[filename] = note
+		}
+	}
+
+	for _, note := range noteCache {
+		for _, link := range note.OutgoingLinks {
+			if targetNote, exists := noteCache[link.Filename]; exists {
+				targetNote.IncomingLinks = append(targetNote.IncomingLinks, Link{
+					LineNumber: link.LineNumber,
+					Filename:   note.Filename,
+				})
+			}
 		}
 	}
 }
@@ -229,7 +250,7 @@ func readNote(dir string, filename string) (*Note, error) {
 		}
 		matches := linkRegex.FindAllStringSubmatch(line, -1)
 		for _, match := range matches {
-			outgoingLinks = append(outgoingLinks, Link{LineNumber: lineNumber, Destination: match[1]})
+			outgoingLinks = append(outgoingLinks, Link{LineNumber: lineNumber, Filename: match[1]})
 		}
 	}
 
@@ -307,6 +328,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
+    --orphans       Limit list to notes without outgoing or incoming links
     --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
   links             Print list of links
