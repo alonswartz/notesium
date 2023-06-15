@@ -48,7 +48,6 @@ teardown_file() {
 }
 
 @test "list: sort alphabetically" {
-    skip
     run notesium list --sort=alpha
     echo "$output"
     [ $status -eq 0 ]
@@ -63,7 +62,6 @@ teardown_file() {
 }
 
 @test "list: sort by mtime" {
-    skip
     run notesium list --sort=mtime
     echo "$output"
     [ $status -eq 0 ]
@@ -78,7 +76,6 @@ teardown_file() {
 }
 
 @test "list: sort by ctime" {
-    skip
     run notesium list --sort=ctime
     echo "$output"
     [ $status -eq 0 ]
@@ -102,7 +99,6 @@ teardown_file() {
 }
 
 @test "list: labels and sort alphabetically" {
-    skip
     run notesium list --labels --sort=alpha
     echo "$output"
     [ $status -eq 0 ]
@@ -111,7 +107,6 @@ teardown_file() {
 }
 
 @test "list: labels and sort by mtime" {
-    skip
     run notesium list --labels --sort=mtime
     echo "$output"
     [ $status -eq 0 ]
@@ -120,7 +115,6 @@ teardown_file() {
 }
 
 @test "list: labels and sort by ctime" {
-    skip
     run notesium list --labels --sort=ctime
     echo "$output"
     [ $status -eq 0 ]
@@ -199,7 +193,6 @@ teardown_file() {
 }
 
 @test "list: prefix mtime and sort alphabetically" {
-    skip
     run notesium list --prefix=mtime --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
@@ -213,7 +206,6 @@ teardown_file() {
 }
 
 @test "list: prefix mtime and sort by mtime" {
-    skip
     run notesium list --prefix=mtime --sort=mtime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
@@ -227,7 +219,6 @@ teardown_file() {
 }
 
 @test "list: prefix mtime and sort by ctime" {
-    skip
     run notesium list --prefix=mtime --sort=ctime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-01-25 albert einstein" ]
@@ -262,7 +253,6 @@ teardown_file() {
 }
 
 @test "list: prefix ctime and sort alphabetically" {
-    skip
     run notesium list --prefix=ctime --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
@@ -276,7 +266,6 @@ teardown_file() {
 }
 
 @test "list: prefix ctime and sort by mtime" {
-    skip
     run notesium list --prefix=ctime --sort=mtime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
@@ -290,7 +279,6 @@ teardown_file() {
 }
 
 @test "list: prefix ctime and sort by ctime" {
-    skip
     run notesium list --prefix=ctime --sort=ctime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: 2023-03-27 albert einstein" ]

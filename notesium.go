@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,22 @@ type Note struct {
 	Ctime         time.Time
 	Mtime         time.Time
 }
+
+type SortByCtime []*Note
+type SortByMtime []*Note
+type SortByTitle []*Note
+
+func (n SortByCtime) Len() int           { return len(n) }
+func (n SortByCtime) Less(i, j int) bool { return n[i].Ctime.After(n[j].Ctime) }
+func (n SortByCtime) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
+
+func (n SortByMtime) Len() int           { return len(n) }
+func (n SortByMtime) Less(i, j int) bool { return n[i].Mtime.After(n[j].Mtime) }
+func (n SortByMtime) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
+
+func (n SortByTitle) Len() int           { return len(n) }
+func (n SortByTitle) Less(i, j int) bool { return n[i].Title < n[j].Title }
+func (n SortByTitle) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
 
 var noteCache map[string]*Note
 var linkRegex = regexp.MustCompile(`\]\(([0-9a-f]{8}\.md)\)`)
@@ -47,21 +64,18 @@ func main() {
 	case "new":
 		notesiumNew(notesiumDir)
 	case "list":
-		var limit string
-		var prefix string
-		if len(os.Args) > 2 && os.Args[2] == "--labels" {
-			limit = "labels"
+		var limit, prefix, sortBy string
+		for _, arg := range os.Args[2:] {
+			switch {
+			case arg == "--labels":
+				limit = "labels"
+			case strings.HasPrefix(arg, "--prefix="):
+				prefix = strings.TrimPrefix(arg, "--prefix=")
+			case strings.HasPrefix(arg, "--sort="):
+				sortBy = strings.TrimPrefix(arg, "--sort=")
+			}
 		}
-		if len(os.Args) > 2 && os.Args[2] == "--prefix=label" {
-			prefix = "label"
-		}
-		if len(os.Args) > 2 && os.Args[2] == "--prefix=ctime" {
-			prefix = "ctime"
-		}
-		if len(os.Args) > 2 && os.Args[2] == "--prefix=mtime" {
-			prefix = "mtime"
-		}
-		notesiumList(notesiumDir, limit, prefix)
+		notesiumList(notesiumDir, limit, prefix, sortBy)
 	case "links":
 		var limit string
 		if len(os.Args) > 2 && os.Args[2] == "--dangling" {
@@ -79,12 +93,13 @@ func notesiumNew(dir string) {
 	fmt.Printf("%s/%s.md\n", dir, epochHex)
 }
 
-func notesiumList(dir string, limit string, prefix string) {
+func notesiumList(dir string, limit string, prefix string, sortBy string) {
 	populateCache(dir)
+	notes := getSortedNotes(sortBy)
 
 	switch limit {
 	case "labels":
-		for _, note := range noteCache {
+		for _, note := range notes {
 			if note.IsLabel {
 				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
 			}
@@ -94,6 +109,7 @@ func notesiumList(dir string, limit string, prefix string) {
 
 	switch prefix {
 	case "label":
+		// TODO: handle sorting
 		notesWithoutLabelLinks := make(map[string]*Note)
 		for key, value := range noteCache {
 			notesWithoutLabelLinks[key] = value
@@ -111,18 +127,18 @@ func notesiumList(dir string, limit string, prefix string) {
 		}
 		return
 	case "ctime":
-		for _, note := range noteCache {
+		for _, note := range notes {
 			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Ctime.Format("2006-01-02"), note.Title)
 		}
 		return
 	case "mtime":
-		for _, note := range noteCache {
+		for _, note := range notes {
 			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Mtime.Format("2006-01-02"), note.Title)
 		}
 		return
 	}
 
-	for _, note := range noteCache {
+	for _, note := range notes {
 		fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
 	}
 }
@@ -232,6 +248,23 @@ func readNote(dir string, filename string) (*Note, error) {
 	return note, nil
 }
 
+func getSortedNotes(sortBy string) []*Note {
+	notes := make([]*Note, 0, len(noteCache))
+	for _, note := range noteCache {
+		notes = append(notes, note)
+	}
+
+	switch sortBy {
+	case "ctime":
+		sort.Sort(SortByCtime(notes))
+	case "mtime":
+		sort.Sort(SortByMtime(notes))
+	case "alpha":
+		sort.Sort(SortByTitle(notes))
+	}
+	return notes
+}
+
 func getNotesiumDir() (string, error) {
 	dir, exists := os.LookupEnv("NOTESIUM_DIR")
 	if !exists {
@@ -273,6 +306,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
+    --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
   links             Print list of links
     --dangling      Limit list to broken links
