@@ -333,15 +333,14 @@ teardown_file() {
 }
 
 @test "list: orphans" {
-    skip
     run notesium list --orphans
     echo "$output"
-    [ "${lines[0]}" == "642176a6.md:1: lorem ipsum" ]
-    [ "${lines[1]}" == "64217712.md:1: empty note" ]
+    [ "${#lines[@]}" -eq 2 ]
+    assert_line "642176a6.md:1: lorem ipsum"
+    assert_line "64217712.md:1: empty note"
 }
 
 @test "list: orphans and sort alphabetically" {
-    skip
     run notesium list --orphans --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
@@ -349,7 +348,6 @@ teardown_file() {
 }
 
 @test "list: orphans and sort by mtime" {
-    skip
     run notesium list --orphans --sort=mtime
     echo "$output"
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
@@ -357,7 +355,6 @@ teardown_file() {
 }
 
 @test "list: orphans and sort by ctime" {
-    skip
     run notesium list --orphans --sort=ctime
     echo "$output"
     [ "${lines[0]}" == "64217712.md:1: empty note" ]
