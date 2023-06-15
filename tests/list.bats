@@ -248,17 +248,17 @@ teardown_file() {
 }
 
 @test "list: prefix ctime" {
-    skip
     run notesium list --prefix=ctime
     echo "$output"
-    [ "${lines[0]}" == "6421460b.md:1: 2023-03-27 book" ]
-    [ "${lines[1]}" == "642146c7.md:1: 2023-03-27 physicist" ]
-    [ "${lines[2]}" == "64214930.md:1: 2023-03-27 quantum mechanics" ]
-    [ "${lines[3]}" == "64214a1d.md:1: 2023-03-27 richard feynman" ]
-    [ "${lines[4]}" == "642176a6.md:1: 2023-03-27 lorem ipsum" ]
-    [ "${lines[5]}" == "64217712.md:1: 2023-03-27 empty note" ]
-    [ "${lines[6]}" == "64218087.md:1: 2023-03-27 surely you're joking mr. feynman" ]
-    [ "${lines[7]}" == "64218088.md:1: 2023-03-27 albert einstein" ]
+    [ "${#lines[@]}" -eq 8 ]
+    assert_line "6421460b.md:1: 2023-03-27 book"
+    assert_line "642146c7.md:1: 2023-03-27 physicist"
+    assert_line "64214930.md:1: 2023-03-27 quantum mechanics"
+    assert_line "64214a1d.md:1: 2023-03-27 richard feynman"
+    assert_line "642176a6.md:1: 2023-03-27 lorem ipsum"
+    assert_line "64217712.md:1: 2023-03-27 empty note"
+    assert_line "64218087.md:1: 2023-03-27 surely you're joking mr. feynman"
+    assert_line "64218088.md:1: 2023-03-27 albert einstein"
 }
 
 @test "list: prefix ctime and sort alphabetically" {
