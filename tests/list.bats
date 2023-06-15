@@ -137,7 +137,6 @@ teardown_file() {
 }
 
 @test "list: prefix label and sort alphabetically" {
-    skip
     run notesium list --prefix=label --sort=alpha
     echo "$output"
     [ "${lines[0]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
