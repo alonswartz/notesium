@@ -7,17 +7,25 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 )
 
+type Link struct {
+	LineNumber  int
+	Destination string
+}
+
 type Note struct {
-	Filename string
-	Title    string
-	IsLabel  bool
+	Filename      string
+	Title         string
+	IsLabel       bool
+	OutgoingLinks []Link
 }
 
 var noteCache map[string]*Note
+var linkRegex = regexp.MustCompile(`\]\(([0-9a-f]{8}\.md)\)`)
 
 func main() {
 	helpFlags := map[string]bool{"-h": true, "--help": true, "help": true}
@@ -41,6 +49,8 @@ func main() {
 			limit = "labels"
 		}
 		notesiumList(notesiumDir, limit)
+	case "links":
+		notesiumLinks(notesiumDir)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -67,6 +77,21 @@ func notesiumList(dir string, limit string) {
 
 	for _, note := range noteCache {
 		fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+	}
+}
+
+func notesiumLinks(dir string) {
+	populateCache(dir)
+
+	for _, note := range noteCache {
+		for _, link := range note.OutgoingLinks {
+			linkNote, exists := noteCache[link.Destination]
+			linkTitle := link.Destination
+			if exists {
+				linkTitle = linkNote.Title
+			}
+			fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, linkTitle)
+		}
 	}
 }
 
@@ -100,14 +125,21 @@ func readNote(dir string, filename string) (*Note, error) {
 
 	var title string
 	var isLabel bool
+	var outgoingLinks []Link
 
 	scanner := bufio.NewScanner(file)
+	lineNumber := 0
 	for scanner.Scan() {
+		lineNumber++
 		line := scanner.Text()
 		if title == "" {
 			title = strings.TrimPrefix(line, "# ")
 			isLabel = len(strings.Fields(title)) == 1
-			break
+			continue
+		}
+		matches := linkRegex.FindAllStringSubmatch(line, -1)
+		for _, match := range matches {
+			outgoingLinks = append(outgoingLinks, Link{LineNumber: lineNumber, Destination: match[1]})
 		}
 	}
 
@@ -116,9 +148,10 @@ func readNote(dir string, filename string) (*Note, error) {
 	}
 
 	note := &Note{
-		Filename: filename,
-		Title:    title,
-		IsLabel:  isLabel,
+		Filename:      filename,
+		Title:         title,
+		IsLabel:       isLabel,
+		OutgoingLinks: outgoingLinks,
 	}
 
 	return note, nil
@@ -139,7 +172,7 @@ func getNotesiumDir() (string, error) {
 	}
 	realDir, err := filepath.EvalSymlinks(absDir)
 	if err != nil {
-		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", dir)
+		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", absDir)
 	}
 	info, err := os.Stat(realDir)
 	if err != nil {
@@ -165,6 +198,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
+  links             Print list of links
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)

@@ -1,22 +1,24 @@
 #!/usr/bin/env bats
 
+load helpers.sh
+
 setup_file() {
     export NOTESIUM_DIR="$BATS_TEST_DIRNAME/fixtures"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
 }
 
 @test "links: default without filename" {
-    skip
     run notesium links
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "64218088.md:3: albert einstein → physicist" ]
-    [ "${lines[1]}" == "64218088.md:7: albert einstein → quantum mechanics" ]
-    [ "${lines[2]}" == "64214a1d.md:3: richard feynman → physicist" ]
-    [ "${lines[3]}" == "64214a1d.md:5: richard feynman → quantum mechanics" ]
-    [ "${lines[4]}" == "64218087.md:3: surely you're joking mr. feynman → book" ]
-    [ "${lines[5]}" == "64218087.md:3: surely you're joking mr. feynman → richard feynman" ]
-    [ "${lines[6]}" == "64218087.md:3: surely you're joking mr. feynman → richard feynman" ]
+    [ "${#lines[@]}" -eq 7 ]
+    assert_line "64218088.md:3: albert einstein → physicist"
+    assert_line "64218088.md:7: albert einstein → quantum mechanics"
+    assert_line "64214a1d.md:3: richard feynman → physicist"
+    assert_line "64214a1d.md:5: richard feynman → quantum mechanics"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → book"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → richard feynman"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → 12345678.md"
 }
 
 @test "links: default with filename" {
