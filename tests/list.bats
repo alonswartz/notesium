@@ -129,17 +129,17 @@ teardown_file() {
 }
 
 @test "list: prefix label" {
-    skip
     run notesium list --prefix=label
     echo "$output"
-    [ "${lines[0]}" == "64214a1d.md:1: physicist richard feynman" ]
-    [ "${lines[1]}" == "64218087.md:1: book surely you're joking mr. feynman" ]
-    [ "${lines[2]}" == "64218088.md:1: physicist albert einstein" ]
-    [ "${lines[3]}" == "6421460b.md:1: book" ]
-    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
-    [ "${lines[5]}" == "64214930.md:1: quantum mechanics" ]
-    [ "${lines[6]}" == "642176a6.md:1: lorem ipsum" ]
-    [ "${lines[7]}" == "64217712.md:1: empty note" ]
+    [ "${#lines[@]}" -eq 8 ]
+    assert_line "64218087.md:1: book surely you're joking mr. feynman"
+    assert_line "64214a1d.md:1: physicist richard feynman"
+    assert_line "64218088.md:1: physicist albert einstein"
+    assert_line "6421460b.md:1: book"
+    assert_line "642146c7.md:1: physicist"
+    assert_line "64214930.md:1: quantum mechanics"
+    assert_line "642176a6.md:1: lorem ipsum"
+    assert_line "64217712.md:1: empty note"
 }
 
 @test "list: prefix label and sort alphabetically" {

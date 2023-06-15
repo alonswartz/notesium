@@ -45,10 +45,14 @@ func main() {
 		notesiumNew(notesiumDir)
 	case "list":
 		var limit string
+		var prefix string
 		if len(os.Args) > 2 && os.Args[2] == "--labels" {
 			limit = "labels"
 		}
-		notesiumList(notesiumDir, limit)
+		if len(os.Args) > 2 && os.Args[2] == "--prefix=label" {
+			prefix = "label"
+		}
+		notesiumList(notesiumDir, limit, prefix)
 	case "links":
 		var limit string
 		if len(os.Args) > 2 && os.Args[2] == "--dangling" {
@@ -66,7 +70,7 @@ func notesiumNew(dir string) {
 	fmt.Printf("%s/%s.md\n", dir, epochHex)
 }
 
-func notesiumList(dir string, limit string) {
+func notesiumList(dir string, limit string, prefix string) {
 	populateCache(dir)
 
 	switch limit {
@@ -75,6 +79,26 @@ func notesiumList(dir string, limit string) {
 			if note.IsLabel {
 				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
 			}
+		}
+		return
+	}
+
+	switch prefix {
+	case "label":
+		notesWithoutLabelLinks := make(map[string]*Note)
+		for key, value := range noteCache {
+			notesWithoutLabelLinks[key] = value
+		}
+		for _, note := range noteCache {
+			for _, link := range note.OutgoingLinks {
+				if linkNote, exists := noteCache[link.Destination]; exists && linkNote.IsLabel {
+					fmt.Printf("%s:1: %s %s\n", note.Filename, linkNote.Title, note.Title)
+					delete(notesWithoutLabelLinks, note.Filename)
+				}
+			}
+		}
+		for _, note := range notesWithoutLabelLinks {
+			fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
 		}
 		return
 	}
@@ -215,6 +239,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
+    --prefix=WORD   Prefix title with linked label (label)
   links             Print list of links
     --dangling      Limit list to broken links
 
