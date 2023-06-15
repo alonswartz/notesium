@@ -151,7 +151,6 @@ teardown_file() {
 }
 
 @test "list: prefix label and sort by mtime" {
-    skip
     run notesium list --prefix=label --sort=mtime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: physicist albert einstein" ]
@@ -165,7 +164,6 @@ teardown_file() {
 }
 
 @test "list: prefix label and sort by ctime" {
-    skip
     run notesium list --prefix=label --sort=ctime
     echo "$output"
     [ "${lines[0]}" == "64218088.md:1: physicist albert einstein" ]

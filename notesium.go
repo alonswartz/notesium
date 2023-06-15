@@ -109,17 +109,18 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 
 	switch prefix {
 	case "label":
-		// TODO: handle sorting
-		notesWithoutLabelLinks := make(map[string]*Note)
-		for key, value := range noteCache {
-			notesWithoutLabelLinks[key] = value
-		}
-		for _, note := range noteCache {
+		// TODO: handle sorting of labels
+		var notesWithoutLabelLinks []*Note
+		for _, note := range notes {
+			labelLinked := false
 			for _, link := range note.OutgoingLinks {
 				if linkNote, exists := noteCache[link.Destination]; exists && linkNote.IsLabel {
 					fmt.Printf("%s:1: %s %s\n", note.Filename, linkNote.Title, note.Title)
-					delete(notesWithoutLabelLinks, note.Filename)
+					labelLinked = true
 				}
+			}
+			if !labelLinked {
+				notesWithoutLabelLinks = append(notesWithoutLabelLinks, note)
 			}
 		}
 		for _, note := range notesWithoutLabelLinks {
