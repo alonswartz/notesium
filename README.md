@@ -132,8 +132,11 @@ ln -s $(pwd)/notesium/notesium.sh $HOME/.local/bin/notesium
 ### Shell completion
 
 ```bash
-# add the following command to $HOME/.bashrc or similar location
-source $(dirname $(realpath notesium))/completion.bash
+# get the path to the completion script
+echo "$(dirname $(realpath $(which notesium)))/completion.bash"
+
+# update $HOME/.bashrc or similar to source completion.bash, for example:
+[ -e "/path/to/notesium/completion.bash" ] && source "/path/to/notesium/completion.bash"
 ```
 
 ### Usage
