@@ -50,7 +50,11 @@ func main() {
 		}
 		notesiumList(notesiumDir, limit)
 	case "links":
-		notesiumLinks(notesiumDir)
+		var limit string
+		if len(os.Args) > 2 && os.Args[2] == "--dangling" {
+			limit = "dangling"
+		}
+		notesiumLinks(notesiumDir, limit)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -80,8 +84,21 @@ func notesiumList(dir string, limit string) {
 	}
 }
 
-func notesiumLinks(dir string) {
+func notesiumLinks(dir string, limit string) {
 	populateCache(dir)
+
+	switch limit {
+	case "dangling":
+		for _, note := range noteCache {
+			for _, link := range note.OutgoingLinks {
+				_, exists := noteCache[link.Destination]
+				if !exists {
+					fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, link.Destination)
+				}
+			}
+		}
+		return
+	}
 
 	for _, note := range noteCache {
 		for _, link := range note.OutgoingLinks {
@@ -199,6 +216,7 @@ Commands:
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
   links             Print list of links
+    --dangling      Limit list to broken links
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
