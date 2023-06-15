@@ -91,7 +91,6 @@ setup_file() {
 }
 
 @test "links: dangling without filename" {
-    skip
     run notesium links --dangling
     echo "$output"
     [ $status -eq 0 ]
