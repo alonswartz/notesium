@@ -119,18 +119,33 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 
 	switch prefix {
 	case "label":
-		// TODO: handle sorting of labels
 		var notesWithoutLabelLinks []*Note
+		var outputLines []string
 		for _, note := range notes {
 			labelLinked := false
 			for _, link := range note.OutgoingLinks {
 				if linkNote, exists := noteCache[link.Filename]; exists && linkNote.IsLabel {
-					fmt.Printf("%s:1: %s %s\n", note.Filename, linkNote.Title, note.Title)
+					line := fmt.Sprintf("%s:1: %s %s", note.Filename, linkNote.Title, note.Title)
+					if sortBy == "alpha" {
+						outputLines = append(outputLines, line)
+					} else {
+						fmt.Println(line)
+					}
 					labelLinked = true
 				}
 			}
 			if !labelLinked {
 				notesWithoutLabelLinks = append(notesWithoutLabelLinks, note)
+			}
+		}
+		if sortBy == "alpha" {
+			sort.Slice(outputLines, func(i, j int) bool {
+				sub_i := strings.SplitN(outputLines[i], ": ", 2)[1]
+				sub_j := strings.SplitN(outputLines[j], ": ", 2)[1]
+				return sub_i < sub_j
+			})
+			for _, line := range outputLines {
+				fmt.Println(line)
 			}
 		}
 		for _, note := range notesWithoutLabelLinks {
