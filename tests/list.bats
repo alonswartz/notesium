@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+load helpers.sh
+
 _set_deterministic_mtimes() {
     touch -m -t 202301250505 "/tmp/notesium-test-corpus/64218088.md"
     touch -m -t 202301240505 "/tmp/notesium-test-corpus/64217712.md"
@@ -9,17 +11,6 @@ _set_deterministic_mtimes() {
     touch -m -t 202301180505 "/tmp/notesium-test-corpus/64218087.md"
     touch -m -t 202301160505 "/tmp/notesium-test-corpus/64214a1d.md"
     touch -m -t 202301130505 "/tmp/notesium-test-corpus/6421460b.md"
-}
-
-flunk() {
-  if [[ "$#" -eq 0 ]]; then cat -; else echo "$*"; fi
-  return 1
-}
-
-assert_line() {
-  local line
-  for line in "${lines[@]}"; do [[ "$line" == "$1" ]] && return 0; done
-  flunk "expected line \"$1\""
 }
 
 setup_file() {
