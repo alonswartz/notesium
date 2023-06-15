@@ -22,6 +22,7 @@ type Note struct {
 	Title         string
 	IsLabel       bool
 	OutgoingLinks []Link
+	Mtime         time.Time
 }
 
 var noteCache map[string]*Note
@@ -51,6 +52,9 @@ func main() {
 		}
 		if len(os.Args) > 2 && os.Args[2] == "--prefix=label" {
 			prefix = "label"
+		}
+		if len(os.Args) > 2 && os.Args[2] == "--prefix=mtime" {
+			prefix = "mtime"
 		}
 		notesiumList(notesiumDir, limit, prefix)
 	case "links":
@@ -99,6 +103,11 @@ func notesiumList(dir string, limit string, prefix string) {
 		}
 		for _, note := range notesWithoutLabelLinks {
 			fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+		}
+		return
+	case "mtime":
+		for _, note := range noteCache {
+			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Mtime.Format("2006-01-02"), note.Title)
 		}
 		return
 	}
@@ -164,6 +173,12 @@ func readNote(dir string, filename string) (*Note, error) {
 	}
 	defer file.Close()
 
+	info, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("could not get file info: %s", err)
+	}
+	modTime := info.ModTime()
+
 	var title string
 	var isLabel bool
 	var outgoingLinks []Link
@@ -193,6 +208,7 @@ func readNote(dir string, filename string) (*Note, error) {
 		Title:         title,
 		IsLabel:       isLabel,
 		OutgoingLinks: outgoingLinks,
+		Mtime:         modTime,
 	}
 
 	return note, nil
@@ -239,7 +255,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
-    --prefix=WORD   Prefix title with linked label (label)
+    --prefix=WORD   Prefix title with date or linked label (mtime|label)
   links             Print list of links
     --dangling      Limit list to broken links
 
