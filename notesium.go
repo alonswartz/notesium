@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -22,6 +23,7 @@ type Note struct {
 	Title         string
 	IsLabel       bool
 	OutgoingLinks []Link
+	Ctime         time.Time
 	Mtime         time.Time
 }
 
@@ -52,6 +54,9 @@ func main() {
 		}
 		if len(os.Args) > 2 && os.Args[2] == "--prefix=label" {
 			prefix = "label"
+		}
+		if len(os.Args) > 2 && os.Args[2] == "--prefix=ctime" {
+			prefix = "ctime"
 		}
 		if len(os.Args) > 2 && os.Args[2] == "--prefix=mtime" {
 			prefix = "mtime"
@@ -103,6 +108,11 @@ func notesiumList(dir string, limit string, prefix string) {
 		}
 		for _, note := range notesWithoutLabelLinks {
 			fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+		}
+		return
+	case "ctime":
+		for _, note := range noteCache {
+			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Ctime.Format("2006-01-02"), note.Title)
 		}
 		return
 	case "mtime":
@@ -177,7 +187,14 @@ func readNote(dir string, filename string) (*Note, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not get file info: %s", err)
 	}
-	modTime := info.ModTime()
+	mtime := info.ModTime()
+
+	hexTime := strings.TrimSuffix(filename, ".md")
+	unixTime, err := strconv.ParseInt(hexTime, 16, 64)
+	if err != nil {
+		return nil, err
+	}
+	ctime := time.Unix(unixTime, 0)
 
 	var title string
 	var isLabel bool
@@ -208,7 +225,8 @@ func readNote(dir string, filename string) (*Note, error) {
 		Title:         title,
 		IsLabel:       isLabel,
 		OutgoingLinks: outgoingLinks,
-		Mtime:         modTime,
+		Ctime:         ctime,
+		Mtime:         mtime,
 	}
 
 	return note, nil
@@ -255,7 +273,7 @@ Commands:
   home              Print path to notes directory
   list              Print list of notes
     --labels        Limit list to only label notes (ie. one word title)
-    --prefix=WORD   Prefix title with date or linked label (mtime|label)
+    --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
   links             Print list of links
     --dangling      Limit list to broken links
 
