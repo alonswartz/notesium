@@ -103,6 +103,15 @@ func main() {
 			fatal("filename not specified")
 		}
 		notesiumLinks(notesiumDir, filename, limit)
+	case "lines":
+		var prefix string
+		for _, arg := range os.Args[2:] {
+			switch {
+			case arg == "--prefix=title":
+				prefix = "title"
+			}
+		}
+		notesiumLines(notesiumDir, prefix)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -250,6 +259,49 @@ func notesiumLinks(dir string, filename string, limit string) {
 				linkTitle = linkNote.Title
 			}
 			fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, linkTitle)
+		}
+	}
+}
+
+func notesiumLines(dir string, prefix string) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		log.Fatalf("Could not read directory: %s\n", err)
+	}
+
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".md") {
+			filename := file.Name()
+			path := filepath.Join(dir, filename)
+			file, err := os.Open(path)
+			if err != nil {
+				log.Fatalf("Could not open file: %s\n", err)
+			}
+
+			var title string
+			scanner := bufio.NewScanner(file)
+			lineNumber := 0
+			for scanner.Scan() {
+				lineNumber++
+				line := scanner.Text()
+				if title == "" && strings.HasPrefix(line, "# ") {
+					title = strings.TrimPrefix(line, "# ")
+				}
+				if line == "" {
+					continue
+				}
+				if prefix == "title" {
+					fmt.Printf("%s:%d: %s %s\n", filename, lineNumber, title, line)
+				} else {
+					fmt.Printf("%s:%d: %s\n", filename, lineNumber, line)
+				}
+			}
+
+			if err := scanner.Err(); err != nil {
+				log.Fatalf("scanner error: %s", err)
+			}
+
+			file.Close()
 		}
 	}
 }
@@ -407,6 +459,8 @@ Commands:
     --outgoing      Limit list to outgoing links related to filename
     --incoming      Limit list to incoming links related to filename
     --dangling      Limit list to broken links
+  lines             Print all lines of notes (ie. fulltext search)
+    --prefix=title  Prefix each line with note title
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
