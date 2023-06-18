@@ -80,11 +80,29 @@ func main() {
 		}
 		notesiumList(notesiumDir, limit, prefix, sortBy)
 	case "links":
-		var limit string
-		if len(os.Args) > 2 && os.Args[2] == "--dangling" {
-			limit = "dangling"
+		var filename, limit string
+		filenameRequired := false
+		for _, arg := range os.Args[2:] {
+			switch {
+			case arg == "--dangling":
+				limit = "dangling"
+			case arg == "--outgoing":
+				limit = map[bool]string{true: "", false: "outgoing"}[limit == "incoming"]
+				filenameRequired = true
+			case arg == "--incoming":
+				limit = map[bool]string{true: "", false: "incoming"}[limit == "outgoing"]
+				filenameRequired = true
+			case strings.HasSuffix(arg, ".md"):
+				filename = arg
+			}
 		}
-		notesiumLinks(notesiumDir, limit)
+		if limit == "dangling" && filename != "" {
+			fatal("dangling filename not supported")
+		}
+		if filenameRequired && filename == "" {
+			fatal("filename not specified")
+		}
+		notesiumLinks(notesiumDir, filename, limit)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -169,8 +187,47 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 	}
 }
 
-func notesiumLinks(dir string, limit string) {
+func notesiumLinks(dir string, filename string, limit string) {
 	populateCache(dir)
+
+	if filename != "" {
+		note, exists := noteCache[filename]
+		if !exists {
+			log.Fatalf("filename does not exist")
+		}
+		switch limit {
+		case "outgoing":
+			for _, link := range note.OutgoingLinks {
+				linkNote, exists := noteCache[link.Filename]
+				if exists {
+					fmt.Printf("%s:1: %s\n", linkNote.Filename, linkNote.Title)
+				}
+			}
+			return
+		case "incoming":
+			for _, link := range note.IncomingLinks {
+				linkNote, exists := noteCache[link.Filename]
+				if exists {
+					fmt.Printf("%s:%d: %s\n", linkNote.Filename, link.LineNumber, linkNote.Title)
+				}
+			}
+			return
+		default:
+			for _, link := range note.OutgoingLinks {
+				linkNote, exists := noteCache[link.Filename]
+				if exists {
+					fmt.Printf("%s:1: outgoing %s\n", linkNote.Filename, linkNote.Title)
+				}
+			}
+			for _, link := range note.IncomingLinks {
+				linkNote, exists := noteCache[link.Filename]
+				if exists {
+					fmt.Printf("%s:%d: incoming %s\n", linkNote.Filename, link.LineNumber, linkNote.Title)
+				}
+			}
+		}
+		return
+	}
 
 	switch limit {
 	case "dangling":
@@ -346,7 +403,9 @@ Commands:
     --orphans       Limit list to notes without outgoing or incoming links
     --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
-  links             Print list of links
+  links [filename]  Print list of links
+    --outgoing      Limit list to outgoing links related to filename
+    --incoming      Limit list to incoming links related to filename
     --dangling      Limit list to broken links
 
 Environment:
