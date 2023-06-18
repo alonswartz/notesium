@@ -29,6 +29,11 @@ type Note struct {
 	Mtime         time.Time
 }
 
+type Color struct {
+	Code  string
+	Reset string
+}
+
 type SortByCtime []*Note
 type SortByMtime []*Note
 type SortByTitle []*Note
@@ -66,8 +71,11 @@ func main() {
 		notesiumNew(notesiumDir)
 	case "list":
 		var limit, prefix, sortBy string
+		color := Color{}
 		for _, arg := range os.Args[2:] {
 			switch {
+			case arg == "--color":
+				color = defaultColor()
 			case arg == "--labels":
 				limit = "labels"
 			case arg == "--orphans":
@@ -78,12 +86,15 @@ func main() {
 				sortBy = strings.TrimPrefix(arg, "--sort=")
 			}
 		}
-		notesiumList(notesiumDir, limit, prefix, sortBy)
+		notesiumList(notesiumDir, limit, prefix, sortBy, color)
 	case "links":
 		var filename, limit string
 		filenameRequired := false
+		color := Color{}
 		for _, arg := range os.Args[2:] {
 			switch {
+			case arg == "--color":
+				color = defaultColor()
 			case arg == "--dangling":
 				limit = "dangling"
 			case arg == "--outgoing":
@@ -102,16 +113,19 @@ func main() {
 		if filenameRequired && filename == "" {
 			fatal("filename not specified")
 		}
-		notesiumLinks(notesiumDir, filename, limit)
+		notesiumLinks(notesiumDir, filename, limit, color)
 	case "lines":
 		var prefix string
+		color := Color{}
 		for _, arg := range os.Args[2:] {
 			switch {
+			case arg == "--color":
+				color = defaultColor()
 			case arg == "--prefix=title":
 				prefix = "title"
 			}
 		}
-		notesiumLines(notesiumDir, prefix)
+		notesiumLines(notesiumDir, prefix, color)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -123,7 +137,7 @@ func notesiumNew(dir string) {
 	fmt.Printf("%s/%s.md\n", dir, epochHex)
 }
 
-func notesiumList(dir string, limit string, prefix string, sortBy string) {
+func notesiumList(dir string, limit string, prefix string, sortBy string, color Color) {
 	populateCache(dir)
 	notes := getSortedNotes(sortBy)
 
@@ -152,7 +166,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 			labelLinked := false
 			for _, link := range note.OutgoingLinks {
 				if linkNote, exists := noteCache[link.Filename]; exists && linkNote.IsLabel {
-					line := fmt.Sprintf("%s:1: %s %s", note.Filename, linkNote.Title, note.Title)
+					line := fmt.Sprintf("%s:1: %s%s%s %s", note.Filename, color.Code, linkNote.Title, color.Reset, note.Title)
 					if sortBy == "alpha" {
 						outputLines = append(outputLines, line)
 					} else {
@@ -181,12 +195,12 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 		return
 	case "ctime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Ctime.Format("2006-01-02"), note.Title)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Ctime.Format("2006-01-02"), color.Reset, note.Title)
 		}
 		return
 	case "mtime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s %s\n", note.Filename, note.Mtime.Format("2006-01-02"), note.Title)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Mtime.Format("2006-01-02"), color.Reset, note.Title)
 		}
 		return
 	}
@@ -196,7 +210,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string) {
 	}
 }
 
-func notesiumLinks(dir string, filename string, limit string) {
+func notesiumLinks(dir string, filename string, limit string, color Color) {
 	populateCache(dir)
 
 	if filename != "" {
@@ -222,16 +236,18 @@ func notesiumLinks(dir string, filename string, limit string) {
 			}
 			return
 		default:
+			prefix := fmt.Sprintf("%soutgoing%s", color.Code, color.Reset)
 			for _, link := range note.OutgoingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:1: outgoing %s\n", linkNote.Filename, linkNote.Title)
+					fmt.Printf("%s:1: %s %s\n", linkNote.Filename, prefix, linkNote.Title)
 				}
 			}
+			prefix = fmt.Sprintf("%sincoming%s", color.Code, color.Reset)
 			for _, link := range note.IncomingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:%d: incoming %s\n", linkNote.Filename, link.LineNumber, linkNote.Title)
+					fmt.Printf("%s:%d: %s %s\n", linkNote.Filename, link.LineNumber, prefix, linkNote.Title)
 				}
 			}
 		}
@@ -244,7 +260,7 @@ func notesiumLinks(dir string, filename string, limit string) {
 			for _, link := range note.OutgoingLinks {
 				_, exists := noteCache[link.Filename]
 				if !exists {
-					fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, link.Filename)
+					fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, color.Code, note.Title, color.Reset, link.Filename)
 				}
 			}
 		}
@@ -258,12 +274,12 @@ func notesiumLinks(dir string, filename string, limit string) {
 			if exists {
 				linkTitle = linkNote.Title
 			}
-			fmt.Printf("%s:%d: %s → %s\n", note.Filename, link.LineNumber, note.Title, linkTitle)
+			fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, color.Code, note.Title, color.Reset, linkTitle)
 		}
 	}
 }
 
-func notesiumLines(dir string, prefix string) {
+func notesiumLines(dir string, prefix string, color Color) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("Could not read directory: %s\n", err)
@@ -291,7 +307,7 @@ func notesiumLines(dir string, prefix string) {
 					continue
 				}
 				if prefix == "title" {
-					fmt.Printf("%s:%d: %s %s\n", filename, lineNumber, title, line)
+					fmt.Printf("%s:%d: %s%s%s %s\n", filename, lineNumber, color.Code, title, color.Reset, line)
 				} else {
 					fmt.Printf("%s:%d: %s\n", filename, lineNumber, line)
 				}
@@ -439,6 +455,13 @@ func getNotesiumDir() (string, error) {
 	return realDir, nil
 }
 
+func defaultColor() Color {
+	return Color{
+		Code:  "\033[0;36m",
+		Reset: "\033[0m",
+	}
+}
+
 func fatal(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, "Fatal: "+format+"\n", a...)
 	os.Exit(1)
@@ -451,15 +474,18 @@ Commands:
   new               Print path for a new note
   home              Print path to notes directory
   list              Print list of notes
+    --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
     --orphans       Limit list to notes without outgoing or incoming links
     --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
   links [filename]  Print list of links
+    --color         Color code using ansi escape sequences
     --outgoing      Limit list to outgoing links related to filename
     --incoming      Limit list to incoming links related to filename
     --dangling      Limit list to broken links
   lines             Print all lines of notes (ie. fulltext search)
+    --color         Color code prefix using ansi escape sequences
     --prefix=title  Prefix each line with note title
 
 Environment:
