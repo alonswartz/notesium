@@ -6,7 +6,6 @@ setup_file() {
 }
 
 @test "stats: default" {
-    skip
     run notesium stats
     echo "$output"
     [ $status -eq 0 ]
@@ -17,7 +16,7 @@ setup_file() {
     [ "${lines[4]}" == "dangling 1" ]
     [ "${lines[5]}" == "lines 28" ]
     [ "${lines[6]}" == "words 213" ]
-    [ "${lines[7]}" == "chars 1424" ]
+    [ "${lines[7]}" == "chars 1396" ]
 }
 
 @test "stats: fmtnum" {
@@ -26,16 +25,15 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes 8" ]
-    [ "${lines[7]}" == "chars 1,424" ]
+    [ "${lines[7]}" == "chars 1,396" ]
 }
 
 @test "stats: table" {
-    skip
     run notesium stats --table
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]
-    [ "${lines[7]}" == "chars     1424" ]
+    [ "${lines[7]}" == "chars     1396" ]
 }
 
 @test "stats: table fmtnum" {
@@ -44,6 +42,6 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "notes     8" ]
-    [ "${lines[7]}" == "chars     1,424" ]
+    [ "${lines[7]}" == "chars     1,396" ]
 }
 

@@ -27,6 +27,9 @@ type Note struct {
 	IncomingLinks []Link
 	Ctime         time.Time
 	Mtime         time.Time
+	Lines         int
+	Words         int
+	Chars         int
 }
 
 type Color struct {
@@ -126,6 +129,18 @@ func main() {
 			}
 		}
 		notesiumLines(notesiumDir, prefix, color)
+	case "stats":
+		var table bool
+		color := Color{}
+		for _, arg := range os.Args[2:] {
+			switch {
+			case arg == "--color":
+				color = defaultColor()
+			case arg == "--table":
+				table = true
+			}
+		}
+		notesiumStats(notesiumDir, table, color)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -322,6 +337,48 @@ func notesiumLines(dir string, prefix string, color Color) {
 	}
 }
 
+func notesiumStats(dir string, table bool, color Color) {
+	populateCache(dir)
+
+	labels := 0
+	orphans := 0
+	links := 0
+	dangling := 0
+	lines := 0
+	words := 0
+	chars := 0
+
+	for _, note := range noteCache {
+		if note.IsLabel {
+			labels++
+		}
+		if len(note.OutgoingLinks) == 0 && len(note.IncomingLinks) == 0 {
+			orphans++
+		}
+		for _, link := range note.OutgoingLinks {
+			_, exists := noteCache[link.Filename]
+			if !exists {
+				dangling++
+			}
+		}
+
+		links += len(note.OutgoingLinks)
+		lines += note.Lines
+		words += note.Words
+		chars += note.Chars
+	}
+
+	keyFormat := color.Code + (map[bool]string{true: "%-9s", false: "%s"}[table]) + color.Reset
+	fmt.Printf(keyFormat+" %d\n", "notes", len(noteCache))
+	fmt.Printf(keyFormat+" %d\n", "labels", labels)
+	fmt.Printf(keyFormat+" %d\n", "orphans", orphans)
+	fmt.Printf(keyFormat+" %d\n", "links", links)
+	fmt.Printf(keyFormat+" %d\n", "dangling", dangling)
+	fmt.Printf(keyFormat+" %d\n", "lines", lines)
+	fmt.Printf(keyFormat+" %d\n", "words", words)
+	fmt.Printf(keyFormat+" %d\n", "chars", chars)
+}
+
 func populateCache(dir string) {
 	noteCache = make(map[string]*Note)
 
@@ -377,12 +434,18 @@ func readNote(dir string, filename string) (*Note, error) {
 	var title string
 	var isLabel bool
 	var outgoingLinks []Link
+	var lines, words, chars int
 
 	scanner := bufio.NewScanner(file)
 	lineNumber := 0
 	for scanner.Scan() {
 		lineNumber++
 		line := scanner.Text()
+		if line != "" {
+			lines++
+			words += len(strings.Fields(line))
+			chars += len(line)
+		}
 		if title == "" {
 			title = strings.TrimPrefix(line, "# ")
 			isLabel = len(strings.Fields(title)) == 1
@@ -405,6 +468,9 @@ func readNote(dir string, filename string) (*Note, error) {
 		OutgoingLinks: outgoingLinks,
 		Ctime:         ctime,
 		Mtime:         mtime,
+		Lines:         lines,
+		Words:         words,
+		Chars:         chars,
 	}
 
 	return note, nil
@@ -487,6 +553,9 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Prefix each line with note title
+  stats             Print statistics
+    --color         Color code using ansi escape sequences
+    --table         Format as table with whitespace delimited columns
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
