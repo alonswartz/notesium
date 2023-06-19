@@ -42,7 +42,6 @@ setup_file() {
 }
 
 @test "graph: encoded url" {
-    skip
     run notesium graph --encoded-url
     echo "$output"
     [ $status -eq 0 ]
