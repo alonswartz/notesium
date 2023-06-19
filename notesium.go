@@ -604,7 +604,7 @@ Commands:
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
   graph             Print graph data
-    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+    --href=FORMAT   Node links format (default: file://%%:p:h/%%:t)
     --encoded-url   Encode graph data in base64 and append to graph file url
 
 Environment:
