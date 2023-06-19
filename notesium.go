@@ -173,7 +173,8 @@ func main() {
 func notesiumNew(dir string) {
 	epochInt := time.Now().Unix()
 	epochHex := fmt.Sprintf("%x", epochInt)
-	fmt.Printf("%s/%s.md\n", dir, epochHex)
+	newPath := filepath.Join(dir, fmt.Sprintf("%s.md", epochHex))
+	fmt.Println(newPath)
 }
 
 func notesiumList(dir string, limit string, prefix string, sortBy string, dateFormat string, color Color) {
