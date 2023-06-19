@@ -227,12 +227,14 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 		return
 	case "ctime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Ctime.Format(dateFormat), color.Reset, note.Title)
+			dateStamp := getDateStamp(note.Ctime, dateFormat)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, dateStamp, color.Reset, note.Title)
 		}
 		return
 	case "mtime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Mtime.Format(dateFormat), color.Reset, note.Title)
+			dateStamp := getDateStamp(note.Mtime, dateFormat)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, dateStamp, color.Reset, note.Title)
 		}
 		return
 	}
@@ -541,6 +543,30 @@ func getSortedNotes(sortBy string) []*Note {
 		sort.Sort(SortByTitle(notes))
 	}
 	return notes
+}
+
+func getDateStamp(t time.Time, dateFormat string) string {
+	dateStamp := t.Format(dateFormat)
+
+	// experimental: monday first day of week
+	if strings.Contains(dateStamp, "%V") {
+		_, week := t.ISOWeek()
+		dateStamp = strings.Replace(dateStamp, "%V", fmt.Sprintf("%02d", week), 1)
+	}
+
+	// experimental: sunday first day of week
+	if strings.Contains(dateStamp, "%U") {
+		_, week := t.ISOWeek()
+		if t.Weekday() == time.Sunday {
+			_, week = t.AddDate(0, 0, 1).ISOWeek()
+			if t.Month() == time.January && t.Day() == 1 {
+				week = 1
+			}
+		}
+		dateStamp = strings.Replace(dateStamp, "%U", fmt.Sprintf("%02d", week), 1)
+	}
+
+	return dateStamp
 }
 
 func getNotesiumDir() (string, error) {
