@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -142,14 +144,17 @@ func main() {
 		}
 		notesiumStats(notesiumDir, table, color)
 	case "graph":
+		var encodedUrl bool
 		href := "file://%:p:h/%:t"
 		for _, arg := range os.Args[2:] {
 			switch {
+			case arg == "--encoded-url":
+				encodedUrl = true
 			case strings.HasPrefix(arg, "--href="):
 				href = strings.TrimPrefix(arg, "--href=")
 			}
 		}
-		notesiumGraph(notesiumDir, href)
+		notesiumGraph(notesiumDir, href, encodedUrl)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -388,22 +393,36 @@ func notesiumStats(dir string, table bool, color Color) {
 	fmt.Printf(keyFormat+" %d\n", "chars", chars)
 }
 
-func notesiumGraph(dir string, href string) {
+func notesiumGraph(dir string, href string, encodedUrl bool) {
 	populateCache(dir)
 
-	href = strings.Replace(href, "%:p:h", dir, -1)
-	fmt.Printf("%s\n", href)
-	fmt.Printf("-----\n")
-	fmt.Printf("id,title\n")
+	var buffer bytes.Buffer
+	fmt.Fprintf(&buffer, "%s\n", strings.Replace(href, "%:p:h", dir, -1))
+	fmt.Fprintf(&buffer, "-----\n")
+	fmt.Fprintf(&buffer, "id,title\n")
 	for _, note := range noteCache {
-		fmt.Printf("%s,%s\n", note.Filename, note.Title)
+		fmt.Fprintf(&buffer, "%s,%s\n", note.Filename, note.Title)
 	}
-	fmt.Printf("-----\n")
-	fmt.Printf("source,target\n")
+	fmt.Fprintf(&buffer, "-----\n")
+	fmt.Fprintf(&buffer, "source,target\n")
 	for _, note := range noteCache {
 		for _, link := range note.OutgoingLinks {
-			fmt.Printf("%s,%s\n", note.Filename, link.Filename)
+			fmt.Fprintf(&buffer, "%s,%s\n", note.Filename, link.Filename)
 		}
+	}
+
+	if encodedUrl {
+		exePath, err := os.Executable()
+		if err != nil {
+			log.Fatalf("Could not get executable path: %v\n", err)
+		}
+		graphIndex := filepath.Join(filepath.Dir(exePath), "graph", "index.html")
+		if _, err := os.Stat(graphIndex); os.IsNotExist(err) {
+			log.Fatalf("%s does not exist\n", graphIndex)
+		}
+		fmt.Printf("file://%s?data=%s\n", graphIndex, base64.StdEncoding.EncodeToString(buffer.Bytes()))
+	} else {
+		fmt.Print(buffer.String())
 	}
 }
 
@@ -586,6 +605,7 @@ Commands:
     --table         Format as table with whitespace delimited columns
   graph             Print graph data
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+    --encoded-url   Encode graph data in base64 and append to graph file url
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
