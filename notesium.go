@@ -76,6 +76,7 @@ func main() {
 		notesiumNew(notesiumDir)
 	case "list":
 		var limit, prefix, sortBy string
+		dateFormat := "2006-01-02"
 		color := Color{}
 		for _, arg := range os.Args[2:] {
 			switch {
@@ -89,9 +90,11 @@ func main() {
 				prefix = strings.TrimPrefix(arg, "--prefix=")
 			case strings.HasPrefix(arg, "--sort="):
 				sortBy = strings.TrimPrefix(arg, "--sort=")
+			case strings.HasPrefix(arg, "--date="):
+				dateFormat = strings.TrimPrefix(arg, "--date=")
 			}
 		}
-		notesiumList(notesiumDir, limit, prefix, sortBy, color)
+		notesiumList(notesiumDir, limit, prefix, sortBy, dateFormat, color)
 	case "links":
 		var filename, limit string
 		filenameRequired := false
@@ -166,7 +169,7 @@ func notesiumNew(dir string) {
 	fmt.Printf("%s/%s.md\n", dir, epochHex)
 }
 
-func notesiumList(dir string, limit string, prefix string, sortBy string, color Color) {
+func notesiumList(dir string, limit string, prefix string, sortBy string, dateFormat string, color Color) {
 	populateCache(dir)
 	notes := getSortedNotes(sortBy)
 
@@ -224,12 +227,12 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, color 
 		return
 	case "ctime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Ctime.Format("2006-01-02"), color.Reset, note.Title)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Ctime.Format(dateFormat), color.Reset, note.Title)
 		}
 		return
 	case "mtime":
 		for _, note := range notes {
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Mtime.Format("2006-01-02"), color.Reset, note.Title)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, note.Mtime.Format(dateFormat), color.Reset, note.Title)
 		}
 		return
 	}
@@ -592,6 +595,7 @@ Commands:
     --orphans       Limit list to notes without outgoing or incoming links
     --sort=WORD     Sort list by date or alphabetically (ctime|mtime|alpha)
     --prefix=WORD   Prefix title with date or linked label (ctime|mtime|label)
+    --date=FORMAT   Date format for ctime/mtime prefix (default: 2006-01-02)
   links [filename]  Print list of links
     --color         Color code using ansi escape sequences
     --outgoing      Limit list to outgoing links related to filename
