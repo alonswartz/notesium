@@ -229,10 +229,9 @@ teardown_file() {
 }
 
 @test "list: prefix mtime with custom date format" {
-    skip
-    run notesium list --prefix=mtime --date=%Y/Week%U
+    run notesium list --prefix=mtime --date=2006-01
     echo "$output"
-    [ "${lines[0]}" == "6421460b.md:1: 2023/Week02 book" ]
+    assert_line "6421460b.md:1: 2023-01 book"
 }
 
 @test "list: prefix ctime" {
@@ -289,10 +288,9 @@ teardown_file() {
 }
 
 @test "list: prefix ctime with custom date format" {
-    skip
-    run notesium list --prefix=ctime --date=%Y/Week%U
+    run notesium list --prefix=ctime --date=2006/01/02
     echo "$output"
-    [ "${lines[0]}" == "6421460b.md:1: 2023/Week13 book" ]
+    assert_line "6421460b.md:1: 2023/03/27 book"
 }
 
 @test "list: match" {
