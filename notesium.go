@@ -141,6 +141,15 @@ func main() {
 			}
 		}
 		notesiumStats(notesiumDir, table, color)
+	case "graph":
+		href := "file://%:p:h/%:t"
+		for _, arg := range os.Args[2:] {
+			switch {
+			case strings.HasPrefix(arg, "--href="):
+				href = strings.TrimPrefix(arg, "--href=")
+			}
+		}
+		notesiumGraph(notesiumDir, href)
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -379,6 +388,25 @@ func notesiumStats(dir string, table bool, color Color) {
 	fmt.Printf(keyFormat+" %d\n", "chars", chars)
 }
 
+func notesiumGraph(dir string, href string) {
+	populateCache(dir)
+
+	href = strings.Replace(href, "%:p:h", dir, -1)
+	fmt.Printf("%s\n", href)
+	fmt.Printf("-----\n")
+	fmt.Printf("id,title\n")
+	for _, note := range noteCache {
+		fmt.Printf("%s,%s\n", note.Filename, note.Title)
+	}
+	fmt.Printf("-----\n")
+	fmt.Printf("source,target\n")
+	for _, note := range noteCache {
+		for _, link := range note.OutgoingLinks {
+			fmt.Printf("%s,%s\n", note.Filename, link.Filename)
+		}
+	}
+}
+
 func populateCache(dir string) {
 	noteCache = make(map[string]*Note)
 
@@ -556,6 +584,8 @@ Commands:
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
+  graph             Print graph data
+    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
