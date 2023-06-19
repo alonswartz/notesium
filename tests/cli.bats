@@ -36,7 +36,6 @@ teardown_file() {
 }
 
 @test "cli: version command sniff test" {
-    skip
     run notesium -v
     echo "$output"
     [ $status -eq 0 ]

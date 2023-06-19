@@ -55,6 +55,7 @@ func (n SortByTitle) Len() int           { return len(n) }
 func (n SortByTitle) Less(i, j int) bool { return n[i].Title < n[j].Title }
 func (n SortByTitle) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
 
+var version = "dev"
 var noteCache map[string]*Note
 var linkRegex = regexp.MustCompile(`\]\(([0-9a-f]{8}\.md)\)`)
 
@@ -62,6 +63,12 @@ func main() {
 	helpFlags := map[string]bool{"-h": true, "--help": true, "help": true}
 	if len(os.Args) < 2 || helpFlags[os.Args[1]] {
 		usage()
+	}
+
+	versionFlags := map[string]bool{"-v": true, "--version": true, "version": true}
+	if len(os.Args) < 2 || versionFlags[os.Args[1]] {
+		fmt.Println(version)
+		os.Exit(0)
 	}
 
 	notesiumDir, err := getNotesiumDir()
@@ -636,6 +643,7 @@ Commands:
   graph             Print graph data
     --href=FORMAT   Node links format (default: file://%%:p:h/%%:t)
     --encoded-url   Encode graph data in base64 and append to graph file url
+  version           Print version
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
