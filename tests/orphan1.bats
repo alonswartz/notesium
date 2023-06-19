@@ -14,7 +14,6 @@ teardown_file() {
 }
 
 @test "orphan1: list" {
-    skip
     run notesium list
     echo "$output"
     [ $status -eq 0 ]
@@ -22,7 +21,6 @@ teardown_file() {
 }
 
 @test "orphan1: list labels" {
-    skip
     run notesium list --labels
     echo "$output"
     [ $status -eq 0 ]
@@ -30,7 +28,6 @@ teardown_file() {
 }
 
 @test "orphan1: list prefix label" {
-    skip
     run notesium list --prefix=label
     echo "$output"
     [ $status -eq 0 ]
@@ -38,7 +35,6 @@ teardown_file() {
 }
 
 @test "orphan1: list orphans" {
-    skip
     run notesium list --orphans
     echo "$output"
     [ $status -eq 0 ]
@@ -54,7 +50,6 @@ teardown_file() {
 }
 
 @test "orphan1: links" {
-    skip
     run notesium links
     echo "$output"
     [ $status -eq 0 ]
@@ -62,7 +57,6 @@ teardown_file() {
 }
 
 @test "orphan1: links file" {
-    skip
     run notesium links 64217712.md
     echo "$output"
     [ $status -eq 0 ]
@@ -70,7 +64,6 @@ teardown_file() {
 }
 
 @test "orphan1: links outgoing" {
-    skip
     run notesium links --outgoing 64217712.md
     echo "$output"
     [ $status -eq 0 ]
@@ -78,7 +71,6 @@ teardown_file() {
 }
 
 @test "orphan1: links incoming" {
-    skip
     run notesium links --incoming 64217712.md
     echo "$output"
     [ $status -eq 0 ]
@@ -86,7 +78,6 @@ teardown_file() {
 }
 
 @test "orphan1: links dangling" {
-    skip
     run notesium links --dangling
     echo "$output"
     [ $status -eq 0 ]
@@ -94,7 +85,6 @@ teardown_file() {
 }
 
 @test "orphan1: lines" {
-    skip
     run notesium lines
     echo "$output"
     [ $status -eq 0 ]
@@ -102,7 +92,6 @@ teardown_file() {
 }
 
 @test "orphan1: lines prefix title" {
-    skip
     run notesium lines --prefix=title
     echo "$output"
     [ $status -eq 0 ]
