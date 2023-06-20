@@ -19,22 +19,6 @@ type Color struct {
 	Reset string
 }
 
-type SortByCtime []*Note
-type SortByMtime []*Note
-type SortByTitle []*Note
-
-func (n SortByCtime) Len() int           { return len(n) }
-func (n SortByCtime) Less(i, j int) bool { return n[i].Ctime.After(n[j].Ctime) }
-func (n SortByCtime) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
-
-func (n SortByMtime) Len() int           { return len(n) }
-func (n SortByMtime) Less(i, j int) bool { return n[i].Mtime.After(n[j].Mtime) }
-func (n SortByMtime) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
-
-func (n SortByTitle) Len() int           { return len(n) }
-func (n SortByTitle) Less(i, j int) bool { return n[i].Title < n[j].Title }
-func (n SortByTitle) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
-
 var version = "dev"
 
 func main() {
@@ -415,23 +399,6 @@ func notesiumGraph(dir string, href string, encodedUrl bool) {
 	} else {
 		fmt.Print(buffer.String())
 	}
-}
-
-func getSortedNotes(sortBy string) []*Note {
-	notes := make([]*Note, 0, len(noteCache))
-	for _, note := range noteCache {
-		notes = append(notes, note)
-	}
-
-	switch sortBy {
-	case "ctime":
-		sort.Sort(SortByCtime(notes))
-	case "mtime":
-		sort.Sort(SortByMtime(notes))
-	case "alpha":
-		sort.Sort(SortByTitle(notes))
-	}
-	return notes
 }
 
 func getDateStamp(t time.Time, dateFormat string) string {
