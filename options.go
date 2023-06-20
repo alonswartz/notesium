@@ -1,5 +1,10 @@
 package main
 
+import (
+	"errors"
+	"fmt"
+)
+
 const usage = `Usage: notesium COMMAND [OPTIONS]
 
 Commands:
@@ -31,3 +36,53 @@ Commands:
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
 `
+
+type Command struct {
+	Name    string
+	Options interface{}
+}
+
+type Color struct {
+	Code  string
+	Reset string
+}
+
+func parseOptions(args []string) (Command, error) {
+	if len(args) < 1 {
+		return Command{}, errors.New("no command provided")
+	}
+
+	cmd := Command{Name: args[0]}
+	switch cmd.Name {
+	case "new":
+		return cmd, nil
+
+	case "home":
+		return cmd, nil
+
+	case "list":
+		return cmd, nil
+
+	case "links":
+		return cmd, nil
+
+	case "lines":
+		return cmd, nil
+
+	case "stats":
+		return cmd, nil
+
+	case "graph":
+		return cmd, nil
+
+	default:
+		return Command{}, fmt.Errorf("unrecognized command: %s", cmd.Name)
+	}
+}
+
+func defaultColor() Color {
+	return Color{
+		Code:  "\033[0;36m",
+		Reset: "\033[0m",
+	}
+}

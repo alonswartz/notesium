@@ -13,11 +13,6 @@ import (
 	"time"
 )
 
-type Color struct {
-	Code  string
-	Reset string
-}
-
 var version = "dev"
 
 func main() {
@@ -38,7 +33,12 @@ func main() {
 		fatal("%v", err)
 	}
 
-	switch os.Args[1] {
+	cmd, err := parseOptions(os.Args[1:])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	switch cmd.Name {
 	case "home":
 		fmt.Println(notesiumDir)
 	case "new":
@@ -447,13 +447,6 @@ func getNotesiumDir() (string, error) {
 	}
 
 	return realDir, nil
-}
-
-func defaultColor() Color {
-	return Color{
-		Code:  "\033[0;36m",
-		Reset: "\033[0m",
-	}
 }
 
 func fatal(format string, a ...interface{}) {
