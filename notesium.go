@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 )
@@ -182,11 +181,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 			}
 		}
 		if sortBy == "alpha" {
-			sort.Slice(outputLines, func(i, j int) bool {
-				sub_i := strings.SplitN(outputLines[i], ": ", 2)[1]
-				sub_j := strings.SplitN(outputLines[j], ": ", 2)[1]
-				return sub_i < sub_j
-			})
+			sortLinesByField(outputLines, ": ", 1)
 			for _, line := range outputLines {
 				fmt.Println(line)
 			}
