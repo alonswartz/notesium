@@ -46,32 +46,7 @@ func main() {
 	case "list":
 		notesiumList(notesiumDir, cmd.Options.(listOptions))
 	case "links":
-		var filename, limit string
-		filenameRequired := false
-		color := Color{}
-		for _, arg := range os.Args[2:] {
-			switch {
-			case arg == "--color":
-				color = defaultColor()
-			case arg == "--dangling":
-				limit = "dangling"
-			case arg == "--outgoing":
-				limit = map[bool]string{true: "", false: "outgoing"}[limit == "incoming"]
-				filenameRequired = true
-			case arg == "--incoming":
-				limit = map[bool]string{true: "", false: "incoming"}[limit == "outgoing"]
-				filenameRequired = true
-			case strings.HasSuffix(arg, ".md"):
-				filename = arg
-			}
-		}
-		if limit == "dangling" && filename != "" {
-			fatal("dangling filename not supported")
-		}
-		if filenameRequired && filename == "" {
-			fatal("filename not specified")
-		}
-		notesiumLinks(notesiumDir, filename, limit, color)
+		notesiumLinks(notesiumDir, cmd.Options.(linksOptions))
 	case "lines":
 		var prefix string
 		color := Color{}
@@ -191,15 +166,15 @@ func notesiumList(dir string, opts listOptions) {
 	}
 }
 
-func notesiumLinks(dir string, filename string, limit string, color Color) {
+func notesiumLinks(dir string, opts linksOptions) {
 	populateCache(dir)
 
-	if filename != "" {
-		note, exists := noteCache[filename]
+	if opts.filename != "" {
+		note, exists := noteCache[opts.filename]
 		if !exists {
 			log.Fatalf("filename does not exist")
 		}
-		switch limit {
+		switch opts.limit {
 		case "outgoing":
 			for _, link := range note.OutgoingLinks {
 				linkNote, exists := noteCache[link.Filename]
@@ -217,14 +192,14 @@ func notesiumLinks(dir string, filename string, limit string, color Color) {
 			}
 			return
 		default:
-			prefix := fmt.Sprintf("%soutgoing%s", color.Code, color.Reset)
+			prefix := fmt.Sprintf("%soutgoing%s", opts.color.Code, opts.color.Reset)
 			for _, link := range note.OutgoingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
 					fmt.Printf("%s:1: %s %s\n", linkNote.Filename, prefix, linkNote.Title)
 				}
 			}
-			prefix = fmt.Sprintf("%sincoming%s", color.Code, color.Reset)
+			prefix = fmt.Sprintf("%sincoming%s", opts.color.Code, opts.color.Reset)
 			for _, link := range note.IncomingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
@@ -235,13 +210,13 @@ func notesiumLinks(dir string, filename string, limit string, color Color) {
 		return
 	}
 
-	switch limit {
+	switch opts.limit {
 	case "dangling":
 		for _, note := range noteCache {
 			for _, link := range note.OutgoingLinks {
 				_, exists := noteCache[link.Filename]
 				if !exists {
-					fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, color.Code, note.Title, color.Reset, link.Filename)
+					fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, link.Filename)
 				}
 			}
 		}
@@ -255,7 +230,7 @@ func notesiumLinks(dir string, filename string, limit string, color Color) {
 			if exists {
 				linkTitle = linkNote.Title
 			}
-			fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, color.Code, note.Title, color.Reset, linkTitle)
+			fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, linkTitle)
 		}
 	}
 }

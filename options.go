@@ -51,6 +51,12 @@ type listOptions struct {
 	dateFormat string
 }
 
+type linksOptions struct {
+	color    Color
+	limit    string
+	filename string
+}
+
 type Color struct {
 	Code  string
 	Reset string
@@ -102,6 +108,33 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "links":
+		opts := linksOptions{}
+		filenameRequired := false
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--color":
+				opts.color = defaultColor()
+			case opt == "--dangling":
+				opts.limit = "dangling"
+			case opt == "--outgoing":
+				opts.limit = map[bool]string{true: "", false: "outgoing"}[opts.limit == "incoming"]
+				filenameRequired = true
+			case opt == "--incoming":
+				opts.limit = map[bool]string{true: "", false: "incoming"}[opts.limit == "outgoing"]
+				filenameRequired = true
+			case strings.HasSuffix(opt, ".md"):
+				opts.filename = opt
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		if opts.filename != "" && opts.limit == "dangling" {
+			return Command{}, fmt.Errorf("filename not supported")
+		}
+		if opts.filename == "" && filenameRequired {
+			return Command{}, fmt.Errorf("filename is required")
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	case "lines":
