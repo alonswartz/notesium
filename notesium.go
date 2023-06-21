@@ -52,17 +52,7 @@ func main() {
 	case "stats":
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "graph":
-		var encodedUrl bool
-		href := "file://%:p:h/%:t"
-		for _, arg := range os.Args[2:] {
-			switch {
-			case arg == "--encoded-url":
-				encodedUrl = true
-			case strings.HasPrefix(arg, "--href="):
-				href = strings.TrimPrefix(arg, "--href=")
-			}
-		}
-		notesiumGraph(notesiumDir, href, encodedUrl)
+		notesiumGraph(notesiumDir, cmd.Options.(graphOptions))
 	default:
 		fatal("unrecognized command: %s", os.Args[1])
 	}
@@ -300,11 +290,11 @@ func notesiumStats(dir string, opts statsOptions) {
 	fmt.Printf(keyFormat+" %d\n", "chars", chars)
 }
 
-func notesiumGraph(dir string, href string, encodedUrl bool) {
+func notesiumGraph(dir string, opts graphOptions) {
 	populateCache(dir)
 
 	var buffer bytes.Buffer
-	fmt.Fprintf(&buffer, "%s\n", strings.Replace(href, "%:p:h", dir, -1))
+	fmt.Fprintf(&buffer, "%s\n", strings.Replace(opts.href, "%:p:h", dir, -1))
 	fmt.Fprintf(&buffer, "-----\n")
 	fmt.Fprintf(&buffer, "id,title\n")
 	for _, note := range noteCache {
@@ -318,7 +308,7 @@ func notesiumGraph(dir string, href string, encodedUrl bool) {
 		}
 	}
 
-	if encodedUrl {
+	if opts.encodedUrl {
 		exePath, err := os.Executable()
 		if err != nil {
 			log.Fatalf("Could not get executable path: %v\n", err)
