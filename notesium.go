@@ -50,17 +50,7 @@ func main() {
 	case "lines":
 		notesiumLines(notesiumDir, cmd.Options.(linesOptions))
 	case "stats":
-		var table bool
-		color := Color{}
-		for _, arg := range os.Args[2:] {
-			switch {
-			case arg == "--color":
-				color = defaultColor()
-			case arg == "--table":
-				table = true
-			}
-		}
-		notesiumStats(notesiumDir, table, color)
+		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "graph":
 		var encodedUrl bool
 		href := "file://%:p:h/%:t"
@@ -268,7 +258,7 @@ func notesiumLines(dir string, opts linesOptions) {
 	}
 }
 
-func notesiumStats(dir string, table bool, color Color) {
+func notesiumStats(dir string, opts statsOptions) {
 	populateCache(dir)
 
 	labels := 0
@@ -299,7 +289,7 @@ func notesiumStats(dir string, table bool, color Color) {
 		chars += note.Chars
 	}
 
-	keyFormat := color.Code + (map[bool]string{true: "%-9s", false: "%s"}[table]) + color.Reset
+	keyFormat := opts.color.Code + (map[bool]string{true: "%-9s", false: "%s"}[opts.table]) + opts.color.Reset
 	fmt.Printf(keyFormat+" %d\n", "notes", len(noteCache))
 	fmt.Printf(keyFormat+" %d\n", "labels", labels)
 	fmt.Printf(keyFormat+" %d\n", "orphans", orphans)
