@@ -49,11 +49,18 @@ teardown_file() {
     [ $status -eq 0 ]
 }
 
-@test "cli: non-existent command fatal error" {
-    run notesium non-existent
+@test "cli: unrecognized command fatal error" {
+    run notesium foo
     echo "$output"
     [ $status -eq 1 ]
-    [[ "${lines[0]}" =~ 'unrecognized command: non-existent' ]]
+    [[ "${lines[0]}" =~ 'unrecognized command: foo' ]]
+}
+
+@test "cli: unrecognized command option fatal error" {
+    run notesium new --foo
+    echo "$output"
+    [ $status -eq 1 ]
+    [[ "${lines[0]}" =~ 'unrecognized option: --foo' ]]
 }
 
 @test "cli: non-existent option fatal error" {
