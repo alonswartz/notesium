@@ -246,13 +246,13 @@ func notesiumLines(dir string, opts linesOptions) {
 			for scanner.Scan() {
 				lineNumber++
 				line := scanner.Text()
-				if title == "" && strings.HasPrefix(line, "# ") {
-					title = strings.TrimPrefix(line, "# ")
-				}
 				if line == "" {
 					continue
 				}
 				if opts.prefix == "title" {
+					if title == "" && strings.HasPrefix(line, "# ") {
+						title = strings.TrimPrefix(line, "# ")
+					}
 					fmt.Printf("%s:%d: %s%s%s %s\n", filename, lineNumber, opts.color.Code, title, opts.color.Reset, line)
 				} else {
 					fmt.Printf("%s:%d: %s\n", filename, lineNumber, line)
