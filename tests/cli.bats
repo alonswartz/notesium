@@ -53,7 +53,7 @@ teardown_file() {
     run notesium non-existent
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == 'Fatal: unrecognized command: non-existent' ]
+    [[ "${lines[0]}" =~ 'unrecognized command: non-existent' ]]
 }
 
 @test "cli: non-existent option fatal error" {

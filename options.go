@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 const usage = `Usage: notesium COMMAND [OPTIONS]
@@ -42,6 +43,14 @@ type Command struct {
 	Options interface{}
 }
 
+type listOptions struct {
+	color      Color
+	limit      string
+	prefix     string
+	sortBy     string
+	dateFormat string
+}
+
 type Color struct {
 	Code  string
 	Reset string
@@ -61,6 +70,35 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "list":
+		opts := listOptions{}
+		opts.dateFormat = "2006-01-02"
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--color":
+				opts.color = defaultColor()
+			case opt == "--labels":
+				opts.limit = "labels"
+			case opt == "--orphans":
+				opts.limit = "orphans"
+			case opt == "--prefix=ctime":
+				opts.prefix = "ctime"
+			case opt == "--prefix=mtime":
+				opts.prefix = "mtime"
+			case opt == "--prefix=label":
+				opts.prefix = "label"
+			case opt == "--sort=ctime":
+				opts.sortBy = "ctime"
+			case opt == "--sort=mtime":
+				opts.sortBy = "mtime"
+			case opt == "--sort=alpha":
+				opts.sortBy = "alpha"
+			case strings.HasPrefix(opt, "--date="):
+				opts.dateFormat = strings.TrimPrefix(opt, "--date=")
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	case "links":

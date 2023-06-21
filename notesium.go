@@ -44,26 +44,7 @@ func main() {
 	case "new":
 		notesiumNew(notesiumDir)
 	case "list":
-		var limit, prefix, sortBy string
-		dateFormat := "2006-01-02"
-		color := Color{}
-		for _, arg := range os.Args[2:] {
-			switch {
-			case arg == "--color":
-				color = defaultColor()
-			case arg == "--labels":
-				limit = "labels"
-			case arg == "--orphans":
-				limit = "orphans"
-			case strings.HasPrefix(arg, "--prefix="):
-				prefix = strings.TrimPrefix(arg, "--prefix=")
-			case strings.HasPrefix(arg, "--sort="):
-				sortBy = strings.TrimPrefix(arg, "--sort=")
-			case strings.HasPrefix(arg, "--date="):
-				dateFormat = strings.TrimPrefix(arg, "--date=")
-			}
-		}
-		notesiumList(notesiumDir, limit, prefix, sortBy, dateFormat, color)
+		notesiumList(notesiumDir, cmd.Options.(listOptions))
 	case "links":
 		var filename, limit string
 		filenameRequired := false
@@ -139,11 +120,11 @@ func notesiumNew(dir string) {
 	fmt.Println(newPath)
 }
 
-func notesiumList(dir string, limit string, prefix string, sortBy string, dateFormat string, color Color) {
+func notesiumList(dir string, opts listOptions) {
 	populateCache(dir)
-	notes := getSortedNotes(sortBy)
+	notes := getSortedNotes(opts.sortBy)
 
-	switch limit {
+	switch opts.limit {
 	case "labels":
 		for _, note := range notes {
 			if note.IsLabel {
@@ -160,7 +141,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 		return
 	}
 
-	switch prefix {
+	switch opts.prefix {
 	case "label":
 		var notesWithoutLabelLinks []*Note
 		var outputLines []string
@@ -168,8 +149,8 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 			labelLinked := false
 			for _, link := range note.OutgoingLinks {
 				if linkNote, exists := noteCache[link.Filename]; exists && linkNote.IsLabel {
-					line := fmt.Sprintf("%s:1: %s%s%s %s", note.Filename, color.Code, linkNote.Title, color.Reset, note.Title)
-					if sortBy == "alpha" {
+					line := fmt.Sprintf("%s:1: %s%s%s %s", note.Filename, opts.color.Code, linkNote.Title, opts.color.Reset, note.Title)
+					if opts.sortBy == "alpha" {
 						outputLines = append(outputLines, line)
 					} else {
 						fmt.Println(line)
@@ -181,7 +162,7 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 				notesWithoutLabelLinks = append(notesWithoutLabelLinks, note)
 			}
 		}
-		if sortBy == "alpha" {
+		if opts.sortBy == "alpha" {
 			sortLinesByField(outputLines, ": ", 1)
 			for _, line := range outputLines {
 				fmt.Println(line)
@@ -193,14 +174,14 @@ func notesiumList(dir string, limit string, prefix string, sortBy string, dateFo
 		return
 	case "ctime":
 		for _, note := range notes {
-			dateStamp := getDateStamp(note.Ctime, dateFormat)
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, dateStamp, color.Reset, note.Title)
+			dateStamp := getDateStamp(note.Ctime, opts.dateFormat)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
 		}
 		return
 	case "mtime":
 		for _, note := range notes {
-			dateStamp := getDateStamp(note.Mtime, dateFormat)
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, color.Code, dateStamp, color.Reset, note.Title)
+			dateStamp := getDateStamp(note.Mtime, opts.dateFormat)
+			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
 		}
 		return
 	}
