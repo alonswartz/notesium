@@ -48,17 +48,7 @@ func main() {
 	case "links":
 		notesiumLinks(notesiumDir, cmd.Options.(linksOptions))
 	case "lines":
-		var prefix string
-		color := Color{}
-		for _, arg := range os.Args[2:] {
-			switch {
-			case arg == "--color":
-				color = defaultColor()
-			case arg == "--prefix=title":
-				prefix = "title"
-			}
-		}
-		notesiumLines(notesiumDir, prefix, color)
+		notesiumLines(notesiumDir, cmd.Options.(linesOptions))
 	case "stats":
 		var table bool
 		color := Color{}
@@ -235,7 +225,7 @@ func notesiumLinks(dir string, opts linksOptions) {
 	}
 }
 
-func notesiumLines(dir string, prefix string, color Color) {
+func notesiumLines(dir string, opts linesOptions) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("Could not read directory: %s\n", err)
@@ -262,8 +252,8 @@ func notesiumLines(dir string, prefix string, color Color) {
 				if line == "" {
 					continue
 				}
-				if prefix == "title" {
-					fmt.Printf("%s:%d: %s%s%s %s\n", filename, lineNumber, color.Code, title, color.Reset, line)
+				if opts.prefix == "title" {
+					fmt.Printf("%s:%d: %s%s%s %s\n", filename, lineNumber, opts.color.Code, title, opts.color.Reset, line)
 				} else {
 					fmt.Printf("%s:%d: %s\n", filename, lineNumber, line)
 				}
