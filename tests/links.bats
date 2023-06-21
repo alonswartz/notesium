@@ -44,7 +44,7 @@ setup_file() {
     run notesium links --outgoing
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == "Fatal: filename not specified" ]
+    [[ "${lines[0]}" =~ 'filename is required' ]]
 }
 
 @test "links: incoming with filename" {
@@ -59,7 +59,8 @@ setup_file() {
 @test "links: incoming without filename" {
     run notesium links --incoming
     echo "$output"
-    [ "${lines[0]}" == "Fatal: filename not specified" ]
+    [ $status -eq 1 ]
+    [[ "${lines[0]}" =~ 'filename is required' ]]
 }
 
 @test "links: incoming and outgoing with filename" {
@@ -76,14 +77,14 @@ setup_file() {
     run notesium links --incoming --outgoing
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == "Fatal: filename not specified" ]
+    [[ "${lines[0]}" =~ 'filename is required' ]]
 }
 
 @test "links: dangling with filename" {
     run notesium links --dangling 64218087.md
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == "Fatal: dangling filename not supported" ]
+    [[ "${lines[0]}" =~ 'filename not supported' ]]
 }
 
 @test "links: dangling without filename" {
