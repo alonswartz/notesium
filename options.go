@@ -67,6 +67,11 @@ type statsOptions struct {
 	table bool
 }
 
+type graphOptions struct {
+	href       string
+	encodedUrl bool
+}
+
 type Color struct {
 	Code  string
 	Reset string
@@ -178,6 +183,19 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "graph":
+		opts := graphOptions{}
+		opts.href = "file://%:p:h/%:t"
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--encoded-url":
+				opts.encodedUrl = true
+			case strings.HasPrefix(opt, "--href="):
+				opts.href = strings.TrimPrefix(opt, "--href=")
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	default:
