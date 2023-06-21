@@ -293,42 +293,6 @@ teardown_file() {
     assert_line "6421460b.md:1: 2023/03/27 book"
 }
 
-@test "list: match" {
-    skip
-    run notesium list --match="quantum"
-    echo "$output"
-    [ "${lines[0]}" == "64214930.md:1: quantum mechanics" ]
-    [ "${lines[1]}" == "64214a1d.md:5: richard feynman" ]
-    [ "${lines[2]}" == "64218088.md:7: albert einstein" ]
-}
-
-@test "list: match and sort alphabetically" {
-    skip
-    run notesium list --match="quantum" --sort=alpha
-    echo "$output"
-    [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
-    [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
-    [ "${lines[2]}" == "64214a1d.md:5: richard feynman" ]
-}
-
-@test "list: match and sort by mtime" {
-    skip
-    run notesium list --match="quantum" --sort=mtime
-    echo "$output"
-    [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
-    [ "${lines[1]}" == "64214930.md:1: quantum mechanics" ]
-    [ "${lines[2]}" == "64214a1d.md:5: richard feynman" ]
-}
-
-@test "list: match and sort by ctime" {
-    skip
-    run notesium list --match="quantum" --sort=ctime
-    echo "$output"
-    [ "${lines[0]}" == "64218088.md:7: albert einstein" ]
-    [ "${lines[1]}" == "64214a1d.md:5: richard feynman" ]
-    [ "${lines[2]}" == "64214930.md:1: quantum mechanics" ]
-}
-
 @test "list: orphans" {
     run notesium list --orphans
     echo "$output"

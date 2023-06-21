@@ -41,14 +41,6 @@ teardown_file() {
     [ "${lines[0]}" == "6421460b.md:1: book" ]
 }
 
-@test "orphan2: list match" {
-    skip
-    run notesium list --match=foo
-    echo "$output"
-    [ $status -eq 0 ]
-    [ "${lines[0]}" == '' ]
-}
-
 @test "orphan2: links" {
     run notesium links
     echo "$output"
