@@ -57,6 +57,11 @@ type linksOptions struct {
 	filename string
 }
 
+type linesOptions struct {
+	color  Color
+	prefix string
+}
+
 type Color struct {
 	Code  string
 	Reset string
@@ -138,6 +143,18 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "lines":
+		opts := linesOptions{}
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--color":
+				opts.color = defaultColor()
+			case opt == "--prefix=title":
+				opts.prefix = "title"
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	case "stats":
