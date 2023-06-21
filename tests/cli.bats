@@ -63,12 +63,11 @@ teardown_file() {
     [[ "${lines[0]}" =~ 'unrecognized option: --foo' ]]
 }
 
-@test "cli: non-existent option fatal error" {
-    skip
-    run notesium --non-existent
+@test "cli: unrecognized option fatal error" {
+    run notesium --foo
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == 'Fatal: unrecognized option: --non-existent' ]
+    [[ "${lines[0]}" =~ 'unrecognized option: --foo' ]]
 }
 
 @test "cli: home error if NOTESIUM_DIR does not exist" {
