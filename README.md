@@ -206,25 +206,25 @@ command! -bang NotesiumGraph execute
 command! -bang -nargs=* NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
   \ call fzf#vim#grep(
-  \   'notesium list '.shellescape(<q-args>), 0,
+  \   'notesium list '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumLinks
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
   \ call fzf#vim#grep(
-  \   'notesium links '.shellescape(<q-args>), 0,
+  \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 command! -bang -nargs=* NotesiumSearch
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
   \ call fzf#vim#grep(
-  \   'notesium lines '.shellescape(<q-args>), 0,
+  \   'notesium lines '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
-nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=%Y/Week%U<CR>
+nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
