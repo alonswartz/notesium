@@ -84,10 +84,10 @@ func parseOptions(args []string) (Command, error) {
 
 	cmd := Command{Name: args[0]}
 	switch cmd.Name {
-	case "new":
-		return cmd, nil
-
-	case "home":
+	case "new", "home":
+		if len(args) > 1 {
+			return Command{}, fmt.Errorf("unrecognized option: %s", args[1])
+		}
 		return cmd, nil
 
 	case "list":
