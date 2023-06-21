@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -211,6 +213,34 @@ func parseOptions(args []string) (Command, error) {
 		}
 		return cmd, fmt.Errorf("unrecognized command: %s", cmd.Name)
 	}
+}
+
+func getNotesiumDir() (string, error) {
+	dir, exists := os.LookupEnv("NOTESIUM_DIR")
+	if !exists {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		dir = filepath.Join(home, "notes")
+	}
+	absDir, err := filepath.Abs(dir)
+	if err != nil {
+		return "", err
+	}
+	realDir, err := filepath.EvalSymlinks(absDir)
+	if err != nil {
+		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", absDir)
+	}
+	info, err := os.Stat(realDir)
+	if err != nil {
+		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", realDir)
+	}
+	if !info.IsDir() {
+		return "", fmt.Errorf("NOTESIUM_DIR is not a directory: %s", realDir)
+	}
+
+	return realDir, nil
 }
 
 func defaultColor() Color {
