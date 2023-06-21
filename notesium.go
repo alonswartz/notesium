@@ -16,14 +16,16 @@ import (
 var version = "dev"
 
 func main() {
-	helpFlags := map[string]bool{"-h": true, "--help": true, "help": true}
-	if len(os.Args) < 2 || helpFlags[os.Args[1]] {
-		fmt.Println(usage)
-		os.Exit(1)
+	cmd, err := parseOptions(os.Args[1:])
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	versionFlags := map[string]bool{"-v": true, "--version": true, "version": true}
-	if len(os.Args) < 2 || versionFlags[os.Args[1]] {
+	switch cmd.Name {
+	case "help":
+		fmt.Println(usage)
+		os.Exit(1)
+	case "version":
 		fmt.Println(version)
 		os.Exit(0)
 	}
@@ -31,11 +33,6 @@ func main() {
 	notesiumDir, err := getNotesiumDir()
 	if err != nil {
 		fatal("%v", err)
-	}
-
-	cmd, err := parseOptions(os.Args[1:])
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	switch cmd.Name {

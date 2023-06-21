@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -79,11 +78,17 @@ type Color struct {
 
 func parseOptions(args []string) (Command, error) {
 	if len(args) < 1 {
-		return Command{}, errors.New("no command provided")
+		return Command{Name: "help"}, nil
 	}
 
 	cmd := Command{Name: args[0]}
 	switch cmd.Name {
+	case "-h", "--help", "help":
+		return Command{Name: "help"}, nil
+
+	case "-v", "--version", "version":
+		return Command{Name: "version"}, nil
+
 	case "new", "home":
 		if len(args) > 1 {
 			return Command{}, fmt.Errorf("unrecognized option: %s", args[1])
