@@ -84,14 +84,16 @@ func parseOptions(args []string) (Command, error) {
 	cmd := Command{Name: args[0]}
 	switch cmd.Name {
 	case "-h", "--help", "help":
-		return Command{Name: "help"}, nil
+		cmd.Name = "help"
+		return cmd, nil
 
 	case "-v", "--version", "version":
-		return Command{Name: "version"}, nil
+		cmd.Name = "version"
+		return cmd, nil
 
 	case "new", "home":
 		if len(args) > 1 {
-			return Command{}, fmt.Errorf("unrecognized option: %s", args[1])
+			return cmd, fmt.Errorf("unrecognized option: %s", args[1])
 		}
 		return cmd, nil
 
@@ -204,7 +206,10 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	default:
-		return Command{}, fmt.Errorf("unrecognized command: %s", cmd.Name)
+		if strings.HasPrefix(cmd.Name, "-") {
+			return cmd, fmt.Errorf("unrecognized option: %s", cmd.Name)
+		}
+		return cmd, fmt.Errorf("unrecognized command: %s", cmd.Name)
 	}
 }
 
