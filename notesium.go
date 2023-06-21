@@ -32,7 +32,7 @@ func main() {
 
 	notesiumDir, err := getNotesiumDir()
 	if err != nil {
-		fatal("%v", err)
+		log.Fatal(err)
 	}
 
 	switch cmd.Name {
@@ -50,8 +50,6 @@ func main() {
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "graph":
 		notesiumGraph(notesiumDir, cmd.Options.(graphOptions))
-	default:
-		fatal("unrecognized command: %s", os.Args[1])
 	}
 }
 
@@ -370,9 +368,4 @@ func getNotesiumDir() (string, error) {
 	}
 
 	return realDir, nil
-}
-
-func fatal(format string, a ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Fatal: "+format+"\n", a...)
-	os.Exit(1)
 }

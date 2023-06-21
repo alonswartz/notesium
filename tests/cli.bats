@@ -76,7 +76,7 @@ teardown_file() {
     run notesium home
     echo "$output"
     [ $status -eq 1 ]
-    [ "${lines[0]}" == "Fatal: NOTESIUM_DIR does not exist: $NOTESIUM_DIR" ]
+    [[ "${lines[0]}" =~ "NOTESIUM_DIR does not exist: $NOTESIUM_DIR" ]]
 }
 
 @test "cli: home prints default NOTESIUM_DIR if not set" {
