@@ -119,24 +119,22 @@ It aspires and is designed to:
 
 ## CLI
 
-Notesium is currently implemented as a simple shell script leveraging
-basic UNIX utilities. It has only been tested on Linux.
+Notesium has only been tested on Linux.
 
 ### Installation
 
 ```bash
 git clone https://github.com/alonswartz/notesium.git
-ln -s $(pwd)/notesium/notesium.sh $HOME/.local/bin/notesium
+cd notesium
+go build -ldflags "-X main.version=$(git describe | sed 's/^v//; s/-/+/')"
+ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 ```
 
 ### Shell completion
 
 ```bash
-# get the path to the completion script
-echo "$(dirname $(realpath $(which notesium)))/completion.bash"
-
 # update $HOME/.bashrc or similar to source completion.bash, for example:
-[ -e "/path/to/notesium/completion.bash" ] && source "/path/to/notesium/completion.bash"
+[ -f "/path/to/notesium/completion.bash" ] && source "/path/to/notesium/completion.bash"
 ```
 
 ### Usage
