@@ -1,3 +1,20 @@
+## 0.3.0
+
+Notesium has been completely rewritten in `golang`, and provides feature
+parity with the previous shell script implementation. Minor changes in
+flag options are the only deviations from the previous version, as
+detailed below.
+
+This version includes **backwards incompatible changes**.
+
+Changed:
+
+- List command option `--date=` requires golang date format.
+- List command option `--match=` is no longer supported.
+- Stats command option `--fmtnum` is no longer supported.
+- Version command prints the version set at build time.
+- Readme Fzf commands updated to shellescape each argument.
+
 ## 0.2.3
 
 Added:
