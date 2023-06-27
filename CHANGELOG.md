@@ -1,3 +1,9 @@
+## 0.3.1
+
+Fixed:
+
+- Graph path enumeration when binary is symlinked (OSX).
+
 ## 0.3.0
 
 Notesium has been completely rewritten in `golang`, and provides feature
