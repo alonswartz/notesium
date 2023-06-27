@@ -308,7 +308,15 @@ func notesiumGraph(dir string, opts graphOptions) {
 		if err != nil {
 			log.Fatalf("Could not get executable path: %v\n", err)
 		}
-		graphIndex := filepath.Join(filepath.Dir(exePath), "graph", "index.html")
+		exeAbsPath, err := filepath.Abs(exePath)
+		if err != nil {
+			log.Fatalf("Could not get executable absolute path: %v\n", err)
+		}
+		exeRealPath, err := filepath.EvalSymlinks(exeAbsPath)
+		if err != nil {
+			log.Fatalf("Could not get executable real path: %v\n", err)
+		}
+		graphIndex := filepath.Join(filepath.Dir(exeRealPath), "graph", "index.html")
 		if _, err := os.Stat(graphIndex); os.IsNotExist(err) {
 			log.Fatalf("%s does not exist\n", graphIndex)
 		}
