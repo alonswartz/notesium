@@ -89,6 +89,10 @@ It aspires and is designed to:
 ![image: force graph filtered](https://www.notesium.com/images/screenshot-1682579228.png)
 <br/>
 
+*Graph: cluster notes based on their titles in force graph view*
+![image: force graph cluster titles](https://www.notesium.com/images/screenshot-1687865971.png)
+<br/>
+
 *Graph: force graph view dark mode enabled*
 ![image: force graph darkmode](https://www.notesium.com/images/screenshot-1682941869.png)
 <br/>
