@@ -119,7 +119,8 @@ It aspires and is designed to:
 
 ## CLI
 
-Notesium has only been tested on Linux.
+Notesium is primarily tested and supported on Linux, with only
+preliminary tests performed on MacOS and Windows.
 
 ### Installation
 
