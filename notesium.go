@@ -334,6 +334,9 @@ func notesiumWeb(dir string, opts webOptions) {
 
 	http.Handle("/", http.FileServer(http.Dir(opts.webroot)))
 	http.HandleFunc("/api/notes", apiList)
+	http.HandleFunc("/api/notes/", func(w http.ResponseWriter, r *http.Request) {
+		apiNote(dir, w, r)
+	})
 
 	fmt.Println("Serving on http://localhost:8080 (bind address 127.0.0.1)")
 	fmt.Println("Press Ctrl+C to stop")
