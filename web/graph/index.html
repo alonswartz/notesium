@@ -140,13 +140,6 @@
         </ul>
       </div>
 
-      <div id="fileloader" class="hidden fixed inset-0 z-50 mt-20" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 backdrop-blur-sm" aria-hidden="true"></div>
-        <div class="text-center text-xs transform">
-          <input id="fileloaderInput" type="file" onchange="loadFile()" />
-        </div>
-      </div>
-
       <div id="forcegraph" class="text-gray-300/70 dark:text-slate-700"></div>
     </div>
     <script type="text/javascript">
@@ -232,21 +225,9 @@
         clusterDefault();
       }
 
-      function loadFile() {
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-            d3.select("#fileloader").classed("hidden", true);
-            loadData(reader.result);
-        }, false);
-        const [dataFile] = document.getElementById("fileloaderInput").files;
-        if (dataFile) reader.readAsText(dataFile);
-      }
-
       const dataB64 = new URLSearchParams(location.search).get('data');
       if (dataB64) {
         loadData(atob(dataB64));
-      } else {
-        d3.select("#fileloader").classed("hidden", false);
       }
 
       // toggle settings section
