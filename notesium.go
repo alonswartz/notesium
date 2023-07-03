@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,6 +51,8 @@ func main() {
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "graph":
 		notesiumGraph(notesiumDir, cmd.Options.(graphOptions))
+	case "web":
+		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
 	}
 }
 
@@ -324,6 +327,16 @@ func notesiumGraph(dir string, opts graphOptions) {
 	} else {
 		fmt.Print(buffer.String())
 	}
+}
+
+func notesiumWeb(dir string, opts webOptions) {
+	populateCache(dir)
+
+	http.Handle("/", http.FileServer(http.Dir(opts.webroot)))
+
+	fmt.Println("Serving on http://localhost:8080 (bind address 127.0.0.1)")
+	fmt.Println("Press Ctrl+C to stop")
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }
 
 func getDateStamp(t time.Time, dateFormat string) string {
