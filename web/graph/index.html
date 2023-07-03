@@ -206,30 +206,6 @@
         initialize_forcegraph(data, '#forcegraph');
       }
 
-      function loadData(dataStr) {
-        const dataArr = dataStr.split("-----\n");
-
-        const data = {
-          "href": dataArr[0],
-          "nodes": d3.csvParse(dataArr[1]),
-          "links": d3.csvParse(dataArr[2])
-        };
-
-        // dangling links
-        const nodes = data.nodes.map(n => n.id);
-        const targets = data.links.map(l => l.target);
-        const dangling = targets.filter(id => !nodes.includes(id));
-        dangling.forEach(id => data.nodes.push({'id': id, 'title': 'dangling link', 'type': 'ghost'}));
-
-        originalData = data;
-        clusterDefault();
-      }
-
-      const dataB64 = new URLSearchParams(location.search).get('data');
-      if (dataB64) {
-        loadData(atob(dataB64));
-      }
-
       // toggle settings section
       function toggleDiv(settingsDiv) {
         d3.select(settingsDiv).attr("hidden", function() {
@@ -262,6 +238,36 @@
           return;
         }
       });
+
+      const graphData = {
+        "href": "%:t",
+        "nodes": [],
+        "links": [],
+      }
+
+      fetch("/api/notes")
+        .then(response => response.json())
+        .then(data => {
+          for (const key in data) {
+            const note = data[key];
+            graphData.nodes.push({'id': note.Filename, 'title': note.Title});
+
+            if (note.OutgoingLinks) {
+              note.OutgoingLinks.forEach(link => {
+                graphData.links.push({'source': note.Filename, 'target': link.Filename});
+              });
+            }
+          }
+
+          // dangling links
+          const nodes = graphData.nodes.map(n => n.id);
+          const targets = graphData.links.map(l => l.target);
+          const dangling = targets.filter(id => !nodes.includes(id));
+          dangling.forEach(id => graphData.nodes.push({'id': id, 'title': 'dangling link', 'type': 'ghost'}));
+
+          originalData = graphData;
+          clusterDefault();
+        });
     </script>
   </body>
 </html>
