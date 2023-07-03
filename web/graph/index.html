@@ -25,6 +25,33 @@
   <body>
     <div class="h-screen bg-slate-50 dark:bg-slate-800 dark:text-white">
 
+      <div id="preview-panel" hidden class="relative z-10" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 overflow-hidden">
+          <div  class="fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class="w-screen max-w-xl">
+              <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl dark:text-slate-300 dark:shadow-slate-700 dark:bg-slate-800">
+                <div class="px-4 sm:px-6">
+                  <div class="flex items-start justify-between">
+                    <h2 id="preview-panel-header" class="text-base font-semibold leading-6 text-gray-900 dark:text-slate-200"></h2>
+                    <div class="ml-3 flex h-7 items-center">
+                      <button onclick="toggleDiv('#preview-panel')" type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500 dark:bg-slate-900 dark:border-slate-700">
+                        <span class="sr-only">close panel</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                  <pre id="preview-panel-content" class="text-xs"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ul id="forcegraph-filter-results" class="absolute top-0 left-44 max-h-screen overflow-y-hidden pt-6 p-4 w-max text-gray-600 text-xs backdrop-blur-sm bg-slate-50/10 dark:text-slate-400 dark:bg-slate-800/10"></ul>
 
       <div class="absolute w-44 space-y-2 text-xs text-gray-600 border border-gray-200 rounded-lg px-2 py-1.5 m-2 backdrop-blur-sm bg-white/30
@@ -239,8 +266,18 @@
         }
       });
 
+      // preview panel
+      function getNote(id) {
+        fetch("/api/notes/" + id)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById("preview-panel").hidden = false;
+            document.getElementById("preview-panel-header").innerText = data.Filename;
+            document.getElementById("preview-panel-content").innerText = data.Content;
+          });
+      }
+
       const graphData = {
-        "href": "%:t",
         "nodes": [],
         "links": [],
       }
