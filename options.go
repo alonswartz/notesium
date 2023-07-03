@@ -33,6 +33,8 @@ Commands:
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+  web               Start web server on http://localhost:8080
+    --webroot=PATH  Path to web root to serve (required)
   version           Print version
 
 Environment:
@@ -71,6 +73,10 @@ type statsOptions struct {
 type graphOptions struct {
 	href       string
 	encodedUrl bool
+}
+
+type webOptions struct {
+	webroot string
 }
 
 type Color struct {
@@ -203,6 +209,30 @@ func parseOptions(args []string) (Command, error) {
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
+		}
+		cmd.Options = opts
+		return cmd, nil
+
+	case "web":
+		opts := webOptions{}
+		for _, opt := range args[1:] {
+			switch {
+			case strings.HasPrefix(opt, "--webroot="):
+				opts.webroot = strings.TrimPrefix(opt, "--webroot=")
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		if opts.webroot != "" {
+			webroot, err := os.Stat(opts.webroot)
+			if err != nil {
+				return Command{}, fmt.Errorf("webroot does not exist: %v", err)
+			}
+			if !webroot.IsDir() {
+				return Command{}, fmt.Errorf("webroot not directory: %v", err)
+			}
+		} else {
+			return Command{}, fmt.Errorf("webroot is currently required")
 		}
 		cmd.Options = opts
 		return cmd, nil
