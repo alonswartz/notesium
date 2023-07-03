@@ -42,7 +42,7 @@ function initialize_forcegraph(data, graphdiv) {
     .data(nodes)
     .enter()
     .append('a')
-    .attr("href", node => (node.type === 'ghost' ? 'javascript: void(0)' : data.href.replace(/%:t/g, node.id)))
+    .attr("href", node => (node.type === 'ghost' ? 'javascript: void(0)' : 'javascript: getNote("' + node.id + '")'))
     .append("text")
     .classed("label", true)
     .attr("alignment-baseline", "middle")
@@ -108,7 +108,7 @@ function initialize_forcegraph(data, graphdiv) {
     resultsDom.html("");
     resultsSorted.forEach(n => {
       var title = n.title.replace(searchExp, '<b>$1</b>');
-      var href = n.type === 'ghost' ? 'javascript: void(0)' : data.href.replace(/%:t/g, n.id);
+      var href = n.type === 'ghost' ? 'javascript: void(0)' : 'javascript: getNote("' + n.id + '")';
       resultsDom.append("li").append("a").attr("href", href).html(title)
     });
   }
