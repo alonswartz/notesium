@@ -10,6 +10,7 @@ import (
 
 type NoteResponse struct {
 	Note
+	Path    string `json:"Path"`
 	Content string `json:"Content"`
 }
 
@@ -33,7 +34,8 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content, err := os.ReadFile(filepath.Join(dir, filename))
+	path := filepath.Join(dir, filename)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -41,6 +43,7 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request) {
 
 	noteResponse := NoteResponse{
 		Note:    *note,
+		Path:    path,
 		Content: string(content),
 	}
 
