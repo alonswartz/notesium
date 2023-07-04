@@ -332,15 +332,28 @@ func notesiumGraph(dir string, opts graphOptions) {
 func notesiumWeb(dir string, opts webOptions) {
 	populateCache(dir)
 
+	server := &http.Server{
+		Addr: "127.0.0.1:8080",
+	}
+
 	http.Handle("/", http.FileServer(http.Dir(opts.webroot)))
 	http.HandleFunc("/api/notes", apiList)
 	http.HandleFunc("/api/notes/", func(w http.ResponseWriter, r *http.Request) {
 		apiNote(dir, w, r)
 	})
 
-	fmt.Println("Serving on http://localhost:8080 (bind address 127.0.0.1)")
-	fmt.Println("Press Ctrl+C to stop")
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
+	var idleStopMsg string
+	if opts.heartbeat {
+		idleStopMsg = " (stop-on-idle enabled)"
+		http.HandleFunc("/api/heartbeat", heartbeatHandler)
+		go checkHeartbeat(server)
+	}
+
+	fmt.Printf("Serving on http://localhost:8080 (bind address 127.0.0.1)\n")
+	fmt.Printf("Press Ctrl+C to stop%s\n", idleStopMsg)
+	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("Server closed unexpected:%+v", err)
+	}
 }
 
 func getDateStamp(t time.Time, dateFormat string) string {
