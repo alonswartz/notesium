@@ -35,6 +35,7 @@ Commands:
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
   web               Start web server on http://localhost:8080
     --webroot=PATH  Path to web root to serve (required)
+    --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
   version           Print version
 
@@ -77,8 +78,9 @@ type graphOptions struct {
 }
 
 type webOptions struct {
-	webroot   string
-	heartbeat bool
+	webroot       string
+	heartbeat     bool
+	launchBrowser bool
 }
 
 type Color struct {
@@ -221,6 +223,8 @@ func parseOptions(args []string) (Command, error) {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
 				opts.webroot = strings.TrimPrefix(opt, "--webroot=")
+			case opt == "--open-browser":
+				opts.launchBrowser = true
 			case opt == "--stop-on-idle":
 				opts.heartbeat = true
 			default:
