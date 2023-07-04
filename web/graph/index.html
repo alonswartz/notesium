@@ -299,14 +299,20 @@
             document.getElementById("preview-panel-backlinks").hidden = true;
 
             if (data.IncomingLinks) {
-              document.getElementById("preview-panel-backlinks").hidden = false;
-              var backlinks = d3.select('#preview-panel-backlinks-list');
-              backlinks.html("");
-              data.IncomingLinks.forEach(link => {
-                  var node = graphData.nodes.find(node => node.id === link.Filename);
-                  var title = node ? node.title : link.Filename;
-                  backlinks.append("li").append("a").attr("href", link.Filename).html(title);
-              });
+                document.getElementById("preview-panel-backlinks").hidden = false;
+                var backlinks = d3.select('#preview-panel-backlinks-list');
+                backlinks.html("");
+
+                var linksWithTitles = data.IncomingLinks.map(link => {
+                    var node = graphData.nodes.find(node => node.id === link.Filename);
+                    var title = node ? node.title : link.Filename;
+                    return { link: link, title: title };
+                });
+
+                linksWithTitles.sort((a, b) => a.title.localeCompare(b.title));
+                linksWithTitles.forEach(item => {
+                    backlinks.append("li").append("a").attr("href", item.link.Filename).html(item.title);
+                });
             }
 
           });
