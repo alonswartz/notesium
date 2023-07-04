@@ -20,9 +20,9 @@
       .dark #forcegraph .label { fill: #94a3b8; }
       #forcegraph-filter-results li { margin-bottom: 3px; }
       #forcegraph-filter-results a:hover { text-decoration: underline; }
-      #preview-panel-content a { color: #2563eb; }
-      #preview-panel-content a:hover { text-decoration: underline; }
-      .dark #preview-panel-content a { color: #60a5fa; }
+      #preview-panel a { color: #2563eb; }
+      #preview-panel a:hover { text-decoration: underline; }
+      .dark #preview-panel a { color: #60a5fa; }
     </style>
   </head>
   <body>
@@ -46,8 +46,12 @@
                     </div>
                   </div>
                 </div>
-                <div class="relative mt-6 flex-1 px-4 sm:px-6">
-                  <pre id="preview-panel-content" class="text-xs"></pre>
+                <div class="relative mt-6 flex-1 px-4 sm:px-6 text-xs leading-normal">
+                  <pre id="preview-panel-content"></pre>
+                  <div id="preview-panel-backlinks" class="mt-8 pt-4 border-t border-gray-200 dark:border-slate-600">
+                    <p class="py-2 text-gray-900 dark:text-slate-200">Backlinks</p>
+                    <ul id="preview-panel-backlinks-list"></ul>
+                  </div>
                 </div>
               </div>
             </div>
@@ -292,6 +296,19 @@
             document.getElementById("preview-panel").hidden = false;
             document.getElementById("preview-panel-header").innerText = data.Filename;
             document.getElementById("preview-panel-content").innerHTML = markdownify(data.Content);
+            document.getElementById("preview-panel-backlinks").hidden = true;
+
+            if (data.IncomingLinks) {
+              document.getElementById("preview-panel-backlinks").hidden = false;
+              var backlinks = d3.select('#preview-panel-backlinks-list');
+              backlinks.html("");
+              data.IncomingLinks.forEach(link => {
+                  var node = graphData.nodes.find(node => node.id === link.Filename);
+                  var title = node ? node.title : link.Filename;
+                  backlinks.append("li").append("a").attr("href", link.Filename).html(title);
+              });
+            }
+
           });
       }
 
