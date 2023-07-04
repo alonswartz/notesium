@@ -15,7 +15,7 @@
       #forcegraph .node-ghost { fill: #a855f7; }
       #forcegraph .node-dangling { fill-opacity: 0.3; }
       #forcegraph .link { stroke-width: 0.5; }
-      #forcegraph .label { fill: #475569; font-size: 4px; }
+      #forcegraph .label { fill: #475569; font-size: 4px; cursor: pointer; }
       #forcegraph .label:hover { text-decoration: underline; }
       .dark #forcegraph .label { fill: #94a3b8; }
       #forcegraph-filter-results li { margin-bottom: 3px; }
@@ -264,6 +264,16 @@
           event.preventDefault();
           return;
         }
+      });
+
+      // capture click events
+      d3.select("body").on('click', function() {
+        if (! event.target.attributes.href ) return;
+        if (! event.target.attributes.href.value ) return;
+        if (! event.target.attributes.href.value.endsWith('.md') ) return;
+        if (! graphData.nodes.map(n => n.id).includes(event.target.attributes.href.value) ) return;
+        event.preventDefault();
+        getNote(event.target.attributes.href.value);
       });
 
       // preview panel

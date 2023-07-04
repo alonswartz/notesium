@@ -42,10 +42,10 @@ function initialize_forcegraph(data, graphdiv) {
     .data(nodes)
     .enter()
     .append('a')
-    .attr("href", node => (node.type === 'ghost' ? 'javascript: void(0)' : 'javascript: getNote("' + node.id + '")'))
     .append("text")
     .classed("label", true)
     .attr("alignment-baseline", "middle")
+    .attr("href", node => (node.type === 'ghost' ? null : node.id))
     .text(node => (node.title == 'dangling link') ? '' : node.title);
 
   const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
@@ -108,7 +108,7 @@ function initialize_forcegraph(data, graphdiv) {
     resultsDom.html("");
     resultsSorted.forEach(n => {
       var title = n.title.replace(searchExp, '<b>$1</b>');
-      var href = n.type === 'ghost' ? 'javascript: void(0)' : 'javascript: getNote("' + n.id + '")';
+      var href = n.type === 'ghost' ? null : n.id;
       resultsDom.append("li").append("a").attr("href", href).html(title)
     });
   }
