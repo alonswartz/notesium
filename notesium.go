@@ -9,7 +9,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -347,6 +349,31 @@ func notesiumWeb(dir string, opts webOptions) {
 		idleStopMsg = " (stop-on-idle enabled)"
 		http.HandleFunc("/api/heartbeat", heartbeatF(apiHeartbeat))
 		go checkHeartbeat(server)
+	}
+
+	if opts.launchBrowser {
+		go func() {
+			time.Sleep(500 * time.Millisecond)
+			url := "http://localhost:8080"
+
+			var cmd *exec.Cmd
+			switch runtime.GOOS {
+			case "linux":
+				cmd = exec.Command("xdg-open", url)
+			case "darwin":
+				cmd = exec.Command("open", url)
+			case "windows":
+				cmd = exec.Command("cmd", "/c", "start", url)
+			default:
+				log.Println("Unsupported operating system for launching the browser")
+				return
+			}
+
+			err := cmd.Start()
+			if err != nil {
+				log.Printf("Failed to launch the browser: %v", err)
+			}
+		}()
 	}
 
 	fmt.Printf("Serving on http://localhost:8080 (bind address 127.0.0.1)\n")
