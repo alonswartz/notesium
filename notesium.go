@@ -336,16 +336,16 @@ func notesiumWeb(dir string, opts webOptions) {
 		Addr: "127.0.0.1:8080",
 	}
 
-	http.Handle("/", http.FileServer(http.Dir(opts.webroot)))
-	http.HandleFunc("/api/notes", apiList)
-	http.HandleFunc("/api/notes/", func(w http.ResponseWriter, r *http.Request) {
+	http.Handle("/", heartbeatH(http.FileServer(http.Dir(opts.webroot))))
+	http.HandleFunc("/api/notes", heartbeatF(apiList))
+	http.HandleFunc("/api/notes/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
 		apiNote(dir, w, r)
-	})
+	}))
 
 	var idleStopMsg string
 	if opts.heartbeat {
 		idleStopMsg = " (stop-on-idle enabled)"
-		http.HandleFunc("/api/heartbeat", heartbeatHandler)
+		http.HandleFunc("/api/heartbeat", heartbeatF(apiHeartbeat))
 		go checkHeartbeat(server)
 	}
 

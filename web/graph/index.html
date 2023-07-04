@@ -183,13 +183,12 @@
               throw new Error("HTTP status " + response.status);
             }
           })
-          .catch(function(error) {
+          .catch(error => {
             console.log("Failed to send heartbeat: " + error.message);
             clearInterval(heartbeatInterval);
           });
       }
       var heartbeatInterval = setInterval(sendHeartbeat, 5000);
-      sendHeartbeat();
 
       var originalData = null;
 

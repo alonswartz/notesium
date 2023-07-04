@@ -14,6 +14,10 @@ type NoteResponse struct {
 	Content string `json:"Content"`
 }
 
+func apiHeartbeat(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Heartbeat received."))
+}
+
 func apiList(w http.ResponseWriter, r *http.Request) {
 	jsonResponse, err := json.Marshal(noteCache)
 	if err != nil {

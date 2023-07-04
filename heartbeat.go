@@ -14,10 +14,24 @@ var (
 	lastHeartbeat time.Time
 )
 
-func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
+func updateHeartbeat() {
 	mu.Lock()
 	lastHeartbeat = time.Now()
 	mu.Unlock()
+}
+
+func heartbeatH(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		updateHeartbeat()
+		next.ServeHTTP(w, r)
+	})
+}
+
+func heartbeatF(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		updateHeartbeat()
+		next(w, r)
+	}
 }
 
 func checkHeartbeat(server *http.Server) {
