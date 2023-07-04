@@ -176,6 +176,21 @@
       <div id="forcegraph" class="text-gray-300/70 dark:text-slate-700"></div>
     </div>
     <script type="text/javascript">
+      function sendHeartbeat() {
+        fetch("/api/heartbeat")
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("HTTP status " + response.status);
+            }
+          })
+          .catch(function(error) {
+            console.log("Failed to send heartbeat: " + error.message);
+            clearInterval(heartbeatInterval);
+          });
+      }
+      var heartbeatInterval = setInterval(sendHeartbeat, 5000);
+      sendHeartbeat();
+
       var originalData = null;
 
       function clusterDefault() {
