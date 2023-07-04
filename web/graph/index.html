@@ -20,9 +20,9 @@
       .dark #forcegraph .label { fill: #94a3b8; }
       #forcegraph-filter-results li { margin-bottom: 3px; }
       #forcegraph-filter-results a:hover { text-decoration: underline; }
-      #preview-panel a { color: #2563eb; }
-      #preview-panel a:hover { text-decoration: underline; }
-      .dark #preview-panel a { color: #60a5fa; }
+      #preview-panel-content a { color: #2563eb; }
+      #preview-panel-content a:hover { text-decoration: underline; }
+      .dark #preview-panel-content a { color: #60a5fa; }
     </style>
   </head>
   <body>
@@ -32,25 +32,24 @@
         <div class="absolute inset-0 overflow-hidden">
           <div  class="fixed inset-y-0 right-0 flex max-w-full pl-10">
             <div class="w-screen max-w-xl">
-              <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl dark:text-slate-300 dark:shadow-slate-700 dark:bg-slate-800">
-                <div class="px-4 sm:px-6">
-                  <div class="flex items-start justify-between">
-                    <h2 id="preview-panel-header" class="text-base font-semibold leading-6 text-gray-900 dark:text-slate-200"></h2>
-                    <div class="ml-3 flex h-7 items-center">
-                      <button onclick="toggleDiv('#preview-panel')" type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500 dark:bg-slate-900 dark:border-slate-700">
-                        <span class="sr-only">close panel</span>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
+              <div class="flex h-full flex-col overflow-y-scroll bg-white py-3 shadow-xl dark:text-slate-300 dark:shadow-slate-700 dark:bg-slate-800">
+                <div class="absolute top-0 right-2 px-4 py-2 flex">
+                  <a id="preview-panel-editlink" href="#" class="p-1 cursor-pointer text-gray-200 hover:text-gray-400" tabindex="-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                  </a>
+                  <div onclick="toggleDiv('#preview-panel')" class="p-1 cursor-pointer text-gray-200 hover:text-gray-400">
+                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
                   </div>
                 </div>
-                <div class="relative mt-6 flex-1 px-4 sm:px-6 text-xs leading-normal">
-                  <pre id="preview-panel-content"></pre>
-                  <div id="preview-panel-backlinks" class="mt-8 pt-4 border-t border-gray-200 dark:border-slate-600">
+                <div id="preview-panel-content" class="relative flex-1 mt-4 px-4 sm:px-6 text-xs leading-normal">
+                  <pre id="preview-panel-content-body"></pre>
+                  <div id="preview-panel-content-backlinks" class="mt-8 pt-4 border-t border-gray-200 dark:border-slate-600">
                     <p class="py-2 text-gray-900 dark:text-slate-200">Backlinks</p>
-                    <ul id="preview-panel-backlinks-list"></ul>
+                    <ul id="preview-panel-content-backlinks-list"></ul>
                   </div>
                 </div>
               </div>
@@ -285,7 +284,7 @@
 
       // markdownify
       function markdownify(s) {
-        return s.replace(/(^|\s)\[(.*?)\]\((.*?)\)/g, '$1<a href="$3">$2</a>');
+        return s.replace(/(^|\s)\[(.*?)\]\((.*?)\)/g, '$1<a href="$3">$2</a>').trimEnd();
       }
 
       // preview panel
@@ -294,13 +293,13 @@
           .then(response => response.json())
           .then(data => {
             document.getElementById("preview-panel").hidden = false;
-            document.getElementById("preview-panel-header").innerText = data.Filename;
-            document.getElementById("preview-panel-content").innerHTML = markdownify(data.Content);
-            document.getElementById("preview-panel-backlinks").hidden = true;
+            document.getElementById("preview-panel-editlink").href = 'notesium://' + data.Path;
+            document.getElementById("preview-panel-content-body").innerHTML = markdownify(data.Content);
+            document.getElementById("preview-panel-content-backlinks").hidden = true;
 
             if (data.IncomingLinks) {
-                document.getElementById("preview-panel-backlinks").hidden = false;
-                var backlinks = d3.select('#preview-panel-backlinks-list');
+                document.getElementById("preview-panel-content-backlinks").hidden = false;
+                var backlinks = d3.select('#preview-panel-content-backlinks-list');
                 backlinks.html("");
 
                 var linksWithTitles = data.IncomingLinks.map(link => {
