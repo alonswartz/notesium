@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -334,8 +335,22 @@ func notesiumGraph(dir string, opts graphOptions) {
 func notesiumWeb(dir string, opts webOptions) {
 	populateCache(dir)
 
+	host := "127.0.0.1"
+	port := 8080
+
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
+	if err != nil {
+		log.Printf("Port %d already in use, choosing a random port\n", port)
+		ln, err = net.Listen("tcp", fmt.Sprintf("%s:0", host))
+		if err != nil {
+			log.Fatalf("Failed to listen on a port: %v", err)
+		}
+	}
+	defer ln.Close()
+
+	url := "http://localhost:" + strings.Split(ln.Addr().String(), ":")[1]
 	server := &http.Server{
-		Addr: "127.0.0.1:8080",
+		Addr: ln.Addr().String(),
 	}
 
 	http.Handle("/", heartbeatH(http.FileServer(http.Dir(opts.webroot))))
@@ -354,7 +369,6 @@ func notesiumWeb(dir string, opts webOptions) {
 	if opts.launchBrowser {
 		go func() {
 			time.Sleep(500 * time.Millisecond)
-			url := "http://localhost:8080"
 
 			var cmd *exec.Cmd
 			switch runtime.GOOS {
@@ -365,7 +379,7 @@ func notesiumWeb(dir string, opts webOptions) {
 			case "windows":
 				cmd = exec.Command("cmd", "/c", "start", url)
 			default:
-				log.Println("Unsupported operating system for launching the browser")
+				log.Println("Unsupported OS for launching browser")
 				return
 			}
 
@@ -376,9 +390,9 @@ func notesiumWeb(dir string, opts webOptions) {
 		}()
 	}
 
-	fmt.Printf("Serving on http://localhost:8080 (bind address 127.0.0.1)\n")
+	fmt.Printf("Serving on %s (bind address %s)\n", url, host)
 	fmt.Printf("Press Ctrl+C to stop%s\n", idleStopMsg)
-	if err := server.ListenAndServe(); err != http.ErrServerClosed {
+	if err := server.Serve(ln); err != http.ErrServerClosed {
 		log.Fatalf("Server closed unexpected:%+v", err)
 	}
 }
