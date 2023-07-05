@@ -38,7 +38,7 @@ Commands:
     --webroot=PATH  Path to web root to serve (required)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
-    --port=INT      Port for web server to listen on (default: 8080)
+    --port=INT      Port for web server to listen on (default: random)
   version           Print version
 
 Environment:
@@ -224,7 +224,7 @@ func parseOptions(args []string) (Command, error) {
 	case "web":
 		opts := webOptions{}
 		opts.host = "127.0.0.1"
-		opts.port = 8080
+		opts.port = 0
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):

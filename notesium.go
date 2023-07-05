@@ -337,11 +337,7 @@ func notesiumWeb(dir string, opts webOptions) {
 
 	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", opts.host, opts.port))
 	if err != nil {
-		log.Printf("Port %d already in use, choosing a random port\n", opts.port)
-		ln, err = net.Listen("tcp", fmt.Sprintf("%s:0", opts.host))
-		if err != nil {
-			log.Fatalf("Failed to listen on a port: %v", err)
-		}
+		log.Fatalf("Failed to listen on a port: %v", err)
 	}
 	defer ln.Close()
 
