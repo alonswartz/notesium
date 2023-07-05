@@ -335,13 +335,10 @@ func notesiumGraph(dir string, opts graphOptions) {
 func notesiumWeb(dir string, opts webOptions) {
 	populateCache(dir)
 
-	host := "127.0.0.1"
-	port := 8080
-
-	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", opts.host, opts.port))
 	if err != nil {
-		log.Printf("Port %d already in use, choosing a random port\n", port)
-		ln, err = net.Listen("tcp", fmt.Sprintf("%s:0", host))
+		log.Printf("Port %d already in use, choosing a random port\n", opts.port)
+		ln, err = net.Listen("tcp", fmt.Sprintf("%s:0", opts.host))
 		if err != nil {
 			log.Fatalf("Failed to listen on a port: %v", err)
 		}
@@ -390,7 +387,7 @@ func notesiumWeb(dir string, opts webOptions) {
 		}()
 	}
 
-	fmt.Printf("Serving on %s (bind address %s)\n", url, host)
+	fmt.Printf("Serving on %s (bind address %s)\n", url, opts.host)
 	fmt.Printf("Press Ctrl+C to stop%s\n", idleStopMsg)
 	if err := server.Serve(ln); err != http.ErrServerClosed {
 		log.Fatalf("Server closed unexpected:%+v", err)

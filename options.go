@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -33,10 +34,11 @@ Commands:
   graph             Print graph data
     --encoded-url   Encode graph data in base64 and append to graph file url
     --href=FORMAT   Node links format (default: file://%:p:h/%:t)
-  web               Start web server on http://localhost:8080
+  web               Start web server
     --webroot=PATH  Path to web root to serve (required)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
+    --port=INT      Port for web server to listen on (default: 8080)
   version           Print version
 
 Environment:
@@ -78,6 +80,8 @@ type graphOptions struct {
 }
 
 type webOptions struct {
+	host          string
+	port          int
 	webroot       string
 	heartbeat     bool
 	launchBrowser bool
@@ -219,6 +223,8 @@ func parseOptions(args []string) (Command, error) {
 
 	case "web":
 		opts := webOptions{}
+		opts.host = "127.0.0.1"
+		opts.port = 8080
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
@@ -227,6 +233,13 @@ func parseOptions(args []string) (Command, error) {
 				opts.launchBrowser = true
 			case opt == "--stop-on-idle":
 				opts.heartbeat = true
+			case strings.HasPrefix(opt, "--port="):
+				portStr := strings.TrimPrefix(opt, "--port=")
+				port, err := strconv.Atoi(portStr)
+				if err != nil || port < 1024 || port > 65535 {
+					return Command{}, fmt.Errorf("invalid or out of range port number: %s", portStr)
+				}
+				opts.port = port
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
