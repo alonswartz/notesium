@@ -81,20 +81,20 @@ It aspires and is designed to:
 
 ## Screenshots
 
-*Graph: display all notes and links in a force graph view*
-![image: force graph](https://www.notesium.com/images/screenshot-1682577852.png)
+*Graph: display all notes and their links in a force graph view*
+![image: force graph cluster links](https://www.notesium.com/images/screenshot-1688650369.png)
 <br/>
 
-*Graph: filter notes with emphasized matches in force graph view*
-![image: force graph filtered](https://www.notesium.com/images/screenshot-1682579228.png)
-<br/>
-
-*Graph: cluster notes based on their titles in force graph view*
+*Graph: cluster notes based on their titles instead of links*
 ![image: force graph cluster titles](https://www.notesium.com/images/screenshot-1687865971.png)
 <br/>
 
-*Graph: force graph view dark mode enabled*
-![image: force graph darkmode](https://www.notesium.com/images/screenshot-1682941869.png)
+*Graph: filter notes with emphasized matches. preview note content (dark mode)*
+![image: force graph note preview](https://www.notesium.com/images/screenshot-1688631869.png)
+<br/>
+
+*Graph: zoomed out large note collection (dark mode)*
+![image: force graph zoom](https://www.notesium.com/images/screenshot-1682941869.png)
 <br/>
 
 *List: prefixed with associated labels and sorted alphabetically*
