@@ -236,6 +236,11 @@ nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
 nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
+
+" overrides for journal
+if $NOTESIUM_DIR =~ '**/journal/*'
+  nnoremap <Leader>nl :NotesiumList --prefix=label --sort=mtime --color<CR>
+endif
 ```
 
 ### Keybindings
@@ -245,7 +250,7 @@ nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
 | normal | `<Leader>ng`      | Opens browser with graph view (auto stop webserver on idle)
-| normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically
+| normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically (mtime if journal)
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
 | normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
