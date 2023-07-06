@@ -69,12 +69,12 @@ It aspires and is designed to:
     - Optionally prefix each line with the note title for context.
 - **Stats**
     - View counts of notes, labels, orphans, links, lines, words, etc.
-- **Graph**
-    - Generate raw data or encoded URL for browsing the graph.
-    - Customize node link format for opening notes.
+- **Web (forcegraph)**
+    - Visual overview of notes structure with a force graph view.
+    - Cluster nodes based on links, inferred from titles or creation date.
     - Adjust node size dynamically based on bi-directional link count.
     - Emphasize nodes and their links using search filter or node click.
-    - Cluster nodes based on links, inferred from titles or creation date.
+    - Preview notes in a side panel. Open for editing via `notesium://` link.
     - Tweak forces such as repel force, collide radius, and strength.
     - Drag, pan, or zoom the graph for a better view or focus.
     - Customize label visibility or automatically scale per zoom level.
@@ -169,9 +169,11 @@ Commands:
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
-  graph             Print graph data
-    --encoded-url   Encode graph data in base64 and append to graph file url
-    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
+  web               Start web server
+    --webroot=PATH  Path to web root to serve (required)
+    --open-browser  Launch default web browser with web server URL
+    --stop-on-idle  Automatically stop when no activity is detected
+    --port=INT      Port for web server to listen on (default: random)
   version           Print version
 
 Environment:
@@ -200,11 +202,13 @@ autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complet
   \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
   \ 'window': {'width': 0.5, 'height': 0.5}})
 
-command! -bang NotesiumNew execute
-  \ ":e" system("notesium new")
+command! -bang NotesiumNew
+  \ execute ":e" system("notesium new")
 
-command! -bang NotesiumGraph execute
-  \ ":silent !notesium graph --encoded-url | xargs -r -n 1 x-www-browser "
+command! -bang NotesiumGraph
+  \ let webroot = "/home/github/alonswartz/notesium/web/graph" |
+  \ let options = "--webroot=".webroot." --stop-on-idle --open-browser" |
+  \ execute ":silent !nohup notesium web ".options." > /dev/null 2>&1 &"
 
 command! -bang -nargs=* NotesiumList
   \ let spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
@@ -240,7 +244,7 @@ nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
 | ----   | --------          | -------
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
-| normal | `<Leader>ng`      | Opens browser with graph view
+| normal | `<Leader>ng`      | Opens browser with graph view (auto stop webserver on idle)
 | normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
@@ -322,12 +326,7 @@ xdg-open notesium:///home/user/notes/625d563f.md
 
 Opening the listing is useful when integrated with a launcher or desktop
 keybinding. Opening a note for editing is useful, for example, when
-integrated with the `graph`:
-
-```vim
-command! -bang NotesiumGraph execute
-  \ ":silent !notesium graph --encoded-url --href='notesium://\\%:p:h/\\%:t' | xargs -r -n 1 x-www-browser "
-```
+using the `web` force graph view.
 
 ### Handler registration
 
