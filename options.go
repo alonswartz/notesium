@@ -31,9 +31,6 @@ Commands:
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
-  graph             Print graph data
-    --encoded-url   Encode graph data in base64 and append to graph file url
-    --href=FORMAT   Node links format (default: file://%:p:h/%:t)
   web               Start web server
     --webroot=PATH  Path to web root to serve (required)
     --open-browser  Launch default web browser with web server URL
@@ -72,11 +69,6 @@ type linesOptions struct {
 type statsOptions struct {
 	color Color
 	table bool
-}
-
-type graphOptions struct {
-	href       string
-	encodedUrl bool
 }
 
 type webOptions struct {
@@ -198,22 +190,6 @@ func parseOptions(args []string) (Command, error) {
 				opts.color = defaultColor()
 			case opt == "--table":
 				opts.table = true
-			default:
-				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
-			}
-		}
-		cmd.Options = opts
-		return cmd, nil
-
-	case "graph":
-		opts := graphOptions{}
-		opts.href = "file://%:p:h/%:t"
-		for _, opt := range args[1:] {
-			switch {
-			case opt == "--encoded-url":
-				opts.encodedUrl = true
-			case strings.HasPrefix(opt, "--href="):
-				opts.href = strings.TrimPrefix(opt, "--href=")
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}

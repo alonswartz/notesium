@@ -2,8 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -52,8 +50,6 @@ func main() {
 		notesiumLines(notesiumDir, cmd.Options.(linesOptions))
 	case "stats":
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
-	case "graph":
-		notesiumGraph(notesiumDir, cmd.Options.(graphOptions))
 	case "web":
 		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
 	}
@@ -289,47 +285,6 @@ func notesiumStats(dir string, opts statsOptions) {
 	fmt.Printf(keyFormat+" %d\n", "lines", lines)
 	fmt.Printf(keyFormat+" %d\n", "words", words)
 	fmt.Printf(keyFormat+" %d\n", "chars", chars)
-}
-
-func notesiumGraph(dir string, opts graphOptions) {
-	populateCache(dir)
-
-	var buffer bytes.Buffer
-	fmt.Fprintf(&buffer, "%s\n", strings.Replace(opts.href, "%:p:h", dir, -1))
-	fmt.Fprintf(&buffer, "-----\n")
-	fmt.Fprintf(&buffer, "id,title\n")
-	for _, note := range noteCache {
-		fmt.Fprintf(&buffer, "%s,%s\n", note.Filename, note.Title)
-	}
-	fmt.Fprintf(&buffer, "-----\n")
-	fmt.Fprintf(&buffer, "source,target\n")
-	for _, note := range noteCache {
-		for _, link := range note.OutgoingLinks {
-			fmt.Fprintf(&buffer, "%s,%s\n", note.Filename, link.Filename)
-		}
-	}
-
-	if opts.encodedUrl {
-		exePath, err := os.Executable()
-		if err != nil {
-			log.Fatalf("Could not get executable path: %v\n", err)
-		}
-		exeAbsPath, err := filepath.Abs(exePath)
-		if err != nil {
-			log.Fatalf("Could not get executable absolute path: %v\n", err)
-		}
-		exeRealPath, err := filepath.EvalSymlinks(exeAbsPath)
-		if err != nil {
-			log.Fatalf("Could not get executable real path: %v\n", err)
-		}
-		graphIndex := filepath.Join(filepath.Dir(exeRealPath), "graph", "index.html")
-		if _, err := os.Stat(graphIndex); os.IsNotExist(err) {
-			log.Fatalf("%s does not exist\n", graphIndex)
-		}
-		fmt.Printf("file://%s?data=%s\n", graphIndex, base64.StdEncoding.EncodeToString(buffer.Bytes()))
-	} else {
-		fmt.Print(buffer.String())
-	}
 }
 
 func notesiumWeb(dir string, opts webOptions) {
