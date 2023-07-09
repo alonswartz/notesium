@@ -1,3 +1,24 @@
+## 0.4.0
+
+This version includes **backwards incompatible changes**.
+
+Added:
+
+- Web command with options for webroot, stop-on-idle, open-browser, port.
+- Web API tests and endpoints: `/api/notes` `/api/notes/:id` `/api/heartbeat`.
+- Web option to automatically stop web server when no activity detected.
+- Web option to launch browser with web server URL for convenience.
+- Web graph now includes note preview panel, with auto-generated backlinks.
+- Web graph note preview markdown links are converted to html links.
+- Readme Vim keybinding override journal example.
+
+Changed:
+
+- Graph command has been removed, superseded by Web command.
+- Web graph webroot was duplicated from Graph, updated to use API.
+- Web graph edit links formatted with `notesium://` URI protocol.
+- Readme Vim graph command updated for Web (stop-on-idle, open-browser).
+
 ## 0.3.1
 
 Fixed:
