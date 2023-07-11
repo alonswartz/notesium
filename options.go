@@ -32,7 +32,7 @@ Commands:
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
   web               Start web server
-    --webroot=PATH  Path to web root to serve (required)
+    --webroot=PATH  Path to web root to serve (default: embedded webroot)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
@@ -228,8 +228,6 @@ func parseOptions(args []string) (Command, error) {
 			if !webroot.IsDir() {
 				return Command{}, fmt.Errorf("webroot not directory: %v", err)
 			}
-		} else {
-			return Command{}, fmt.Errorf("webroot is currently required")
 		}
 		cmd.Options = opts
 		return cmd, nil

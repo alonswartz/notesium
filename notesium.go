@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"embed"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net"
@@ -16,6 +18,10 @@ import (
 )
 
 var version = "dev"
+
+//go:embed web/graph
+var webfs embed.FS
+var webfsRoot = "web/graph"
 
 func main() {
 	cmd, err := parseOptions(os.Args[1:])
@@ -290,6 +296,18 @@ func notesiumStats(dir string, opts statsOptions) {
 func notesiumWeb(dir string, opts webOptions) {
 	populateCache(dir)
 
+	var httpfs http.FileSystem
+
+	if opts.webroot == "" {
+		subfs, err := fs.Sub(webfs, webfsRoot)
+		if err != nil {
+			log.Fatalf("embedded webroot sub error: %v", err)
+		}
+		httpfs = http.FS(subfs)
+	} else {
+		httpfs = http.Dir(opts.webroot)
+	}
+
 	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", opts.host, opts.port))
 	if err != nil {
 		log.Fatalf("Failed to listen on a port: %v", err)
@@ -301,7 +319,7 @@ func notesiumWeb(dir string, opts webOptions) {
 		Addr: ln.Addr().String(),
 	}
 
-	http.Handle("/", heartbeatH(http.FileServer(http.Dir(opts.webroot))))
+	http.Handle("/", heartbeatH(http.FileServer(httpfs)))
 	http.HandleFunc("/api/notes", heartbeatF(apiList))
 	http.HandleFunc("/api/notes/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
 		apiNote(dir, w, r)
