@@ -170,7 +170,7 @@ Commands:
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
   web               Start web server
-    --webroot=PATH  Path to web root to serve (required)
+    --webroot=PATH  Path to web root to serve (default: embedded webroot)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
@@ -206,8 +206,7 @@ command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
 command! -bang NotesiumGraph
-  \ let webroot = "/home/github/alonswartz/notesium/web/graph" |
-  \ let options = "--webroot=".webroot." --stop-on-idle --open-browser" |
+  \ let options = "--stop-on-idle --open-browser" |
   \ execute ":silent !nohup notesium web ".options." > /dev/null 2>&1 &"
 
 command! -bang -nargs=* NotesiumList
