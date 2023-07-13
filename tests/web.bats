@@ -14,7 +14,7 @@ setup_file() {
 }
 
 @test "web: start with custom port and stop-on-idle" {
-    run notesium web  --port=8881 --stop-on-idle --webroot=. &
+    run notesium web  --port=8881 --stop-on-idle &
     echo "$output"
 }
 
