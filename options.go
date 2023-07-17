@@ -36,6 +36,7 @@ Commands:
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
+  extract [path]    Print list of embedded files or contents of file path
   version           Print version
 
 Environment:
@@ -77,6 +78,10 @@ type webOptions struct {
 	webroot       string
 	heartbeat     bool
 	launchBrowser bool
+}
+
+type extractOptions struct {
+	path string
 }
 
 type Color struct {
@@ -228,6 +233,14 @@ func parseOptions(args []string) (Command, error) {
 			if !webroot.IsDir() {
 				return Command{}, fmt.Errorf("webroot not directory: %v", err)
 			}
+		}
+		cmd.Options = opts
+		return cmd, nil
+
+	case "extract":
+		opts := extractOptions{}
+		for _, opt := range args[1:] {
+			opts.path = opt
 		}
 		cmd.Options = opts
 		return cmd, nil

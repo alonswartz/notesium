@@ -58,6 +58,8 @@ func main() {
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "web":
 		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
+	case "extract":
+		notesiumExtract(cmd.Options.(extractOptions))
 	}
 }
 
@@ -360,6 +362,33 @@ func notesiumWeb(dir string, opts webOptions) {
 	fmt.Printf("Press Ctrl+C to stop%s\n", idleStopMsg)
 	if err := server.Serve(ln); err != http.ErrServerClosed {
 		log.Fatalf("Server closed unexpected:%+v", err)
+	}
+}
+
+func notesiumExtract(opts extractOptions) {
+	switch opts.path {
+	case "":
+		var files []string
+		fs.WalkDir(webfs, ".", func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if !d.IsDir() {
+				files = append(files, path)
+			}
+			return nil
+		})
+
+		for _, file := range files {
+			fmt.Println(file)
+		}
+
+	default:
+		content, err := fs.ReadFile(webfs, opts.path)
+		if err != nil {
+			log.Fatalf("Failed to read file: %s", err)
+		}
+		fmt.Println(string(content))
 	}
 }
 

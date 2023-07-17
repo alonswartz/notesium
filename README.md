@@ -174,6 +174,7 @@ Commands:
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
+  extract [path]    Print list of embedded files or contents of file path
   version           Print version
 
 Environment:
