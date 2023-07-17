@@ -131,13 +131,19 @@ preliminary tests performed on MacOS and Windows.
 ```bash
 git clone https://github.com/alonswartz/notesium.git
 cd notesium
+./web/graph/make.sh all
 go build -ldflags "-X main.version=$(git describe | sed 's/^v//; s/-/+/')"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 ```
 
+Alternatively, download the [latest release](https://github.com/alonswartz/notesium/releases/latest) and add it to your `$PATH`.
+
 ### Shell completion
 
 ```bash
+# if you downloaded the latest release binary, extract completion.bash, for example:
+notesium extract completion.bash > /path/to/notesium/completion.bash
+
 # update $HOME/.bashrc or similar to source completion.bash, for example:
 [ -f "/path/to/notesium/completion.bash" ] && source "/path/to/notesium/completion.bash"
 ```
