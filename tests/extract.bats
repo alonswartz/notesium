@@ -11,6 +11,7 @@ setup_file() {
     run notesium extract
     echo "$output"
     [ $status -eq 0 ]
+    assert_line "completion.bash"
     assert_line "web/graph/index.html"
 }
 

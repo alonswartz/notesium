@@ -19,9 +19,9 @@ import (
 
 var version = "dev"
 
-//go:embed web/graph
-var webfs embed.FS
-var webfsRoot = "web/graph"
+//go:embed completion.bash web/graph
+var embedfs embed.FS
+var embedfsWebRoot = "web/graph"
 
 func main() {
 	cmd, err := parseOptions(os.Args[1:])
@@ -301,7 +301,7 @@ func notesiumWeb(dir string, opts webOptions) {
 	var httpfs http.FileSystem
 
 	if opts.webroot == "" {
-		subfs, err := fs.Sub(webfs, webfsRoot)
+		subfs, err := fs.Sub(embedfs, embedfsWebRoot)
 		if err != nil {
 			log.Fatalf("embedded webroot sub error: %v", err)
 		}
@@ -369,7 +369,7 @@ func notesiumExtract(opts extractOptions) {
 	switch opts.path {
 	case "":
 		var files []string
-		fs.WalkDir(webfs, ".", func(path string, d fs.DirEntry, err error) error {
+		fs.WalkDir(embedfs, ".", func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -384,7 +384,7 @@ func notesiumExtract(opts extractOptions) {
 		}
 
 	default:
-		content, err := fs.ReadFile(webfs, opts.path)
+		content, err := fs.ReadFile(embedfs, opts.path)
 		if err != nil {
 			log.Fatalf("Failed to read file: %s", err)
 		}
