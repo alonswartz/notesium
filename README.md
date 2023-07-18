@@ -128,15 +128,27 @@ preliminary tests performed on MacOS and Windows.
 
 ### Installation
 
+Download the [latest release](https://github.com/alonswartz/notesium/releases/latest) for your platform, making sure to give it
+executable permissions and available in your `PATH`.
+
+```bash
+# Example for linux amd64
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-linux-amd64
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt
+sha256sum --check --ignore-missing checksums.txt && rm checksums.txt
+chmod +x notesium-linux-amd64
+mv notesium-linux-amd64 $HOME/.local/bin/notesium
+```
+
+Or build from source.
+
 ```bash
 git clone https://github.com/alonswartz/notesium.git
 cd notesium
 ./web/graph/make.sh all
-go build -ldflags "-X main.version=$(git describe | sed 's/^v//; s/-/+/')"
+go build -ldflags "-s -w -X main.version=$(git describe | sed 's/^v//; s/-/+/')"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 ```
-
-Alternatively, download the [latest release](https://github.com/alonswartz/notesium/releases/latest) and add it to your `$PATH`.
 
 ### Shell completion
 
