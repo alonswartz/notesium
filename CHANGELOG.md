@@ -1,3 +1,17 @@
+## 0.4.1
+
+Added:
+
+- Embedded `web/graph` and `completion.bash` in binary.
+- Web command will serve embedded webroot by default.
+- Extract command to print embedded files list of file content.
+
+Changed:
+
+- Web option `--webroot` is no longer required (default: embedded webroot).
+- Web graph requires local d3.js and compiled tailwind.css (instead of CDN).
+- Readme Vim graph command updated to not specify a webroot.
+
 ## 0.4.0
 
 This version includes **backwards incompatible changes**.
