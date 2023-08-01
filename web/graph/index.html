@@ -26,8 +26,11 @@
       #forcegraph-filter-results a:hover { text-decoration: underline; }
       #preview-panel-content a { color: #2563eb; }
       #preview-panel-content a:hover { text-decoration: underline; }
+      #preview-panel-content .heading { color: #ff7f0e; font-weight: bold;}
+      #preview-panel-content-body pre { background-color: #f8fafc; padding: 5px;}
       .dark #preview-panel-content a { color: #60a5fa; }
       .dark #preview-panel-content hr { border-top: 1px solid #475569; }
+      .dark #preview-panel-content-body pre { background-color: #0f172a; padding: 5px;}
     </style>
   </head>
   <body>
@@ -299,7 +302,28 @@
 
       // markdownify
       function markdownify(s) {
-        return s.replace(/(^|\s)\[(.*?)\]\((.*?)\)/g, '$1<a href="$3">$2</a>').trimEnd();
+        const blocks = [];
+
+        s = s.replace(/(```)([^`]*?)(```)/gs, function(_, start, content, end) {
+          var div = document.createElement("div");
+          div.textContent = content;
+          blocks.push('<pre>' + div.innerHTML + '</pre>');
+          return '%%BLOCK' + (blocks.length - 1) + '%%';
+        });
+
+        s = s
+          .replace(/(^|\s)\[(.*?)\]\((http[s]?:\/\/.*?)\)/g, '$1<a href="$3" target="_blank">$2➜</a>')
+          .replace(/(^|\s)\[(.*?)\]\((?!http[s]?:\/\/)(?!.*\.md$)(.*?)\)/g, '$1<a href="$3">$2</a>')
+          .replace(/(^|\n)(#+\s.*?)(?=\n|$)/g, '$1<span class="heading">$2</span>')
+          .replace(/\*\*(.*?)\*\*/gs, '<b>$1</b>')
+          .replace(/`([^`]*)`/g, '<b><i>`$1`</i></b>')
+          .trimEnd();
+
+        blocks.forEach((block, index) => {
+          s = s.replace('%%BLOCK' + index + '%%', block);
+        });
+
+        return s;
       }
 
       // preview panel
