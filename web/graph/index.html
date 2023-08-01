@@ -27,6 +27,7 @@
       #preview-panel-content a { color: #2563eb; }
       #preview-panel-content a:hover { text-decoration: underline; }
       .dark #preview-panel-content a { color: #60a5fa; }
+      .dark #preview-panel-content hr { border-top: 1px solid #475569; }
     </style>
   </head>
   <body>
@@ -51,10 +52,6 @@
                 </div>
                 <div id="preview-panel-content" class="relative flex-1 mt-4 px-4 sm:px-6 text-xs leading-normal">
                   <pre id="preview-panel-content-body"></pre>
-                  <div id="preview-panel-content-backlinks" class="mt-8 pt-4 border-t border-gray-200 dark:border-slate-600">
-                    <p class="py-2 text-gray-900 dark:text-slate-200">Backlinks</p>
-                    <ul id="preview-panel-content-backlinks-list"></ul>
-                  </div>
                 </div>
               </div>
             </div>
@@ -313,12 +310,10 @@
             document.getElementById("preview-panel").hidden = false;
             document.getElementById("preview-panel-editlink").href = 'notesium://' + data.Path;
             document.getElementById("preview-panel-content-body").innerHTML = markdownify(data.Content);
-            document.getElementById("preview-panel-content-backlinks").hidden = true;
 
+            var backlinks = ""
             if (data.IncomingLinks) {
-                document.getElementById("preview-panel-content-backlinks").hidden = false;
-                var backlinks = d3.select('#preview-panel-content-backlinks-list');
-                backlinks.html("");
+                backlinks += "\n\n<hr/>\n\n## backlinks\n\n";
 
                 var linksWithTitles = data.IncomingLinks.map(link => {
                     var node = graphData.nodes.find(node => node.id === link.Filename);
@@ -328,8 +323,10 @@
 
                 linksWithTitles.sort((a, b) => a.title.localeCompare(b.title));
                 linksWithTitles.forEach(item => {
-                    backlinks.append("li").append("a").attr("href", item.link.Filename).html(item.title);
+                    backlinks += `[${item.title}](${item.link.Filename})\n`;
                 });
+
+                document.getElementById("preview-panel-content-body").innerHTML += markdownify(backlinks);
             }
 
           });
