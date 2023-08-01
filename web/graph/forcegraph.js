@@ -107,8 +107,8 @@ function initialize_forcegraph(data, graphdiv) {
     const searchExp = new RegExp(`(${searchWords.join('|')})`, 'ig');
     resultsDom.html("");
     resultsSorted.forEach(n => {
-      var title = n.title.replace(searchExp, '<b>$1</b>');
       var href = n.type === 'ghost' ? null : n.id;
+      var title = n.title.replace(searchExp, '<b><a href="' + href + '">$1</a></b>');
       resultsDom.append("li").append("a").attr("href", href).html(title)
     });
   }
