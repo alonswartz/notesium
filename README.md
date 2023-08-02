@@ -90,7 +90,7 @@ It aspires and is designed to:
 <br/>
 
 *Graph: filter notes with emphasized matches. preview note content (dark mode)*
-![image: force graph note preview](https://www.notesium.com/images/screenshot-1688631869.png)
+![image: force graph note preview](https://www.notesium.com/images/screenshot-1690971723.png)
 <br/>
 
 *Graph: zoomed out large note collection (dark mode)*
