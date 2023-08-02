@@ -1,3 +1,19 @@
+## 0.4.2
+
+Fixed:
+
+- Web graph filtered results search term highlight for click capture.
+
+Added:
+
+- Web graph note preview syntax highlighting for headings, code blocks,
+  inline code, bold, outgoing links with visual indicator.
+
+Changed:
+
+- Web graph note preview backlinks refactor.
+- Web graph input filter event handling.
+
 ## 0.4.1
 
 Added:
