@@ -35,6 +35,10 @@ var noteCache map[string]*Note
 var linkRegex = regexp.MustCompile(`\]\(([0-9a-f]{8}\.md)\)`)
 
 func populateCache(dir string) {
+	if noteCache != nil {
+		return
+	}
+
 	noteCache = make(map[string]*Note)
 
 	files, err := ioutil.ReadDir(dir)
