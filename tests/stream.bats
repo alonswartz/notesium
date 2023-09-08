@@ -59,6 +59,16 @@ setup_file() {
     assert_line "64218087.md:3: surely you're joking mr. feynman → 12345678.md"
 }
 
+@test "stream: links default with filename" {
+    run _curl 'api/stream/links?filename=64214a1d.md'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 3 ]
+    assert_line "642146c7.md:1: outgoing physicist"
+    assert_line "64214930.md:1: outgoing quantum mechanics"
+    assert_line "64218087.md:3: incoming surely you're joking mr. feynman"
+}
+
 @test "stream: no command specified error" {
     run _curl 'api/stream/'
     echo "$output"

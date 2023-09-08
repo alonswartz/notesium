@@ -157,6 +157,8 @@ func parseOptions(args []string) (Command, error) {
 			case opt == "--incoming":
 				opts.limit = map[bool]string{true: "", false: "incoming"}[opts.limit == "outgoing"]
 				filenameRequired = true
+			case strings.HasPrefix(opt, "--filename=") && strings.HasSuffix(opt, ".md"):
+				opts.filename = strings.TrimPrefix(opt, "--filename=")
 			case strings.HasSuffix(opt, ".md"):
 				opts.filename = opt
 			default:
