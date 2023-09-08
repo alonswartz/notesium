@@ -31,6 +31,20 @@ setup_file() {
     assert_line "64218088.md:1: albert einstein"
 }
 
+@test "stream: list sort alphabetically" {
+    run _curl 'api/stream/list?sort=alpha'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "64218088.md:1: albert einstein" ]
+    [ "${lines[1]}" == "6421460b.md:1: book" ]
+    [ "${lines[2]}" == "64217712.md:1: empty note" ]
+    [ "${lines[3]}" == "642176a6.md:1: lorem ipsum" ]
+    [ "${lines[4]}" == "642146c7.md:1: physicist" ]
+    [ "${lines[5]}" == "64214930.md:1: quantum mechanics" ]
+    [ "${lines[6]}" == "64214a1d.md:1: richard feynman" ]
+    [ "${lines[7]}" == "64218087.md:1: surely you're joking mr. feynman" ]
+}
+
 @test "stream: no command specified error" {
     run _curl 'api/stream/'
     echo "$output"

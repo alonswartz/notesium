@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -84,15 +85,34 @@ func apiStream(dir string, w http.ResponseWriter, r *http.Request) {
 	}
 	command := pathSegments[3]
 
+	args := []string{command}
+	queryParameters := r.URL.Query()
+	for key, values := range queryParameters {
+		for _, value := range values {
+			if value == "true" {
+				arg := fmt.Sprintf("--%s", key)
+				args = append(args, arg)
+			} else if value != "" && value != "false" {
+				arg := fmt.Sprintf("--%s=%s", key, value)
+				args = append(args, arg)
+			}
+		}
+	}
+
+	cmd, err := parseOptions(args)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	var writer io.Writer
 	writer = &streamResponseWriter{w}
 
-	switch command {
+	switch cmd.Name {
 	case "list":
-		opts := listOptions{}
-		notesiumList(dir, opts, writer)
+		notesiumList(dir, cmd.Options.(listOptions), writer)
 	default:
-		http.Error(w, "unrecognized command: "+command, http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("unrecognized command: %s", command), http.StatusBadRequest)
 		return
 	}
 }
