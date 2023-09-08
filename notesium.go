@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"embed"
 	"fmt"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"log"
@@ -49,7 +50,7 @@ func main() {
 	case "new":
 		notesiumNew(notesiumDir)
 	case "list":
-		notesiumList(notesiumDir, cmd.Options.(listOptions))
+		notesiumList(notesiumDir, cmd.Options.(listOptions), os.Stdout)
 	case "links":
 		notesiumLinks(notesiumDir, cmd.Options.(linksOptions))
 	case "lines":
@@ -70,7 +71,7 @@ func notesiumNew(dir string) {
 	fmt.Println(newPath)
 }
 
-func notesiumList(dir string, opts listOptions) {
+func notesiumList(dir string, opts listOptions, w io.Writer) {
 	populateCache(dir)
 	notes := getSortedNotes(opts.sortBy)
 
@@ -78,14 +79,14 @@ func notesiumList(dir string, opts listOptions) {
 	case "labels":
 		for _, note := range notes {
 			if note.IsLabel {
-				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+				fmt.Fprintf(w, "%s:1: %s\n", note.Filename, note.Title)
 			}
 		}
 		return
 	case "orphans":
 		for _, note := range notes {
 			if len(note.OutgoingLinks) == 0 && len(note.IncomingLinks) == 0 {
-				fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+				fmt.Fprintf(w, "%s:1: %s\n", note.Filename, note.Title)
 			}
 		}
 		return
@@ -103,7 +104,7 @@ func notesiumList(dir string, opts listOptions) {
 					if opts.sortBy == "alpha" {
 						outputLines = append(outputLines, line)
 					} else {
-						fmt.Println(line)
+						fmt.Fprintln(w, line)
 					}
 					labelLinked = true
 				}
@@ -115,29 +116,29 @@ func notesiumList(dir string, opts listOptions) {
 		if opts.sortBy == "alpha" {
 			sortLinesByField(outputLines, ": ", 1)
 			for _, line := range outputLines {
-				fmt.Println(line)
+				fmt.Fprintln(w, line)
 			}
 		}
 		for _, note := range notesWithoutLabelLinks {
-			fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+			fmt.Fprintf(w, "%s:1: %s\n", note.Filename, note.Title)
 		}
 		return
 	case "ctime":
 		for _, note := range notes {
 			dateStamp := getDateStamp(note.Ctime, opts.dateFormat)
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
+			fmt.Fprintf(w, "%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
 		}
 		return
 	case "mtime":
 		for _, note := range notes {
 			dateStamp := getDateStamp(note.Mtime, opts.dateFormat)
-			fmt.Printf("%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
+			fmt.Fprintf(w, "%s:1: %s%s%s %s\n", note.Filename, opts.color.Code, dateStamp, opts.color.Reset, note.Title)
 		}
 		return
 	}
 
 	for _, note := range notes {
-		fmt.Printf("%s:1: %s\n", note.Filename, note.Title)
+		fmt.Fprintf(w, "%s:1: %s\n", note.Filename, note.Title)
 	}
 }
 
@@ -325,6 +326,10 @@ func notesiumWeb(dir string, opts webOptions) {
 	http.HandleFunc("/api/notes", heartbeatF(apiList))
 	http.HandleFunc("/api/notes/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
 		apiNote(dir, w, r)
+	}))
+
+	http.HandleFunc("/api/stream/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
+		apiStream(dir, w, r)
 	}))
 
 	var idleStopMsg string
