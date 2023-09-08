@@ -52,7 +52,7 @@ func main() {
 	case "list":
 		notesiumList(notesiumDir, cmd.Options.(listOptions), os.Stdout)
 	case "links":
-		notesiumLinks(notesiumDir, cmd.Options.(linksOptions))
+		notesiumLinks(notesiumDir, cmd.Options.(linksOptions), os.Stdout)
 	case "lines":
 		notesiumLines(notesiumDir, cmd.Options.(linesOptions))
 	case "stats":
@@ -142,7 +142,7 @@ func notesiumList(dir string, opts listOptions, w io.Writer) {
 	}
 }
 
-func notesiumLinks(dir string, opts linksOptions) {
+func notesiumLinks(dir string, opts linksOptions, w io.Writer) {
 	populateCache(dir)
 
 	if opts.filename != "" {
@@ -155,7 +155,7 @@ func notesiumLinks(dir string, opts linksOptions) {
 			for _, link := range note.OutgoingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:1: %s\n", linkNote.Filename, linkNote.Title)
+					fmt.Fprintf(w, "%s:1: %s\n", linkNote.Filename, linkNote.Title)
 				}
 			}
 			return
@@ -163,7 +163,7 @@ func notesiumLinks(dir string, opts linksOptions) {
 			for _, link := range note.IncomingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:%d: %s\n", linkNote.Filename, link.LineNumber, linkNote.Title)
+					fmt.Fprintf(w, "%s:%d: %s\n", linkNote.Filename, link.LineNumber, linkNote.Title)
 				}
 			}
 			return
@@ -172,14 +172,14 @@ func notesiumLinks(dir string, opts linksOptions) {
 			for _, link := range note.OutgoingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:1: %s %s\n", linkNote.Filename, prefix, linkNote.Title)
+					fmt.Fprintf(w, "%s:1: %s %s\n", linkNote.Filename, prefix, linkNote.Title)
 				}
 			}
 			prefix = fmt.Sprintf("%sincoming%s", opts.color.Code, opts.color.Reset)
 			for _, link := range note.IncomingLinks {
 				linkNote, exists := noteCache[link.Filename]
 				if exists {
-					fmt.Printf("%s:%d: %s %s\n", linkNote.Filename, link.LineNumber, prefix, linkNote.Title)
+					fmt.Fprintf(w, "%s:%d: %s %s\n", linkNote.Filename, link.LineNumber, prefix, linkNote.Title)
 				}
 			}
 		}
@@ -192,7 +192,7 @@ func notesiumLinks(dir string, opts linksOptions) {
 			for _, link := range note.OutgoingLinks {
 				_, exists := noteCache[link.Filename]
 				if !exists {
-					fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, link.Filename)
+					fmt.Fprintf(w, "%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, link.Filename)
 				}
 			}
 		}
@@ -206,7 +206,7 @@ func notesiumLinks(dir string, opts linksOptions) {
 			if exists {
 				linkTitle = linkNote.Title
 			}
-			fmt.Printf("%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, linkTitle)
+			fmt.Fprintf(w, "%s:%d: %s%s%s → %s\n", note.Filename, link.LineNumber, opts.color.Code, note.Title, opts.color.Reset, linkTitle)
 		}
 	}
 }

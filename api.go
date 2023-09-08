@@ -111,6 +111,8 @@ func apiStream(dir string, w http.ResponseWriter, r *http.Request) {
 	switch cmd.Name {
 	case "list":
 		notesiumList(dir, cmd.Options.(listOptions), writer)
+	case "links":
+		notesiumLinks(dir, cmd.Options.(linksOptions), writer)
 	default:
 		http.Error(w, fmt.Sprintf("unrecognized command: %s", command), http.StatusBadRequest)
 		return

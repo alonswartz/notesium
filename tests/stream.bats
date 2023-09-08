@@ -45,6 +45,20 @@ setup_file() {
     [ "${lines[7]}" == "64218087.md:1: surely you're joking mr. feynman" ]
 }
 
+@test "stream: links default without filename" {
+    run _curl 'api/stream/links'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 7 ]
+    assert_line "64218088.md:3: albert einstein → physicist"
+    assert_line "64218088.md:7: albert einstein → quantum mechanics"
+    assert_line "64214a1d.md:3: richard feynman → physicist"
+    assert_line "64214a1d.md:5: richard feynman → quantum mechanics"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → book"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → richard feynman"
+    assert_line "64218087.md:3: surely you're joking mr. feynman → 12345678.md"
+}
+
 @test "stream: no command specified error" {
     run _curl 'api/stream/'
     echo "$output"
