@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.9.1/dist/cdn.min.js"></script>
+  </head>
+  <body>
+
+    <div x-data="streamData">
+      <div class="h-screen mx-auto h-full flex flex-col overflow-y-auto p-24">
+        <div class="flex py-2 items-center justify-items-center justify-between border-b border-gray-300">
+          <div class="text-sm space-x-1">
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/list?sort=alpha')">list</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/links')">links</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/lines')">lines</button>
+            <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/stream/..." x-model="uri" @change="fetchStream(uri)" />
+          </div>
+          <p class="text-sm" x-text="output.split('\n').length"></p>
+        </div>
+        <div class="h-full overflow-y-auto">
+          <div class="max-h-full overflow-y-auto py-2">
+            <pre class="text-sm" x-text="output"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function streamData() {
+        return {
+          uri: '',
+          output: '',
+          fetchStream(uri) {
+            this.uri = uri;
+            this.output = '';
+            const self = this;
+            fetch(this.uri)
+              .then(response => {
+                const reader = response.body.getReader();
+                const stream = new ReadableStream({
+                  start(controller) {
+                    function push() {
+                      reader.read().then(({ done, value }) => {
+                        if (done) { controller.close(); return; }
+                        self.output += new TextDecoder().decode(value);
+                        controller.enqueue(value); push();
+                      });
+                    }
+                    push();
+                  }
+                });
+                return new Response(stream);
+              });
+          },
+        }
+      }
+    </script>
+
+  </body>
+</html>
