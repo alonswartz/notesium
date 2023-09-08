@@ -54,7 +54,7 @@ func main() {
 	case "links":
 		notesiumLinks(notesiumDir, cmd.Options.(linksOptions), os.Stdout)
 	case "lines":
-		notesiumLines(notesiumDir, cmd.Options.(linesOptions))
+		notesiumLines(notesiumDir, cmd.Options.(linesOptions), os.Stdout)
 	case "stats":
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
 	case "web":
@@ -211,7 +211,7 @@ func notesiumLinks(dir string, opts linksOptions, w io.Writer) {
 	}
 }
 
-func notesiumLines(dir string, opts linesOptions) {
+func notesiumLines(dir string, opts linesOptions, w io.Writer) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("Could not read directory: %s\n", err)
@@ -239,9 +239,9 @@ func notesiumLines(dir string, opts linesOptions) {
 					if title == "" && strings.HasPrefix(line, "# ") {
 						title = strings.TrimPrefix(line, "# ")
 					}
-					fmt.Printf("%s:%d: %s%s%s %s\n", filename, lineNumber, opts.color.Code, title, opts.color.Reset, line)
+					fmt.Fprintf(w, "%s:%d: %s%s%s %s\n", filename, lineNumber, opts.color.Code, title, opts.color.Reset, line)
 				} else {
-					fmt.Printf("%s:%d: %s\n", filename, lineNumber, line)
+					fmt.Fprintf(w, "%s:%d: %s\n", filename, lineNumber, line)
 				}
 			}
 
