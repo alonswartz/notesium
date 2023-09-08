@@ -69,6 +69,16 @@ setup_file() {
     assert_line "64218087.md:3: incoming surely you're joking mr. feynman"
 }
 
+@test "stream: lines default" {
+    run _curl 'api/stream/lines'
+    echo "$output"
+    [ $status -eq 0 ]
+    assert_line "6421460b.md:1: # book"
+    assert_line "642146c7.md:1: # physicist"
+    assert_line "64214930.md:3: a fundamental theory in physics that provides a description of the"
+    assert_line "64214930.md:5: particles."
+}
+
 @test "stream: no command specified error" {
     run _curl 'api/stream/'
     echo "$output"
