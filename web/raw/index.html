@@ -9,13 +9,13 @@
   </head>
   <body>
 
-    <div x-data="rawData" x-init="fetchRaw('/api/raw/list?sort=alpha')">
+    <div x-data="rawData" x-init="fetchRaw('/api/raw/list?prefix=label&sort=alpha&color=true')">
       <div class="h-screen mx-auto h-full flex flex-col overflow-y-auto p-24">
         <div class="bg-gray-300 flex p-2 items-center justify-items-center justify-between rounded-lg">
           <div class="text-sm space-x-1">
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/list?sort=alpha')">list</button>
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/links')">links</button>
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/lines')">lines</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/list?color=true&prefix=label&sort=alpha')">list</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/links?color=true')">links</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/lines?color=true&prefix=title')">lines</button>
             <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/raw/..." x-model="uri" @change="fetchRaw(uri)" />
           </div>
         </div>
@@ -31,13 +31,17 @@
           <p class="text-sm text-right w-20" x-text="filteredItems.length + '/' + items.length"></p>
         </div>
         <div class="h-full overflow-y-auto grid grid-cols-2 divide-x divide-gray-300">
-          <select x-model="selected" id="options" role="listbox" size=5
+          <ul x-model="selected" role="listbox"
            class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
             <template x-for="item, index in filteredItems">
-              <option :selected="selected==index" :value="index" x-text="item.Content" role="option"
-               class="checked:!bg-blue-500 checked:text-white hover:bg-indigo-600/10 cursor-pointer py-1"></option>
+              <li @click="selected = index" role="option"
+               :class="(index === selected) ? '!bg-blue-500 text-white' : ''"
+               class="hover:bg-indigo-600/10 cursor-pointer select-none px-4 py-1 whitespace-nowrap">
+                <b x-text="item.Colored"></b>
+                <span x-text="item.Content"></span>
+              </li>
             </template>
-          </select>
+          </ul>
           <div class="text-sm font-mono text-gray-800">
             <template x-if="filteredItems.length > 0">
               <pre x-text="filteredItems[selected].Filename"></pre>
