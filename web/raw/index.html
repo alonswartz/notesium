@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Stream</title>
+    <title>Raw</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.9.1/dist/cdn.min.js"></script>
   </head>
   <body>
 
-    <div x-data="streamData" x-init="fetchStream('/api/stream/list?sort=alpha')">
+    <div x-data="rawData" x-init="fetchRaw('/api/raw/list?sort=alpha')">
       <div class="h-screen mx-auto h-full flex flex-col overflow-y-auto p-24">
         <div class="bg-gray-300 flex p-2 items-center justify-items-center justify-between rounded-lg">
           <div class="text-sm space-x-1">
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/list?sort=alpha')">list</button>
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/links')">links</button>
-            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/lines')">lines</button>
-            <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/stream/..." x-model="uri" @change="fetchStream(uri)" />
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/list?sort=alpha')">list</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/links')">links</button>
+            <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchRaw('/api/raw/lines')">lines</button>
+            <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/raw/..." x-model="uri" @change="fetchRaw(uri)" />
           </div>
         </div>
 
@@ -43,7 +43,7 @@
     </div>
 
     <script>
-      function streamData() {
+      function rawData() {
         return {
           uri: '',
           query: '',
@@ -57,30 +57,16 @@
               ? this.lines.slice(0, this.maxLines)
               : this.lines.filter(line => line.toLowerCase().includes(this.query.toLowerCase())).slice(0, this.maxLines);
           },
-          fetchStream(uri) {
+          fetchRaw(uri) {
             this.uri = uri;
             this.selected = 0;
             this.query = '';
             this.$nextTick(() => { this.$refs.queryInput.focus() });
-            const self = this;
             fetch(this.uri)
-              .then(response => {
-                const reader = response.body.getReader();
-                const stream = new ReadableStream({
-                  start(controller) {
-                    function push() {
-                      reader.read().then(({ done, value }) => {
-                        if (done) { controller.close(); buffer = ''; self.filterLines(); return; }
-                        buffer += new TextDecoder().decode(value);
-                        self.lines = buffer.trim().split('\n');
-                        controller.enqueue(value); push();
-                      });
-                    }
-                    var buffer = '';
-                    push();
-                  }
-                });
-                return new Response(stream);
+              .then(response => response.text())
+              .then(text => {
+                 this.lines = text.trim().split('\n');
+                 this.filterLines();
               });
           },
         }

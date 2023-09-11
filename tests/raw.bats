@@ -11,13 +11,13 @@ setup_file() {
     [ "$(pidof notesium)" == "" ]
 }
 
-@test "stream: start with custom port and stop-on-idle" {
+@test "api/raw: start with custom port and stop-on-idle" {
     run notesium web  --port=8881 --stop-on-idle &
     echo "$output"
 }
 
-@test "stream: list default" {
-    run _curl 'api/stream/list'
+@test "api/raw: list default" {
+    run _curl 'api/raw/list'
     echo "$output"
     [ $status -eq 0 ]
     [ "${#lines[@]}" -eq 8 ]
@@ -31,8 +31,8 @@ setup_file() {
     assert_line "64218088.md:1: albert einstein"
 }
 
-@test "stream: list sort alphabetically" {
-    run _curl 'api/stream/list?sort=alpha'
+@test "api/raw: list sort alphabetically" {
+    run _curl 'api/raw/list?sort=alpha'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218088.md:1: albert einstein" ]
@@ -45,8 +45,8 @@ setup_file() {
     [ "${lines[7]}" == "64218087.md:1: surely you're joking mr. feynman" ]
 }
 
-@test "stream: links default without filename" {
-    run _curl 'api/stream/links'
+@test "api/raw: links default without filename" {
+    run _curl 'api/raw/links'
     echo "$output"
     [ $status -eq 0 ]
     [ "${#lines[@]}" -eq 7 ]
@@ -59,8 +59,8 @@ setup_file() {
     assert_line "64218087.md:3: surely you're joking mr. feynman → 12345678.md"
 }
 
-@test "stream: links default with filename" {
-    run _curl 'api/stream/links?filename=64214a1d.md'
+@test "api/raw: links default with filename" {
+    run _curl 'api/raw/links?filename=64214a1d.md'
     echo "$output"
     [ $status -eq 0 ]
     [ "${#lines[@]}" -eq 3 ]
@@ -69,8 +69,8 @@ setup_file() {
     assert_line "64218087.md:3: incoming surely you're joking mr. feynman"
 }
 
-@test "stream: lines default" {
-    run _curl 'api/stream/lines'
+@test "api/raw: lines default" {
+    run _curl 'api/raw/lines'
     echo "$output"
     [ $status -eq 0 ]
     assert_line "6421460b.md:1: # book"
@@ -79,21 +79,21 @@ setup_file() {
     assert_line "64214930.md:5: particles."
 }
 
-@test "stream: no command specified error" {
-    run _curl 'api/stream/'
+@test "api/raw: no command specified error" {
+    run _curl 'api/raw/'
     echo "$output"
     [ $status -eq 0 ]
     [[ "${lines[0]}" =~ 'no command specified' ]]
 }
 
-@test "stream: unrecognized command error" {
-    run _curl 'api/stream/foo'
+@test "api/raw: unrecognized command error" {
+    run _curl 'api/raw/foo'
     echo "$output"
     [ $status -eq 0 ]
     [[ "${lines[0]}" =~ 'unrecognized command: foo' ]]
 }
 
-@test "stream: stop by sending terminate signal" {
+@test "api/raw: stop by sending terminate signal" {
     # force stop otherwise bats will block until timeout (bats-core/issues/205)
     run pidof notesium
     echo "$output"
