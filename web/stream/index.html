@@ -22,6 +22,11 @@
 
         <div class="flex py-2 items-center justify-items-center justify-between space-x-2">
           <input x-ref="queryInput" x-model="query" x-init="$watch('query', value => filterLines(value))"
+           @blur="$refs.queryInput.focus()"
+           @keydown.down.prevent="(selected !== filteredLines.length - 1) ? selected+=1: undefined"
+           @keydown.up.prevent="(selected !== 0) ? selected-=1 : undefined;"
+           @keydown.ctrl.j.prevent="(selected !== filteredLines.length - 1) ? selected+=1: undefined"
+           @keydown.ctrl.k.prevent="(selected !== 0) ? selected-=1 : undefined;"
            class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" autofocus placeholder="filter..." />
           <p class="text-sm text-right w-20" x-text="filteredLines.length + '/' + lines.length"></p>
         </div>
