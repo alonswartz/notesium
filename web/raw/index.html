@@ -21,23 +21,28 @@
         </div>
 
         <div class="flex py-2 items-center justify-items-center justify-between space-x-2">
-          <input x-ref="queryInput" x-model="query" x-init="$watch('query', value => filterLines(value))"
+          <input x-ref="queryInput" x-model="query" x-init="$watch('query', value => filterItems(value))" autofocus placeholder="filter..."
            @blur="$refs.queryInput.focus()"
-           @keydown.down.prevent="(selected !== filteredLines.length - 1) ? selected+=1: undefined"
+           @keydown.down.prevent="(selected !== filteredItems.length - 1) ? selected+=1: undefined"
            @keydown.up.prevent="(selected !== 0) ? selected-=1 : undefined;"
-           @keydown.ctrl.j.prevent="(selected !== filteredLines.length - 1) ? selected+=1: undefined"
+           @keydown.ctrl.j.prevent="(selected !== filteredItems.length - 1) ? selected+=1: undefined"
            @keydown.ctrl.k.prevent="(selected !== 0) ? selected-=1 : undefined;"
-           class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" autofocus placeholder="filter..." />
-          <p class="text-sm text-right w-20" x-text="filteredLines.length + '/' + lines.length"></p>
+           class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" />
+          <p class="text-sm text-right w-20" x-text="filteredItems.length + '/' + items.length"></p>
         </div>
         <div class="h-full overflow-y-auto grid grid-cols-2 divide-x divide-gray-300">
           <select x-model="selected" id="options" role="listbox" size=5
-            class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
-            <template x-for="line, index in filteredLines">
-              <option :selected="selected==index" class="checked:!bg-blue-500 checked:text-white hover:bg-indigo-600/10 cursor-pointer py-1" role="option" :value="index" x-text="line"></option>
+           class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
+            <template x-for="item, index in filteredItems">
+              <option :selected="selected==index" :value="index" x-text="item.Content" role="option"
+               class="checked:!bg-blue-500 checked:text-white hover:bg-indigo-600/10 cursor-pointer py-1"></option>
             </template>
           </select>
-          <div x-text="selected"></div>
+          <div class="text-sm font-mono text-gray-800">
+            <template x-if="filteredItems.length > 0">
+              <pre x-text="filteredItems[selected].Filename"></pre>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -47,26 +52,30 @@
         return {
           uri: '',
           query: '',
-          lines: [],
-          filteredLines: [],
-          maxLines: 300,
+          items: [],
+          filteredItems: [],
+          filteredItemsMax: 300,
           selected: 0,
-          filterLines() {
+          filterItems() {
             this.selected = 0;
-            this.filteredLines = !this.query
-              ? this.lines.slice(0, this.maxLines)
-              : this.lines.filter(line => line.toLowerCase().includes(this.query.toLowerCase())).slice(0, this.maxLines);
+            this.filteredItems = !this.query
+              ? this.items.slice(0, this.filteredItemsMax)
+              : this.items.filter(item => item.Content.toLowerCase().includes(this.query.toLowerCase())).slice(0, this.filteredItemsMax);
           },
           fetchRaw(uri) {
             this.uri = uri;
-            this.selected = 0;
             this.query = '';
+            this.selected = 0;
             this.$nextTick(() => { this.$refs.queryInput.focus() });
             fetch(this.uri)
               .then(response => response.text())
               .then(text => {
-                 this.lines = text.trim().split('\n');
-                 this.filterLines();
+                 this.items = text.trim().split('\n').map(line => {
+                   const [Filename, Lineno, ...contentParts] = line.split(':');
+                   const Content = contentParts.join(':');
+                   return { Filename, Lineno, Content };
+                 });
+                 this.filterItems();
               });
           },
         }
