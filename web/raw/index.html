@@ -57,10 +57,11 @@
           filteredItemsMax: 300,
           selected: 0,
           filterItems() {
+            const qs = this.query.toLowerCase();
             this.selected = 0;
             this.filteredItems = !this.query
               ? this.items.slice(0, this.filteredItemsMax)
-              : this.items.filter(item => item.Content.toLowerCase().includes(this.query.toLowerCase())).slice(0, this.filteredItemsMax);
+              : this.items.filter(item => item.SearchStr.includes(qs)).slice(0, this.filteredItemsMax);
           },
           fetchRaw(uri) {
             this.uri = uri;
@@ -70,11 +71,17 @@
             fetch(this.uri)
               .then(response => response.text())
               .then(text => {
+                 const PATTERN = /^(.*?):(.*?):\s*(?:\x1b\[0;36m(.*?)\x1b\[0m\s*)?(.*)$/
                  this.items = text.trim().split('\n').map(line => {
-                   const [Filename, Lineno, ...contentParts] = line.split(':');
-                   const Content = contentParts.join(':');
-                   return { Filename, Lineno, Content };
-                 });
+                   const matches = PATTERN.exec(line);
+                   if (!matches) return null;
+                   const Filename = matches[1];
+                   const Linenum = matches[2];
+                   const Colored = matches[3] || '';
+                   const Content = matches[4];
+                   const SearchStr = Colored ? `${Colored} ${Content}`.toLowerCase() : Content.toLowerCase();
+                   return { Filename, Linenum, Colored, Content, SearchStr };
+                 }).filter(Boolean);
                  this.filterItems();
               });
           },
