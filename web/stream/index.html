@@ -18,16 +18,17 @@
             <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="fetchStream('/api/stream/lines')">lines</button>
             <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/stream/..." x-model="uri" @change="fetchStream(uri)" />
           </div>
-          <p class="text-sm" x-text="lines.length"></p>
         </div>
 
-        <div class="flex py-2 items-center justify-items-center justify-between">
-          <input x-ref="queryInput" x-model="query" class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" placeholder="filter..." />
+        <div class="flex py-2 items-center justify-items-center justify-between space-x-2">
+          <input x-ref="queryInput" x-model="query" x-init="$watch('query', value => filterLines(value))"
+           class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" autofocus placeholder="filter..." />
+          <p class="text-sm text-right w-20" x-text="filteredLines.length + '/' + lines.length"></p>
         </div>
         <div class="h-full overflow-y-auto grid grid-cols-2 divide-x divide-gray-300">
           <select x-model="selected" id="options" role="listbox" size=5
             class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
-            <template x-for="line, index in filterLines()">
+            <template x-for="line, index in filteredLines">
               <option :selected="selected==index" class="checked:!bg-blue-500 checked:text-white hover:bg-indigo-600/10 cursor-pointer py-1" role="option" :value="index" x-text="line"></option>
             </template>
           </select>
@@ -42,13 +43,14 @@
           uri: '',
           query: '',
           lines: [],
+          filteredLines: [],
           maxLines: 300,
           selected: 0,
           filterLines() {
             this.selected = 0;
-            if (!this.query) return this.lines.slice(0, this.maxLines);
-            const loweredQuery = this.query.toLowerCase();
-            return this.lines.filter(line => { return line.toLowerCase().includes(loweredQuery); }).slice(0, this.maxLines);
+            this.filteredLines = !this.query
+              ? this.lines.slice(0, this.maxLines)
+              : this.lines.filter(line => line.toLowerCase().includes(this.query.toLowerCase())).slice(0, this.maxLines);
           },
           fetchStream(uri) {
             this.uri = uri;
@@ -63,7 +65,7 @@
                   start(controller) {
                     function push() {
                       reader.read().then(({ done, value }) => {
-                        if (done) { controller.close(); buffer = ''; return; }
+                        if (done) { controller.close(); buffer = ''; self.filterLines(); return; }
                         buffer += new TextDecoder().decode(value);
                         self.lines = buffer.trim().split('\n');
                         controller.enqueue(value); push();
