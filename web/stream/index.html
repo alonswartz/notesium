@@ -42,12 +42,13 @@
           uri: '',
           query: '',
           lines: [],
+          maxLines: 300,
           selected: 0,
           filterLines() {
             this.selected = 0;
-            if (!this.query) return this.lines;
+            if (!this.query) return this.lines.slice(0, this.maxLines);
             const loweredQuery = this.query.toLowerCase();
-            return this.lines.filter(line => { return line.toLowerCase().includes(loweredQuery); });
+            return this.lines.filter(line => { return line.toLowerCase().includes(loweredQuery); }).slice(0, this.maxLines);
           },
           fetchStream(uri) {
             this.uri = uri;
