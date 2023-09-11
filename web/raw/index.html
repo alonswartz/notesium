@@ -23,10 +23,10 @@
         <div class="flex py-2 items-center justify-items-center justify-between space-x-2">
           <input x-ref="queryInput" x-model="query" x-init="$watch('query', value => filterItems(value))" autofocus placeholder="filter..."
            @blur="$refs.queryInput.focus()"
-           @keydown.down.prevent="(selected !== filteredItems.length - 1) ? selected+=1: undefined"
-           @keydown.up.prevent="(selected !== 0) ? selected-=1 : undefined;"
-           @keydown.ctrl.j.prevent="(selected !== filteredItems.length - 1) ? selected+=1: undefined"
-           @keydown.ctrl.k.prevent="(selected !== 0) ? selected-=1 : undefined;"
+           @keydown.down.prevent="selectDown()"
+           @keydown.up.prevent="selectUp()"
+           @keydown.ctrl.j.prevent="selectDown()"
+           @keydown.ctrl.k.prevent="selectUp()"
            class="border border-gray-400 py-2 px-2 w-full rounded-lg text-sm" />
           <p class="text-sm text-right w-20" x-text="filteredItems.length + '/' + items.length"></p>
         </div>
@@ -34,7 +34,7 @@
           <ul x-model="selected" role="listbox"
            class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
             <template x-for="item, index in filteredItems">
-              <li @click="selected = index" role="option"
+              <li :id="'item'+index" @click="selected = index" role="option"
                :class="(index === selected) ? '!bg-blue-500 text-white' : ''"
                class="hover:bg-indigo-600/10 cursor-pointer select-none px-4 py-1 whitespace-nowrap">
                 <b x-text="item.Colored"></b>
@@ -60,6 +60,19 @@
           filteredItems: [],
           filteredItemsMax: 300,
           selected: 0,
+          selectUp() {
+            if (this.selected !== 0) {
+              this.selected -= 1; this.scrollIntoView(`item${this.selected}`)
+            }
+          },
+          selectDown() {
+            if (this.selected !== this.filteredItems.length - 1) {
+              this.selected += 1; this.scrollIntoView(`item${this.selected}`)
+            }
+          },
+          scrollIntoView(id) {
+            document.getElementById(id).scrollIntoView({ block: 'nearest' });
+          },
           filterItems() {
             const qs = this.query.toLowerCase();
             this.selected = 0;
