@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -65,19 +65,23 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request) {
 
 //////////////////////////////// experimental ////////////////////////////////
 
-type streamResponseWriter struct {
-	w http.ResponseWriter
+type bufferedResponseWriter struct {
+	buf bytes.Buffer
+	w   http.ResponseWriter
 }
 
-func (rw *streamResponseWriter) Write(p []byte) (n int, err error) {
-	n, err = rw.w.Write(p)
+func (rw *bufferedResponseWriter) Write(p []byte) (n int, err error) {
+	return rw.buf.Write(p)
+}
+
+func (rw *bufferedResponseWriter) Flush() {
+	rw.w.Write(rw.buf.Bytes())
 	if f, ok := rw.w.(http.Flusher); ok {
 		f.Flush()
 	}
-	return
 }
 
-func apiStream(dir string, w http.ResponseWriter, r *http.Request) {
+func apiRaw(dir string, w http.ResponseWriter, r *http.Request) {
 	pathSegments := strings.Split(r.URL.Path, "/")
 	if len(pathSegments) < 4 || pathSegments[3] == "" {
 		http.Error(w, "no command specified", http.StatusNotFound)
@@ -105,8 +109,8 @@ func apiStream(dir string, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var writer io.Writer
-	writer = &streamResponseWriter{w}
+	writer := &bufferedResponseWriter{w: w}
+	defer writer.Flush()
 
 	switch cmd.Name {
 	case "list":
