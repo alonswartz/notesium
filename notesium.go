@@ -328,8 +328,8 @@ func notesiumWeb(dir string, opts webOptions) {
 		apiNote(dir, w, r)
 	}))
 
-	http.HandleFunc("/api/stream/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
-		apiStream(dir, w, r)
+	http.HandleFunc("/api/raw/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
+		apiRaw(dir, w, r)
 	}))
 
 	var idleStopMsg string
