@@ -1,15 +1,6 @@
 var t = `
-<div class="bg-gray-200 flex p-2 items-center justify-items-center justify-between">
-  <div class="text-sm space-x-2">
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="handleOpen('/api/raw/list?color=true&prefix=label&sort=alpha')">list</button>
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="handleOpen('/api/raw/links?color=true')">links</button>
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="handleOpen('/api/raw/lines?color=true&prefix=title')">lines</button>
-    <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/raw/..." v-model="uri" @change="handleOpen(uri)" />
-  </div>
-</div>
-
-<div v-show="isOpen" @keyup.esc="isOpen=false" class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true" >
-  <div @click="isOpen=false" class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" aria-hidden="true"></div>
+<div @keyup.esc="handleClose()" class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true" >
+  <div @click="handleClose()" class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" aria-hidden="true"></div>
   <div class="mx-auto flex flex-col w-full h-full transform overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5">
     <div class="relative group flex items-center justify-items-center justify-between space-x-2 border-b border-gray-100">
       <input ref="queryInput" v-model="query" autofocus placeholder="filter..."
@@ -42,20 +33,18 @@ var t = `
 `
 
 export default {
+  props: ['uri'],
+  emits: ['filter-selection'],
   data() {
     return {
-      isOpen: true,
-      uri: '',
       query: '',
       items: [],
       selected: 0,
     }
   },
   methods: {
-    handleOpen(uri) {
-      this.isOpen = true;
-      this.$nextTick(() => { this.$refs.queryInput.focus(); });
-      this.fetchRaw(uri);
+    handleClose() {
+      this.$emit('filter-selection', 'foo');
     },
     selectUp() {
       if (this.selected !== 0) {
@@ -71,10 +60,9 @@ export default {
       document.getElementById(id).scrollIntoView({ block: 'nearest' });
     },
     fetchRaw(uri) {
-      this.uri = uri;
       this.query = '';
       this.selected = 0;
-      fetch(this.uri)
+      fetch(uri)
         .then(response => response.text())
         .then(text => {
           const PATTERN = /^(.*?):(.*?):\s*(?:\x1b\[0;36m(.*?)\x1b\[0m\s*)?(.*)$/
@@ -105,9 +93,8 @@ export default {
     },
   },
   created() {
-    if (this.isOpen) {
-      this.handleOpen('/api/raw/list?color=true&prefix=label&sort=alpha')
-    }
+    this.fetchRaw(this.uri);
+    this.$nextTick(() => { this.$refs.queryInput.focus(); });
   },
   template: t
 }
