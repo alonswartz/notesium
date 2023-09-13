@@ -87,11 +87,11 @@ export default {
     },
     filteredItems() {
       this.selected = 0;
-      const qs = this.query.toLowerCase();
       const maxItems = 300;
+      const queryWords = this.query.toLowerCase().split(' ');
       return !this.query
         ? this.items.slice(0, maxItems)
-        : this.items.filter(item => item.SearchStr.includes(qs)).slice(0, maxItems);
+        : this.items.filter(item => (queryWords.every(queryWord => item.SearchStr.includes(queryWord)))).slice(0, maxItems);
     },
   },
   created() {
