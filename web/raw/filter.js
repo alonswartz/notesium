@@ -2,19 +2,20 @@ var t = `
 <div @keyup.esc="handleSelection(null)" class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true" >
   <div @click="handleSelection(null)" class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" aria-hidden="true"></div>
   <div class="mx-auto flex flex-col w-full h-full transform overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5">
-    <div class="relative group flex items-center justify-items-center justify-between space-x-2 border-b border-gray-100">
+    <div class="relative group flex items-center justify-items-center justify-between space-x-2 border-b border-gray-200">
       <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
         @blur="$refs.queryInput && $refs.queryInput.focus()"
         @keydown.down.prevent="selectDown()"
         @keydown.up.prevent="selectUp()"
         @keydown.ctrl.j.prevent="selectDown()"
         @keydown.ctrl.k.prevent="selectUp()"
+        @keydown.ctrl.p.prevent="preview=!preview"
         @keyup.enter.prevent="(filteredItems.length === 0) ? undefined : handleSelection(selected)"
         @keydown.tab.prevent
         class="h-12 bg-gray-100 w-full border-0 m-2 rounded-lg px-4 text-gray-900 placeholder:text-gray-400 ring-0 focus:outline-none text-sm" />
       <p class="text-sm px-4">{{ filteredItems.length }}/{{ itemsLength }}</p>
     </div>
-    <div class="h-full overflow-y-auto grid grid-cols-2 divide-x divide-gray-300">
+    <div :class="(preview) ? 'grid-cols-2' : 'grid-cols-1'" class="h-full overflow-y-auto grid divide-x divide-gray-200">
       <ul role="listbox" class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
         <template v-for="item, index in filteredItems">
           <li :id="'item'+index" @click="selected = index" @dblclick="handleSelection(index)" role="option"
@@ -25,7 +26,7 @@ var t = `
         </template>
       </ul>
       <div class="max-h-full overflow-y-auto p-1 text-sm font-mono text-gray-800">
-        <template v-if="filteredItems.length > 0">
+        <template v-if="filteredItems.length > 0 && preview">
           <Preview :filename=filteredItems[selected].Filename :lineNumber=filteredItems[selected].Linenum />
         </template>
       </div>
@@ -43,6 +44,7 @@ export default {
       query: '',
       items: [],
       selected: 0,
+      preview: true,
     }
   },
   methods: {
