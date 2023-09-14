@@ -26,15 +26,16 @@ var t = `
       </ul>
       <div class="max-h-full overflow-y-auto p-1 text-sm font-mono text-gray-800">
         <template v-if="filteredItems.length > 0">
-          <pre v-text="filteredItems[selected].Filename + ':' + filteredItems[selected].Linenum"></pre>
+          <Preview :filename=filteredItems[selected].Filename :lineNumber=filteredItems[selected].Linenum />
         </template>
       </div>
     </div>
   </div>
 </div>
 `
-
+import Preview from './preview.js'
 export default {
+  components: { Preview },
   props: ['uri'],
   emits: ['filter-selection'],
   data() {
