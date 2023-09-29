@@ -1,28 +1,47 @@
 var t = `
-<div class="bg-gray-200 flex p-2 items-center justify-items-center justify-between">
-  <div class="text-sm space-x-2">
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha')">list</button>
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="openFilter('/api/raw/links?color=true')">links</button>
-    <button class="bg-blue-600 text-white p-1 w-16 rounded-lg" @click="openFilter('/api/raw/lines?color=true&prefix=title')">lines</button>
-    <input class="border border-gray-400 py-1 px-2 w-96 rounded-lg" placeholder="/api/raw/..." v-model="filterUri" @change="openFilter(filterUri)" />
-  </div>
-  <span class="text-xs" v-text="keySequence.join(' ')"></span>
+<div class="relative flex flex-col max-h-screen h-screen overflow-y bg-gray-50">
+
+  <nav class="flex bg-gray-200 text-gray-800 h-9">
+    <div class="flex flex-nowrap max-w-full w-full overflow-x-hidden items-center content-center mr-6">
+      <!-- placeholder -->
+    </div>
+    <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
+      <span title="list" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="mini-bars-three-bottom-left" size="4" />
+      </span>
+      <span title="links" @click="openFilter('/api/raw/links?color=true');"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="mini-arrows-right-left" size="4" />
+      </span>
+      <span title="lines" @click="openFilter('/api/raw/lines?color=true&prefix=title');"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="mini-magnifying-glass" size="4" />
+      </span>
+    </div>
+  </nav>
+
+  <main class="text-gray-800">
+    <pre class="text-xs p-2" v-text="filterSelection"></pre>
+    <pre class="text-xs p-2" v-text="note"></pre>
+  </main>
+
+  <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
+  <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
+
 </div>
-
-<pre class="text-sm p-2" v-text="note"></pre>
-
-<Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
 `
 
 import Filter from './filter.js'
+import Icon from './icon.js'
 export default {
-  components: { Filter },
+  components: { Filter, Icon },
   data() {
     return {
       note: {},
+      filterSelection: {},
       filterUri: '',
       showFilter: false,
-      filterConfig: {},
       keySequence: [],
     }
   },
@@ -34,8 +53,16 @@ export default {
     handleFilterSelection(value) {
       this.showFilter = false;
       if (value !== null) {
-        this.note = value
+        this.filterSelection = value;
+        this.fetchNote(value.Filename);
       }
+    },
+    fetchNote(filename) {
+      fetch("/api/notes/" + filename)
+        .then(response => response.json())
+        .then(data => {
+          this.note = data;
+        });
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
