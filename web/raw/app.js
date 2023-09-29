@@ -40,12 +40,13 @@ export default {
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
 
+      let timeoutId;
       const leaderKey = 'Space'
       if (event.code == leaderKey) {
         this.keySequence = [leaderKey];
         event.preventDefault();
-        setTimeout(() => { this.keySequence = []; }, 2000);
-        return
+        timeoutId = setTimeout(() => { this.keySequence = []; }, 2000);
+        return;
       }
 
       if (this.keySequence[0] == leaderKey) {
@@ -53,23 +54,28 @@ export default {
         event.preventDefault();
 
         switch(this.keySequence.join(' ')) {
-            case `${leaderKey} KeyN KeyL`:
-                this.openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');
-                break;
-            case `${leaderKey} KeyN KeyC`:
-                this.openFilter('/api/raw/list?color=true&prefix=ctime&sort=ctime');
-                break;
-            case `${leaderKey} KeyN KeyM`:
-                this.openFilter('/api/raw/list?color=true&prefix=mtime&sort=mtime');
-                break;
-            case `${leaderKey} KeyN KeyK`:
-                this.note.Filename
-                  ? this.openFilter('/api/raw/links?color=true&filename=' + this.note.Filename)
-                  : this.openFilter('/api/raw/links?color=true');
-                break;
-            case `${leaderKey} KeyN KeyS`:
-                this.openFilter('/api/raw/lines?color=true&prefix=title');
-                break;
+          case `${leaderKey} KeyN KeyL`:
+            this.openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');
+            this.keySequence = []; clearTimeout(timeoutId);
+            break;
+          case `${leaderKey} KeyN KeyC`:
+            this.openFilter('/api/raw/list?color=true&prefix=ctime&sort=ctime');
+            this.keySequence = []; clearTimeout(timeoutId);
+            break;
+          case `${leaderKey} KeyN KeyM`:
+            this.openFilter('/api/raw/list?color=true&prefix=mtime&sort=mtime');
+            this.keySequence = []; clearTimeout(timeoutId);
+            break;
+          case `${leaderKey} KeyN KeyK`:
+            this.note.Filename
+              ? this.openFilter('/api/raw/links?color=true&filename=' + this.note.Filename)
+              : this.openFilter('/api/raw/links?color=true');
+            this.keySequence = []; clearTimeout(timeoutId);
+            break;
+          case `${leaderKey} KeyN KeyS`:
+            this.openFilter('/api/raw/lines?color=true&prefix=title');
+            this.keySequence = []; clearTimeout(timeoutId);
+            break;
         }
       }
     },
