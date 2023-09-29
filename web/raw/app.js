@@ -3,7 +3,13 @@ var t = `
 
   <nav class="flex bg-gray-200 text-gray-800 h-9">
     <div class="flex flex-nowrap max-w-full w-full overflow-x-hidden items-center content-center mr-6">
-      <!-- placeholder -->
+      <div class="flex space-x-5">
+        <template v-for="note in notes">
+          <span @click="activeFilename=note.Filename" v-text="note.Filename"
+            :class="(note.Filename == activeFilename) ? 'underline underline-offset-4' : ''"
+            class="cursor-pointer text-gray-600 hover:text-gray-700"></span>
+        </template>
+      </div>
     </div>
     <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
       <span title="list" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');"
@@ -22,8 +28,9 @@ var t = `
   </nav>
 
   <main class="text-gray-800">
-    <pre class="text-xs p-2" v-text="filterSelection"></pre>
-    <pre class="text-xs p-2" v-text="note"></pre>
+    <template v-for="note in notes">
+      <pre v-show="note.Filename == activeFilename" class="text-xs p-2" v-text="note"></pre>
+    </template>
   </main>
 
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
@@ -38,7 +45,8 @@ export default {
   components: { Filter, Icon },
   data() {
     return {
-      note: {},
+      notes: [],
+      activeFilename: '',
       filterSelection: {},
       filterUri: '',
       showFilter: false,
@@ -54,14 +62,17 @@ export default {
       this.showFilter = false;
       if (value !== null) {
         this.filterSelection = value;
-        this.fetchNote(value.Filename);
+        this.notes.some(note => note.Filename === this.filterSelection.Filename)
+          ? this.activeFilename = this.filterSelection.Filename
+          : this.fetchNote(this.filterSelection.Filename);
       }
     },
     fetchNote(filename) {
       fetch("/api/notes/" + filename)
         .then(response => response.json())
-        .then(data => {
-          this.note = data;
+        .then(note => {
+          this.notes.push(note);
+          this.activeFilename = note.Filename;
         });
     },
     handleKeyPress(event) {
@@ -94,8 +105,8 @@ export default {
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyK`:
-            this.note.Filename
-              ? this.openFilter('/api/raw/links?color=true&filename=' + this.note.Filename)
+            this.activeFilename
+              ? this.openFilter('/api/raw/links?color=true&filename=' + this.activeFilename)
               : this.openFilter('/api/raw/links?color=true');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
