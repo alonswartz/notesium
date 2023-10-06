@@ -12,6 +12,9 @@ var t = `
           :class="(note.Filename == activeFilename) ? 'bg-gray-50 text-gray-800' : 'hover:bg-gray-100/75 hover:text-gray-700 text-gray-500'"
           class="flex rounded-t-lg justify-between basis-52 truncate text-xs h-full items-center pl-3 pr-2 cursor-pointer">
           <span class="truncate pt-px" v-text="note.Title"></span>
+          <span @click.stop="closeNote(note.Filename)" class="hover:bg-gray-300 hover:rounded-full">
+            <Icon name="mini-x-mark" size="4" />
+          </span>
         </div>
         <div :class="(note.Filename == activeFilename) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
           <svg class="absolute bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 0 A 7 7 0 0 0 7 7 L 0 7 Z"></path></svg>
@@ -83,6 +86,17 @@ export default {
           this.notes.push(note);
           this.activeFilename = note.Filename;
         });
+    },
+    closeNote(filename) {
+      const index = this.notes.findIndex(note => note.Filename === filename);
+      if (index === -1) return;
+      if (filename === this.activeFilename) {
+        this.activeFilename =
+          index < this.notes.length - 1 ? this.notes[index + 1].Filename :
+          index > 0 ? this.notes[index - 1].Filename :
+          null;
+      }
+      this.notes.splice(index, 1);
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
