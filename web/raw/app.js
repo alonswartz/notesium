@@ -101,6 +101,16 @@ export default {
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
 
+      if (event.ctrlKey && (event.code == 'KeyJ' || event.code == 'KeyK')) {
+        const index = this.notes.findIndex(note => note.Filename === this.activeFilename);
+        if (index === -1) return;
+        const movement = event.code === 'KeyJ' ? 1 : -1;
+        const newIndex = (index + movement + this.notes.length) % this.notes.length;
+        this.activeFilename = this.notes[newIndex].Filename;
+        event.preventDefault();
+        return;
+      }
+
       let timeoutId;
       const leaderKey = 'Space'
       if (event.code == leaderKey) {
