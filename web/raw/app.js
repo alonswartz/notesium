@@ -2,7 +2,7 @@ var t = `
 <div class="relative flex flex-col max-h-screen h-screen overflow-y bg-gray-50">
 
   <nav class="flex bg-gray-200 text-gray-800">
-    <Tabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" />
+    <Tabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
 
     <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
       <span title="list" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');"
@@ -82,6 +82,11 @@ export default {
           null;
       }
       this.notes.splice(index, 1);
+    },
+    moveNote(filename, newIndex) {
+      const index = this.notes.findIndex(note => note.Filename === filename);
+      if (index === -1) return;
+      this.notes.splice(newIndex, 0, this.notes.splice(index, 1)[0]);
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
