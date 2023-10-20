@@ -20,11 +20,7 @@ var t = `
     </div>
   </nav>
 
-  <main class="text-gray-800">
-    <template v-for="note in notes">
-      <pre v-show="note.Filename == activeFilename" class="text-xs p-2" v-text="note"></pre>
-    </template>
-  </main>
+  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" />
 
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -34,9 +30,10 @@ var t = `
 
 import Filter from './filter.js'
 import Tabs from './tabs.js'
+import Note from './note.js'
 import Icon from './icon.js'
 export default {
-  components: { Filter, Tabs, Icon },
+  components: { Filter, Tabs, Note, Icon },
   data() {
     return {
       notes: [],
