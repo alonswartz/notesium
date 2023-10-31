@@ -47,6 +47,7 @@ export default {
     this.cm = new CodeMirror(this.$refs.codemirror, {
       value: this.note.Content,
       lineNumbers: false,
+      styleActiveLine: true,
       theme: 'notesium-light',
       mode: {
         name: "markdown",
