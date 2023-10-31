@@ -1,7 +1,8 @@
 var t = `
 <div @keyup.esc="handleSelection(null)" class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 md:p-20" role="dialog" aria-modal="true" >
   <div @click="handleSelection(null)" class="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" aria-hidden="true"></div>
-  <div class="mx-auto flex flex-col w-full h-full transform overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5">
+  <div :class="(small && !preview) ? 'max-w-2xl h-96' : 'w-full h-full'"
+    class="mx-auto flex flex-col transform overflow-hidden rounded-lg bg-white shadow-2xl ring-1 ring-black ring-opacity-5">
     <div class="relative group flex items-center justify-items-center justify-between space-x-2 border-b border-gray-200">
       <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
         @blur="$refs.queryInput && $refs.queryInput.focus()"
@@ -37,7 +38,7 @@ var t = `
 import Preview from './preview.js'
 export default {
   components: { Preview },
-  props: ['uri'],
+  props: ['uri', 'small'],
   emits: ['filter-selection'],
   data() {
     return {
@@ -98,6 +99,7 @@ export default {
     },
   },
   created() {
+    this.preview = this.small ? false : this.preview;
     this.fetchRaw(this.uri);
     this.$nextTick(() => { this.$refs.queryInput.focus(); });
   },

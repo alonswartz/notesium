@@ -6,7 +6,7 @@ var t = `
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
     <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre>
   </div>
-  <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
+  <Filter v-if="showFilter" :uri=filterUri small=true @filter-selection="handleFilterSelection" />
 </div>
 `
 
@@ -37,7 +37,7 @@ export default {
       if (value !== null) {
         const cursorPos = this.cm.getCursor();
         const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
-        const formattedLink = `[${value.SearchStr}](${value.Filename})`;
+        const formattedLink = `[${value.Content}](${value.Filename})`;
         this.cm.replaceRange(formattedLink, startPos, cursorPos);
       }
       this.$nextTick(() => { this.cm.focus(); } );
