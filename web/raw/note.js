@@ -51,6 +51,7 @@ export default {
       theme: 'notesium-light',
       mode: {
         name: "markdown",
+        highlightFormatting: true,
       },
       extraKeys: {
         "[": this.handleLeftBracket,
@@ -59,16 +60,26 @@ export default {
     this.cm.setSize("100%", "100%");
 
     this.cm.on('mousedown', (cm, e) => {
-      const el = e.path[0];
-      if (el.classList.contains('cm-url')) {
-        let link = el.textContent.slice(1, -1);
-        if (this.note.OutgoingLinks.some(l => l.Filename === link)) {
-          this.$emit('note-open', link);
-        } else {
-          link = link.match(/^[a-zA-Z]+:\/\//) ? link : 'https://' + link;
-          window.open(link, '_blank');
+      let el = e.path[0];
+      if (el.classList.contains('cm-link') || el.classList.contains('cm-url')) {
+        if (el.classList.contains('cm-formatting-link-string')) {
+          el = el.previousElementSibling;
         }
-        e.preventDefault();
+        for (let i = 0; i <= 4; i++) {
+          if (el && el.classList.contains('cm-url') && !el.classList.contains('cm-formatting-link-string')) {
+            let link = el.textContent;
+            if (this.note.OutgoingLinks.some(l => l.Filename === link)) {
+              this.$emit('note-open', link);
+            } else {
+              link = link.match(/^[a-zA-Z]+:\/\//) ? link : 'https://' + link;
+              window.open(link, '_blank');
+            }
+            e.preventDefault();
+            break;
+          }
+          if (! el.nextElementSibling) break;
+          el = el.nextElementSibling;
+        }
       }
     });
   },
