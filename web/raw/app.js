@@ -20,7 +20,7 @@ var t = `
     </div>
   </nav>
 
-  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" />
+  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" @note-open="openNote" />
 
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -65,6 +65,11 @@ export default {
           this.notes.push(note);
           this.activeFilename = note.Filename;
         });
+    },
+    openNote(filename) {
+      this.notes.some(note => note.Filename === filename)
+        ? this.activeFilename = filename
+        : this.fetchNote(filename);
     },
     activateNote(filename) {
       this.activeFilename = filename;
