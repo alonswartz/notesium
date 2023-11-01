@@ -47,7 +47,7 @@ export default {
     this.cm = new CodeMirror(this.$refs.codemirror, {
       value: this.note.Content,
       lineNumbers: false,
-      styleActiveLine: true,
+      styleActiveLine: false,
       theme: 'notesium-light',
       mode: {
         name: "markdown",
@@ -58,6 +58,13 @@ export default {
       },
     });
     this.cm.setSize("100%", "100%");
+
+    this.cm.on('focus', (cm, e) => {
+      this.cm.setOption("styleActiveLine", true);
+    });
+    this.cm.on('blur', (cm, e) => {
+      this.cm.setOption("styleActiveLine", false);
+    });
 
     this.cm.on('mousedown', (cm, e) => {
       let el = e.path[0];
