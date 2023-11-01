@@ -76,24 +76,29 @@ export default {
     this.cm.on('mousedown', (cm, e) => {
       let el = e.path[0];
       if (el.classList.contains('cm-link') || el.classList.contains('cm-url')) {
-        if (el.classList.contains('cm-formatting-link-string')) {
-          el = el.previousElementSibling;
-        }
-        for (let i = 0; i <= 4; i++) {
-          if (el && el.classList.contains('cm-url') && !el.classList.contains('cm-formatting-link-string')) {
-            let link = el.textContent;
-            if (this.note.OutgoingLinks.some(l => l.Filename === link)) {
-              this.$emit('note-open', link);
-            } else {
-              link = link.match(/^[a-zA-Z]+:\/\//) ? link : 'https://' + link;
-              window.open(link, '_blank');
-            }
-            e.preventDefault();
-            break;
+        const getNextNSibling = (element, n) => { for (; n > 0 && element; n--, element = element.nextElementSibling); return element; };
+
+        if (el.classList.contains('cm-formatting')) {
+          switch (el.textContent) {
+            case '[': el = getNextNSibling(el, 4); break;
+            case ']': el = getNextNSibling(el, 2); break;
+            case '(': el = getNextNSibling(el, 1); break;
+            case ')': el = el.previousElementSibling; break;
+            default: return;
           }
-          if (! el.nextElementSibling) break;
-          el = el.nextElementSibling;
+          if (!el?.classList.contains('cm-url')) return;
         }
+
+        if (el.classList.contains('cm-link')) {
+          const potentialUrlElement = getNextNSibling(el, 3);
+          el = potentialUrlElement?.classList.contains('cm-url') ? potentialUrlElement : el;
+        }
+
+        const link = el.textContent;
+        const isMdFile = /^[0-9a-f]{8}\.md$/i.test(link);
+        const hasProtocol = /^[a-zA-Z]+:\/\//.test(link);
+        (isMdFile) ? this.$emit('note-open', link) : window.open(hasProtocol ? link : 'https://' + link, '_blank');
+        e.preventDefault();
       }
     });
   },
