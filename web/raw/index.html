@@ -21,6 +21,17 @@
       .cm-s-notesium-light span.cm-link { color: #4338ca; text-decoration: none; }
       .cm-s-notesium-light span.cm-url:hover,
       .cm-s-notesium-light span.cm-link:hover { cursor: pointer; text-decoration: underline; }
+
+      .conceal .CodeMirror span.cm-url,
+      .conceal .CodeMirror span.cm-formatting-em,
+      .conceal .CodeMirror span.cm-formatting-link,
+      .conceal .CodeMirror span.cm-formatting-code,
+      .conceal .CodeMirror span.cm-formatting-strong { display: none; }
+      .conceal .CodeMirror .CodeMirror-activeline span.cm-url,
+      .conceal .CodeMirror .CodeMirror-activeline span.cm-formatting-em,
+      .conceal .CodeMirror .CodeMirror-activeline span.cm-formatting-link,
+      .conceal .CodeMirror .CodeMirror-activeline span.cm-formatting-code,
+      .conceal .CodeMirror .CodeMirror-activeline span.cm-formatting-strong { display: revert; }
     </style>
   </head>
   <body>

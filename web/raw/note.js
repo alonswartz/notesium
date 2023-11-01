@@ -1,9 +1,15 @@
 var t = `
 <div class="flex h-full w-full overflow-x-auto gap-1 p-2">
   <div class="relative overflow-y-auto w-4/6">
-    <div class="p-2" ref="codemirror"></div>
+    <div :class="{ 'conceal': conceal }" class="p-2" ref="codemirror"></div>
   </div>
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
+    <div class="p-2 border-b">
+      <div class="flex h-4 text-xs items-center content-center">
+        <input type="checkbox" v-model="conceal" id="conceal-checkbox">
+        <label for="conceal-checkbox" class="ml-1">conceal</label>
+      </div>
+    </div>
     <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre>
   </div>
   <Filter v-if="showFilter" :uri=filterUri small=true @filter-selection="handleFilterSelection" />
@@ -19,6 +25,7 @@ export default {
     return {
       filterUri: '/api/raw/list?sort=mtime',
       showFilter: false,
+      conceal: true,
     }
   },
   methods: {
