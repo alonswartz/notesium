@@ -57,7 +57,7 @@ export default {
       styleActiveLine: false,
       theme: 'notesium-light',
       mode: {
-        name: "markdown",
+        name: "gfm",
         highlightFormatting: true,
       },
       extraKeys: {
