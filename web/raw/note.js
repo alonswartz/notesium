@@ -62,6 +62,7 @@ export default {
       },
       extraKeys: {
         "[": this.handleLeftBracket,
+        "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
       },
     });
     this.cm.setSize("100%", "100%");
