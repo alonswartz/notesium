@@ -6,7 +6,7 @@ var t = `
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
     <div class="p-2 border-b">
       <div class="flex h-4 text-xs items-center content-center">
-        <input type="checkbox" v-model="conceal" id="conceal-checkbox">
+        <input type="checkbox" v-model="conceal" id="conceal-checkbox" tabindex="-1" @click="event => event.target.blur()">
         <label for="conceal-checkbox" class="ml-1">conceal</label>
       </div>
     </div>
