@@ -1,7 +1,7 @@
 var t = `
 <div class="flex h-full w-full overflow-x-auto gap-1 p-2">
   <div class="relative overflow-y-auto w-4/6">
-    <div :class="{ 'conceal': conceal }" class="p-2" ref="codemirror"></div>
+    <div :class="{ 'conceal': conceal }" class="p-2 h-full" ref="codemirror"></div>
   </div>
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
     <div class="p-2 border-b">
@@ -49,6 +49,12 @@ export default {
       }
       this.$nextTick(() => { this.cm.focus(); } );
     },
+    lineNumberHL(linenum) {
+      this.$nextTick(() => {
+        this.cm.setOption("styleActiveLine", true);
+        this.cm.setCursor({line: linenum - 1});
+      });
+    },
   },
   mounted() {
     this.cm = new CodeMirror(this.$refs.codemirror, {
@@ -65,7 +71,10 @@ export default {
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
       },
     });
-    this.cm.setSize("100%", "100%");
+
+    if (this.note.Linenum > 1) {
+      this.lineNumberHL(this.note.Linenum);
+    }
 
     this.cm.on('focus', (cm, e) => {
       this.cm.setOption("styleActiveLine", true);
@@ -102,6 +111,9 @@ export default {
         e.preventDefault();
       }
     });
+  },
+  watch: {
+    'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
   },
   template: t
 }

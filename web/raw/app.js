@@ -38,7 +38,6 @@ export default {
     return {
       notes: [],
       activeFilename: '',
-      filterSelection: {},
       filterUri: '',
       showFilter: false,
       keySequence: [],
@@ -52,16 +51,20 @@ export default {
     handleFilterSelection(value) {
       this.showFilter = false;
       if (value !== null) {
-        this.filterSelection = value;
-        this.notes.some(note => note.Filename === this.filterSelection.Filename)
-          ? this.activeFilename = this.filterSelection.Filename
-          : this.fetchNote(this.filterSelection.Filename);
+        const note = this.notes.find(note => note.Filename === value.Filename);
+        if (note) {
+          note.Linenum = value.Linenum;
+          this.activeFilename = value.Filename;
+        } else {
+          this.fetchNote(value.Filename, value.Linenum);
+        }
       }
     },
-    fetchNote(filename) {
+    fetchNote(filename, linenum) {
       fetch("/api/notes/" + filename)
         .then(response => response.json())
         .then(note => {
+          note.Linenum = linenum;
           this.notes.push(note);
           this.activeFilename = note.Filename;
         });
