@@ -20,7 +20,7 @@ var t = `
     </div>
   </nav>
 
-  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" @note-open="openNote" />
+  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" @note-open="openNote" @note-save="saveNote"/>
 
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -67,6 +67,18 @@ export default {
           note.Linenum = linenum;
           this.notes.push(note);
           this.activeFilename = note.Filename;
+        });
+    },
+    saveNote(filename, content) {
+      const params = { method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content}) };
+      fetch("/api/notes/" + filename, params)
+        .then(response => response.ok ? response.json() : response.text().then(errText => Promise.reject(errText)))
+        .then(note => {
+          const index = this.notes.findIndex(note => note.Filename === filename);
+          this.notes[index] = note;
+        })
+        .catch(error => {
+          console.error('Error', error);
         });
     },
     openNote(filename) {
