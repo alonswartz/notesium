@@ -76,6 +76,15 @@ export default {
         .then(note => {
           const index = this.notes.findIndex(note => note.Filename === filename);
           this.notes[index] = note;
+
+          // update other notes IncomingLinks due to potential changes
+          this.notes.forEach(openNote => {
+            if (openNote.Filename == filename) return;
+            fetch("/api/notes/" + openNote.Filename)
+              .then(response => response.json())
+              .then(fetchedNote => { openNote.IncomingLinks = fetchedNote.IncomingLinks; })
+              .catch(error => { console.error('Error fetching note:', error); });
+          });
         })
         .catch(error => {
           console.error('Error', error);
