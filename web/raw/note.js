@@ -23,7 +23,7 @@ import Filter from './filter.js'
 export default {
   components: { Filter },
   props: ['note'],
-  emits: ['note-open'],
+  emits: ['note-open', 'note-save'],
   data() {
     return {
       filterUri: '/api/raw/list?sort=mtime',
@@ -54,9 +54,7 @@ export default {
     },
     handleSave() {
       if (this.note.isModified) {
-        // TODO: perform actual save.
-        console.log('note-save', this.note.Filename, this.cm.getValue() );
-        this.note.isModified = false;
+        this.$emit('note-save', this.note.Filename, this.cm.getValue() );
         this.cm.doc.markClean();
       }
     },
