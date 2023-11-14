@@ -13,7 +13,10 @@ var t = `
       :title="note.Title + ' (' + note.Filename + ')'"
       :class="(note.Filename == activeFilename) ? 'bg-gray-50 text-gray-800' : 'hover:bg-gray-100/75 hover:text-gray-700 text-gray-500'"
       class="flex rounded-t-lg justify-between basis-52 truncate text-xs h-full items-center pl-3 pr-2 cursor-pointer">
-      <span class="truncate pt-px" v-text="note.Title"></span>
+      <span class="truncate pt-px">
+        <span v-show="note.isModified" class="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-2"></span>
+        <span v-text="note.Title"></span>
+      </span>
       <span @click.stop="$emit('note-close', note.Filename)" class="hover:bg-gray-300 hover:rounded-full">
         <Icon name="mini-x-mark" size="4" />
       </span>
