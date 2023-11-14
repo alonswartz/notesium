@@ -325,7 +325,7 @@ func notesiumWeb(dir string, opts webOptions) {
 	http.Handle("/", heartbeatH(http.FileServer(httpfs)))
 	http.HandleFunc("/api/notes", heartbeatF(apiList))
 	http.HandleFunc("/api/notes/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
-		apiNote(dir, w, r)
+		apiNote(dir, w, r, opts.readOnly)
 	}))
 
 	http.HandleFunc("/api/raw/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {

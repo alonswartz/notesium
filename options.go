@@ -36,6 +36,7 @@ Commands:
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
+    --writable      Allow writing of notes in NOTESIUM_DIR via API
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
 
@@ -78,6 +79,7 @@ type webOptions struct {
 	webroot       string
 	heartbeat     bool
 	launchBrowser bool
+	readOnly      bool
 }
 
 type extractOptions struct {
@@ -208,6 +210,7 @@ func parseOptions(args []string) (Command, error) {
 		opts := webOptions{}
 		opts.host = "127.0.0.1"
 		opts.port = 0
+		opts.readOnly = true
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
@@ -223,6 +226,8 @@ func parseOptions(args []string) (Command, error) {
 					return Command{}, fmt.Errorf("invalid or out of range port number: %s", portStr)
 				}
 				opts.port = port
+			case opt == "--writable":
+				opts.readOnly = false
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}

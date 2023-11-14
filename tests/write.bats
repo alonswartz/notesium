@@ -28,8 +28,35 @@ teardown_file() {
     run rmdir /tmp/notesium-test-corpus
 }
 
-@test "write: start with custom port, stop-on-idle" {
+@test "write: start with custom port, stop-on-idle, NOT writable" {
     run notesium web  --port=8881 --stop-on-idle &
+    echo "$output"
+}
+
+@test "write: change note should fail" {
+    run _post 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}'
+    echo "$output"
+    [ "${lines[0]}" == "NOTESIUM_DIR is set to read-only mode" ]
+}
+
+@test "write: stop NOT writable by sending terminate signal" {
+    # force stop otherwise bats will block until timeout (bats-core/issues/205)
+    run pidof notesium
+    echo "$output"
+    echo "could not get pid"
+    [ $status -eq 0 ]
+
+    run kill "$(pidof notesium)"
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run pidof notesium
+    echo "$output"
+    [ $status -eq 1 ]
+}
+
+@test "write: start with custom port, stop-on-idle, writable" {
+    run notesium web  --port=8881 --stop-on-idle --writable &
     echo "$output"
 }
 
