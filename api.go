@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +14,10 @@ import (
 type NoteResponse struct {
 	Note
 	Path    string `json:"Path"`
+	Content string `json:"Content"`
+}
+
+type NotePost struct {
 	Content string `json:"Content"`
 }
 
@@ -33,6 +38,43 @@ func apiList(w http.ResponseWriter, r *http.Request) {
 
 func apiNote(dir string, w http.ResponseWriter, r *http.Request) {
 	filename := strings.Split(r.URL.Path, "/")[3]
+
+	if r.Method == "POST" {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+
+		var notePost NotePost
+		if err := json.Unmarshal(body, &notePost); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if notePost.Content == "" {
+			http.Error(w, "Content field is required", http.StatusBadRequest)
+			return
+		}
+
+		if _, ok := noteCache[filename]; !ok {
+			http.Error(w, "Note not found", http.StatusNotFound)
+			return
+		}
+
+		path := filepath.Join(dir, filename)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if err := os.WriteFile(path, []byte(notePost.Content), 0644); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		noteCache = nil
+		populateCache(dir)
+	}
 
 	note, ok := noteCache[filename]
 	if !ok {
