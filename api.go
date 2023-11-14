@@ -36,10 +36,15 @@ func apiList(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-func apiNote(dir string, w http.ResponseWriter, r *http.Request) {
+func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) {
 	filename := strings.Split(r.URL.Path, "/")[3]
 
 	if r.Method == "POST" {
+		if readOnly {
+			http.Error(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			return
+		}
+
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
