@@ -54,7 +54,7 @@ export default {
     },
     handleSave() {
       if (this.note.isModified) {
-        this.$emit('note-save', this.note.Filename, this.cm.getValue() );
+        this.$emit('note-save', this.note.Filename, this.cm.getValue(), this.note.Mtime );
       }
     },
     lineNumberHL(linenum) {
