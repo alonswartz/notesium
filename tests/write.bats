@@ -7,6 +7,17 @@ _curl_jq() { curl -qs http://localhost:8881/${1} | jq -r "${2}" ; }
 _post()    { curl -qs -X POST -d "${2}" http://localhost:8881/${1} ; }
 _post_jq() { curl -qs -X POST -d "${2}" http://localhost:8881/${1} | jq ; }
 
+_set_deterministic_mtimes() {
+    touch -m -t 202301250505 "/tmp/notesium-test-corpus/64218088.md"
+    touch -m -t 202301240505 "/tmp/notesium-test-corpus/64217712.md"
+    touch -m -t 202301240504 "/tmp/notesium-test-corpus/642146c7.md"
+    touch -m -t 202301220505 "/tmp/notesium-test-corpus/642176a6.md"
+    touch -m -t 202301220504 "/tmp/notesium-test-corpus/64214930.md"
+    touch -m -t 202301180505 "/tmp/notesium-test-corpus/64218087.md"
+    touch -m -t 202301160505 "/tmp/notesium-test-corpus/64214a1d.md"
+    touch -m -t 202301130505 "/tmp/notesium-test-corpus/6421460b.md"
+}
+
 setup_file() {
     command -v jq >/dev/null
     command -v curl >/dev/null
@@ -14,6 +25,7 @@ setup_file() {
     [ -e "/tmp/notesium-test-corpus" ] && exit 1
     run mkdir /tmp/notesium-test-corpus
     run cp $BATS_TEST_DIRNAME/fixtures/*.md /tmp/notesium-test-corpus/
+    run _set_deterministic_mtimes
     export NOTESIUM_DIR="/tmp/notesium-test-corpus"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
 }
@@ -68,7 +80,7 @@ teardown_file() {
 }
 
 @test "write: change note" {
-    run _post_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}'
+    run _post_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[2]}" == '  "Title": "mr. richard feynman",' ]
@@ -95,14 +107,20 @@ teardown_file() {
     [ "${lines[0]}" == "1" ]
 }
 
-@test "write: change note without specifying content" {
-    run _post 'api/notes/64214a1d.md' '{"Content": ""}'
+@test "write: change note with incorrect mtime" {
+    run _post 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    echo "$output"
+    [ "${lines[0]}" == "Refusing to overwrite. File changed on disk." ]
+}
+
+@test "write: change note without specifying params" {
+    run _post 'api/notes/64214a1d.md' '{}'
     echo "$output"
     [ "${lines[0]}" == "Content field is required" ]
 }
 
 @test "write: change note that does not exist" {
-    run _post 'api/notes/xxxxxxxx.md' '{"Content": "# test"}'
+    run _post 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ "${lines[0]}" == "Note not found" ]
 }

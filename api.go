@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type NoteResponse struct {
@@ -18,7 +19,8 @@ type NoteResponse struct {
 }
 
 type NotePost struct {
-	Content string `json:"Content"`
+	Content   string    `json:"Content"`
+	LastMtime time.Time `json:"LastMtime"`
 }
 
 func apiHeartbeat(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +63,10 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			http.Error(w, "Content field is required", http.StatusBadRequest)
 			return
 		}
+		if notePost.LastMtime.IsZero() {
+			http.Error(w, "LastMtime field is required", http.StatusBadRequest)
+			return
+		}
 
 		if _, ok := noteCache[filename]; !ok {
 			http.Error(w, "Note not found", http.StatusNotFound)
@@ -68,12 +74,23 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 		}
 
 		path := filepath.Join(dir, filename)
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		info, err := os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				http.Error(w, "File does not exist: "+err.Error(), http.StatusNotFound)
+			} else {
+				http.Error(w, "Error accessing file: "+err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
+
+		if info.ModTime() != notePost.LastMtime {
+			http.Error(w, "Refusing to overwrite. File changed on disk.", http.StatusConflict)
+			return
+		}
+
 		if err := os.WriteFile(path, []byte(notePost.Content), 0644); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
