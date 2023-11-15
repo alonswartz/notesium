@@ -25,6 +25,12 @@ var t = `
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
+  <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
+    <div class="flex w-full flex-col items-center space-y-2 sm:items-end">
+      <Alert :alert=alert :index=index v-for="(alert, index) in alerts" :key="index" @alert-dismiss="dismissAlert" />
+    </div>
+  </div>
+
 </div>
 `
 
@@ -32,8 +38,9 @@ import Filter from './filter.js'
 import Tabs from './tabs.js'
 import Note from './note.js'
 import Icon from './icon.js'
+import Alert from './alert.js'
 export default {
-  components: { Filter, Tabs, Note, Icon },
+  components: { Filter, Tabs, Note, Icon, Alert },
   data() {
     return {
       notes: [],
@@ -41,6 +48,7 @@ export default {
       filterUri: '',
       showFilter: false,
       keySequence: [],
+      alerts: [],
     }
   },
   methods: {
@@ -87,7 +95,7 @@ export default {
           });
         })
         .catch(error => {
-          console.error('Error', error);
+          this.alerts.push({type: 'error', title: 'Error saving note', body: error, sticky: true})
         });
     },
     openNote(filename) {
@@ -113,6 +121,9 @@ export default {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
       this.notes.splice(newIndex, 0, this.notes.splice(index, 1)[0]);
+    },
+    dismissAlert(index) {
+      this.alerts.splice(index, 1);
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
