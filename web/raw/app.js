@@ -77,8 +77,8 @@ export default {
           this.activeFilename = note.Filename;
         });
     },
-    saveNote(filename, content) {
-      const params = { method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content}) };
+    saveNote(filename, content, lastmtime) {
+      const params = { method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content, LastMtime: lastmtime}) };
       fetch("/api/notes/" + filename, params)
         .then(response => response.ok ? response.json() : response.text().then(errText => Promise.reject(errText)))
         .then(note => {
