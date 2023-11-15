@@ -55,7 +55,6 @@ export default {
     handleSave() {
       if (this.note.isModified) {
         this.$emit('note-save', this.note.Filename, this.cm.getValue() );
-        this.cm.doc.markClean();
       }
     },
     lineNumberHL(linenum) {
@@ -127,6 +126,7 @@ export default {
   },
   watch: {
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
+    'note.Mtime': function() { this.cm.doc.markClean(); },
   },
   template: t
 }
