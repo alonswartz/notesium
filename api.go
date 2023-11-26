@@ -18,7 +18,7 @@ type NoteResponse struct {
 	Content string `json:"Content"`
 }
 
-type NotePost struct {
+type NotePatch struct {
 	Content   string    `json:"Content"`
 	LastMtime time.Time `json:"LastMtime"`
 }
@@ -39,11 +39,33 @@ func apiList(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) {
-	filename := strings.Split(r.URL.Path, "/")[3]
+	pathSegments := strings.Split(r.URL.Path, "/")
 
-	if r.Method == "POST" {
+	var filename string
+	if len(pathSegments) >= 4 {
+		filename = pathSegments[3]
+	}
+
+	switch r.Method {
+	case "GET":
+		if filename == "" {
+			http.Error(w, "Filename not specified", http.StatusBadRequest)
+			return
+		}
+
+	case "PATCH":
 		if readOnly {
 			http.Error(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			return
+		}
+
+		if filename == "" {
+			http.Error(w, "Filename not specified", http.StatusBadRequest)
+			return
+		}
+
+		if _, ok := noteCache[filename]; !ok {
+			http.Error(w, "Note not found", http.StatusNotFound)
 			return
 		}
 
@@ -54,22 +76,18 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 		}
 		defer r.Body.Close()
 
-		var notePost NotePost
-		if err := json.Unmarshal(body, &notePost); err != nil {
+		var notePatch NotePatch
+		if err := json.Unmarshal(body, &notePatch); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if notePost.Content == "" {
+
+		if notePatch.Content == "" {
 			http.Error(w, "Content field is required", http.StatusBadRequest)
 			return
 		}
-		if notePost.LastMtime.IsZero() {
+		if notePatch.LastMtime.IsZero() {
 			http.Error(w, "LastMtime field is required", http.StatusBadRequest)
-			return
-		}
-
-		if _, ok := noteCache[filename]; !ok {
-			http.Error(w, "Note not found", http.StatusNotFound)
 			return
 		}
 
@@ -84,18 +102,21 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			return
 		}
 
-		if info.ModTime() != notePost.LastMtime {
+		if info.ModTime() != notePatch.LastMtime {
 			http.Error(w, "Refusing to overwrite. File changed on disk.", http.StatusConflict)
 			return
 		}
 
-		if err := os.WriteFile(path, []byte(notePost.Content), 0644); err != nil {
+		if err := os.WriteFile(path, []byte(notePatch.Content), 0644); err != nil {
 			http.Error(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		noteCache = nil
 		populateCache(dir)
+
+	default:
+		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 	}
 
 	note, ok := noteCache[filename]
