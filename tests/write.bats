@@ -4,8 +4,8 @@ load helpers.sh
 
 _curl()    { curl -qs http://localhost:8881/${1} ; }
 _curl_jq() { curl -qs http://localhost:8881/${1} | jq -r "${2}" ; }
-_post()    { curl -qs -X POST -d "${2}" http://localhost:8881/${1} ; }
-_post_jq() { curl -qs -X POST -d "${2}" http://localhost:8881/${1} | jq ; }
+_patch()    { curl -qs -X PATCH -d "${2}" http://localhost:8881/${1} ; }
+_patch_jq() { curl -qs -X PATCH -d "${2}" http://localhost:8881/${1} | jq ; }
 
 _set_deterministic_mtimes() {
     touch -m -t 202301250505 "/tmp/notesium-test-corpus/64218088.md"
@@ -46,7 +46,7 @@ teardown_file() {
 }
 
 @test "write: change note should fail" {
-    run _post 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}'
+    run _patch 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}'
     echo "$output"
     [ "${lines[0]}" == "NOTESIUM_DIR is set to read-only mode" ]
 }
@@ -80,7 +80,7 @@ teardown_file() {
 }
 
 @test "write: change note" {
-    run _post_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[2]}" == '  "Title": "mr. richard feynman",' ]
@@ -108,19 +108,19 @@ teardown_file() {
 }
 
 @test "write: change note with incorrect mtime" {
-    run _post 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ "${lines[0]}" == "Refusing to overwrite. File changed on disk." ]
 }
 
 @test "write: change note without specifying params" {
-    run _post 'api/notes/64214a1d.md' '{}'
+    run _patch 'api/notes/64214a1d.md' '{}'
     echo "$output"
     [ "${lines[0]}" == "Content field is required" ]
 }
 
 @test "write: change note that does not exist" {
-    run _post 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ "${lines[0]}" == "Note not found" ]
 }
