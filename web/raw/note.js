@@ -67,6 +67,7 @@ export default {
   mounted() {
     this.cm = new CodeMirror(this.$refs.codemirror, {
       value: this.note.Content,
+      placeholder: '# title',
       lineNumbers: false,
       styleActiveLine: false,
       theme: 'notesium-light',
