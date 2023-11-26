@@ -18,6 +18,10 @@ type NoteResponse struct {
 	Content string `json:"Content"`
 }
 
+type NotePost struct {
+	Content string `json:"Content"`
+}
+
 type NotePatch struct {
 	Content   string    `json:"Content"`
 	LastMtime time.Time `json:"LastMtime"`
@@ -52,6 +56,48 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			http.Error(w, "Filename not specified", http.StatusBadRequest)
 			return
 		}
+
+	case "POST":
+		if readOnly {
+			http.Error(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			return
+		}
+
+		if filename != "" {
+			http.Error(w, "Filename should not be specified", http.StatusBadRequest)
+			return
+		}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+
+		var notePost NotePost
+		if err := json.Unmarshal(body, &notePost); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		epochInt := time.Now().Unix()
+		epochHex := fmt.Sprintf("%x", epochInt)
+		filename = fmt.Sprintf("%s.md", epochHex)
+
+		path := filepath.Join(dir, filename)
+		if _, err := os.Stat(path); err == nil {
+			http.Error(w, "File already exists", http.StatusConflict)
+			return
+		}
+
+		if err := os.WriteFile(path, []byte(notePost.Content), 0644); err != nil {
+			http.Error(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		noteCache = nil
+		populateCache(dir)
 
 	case "PATCH":
 		if readOnly {
