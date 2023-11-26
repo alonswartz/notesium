@@ -78,7 +78,7 @@ export default {
         });
     },
     saveNote(filename, content, lastmtime) {
-      const params = { method: "POST", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content, LastMtime: lastmtime}) };
+      const params = { method: "PATCH", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content, LastMtime: lastmtime}) };
       fetch("/api/notes/" + filename, params)
         .then(response => response.ok ? response.json() : response.text().then(errText => Promise.reject(errText)))
         .then(note => {
