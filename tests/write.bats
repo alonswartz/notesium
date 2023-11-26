@@ -2,10 +2,13 @@
 
 load helpers.sh
 
-_curl()    { curl -qs http://localhost:8881/${1} ; }
-_curl_jq() { curl -qs http://localhost:8881/${1} | jq -r "${2}" ; }
-_patch()    { curl -qs -X PATCH -d "${2}" http://localhost:8881/${1} ; }
-_patch_jq() { curl -qs -X PATCH -d "${2}" http://localhost:8881/${1} | jq ; }
+URL="http://localhost:8881"
+_get()      { curl -qs ${URL}/${1} ; }
+_get_jq()   { curl -qs ${URL}/${1} | jq -r "${2}" ; }
+_post()     { curl -qs -X POST -d "${2}" ${URL}/${1} ; }
+_post_jq()  { curl -qs -X POST -d "${2}" ${URL}/${1} | jq -r "${3}" ; }
+_patch()    { curl -qs -X PATCH -d "${2}" ${URL}/${1} ; }
+_patch_jq() { curl -qs -X PATCH -d "${2}" ${URL}/${1} | jq -r "${3}" ; }
 
 _set_deterministic_mtimes() {
     touch -m -t 202301250505 "/tmp/notesium-test-corpus/64218088.md"
@@ -73,21 +76,21 @@ teardown_file() {
 }
 
 @test "write: verify incoming links pre change" {
-    run _curl_jq 'api/notes/642146c7.md' '.IncomingLinks | length'
+    run _get_jq 'api/notes/642146c7.md' '.IncomingLinks | length'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "2" ]
 }
 
 @test "write: change note" {
-    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Title'
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[2]}" == '  "Title": "mr. richard feynman",' ]
+    [ "${lines[0]}" == "mr. richard feynman" ]
 }
 
 @test "write: verify note changed in cache" {
-    run _curl_jq 'api/notes/64214a1d.md' '.Content'
+    run _get_jq 'api/notes/64214a1d.md' '.Content'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "# mr. richard feynman" ]
@@ -101,7 +104,7 @@ teardown_file() {
 }
 
 @test "write: verify incoming links post change" {
-    run _curl_jq 'api/notes/642146c7.md' '.IncomingLinks | length'
+    run _get_jq 'api/notes/642146c7.md' '.IncomingLinks | length'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "1" ]
@@ -123,6 +126,19 @@ teardown_file() {
     run _patch 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}'
     echo "$output"
     [ "${lines[0]}" == "Note not found" ]
+}
+
+@test "write: new note" {
+    run _post_jq 'api/notes/' '{"Content": "# new note"}' '.Title'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "new note" ]
+}
+
+@test "write: new note with filename" {
+    run _post 'api/notes/xxxxxxxx.md' '{"Content": "# new note"}'
+    echo "$output"
+    [ "${lines[0]}" == "Filename should not be specified" ]
 }
 
 @test "write: stop by sending terminate signal" {
