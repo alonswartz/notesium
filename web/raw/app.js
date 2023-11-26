@@ -130,6 +130,10 @@ export default {
     closeNote(filename) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
+      if (this.notes[index].isModified && !this.notes[index].ghost) {
+          this.alerts.push({type: 'error', title: 'Note has changes'});
+          return;
+      }
       if (filename === this.activeFilename) {
         this.activeFilename =
           index < this.notes.length - 1 ? this.notes[index + 1].Filename :
