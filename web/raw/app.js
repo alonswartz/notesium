@@ -5,6 +5,10 @@ var t = `
     <Tabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
 
     <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
+      <span title="new" @click="newNote('');"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="outline-plus-small" size="5" />
+      </span>
       <span title="list" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="mini-bars-three-bottom-left" size="4" />
@@ -78,16 +82,28 @@ export default {
         });
     },
     saveNote(filename, content, lastmtime) {
-      const params = { method: "PATCH", headers: {"Content-type": "application/json"}, body: JSON.stringify({Content: content, LastMtime: lastmtime}) };
-      fetch("/api/notes/" + filename, params)
+      let uri;
+      let params = { method: null, body: null, headers: {"Content-type": "application/json"} }
+      if (filename.startsWith('ghost-')) {
+        uri = "/api/notes/";
+        params.method = "POST";
+        params.body = JSON.stringify({Content: content});
+      } else {
+        uri = "/api/notes/" + filename;
+        params.method = "PATCH"
+        params.body = JSON.stringify({ Content: content, LastMtime: lastmtime });
+      }
+      fetch(uri, params)
         .then(response => response.ok ? response.json() : response.text().then(errText => Promise.reject(errText)))
         .then(note => {
-          const index = this.notes.findIndex(note => note.Filename === filename);
+          const index = this.notes.findIndex(n => n.Filename === filename);
           this.notes[index] = note;
+          this.activeFilename = note.Filename;
 
           // update other notes IncomingLinks due to potential changes
           this.notes.forEach(openNote => {
-            if (openNote.Filename == filename) return;
+            if (openNote.Filename == note.Filename) return;
+            if (openNote.ghost) return;
             fetch("/api/notes/" + openNote.Filename)
               .then(response => response.json())
               .then(fetchedNote => { openNote.IncomingLinks = fetchedNote.IncomingLinks; })
@@ -97,6 +113,11 @@ export default {
         .catch(error => {
           this.alerts.push({type: 'error', title: 'Error saving note', body: error, sticky: true})
         });
+    },
+    newNote(content) {
+      const note = {Filename: 'ghost-' + Date.now().toString(36), Title: 'untitled', Content: content, isModified: false, Mtime: '0', ghost: true};
+      this.notes.push(note);
+      this.activeFilename = note.Filename;
     },
     openNote(filename) {
       this.notes.some(note => note.Filename === filename)
@@ -163,6 +184,9 @@ export default {
           case `${leaderKey} KeyN KeyS`:
             this.openFilter('/api/raw/lines?color=true&prefix=title');
             this.keySequence = []; clearTimeout(timeoutId);
+            break;
+          case `${leaderKey} KeyN KeyN`:
+            this.newNote('');
             break;
         }
       }
