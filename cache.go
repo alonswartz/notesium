@@ -15,6 +15,7 @@ import (
 
 type Link struct {
 	Filename   string
+	Title      string
 	LineNumber int
 }
 
@@ -22,8 +23,8 @@ type Note struct {
 	Filename      string
 	Title         string
 	IsLabel       bool
-	OutgoingLinks []Link
-	IncomingLinks []Link
+	OutgoingLinks []*Link
+	IncomingLinks []*Link
 	Ctime         time.Time
 	Mtime         time.Time
 	Lines         int
@@ -60,9 +61,11 @@ func populateCache(dir string) {
 	for _, note := range noteCache {
 		for _, link := range note.OutgoingLinks {
 			if targetNote, exists := noteCache[link.Filename]; exists {
-				targetNote.IncomingLinks = append(targetNote.IncomingLinks, Link{
-					LineNumber: link.LineNumber,
+				link.Title = targetNote.Title
+				targetNote.IncomingLinks = append(targetNote.IncomingLinks, &Link{
 					Filename:   note.Filename,
+					Title:      note.Title,
+					LineNumber: link.LineNumber,
 				})
 			}
 		}
@@ -92,7 +95,7 @@ func readNote(dir string, filename string) (*Note, error) {
 
 	var title string
 	var isLabel bool
-	var outgoingLinks []Link
+	var outgoingLinks []*Link
 	var lines, words, chars int
 
 	scanner := bufio.NewScanner(file)
@@ -112,7 +115,7 @@ func readNote(dir string, filename string) (*Note, error) {
 		}
 		matches := linkRegex.FindAllStringSubmatch(line, -1)
 		for _, match := range matches {
-			outgoingLinks = append(outgoingLinks, Link{LineNumber: lineNumber, Filename: match[1]})
+			outgoingLinks = append(outgoingLinks, &Link{LineNumber: lineNumber, Filename: match[1]})
 		}
 	}
 
