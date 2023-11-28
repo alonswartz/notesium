@@ -46,8 +46,8 @@ var t = `
       <div v-if="note.IncomingLinks && note.IncomingLinks.length > 0" class="m-2 p-2 overflow-hidden">
         <p class="mt-1 text-sm font-semibold tracking-tight text-gray-900">Backlinks</p>
         <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
-          <li v-for="link in note.IncomingLinks" @click="$emit('note-open', link.Filename)" v-text="link.Title"
-          :title="link.Filename"
+          <li v-for="link in note.IncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
+          :title="link.Filename + ' (line:' + link.LineNumber + ')'"
           class="cursor-pointer hover:underline truncate">
           </li>
         </ul>
@@ -100,9 +100,11 @@ export default {
       }
     },
     lineNumberHL(linenum) {
+      if (!Number.isInteger(linenum) || linenum === undefined) return;
       this.$nextTick(() => {
         this.cm.setOption("styleActiveLine", true);
         this.cm.setCursor({line: linenum - 1});
+        this.note.Linenum = undefined;
       });
     },
     formatDate(dateStr) {
@@ -137,7 +139,7 @@ export default {
       },
     });
 
-    if (this.note.Linenum > 1) {
+    if (Number.isInteger(this.note.Linenum) && this.note.Linenum > 1) {
       this.lineNumberHL(this.note.Linenum);
     }
 
