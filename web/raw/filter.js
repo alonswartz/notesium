@@ -76,7 +76,7 @@ export default {
             const matches = PATTERN.exec(line);
             if (!matches) return null;
             const Filename = matches[1];
-            const Linenum = matches[2];
+            const Linenum = parseInt(matches[2], 10);
             const Colored = matches[3] || '';
             const Content = matches[4];
             const SearchStr = Colored ? `${Colored} ${Content}`.toLowerCase() : Content.toLowerCase();

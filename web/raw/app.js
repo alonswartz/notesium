@@ -119,10 +119,14 @@ export default {
       this.notes.push(note);
       this.activeFilename = note.Filename;
     },
-    openNote(filename) {
-      this.notes.some(note => note.Filename === filename)
-        ? this.activeFilename = filename
-        : this.fetchNote(filename);
+    openNote(filename, linenum) {
+      const index = this.notes.findIndex(note => note.Filename === filename);
+      if (index !== -1) {
+        this.notes[index].Linenum = linenum;
+        this.activeFilename = filename;
+      } else {
+        this.fetchNote(filename, linenum);
+      }
     },
     activateNote(filename) {
       this.activeFilename = filename;
