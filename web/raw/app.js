@@ -24,7 +24,8 @@ var t = `
     </div>
   </nav>
 
-  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" @note-open="openNote" @note-save="saveNote"/>
+  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
+    @note-open="openNote" @note-save="saveNote" @filter-open="openFilter"/>
 
   <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
