@@ -33,6 +33,7 @@ var t = `
           <dt class="text-sm font-medium text-gray-500">Chars</dt>
         </div>
       </dl>
+
       <dl class="m-2 grid grid-cols-1 gap-2">
         <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
           <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Mtime)"></dd>
@@ -41,6 +42,16 @@ var t = `
           <dt class="text-sm font-medium text-gray-500">Created</dt>
         </div>
       </dl>
+
+      <div v-if="note.IncomingLinks && note.IncomingLinks.length > 0" class="m-2 p-2 overflow-hidden">
+        <p class="mt-1 text-sm font-semibold tracking-tight text-gray-900">Backlinks</p>
+        <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
+          <li v-for="link in note.IncomingLinks" @click="$emit('note-open', link.Filename)" v-text="link.Title"
+          :title="link.Filename"
+          class="cursor-pointer hover:underline truncate">
+          </li>
+        </ul>
+      </div>
     </div>
 
     <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre>
