@@ -47,11 +47,27 @@ setup_file() {
     assert_line "64218088.md albert einstein"
 }
 
-@test "web: api/notes specific note incoming links" {
+@test "web: api/notes specific note incoming link filename" {
     run _curl_jq 'api/notes' '.["64214a1d.md"].IncomingLinks[].Filename'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "64218087.md" ]
+}
+
+@test "web: api/notes specific note incoming link title" {
+    run _curl_jq 'api/notes' '.["64214a1d.md"].IncomingLinks[].Title'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "surely you're joking mr. feynman" ]
+}
+
+@test "web: api/notes specific note outgoing link titles" {
+    run _curl_jq 'api/notes' '.["64214a1d.md"].OutgoingLinks[].Title'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 2 ]
+    assert_line "physicist"
+    assert_line "quantum mechanics"
 }
 
 @test "web: api/notes/filename content" {
