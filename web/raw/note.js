@@ -33,6 +33,14 @@ var t = `
           <dt class="text-sm font-medium text-gray-500">Chars</dt>
         </div>
       </dl>
+      <dl class="m-2 grid grid-cols-1 gap-2">
+        <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
+          <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Mtime)"></dd>
+          <dt class="text-sm font-medium text-gray-500">Modified</dt>
+          <dd class="mt-4 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Ctime)"></dd>
+          <dt class="text-sm font-medium text-gray-500">Created</dt>
+        </div>
+      </dl>
     </div>
 
     <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre>
@@ -85,6 +93,19 @@ export default {
         this.cm.setOption("styleActiveLine", true);
         this.cm.setCursor({line: linenum - 1});
       });
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      const day = date.getDate();
+      const month = date.toLocaleString('default', { month: 'short' });
+      const year = date.getFullYear();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+      const formattedDate = `${day} ${month} ${year}`;
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      return `${formattedDate} at ${formattedTime}`;
     },
   },
   mounted() {
