@@ -4,13 +4,17 @@ var t = `
     <div :class="{ 'conceal': conceal }" class="p-2 h-full" ref="codemirror"></div>
   </div>
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
-    <div class="p-2 border-b flex space-x-4">
-      <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
-        :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
-        class="rounded px-2 pt-px text-xs shadow-sm">Save</button>
-      <div class="flex h-6 text-xs items-center content-center">
-        <input type="checkbox" v-model="conceal" id="conceal-checkbox" tabindex="-1" @click="event => event.target.blur()">
-        <label for="conceal-checkbox" class="ml-1">conceal</label>
+    <div class="flex p-2 border-b">
+        <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
+          :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
+          class="rounded px-10 pt-2 pb-1 text-xs shadow-sm">Save</button>
+      <div class="flex w-auto mt-0 ml-auto items-center space-x-5 pr-1">
+        <span title="conceal formatting" @click="conceal=!conceal" class="cursor-pointer text-gray-400 hover:text-gray-700">
+          <Icon name="outline-code" size="4" />
+        </span>
+        <a title="open via xdg" v-if="note.Path" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
+          <Icon name="outline-external-link" size="4" />
+        </a>
       </div>
     </div>
     <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre>
@@ -20,8 +24,9 @@ var t = `
 `
 
 import Filter from './filter.js'
+import Icon from './icon.js'
 export default {
-  components: { Filter },
+  components: { Filter, Icon },
   props: ['note'],
   emits: ['note-open', 'note-save'],
   data() {
