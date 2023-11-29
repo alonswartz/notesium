@@ -44,9 +44,19 @@ var t = `
       <dl class="m-2 grid grid-cols-1 gap-2">
         <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
           <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Mtime)"></dd>
-          <dt class="text-sm font-medium text-gray-500">Modified</dt>
+          <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
+            title="list notes modified same day"
+            @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
+            <span>Modified</span>
+            <Icon name="mini-bars-three-bottom-left" size="3" />
+          </dt>
           <dd class="mt-4 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Ctime)"></dd>
-          <dt class="text-sm font-medium text-gray-500">Created</dt>
+          <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
+            title="list notes created same day"
+            @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
+            <span>Created</span>
+            <Icon name="mini-bars-three-bottom-left" size="3" />
+          </dt>
         </div>
       </dl>
 
