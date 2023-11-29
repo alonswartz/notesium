@@ -3,6 +3,7 @@ var t = `
   <div class="relative overflow-y-auto w-4/6">
     <div :class="{ 'conceal': conceal }" class="p-2 h-full" ref="codemirror"></div>
   </div>
+
   <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
     <div class="flex p-2 border-b">
         <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
@@ -52,7 +53,7 @@ var t = `
       <div v-if="note.IncomingLinks && note.IncomingLinks.length > 0" class="m-2 p-2 overflow-hidden">
         <p class="mt-1 text-sm font-semibold tracking-tight text-gray-900">Backlinks</p>
         <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
-          <li v-for="link in note.IncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
+          <li v-for="link in sortedIncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
           :title="link.Filename + ' (line:' + link.LineNumber + ')'"
           class="cursor-pointer hover:underline truncate">
           </li>
@@ -126,6 +127,11 @@ export default {
       const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       return `${formattedDate} at ${formattedTime}`;
     },
+  },
+  computed: {
+    sortedIncomingLinks() {
+      return this.note.IncomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
+    }
   },
   mounted() {
     this.cm = new CodeMirror(this.$refs.codemirror, {
