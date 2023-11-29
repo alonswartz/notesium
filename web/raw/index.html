@@ -26,6 +26,13 @@
       .cm-s-notesium-light span.cm-url:hover,
       .cm-s-notesium-light span.cm-link:hover { cursor: pointer; text-decoration: underline; }
 
+      .conceal-noactive .CodeMirror span.cm-url,
+      .conceal-noactive .CodeMirror span.cm-formatting-em,
+      .conceal-noactive .CodeMirror span.cm-formatting-link,
+      .conceal-noactive .CodeMirror span.cm-formatting-code,
+      .conceal-noactive .CodeMirror span.cm-formatting-strong { display: none; }
+      .conceal-noactive .CodeMirror span.cm-link:hover { cursor: text; text-decoration: none; }
+
       .conceal .CodeMirror span.cm-url,
       .conceal .CodeMirror span.cm-formatting-em,
       .conceal .CodeMirror span.cm-formatting-link,
