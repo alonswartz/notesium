@@ -27,7 +27,7 @@ var t = `
   <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
     @note-open="openNote" @note-save="saveNote" @filter-open="openFilter"/>
 
-  <Filter v-if="showFilter" :uri=filterUri @filter-selection="handleFilterSelection" />
+  <Filter v-if="showFilter" :uri=filterUri :initialQuery=filterQuery @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
   <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
@@ -51,18 +51,21 @@ export default {
       notes: [],
       activeFilename: '',
       filterUri: '',
+      filterQuery: '',
       showFilter: false,
       keySequence: [],
       alerts: [],
     }
   },
   methods: {
-    openFilter(uri) {
+    openFilter(uri, query) {
       this.filterUri = uri;
+      this.filterQuery = query;
       this.showFilter = true;
     },
     handleFilterSelection(value) {
       this.showFilter = false;
+      this.filterQuery = '';
       if (value !== null) {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {

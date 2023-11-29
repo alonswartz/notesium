@@ -38,7 +38,7 @@ var t = `
 import Preview from './preview.js'
 export default {
   components: { Preview },
-  props: ['uri', 'small'],
+  props: ['uri', 'small', 'initialQuery'],
   emits: ['filter-selection'],
   data() {
     return {
@@ -101,7 +101,7 @@ export default {
   created() {
     this.preview = this.small ? false : this.preview;
     this.fetchRaw(this.uri);
-    this.$nextTick(() => { this.$refs.queryInput.focus(); });
+    this.$nextTick(() => { this.query = this.initialQuery ? this.initialQuery : ''; this.$refs.queryInput.focus(); });
   },
   template: t
 }
