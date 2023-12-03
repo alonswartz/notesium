@@ -21,12 +21,17 @@ var t = `
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="mini-magnifying-glass" size="4" />
       </span>
+      <span title="settings" @click="showSettings=true"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="outline-ellipsis-vertical" size="5" />
+      </span>
     </div>
   </nav>
 
   <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
     @note-open="openNote" @note-save="saveNote" @filter-open="openFilter"/>
 
+  <Settings v-if="showSettings" @settings-close="showSettings=false"/>
   <Filter v-if="showFilter" :uri=filterUri :initialQuery=filterQuery @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
@@ -38,14 +43,14 @@ var t = `
 
 </div>
 `
-
+import Settings from './settings.js'
 import Filter from './filter.js'
 import Tabs from './tabs.js'
 import Note from './note.js'
 import Icon from './icon.js'
 import Alert from './alert.js'
 export default {
-  components: { Filter, Tabs, Note, Icon, Alert },
+  components: { Settings, Filter, Tabs, Note, Icon, Alert },
   data() {
     return {
       notes: [],
@@ -53,6 +58,7 @@ export default {
       filterUri: '',
       filterQuery: '',
       showFilter: false,
+      showSettings: false,
       keySequence: [],
       alerts: [],
     }
