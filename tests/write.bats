@@ -49,7 +49,7 @@ teardown_file() {
 }
 
 @test "write: change note should fail" {
-    run _patch 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}'
+    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "NOTESIUM_DIR is set to read-only mode" ]
 }
@@ -111,19 +111,19 @@ teardown_file() {
 }
 
 @test "write: change note with incorrect mtime" {
-    run _patch 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Refusing to overwrite. File changed on disk." ]
 }
 
 @test "write: change note without specifying params" {
-    run _patch 'api/notes/64214a1d.md' '{}'
+    run _patch_jq 'api/notes/64214a1d.md' '{}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Content field is required" ]
 }
 
 @test "write: change note that does not exist" {
-    run _patch 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}'
+    run _patch_jq 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Note not found" ]
 }
@@ -136,7 +136,7 @@ teardown_file() {
 }
 
 @test "write: new note with filename" {
-    run _post 'api/notes/xxxxxxxx.md' '{"Content": "# new note"}'
+    run _post_jq 'api/notes/xxxxxxxx.md' '{"Content": "# new note"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Filename should not be specified" ]
 }

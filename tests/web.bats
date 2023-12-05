@@ -78,7 +78,7 @@ setup_file() {
 }
 
 @test "web: api/notes/filename not found" {
-    run _curl 'api/notes/xxxxxxxx.md'
+    run _curl_jq 'api/notes/xxxxxxxx.md' '.Error'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "Note not found" ]
