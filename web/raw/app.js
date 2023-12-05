@@ -169,6 +169,13 @@ export default {
     dismissAlert(index) {
       this.alerts.splice(index, 1);
     },
+    handleBeforeUnload(event) {
+      if (this.notes.some(note => note.isModified)) {
+        const message = 'You have unsaved changes.';
+        event.returnValue = message;
+        return message;
+      }
+    },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
 
@@ -217,9 +224,11 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyPress);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
   },
   created () {
     this.openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');
