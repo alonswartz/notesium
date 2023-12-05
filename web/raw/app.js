@@ -43,6 +43,7 @@ var t = `
 
 </div>
 `
+
 import Settings from './settings.js'
 import Filter from './filter.js'
 import Tabs from './tabs.js'
@@ -84,12 +85,16 @@ export default {
     },
     fetchNote(filename, linenum) {
       fetch("/api/notes/" + filename)
-        .then(response => response.json())
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           note.Linenum = linenum;
           this.notes.push(note);
           this.activeFilename = note.Filename;
+        })
+        .catch(e => {
+          this.alerts.push({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
         });
+      ;
     },
     saveNote(filename, content, lastmtime) {
       let uri;
@@ -104,7 +109,7 @@ export default {
         params.body = JSON.stringify({ Content: content, LastMtime: lastmtime });
       }
       fetch(uri, params)
-        .then(response => response.ok ? response.json() : response.text().then(errText => Promise.reject(errText)))
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           const index = this.notes.findIndex(n => n.Filename === filename);
           this.notes[index] = note;
@@ -115,13 +120,13 @@ export default {
             if (openNote.Filename == note.Filename) return;
             if (openNote.ghost) return;
             fetch("/api/notes/" + openNote.Filename)
-              .then(response => response.json())
+              .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
               .then(fetchedNote => { openNote.IncomingLinks = fetchedNote.IncomingLinks; })
-              .catch(error => { console.error('Error fetching note:', error); });
+              .catch(e => { console.error('Error fetching note for IncomingLinks: ', e); });
           });
         })
-        .catch(error => {
-          this.alerts.push({type: 'error', title: 'Error saving note', body: error, sticky: true})
+        .catch(e => {
+          this.alerts.push({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
         });
     },
     newNote(content) {
