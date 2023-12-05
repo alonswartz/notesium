@@ -27,6 +27,19 @@ type NotePatch struct {
 	LastMtime time.Time `json:"LastMtime"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"Error"`
+	Code  int    `json:"Code"`
+}
+
+func respondWithError(w http.ResponseWriter, errMsg string, statusCode int) {
+	errorResponse := ErrorResponse{Error: errMsg, Code: statusCode}
+	errorJSON, _ := json.Marshal(errorResponse)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	w.Write(errorJSON)
+}
+
 func apiHeartbeat(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Heartbeat received."))
 }
@@ -53,31 +66,31 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 	switch r.Method {
 	case "GET":
 		if filename == "" {
-			http.Error(w, "Filename not specified", http.StatusBadRequest)
+			respondWithError(w, "Filename not specified", http.StatusBadRequest)
 			return
 		}
 
 	case "POST":
 		if readOnly {
-			http.Error(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			respondWithError(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
 			return
 		}
 
 		if filename != "" {
-			http.Error(w, "Filename should not be specified", http.StatusBadRequest)
+			respondWithError(w, "Filename should not be specified", http.StatusBadRequest)
 			return
 		}
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			respondWithError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		defer r.Body.Close()
 
 		var notePost NotePost
 		if err := json.Unmarshal(body, &notePost); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			respondWithError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -87,12 +100,12 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 
 		path := filepath.Join(dir, filename)
 		if _, err := os.Stat(path); err == nil {
-			http.Error(w, "File already exists", http.StatusConflict)
+			respondWithError(w, "File already exists", http.StatusConflict)
 			return
 		}
 
 		if err := os.WriteFile(path, []byte(notePost.Content), 0644); err != nil {
-			http.Error(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
+			respondWithError(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -101,39 +114,39 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 
 	case "PATCH":
 		if readOnly {
-			http.Error(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			respondWithError(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
 			return
 		}
 
 		if filename == "" {
-			http.Error(w, "Filename not specified", http.StatusBadRequest)
+			respondWithError(w, "Filename not specified", http.StatusBadRequest)
 			return
 		}
 
 		if _, ok := noteCache[filename]; !ok {
-			http.Error(w, "Note not found", http.StatusNotFound)
+			respondWithError(w, "Note not found", http.StatusNotFound)
 			return
 		}
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			respondWithError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		defer r.Body.Close()
 
 		var notePatch NotePatch
 		if err := json.Unmarshal(body, &notePatch); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			respondWithError(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		if notePatch.Content == "" {
-			http.Error(w, "Content field is required", http.StatusBadRequest)
+			respondWithError(w, "Content field is required", http.StatusBadRequest)
 			return
 		}
 		if notePatch.LastMtime.IsZero() {
-			http.Error(w, "LastMtime field is required", http.StatusBadRequest)
+			respondWithError(w, "LastMtime field is required", http.StatusBadRequest)
 			return
 		}
 
@@ -141,20 +154,20 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 		info, err := os.Stat(path)
 		if err != nil {
 			if os.IsNotExist(err) {
-				http.Error(w, "File does not exist: "+err.Error(), http.StatusNotFound)
+				respondWithError(w, "File does not exist: "+err.Error(), http.StatusNotFound)
 			} else {
-				http.Error(w, "Error accessing file: "+err.Error(), http.StatusInternalServerError)
+				respondWithError(w, "Error accessing file: "+err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
 		if info.ModTime() != notePatch.LastMtime {
-			http.Error(w, "Refusing to overwrite. File changed on disk.", http.StatusConflict)
+			respondWithError(w, "Refusing to overwrite. File changed on disk.", http.StatusConflict)
 			return
 		}
 
 		if err := os.WriteFile(path, []byte(notePatch.Content), 0644); err != nil {
-			http.Error(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
+			respondWithError(w, "Error writing file: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -162,19 +175,19 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 		populateCache(dir)
 
 	default:
-		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
+		respondWithError(w, "Method not supported", http.StatusMethodNotAllowed)
 	}
 
 	note, ok := noteCache[filename]
 	if !ok {
-		http.Error(w, "Note not found", http.StatusNotFound)
+		respondWithError(w, "Note not found", http.StatusNotFound)
 		return
 	}
 
 	path := filepath.Join(dir, filename)
 	content, err := os.ReadFile(path)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -186,7 +199,7 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 
 	jsonResponse, err := json.Marshal(noteResponse)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
