@@ -2,30 +2,8 @@ var t = `
 <div class="relative flex flex-col max-h-screen h-screen overflow-y bg-gray-50">
 
   <nav class="flex bg-gray-200 text-gray-800">
-    <Tabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-
-    <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
-      <span title="new" @click="newNote('');"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="outline-plus-small" size="5" />
-      </span>
-      <span title="list" @click="openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="mini-bars-three-bottom-left" size="4" />
-      </span>
-      <span title="links" @click="openFilter('/api/raw/links?color=true');"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="mini-arrows-right-left" size="4" />
-      </span>
-      <span title="lines" @click="openFilter('/api/raw/lines?color=true&prefix=title');"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="mini-magnifying-glass" size="4" />
-      </span>
-      <span title="settings" @click="showSettings=true"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="outline-ellipsis-vertical" size="5" />
-      </span>
-    </div>
+    <NavTabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
+    <NavActions @note-new="newNote" @filter-open="openFilter" @settings-open="showSettings=true" />
   </nav>
 
   <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
@@ -44,14 +22,14 @@ var t = `
 </div>
 `
 
-import Settings from './settings.js'
 import Filter from './filter.js'
-import Tabs from './tabs.js'
+import NavTabs from './nav-tabs.js'
+import NavActions from './nav-actions.js'
 import Note from './note.js'
-import Icon from './icon.js'
 import Alert from './alert.js'
+import Settings from './settings.js'
 export default {
-  components: { Settings, Filter, Tabs, Note, Icon, Alert },
+  components: { Filter, NavTabs, NavActions, Note, Alert, Settings },
   data() {
     return {
       notes: [],
