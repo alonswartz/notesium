@@ -63,12 +63,13 @@ export default {
         }
       }
     },
-    fetchNote(filename, linenum) {
+    fetchNote(filename, linenum, insertAfterActive = false) {
       fetch("/api/notes/" + filename)
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           note.Linenum = linenum;
-          this.notes.push(note);
+          const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeFilename) : -1;
+          (index === -1) ? this.notes.push(note) : this.notes.splice(index + 1, 0, note);
           this.activeFilename = note.Filename;
         })
         .catch(e => {
@@ -120,7 +121,7 @@ export default {
         this.notes[index].Linenum = linenum;
         this.activeFilename = filename;
       } else {
-        this.fetchNote(filename, linenum);
+        this.fetchNote(filename, linenum, true);
       }
     },
     activateNote(filename) {
