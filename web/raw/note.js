@@ -73,7 +73,7 @@ var t = `
 
     <!-- <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre> -->
   </div>
-  <Filter v-if="showFilter" :uri=filterUri small=true @filter-selection="handleFilterSelection" />
+  <Filter v-if="showFilter" uri="/api/raw/list?sort=mtime" small=true @filter-selection="handleFilterSelection" />
 </div>
 `
 
@@ -85,7 +85,6 @@ export default {
   emits: ['note-open', 'note-save', 'filter-open'],
   data() {
     return {
-      filterUri: '/api/raw/list?sort=mtime',
       showFilter: false,
       conceal: true,
     }
