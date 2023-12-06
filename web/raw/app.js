@@ -9,6 +9,7 @@ var t = `
   <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
     @note-open="openNote" @note-save="saveNote" @filter-open="openFilter"/>
 
+  <Empty v-if="notes.length == 0" @note-new="newNote" @filter-open="openFilter" />
   <Settings v-if="showSettings" @settings-close="showSettings=false"/>
   <Filter v-if="showFilter" :uri=filterUri :initialQuery=filterQuery @filter-selection="handleFilterSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -26,10 +27,11 @@ import Filter from './filter.js'
 import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
 import Note from './note.js'
+import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Filter, NavTabs, NavActions, Note, Alert, Settings },
+  components: { Filter, NavTabs, NavActions, Note, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
@@ -207,9 +209,6 @@ export default {
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
-  },
-  created () {
-    this.openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');
   },
   template: t
 }
