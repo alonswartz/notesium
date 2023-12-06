@@ -2,7 +2,7 @@ var t = `
 <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
   <span title="new" @click="$emit('note-new', '')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
-    <Icon name="outline-plus-small" size="5" />
+    <Icon name="outline-plus" size="4" />
   </span>
   <span title="list" @click="$emit('filter-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
