@@ -36,6 +36,7 @@ export default {
     return {
       notes: [],
       activeFilename: '',
+      activeFilenamePrevious: '',
       filterUri: '',
       filterQuery: '',
       showFilter: false,
@@ -57,7 +58,7 @@ export default {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {
           note.Linenum = value.Linenum;
-          this.activeFilename = value.Filename;
+          this.activateNote(value.Filename);
         } else {
           this.fetchNote(value.Filename, value.Linenum);
         }
@@ -70,7 +71,7 @@ export default {
           note.Linenum = linenum;
           const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeFilename) : -1;
           (index === -1) ? this.notes.push(note) : this.notes.splice(index + 1, 0, note);
-          this.activeFilename = note.Filename;
+          this.activateNote(note.Filename);
         })
         .catch(e => {
           this.alerts.push({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
@@ -94,7 +95,7 @@ export default {
         .then(note => {
           const index = this.notes.findIndex(n => n.Filename === filename);
           this.notes[index] = note;
-          this.activeFilename = note.Filename;
+          this.activateNote(note.Filename);
 
           // update other notes IncomingLinks due to potential changes
           this.notes.forEach(openNote => {
@@ -113,34 +114,33 @@ export default {
     newNote(content) {
       const note = {Filename: 'ghost-' + Date.now().toString(36), Title: 'untitled', Content: content, isModified: false, Mtime: '0', ghost: true};
       this.notes.push(note);
-      this.activeFilename = note.Filename;
+      this.activateNote(note.Filename);
     },
     openNote(filename, linenum) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index !== -1) {
         this.notes[index].Linenum = linenum;
-        this.activeFilename = filename;
+        this.activateNote(filename);
       } else {
         this.fetchNote(filename, linenum, true);
       }
     },
     activateNote(filename) {
+      this.activeFilenamePrevious = this.activeFilename;
       this.activeFilename = filename;
     },
     closeNote(filename) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
       if (this.notes[index].isModified && !this.notes[index].ghost) {
-          this.alerts.push({type: 'error', title: 'Note has changes'});
+          this.alerts.push({type: 'error', title: 'Note has unsaved changes'});
           return;
       }
-      if (filename === this.activeFilename) {
-        this.activeFilename =
-          index < this.notes.length - 1 ? this.notes[index + 1].Filename :
-          index > 0 ? this.notes[index - 1].Filename :
-          null;
-      }
       this.notes.splice(index, 1);
+      if (this.notes.length > 0 && filename === this.activeFilename) {
+        const previousExists = this.notes.some(note => note.Filename === this.activeFilenamePrevious);
+        this.activateNote(previousExists ? this.activeFilenamePrevious : this.notes.at(-1).Filename);
+      }
     },
     moveNote(filename, newIndex) {
       const index = this.notes.findIndex(note => note.Filename === filename);
