@@ -137,9 +137,24 @@ export default {
           return;
       }
       this.notes.splice(index, 1);
-      if (this.notes.length > 0 && filename === this.activeFilename) {
-        const previousExists = this.notes.some(note => note.Filename === this.activeFilenamePrevious);
-        this.activateNote(previousExists ? this.activeFilenamePrevious : this.notes.at(-1).Filename);
+      const notesLength = this.notes.length;
+      switch(notesLength) {
+        case 0:
+          this.activeFilename = '';
+          this.activeFilenamePrevious = '';
+          break;
+        case 1:
+          this.activeFilename = this.notes[0].Filename;
+          this.activeFilenamePrevious = '';
+          break;
+        default:
+          const lastFilename = this.notes.at(-1).Filename;
+          if (filename == this.activeFilename) {
+            const previousExists = this.notes.some(note => note.Filename === this.activeFilenamePrevious);
+            this.activeFilename = previousExists ? this.activeFilenamePrevious : lastFilename;
+          }
+          this.activeFilenamePrevious = (this.activeFilename !== lastFilename) ? lastFilename : this.notes.at(-2).Filename;
+          break;
       }
     },
     moveNote(filename, newIndex) {
