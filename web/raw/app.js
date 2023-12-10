@@ -2,7 +2,8 @@ var t = `
 <div class="relative flex flex-col max-h-screen h-screen overflow-y bg-gray-50">
 
   <nav class="flex bg-gray-200 text-gray-800">
-    <NavTabs :notes=notes :activeFilename=activeFilename @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
+    <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
+      @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
     <NavActions @note-new="newNote" @filter-open="openFilter" @settings-open="showSettings=true" />
   </nav>
 

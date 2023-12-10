@@ -51,6 +51,7 @@ export default {
         ['note', 'note-unfocus', 'esc', 'Exit editing mode'],
         ['tab', 'tab-next', 'ctrl j', 'Switch to next tab'],
         ['tab', 'tab-previous', 'ctrl k', 'Switch to previous tab'],
+        ['tab', 'tab-previous-active', 'ctrl o', 'Switch to previously active tab'],
       ]
     }
   },

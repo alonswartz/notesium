@@ -43,7 +43,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['notes', 'activeFilename'],
+  props: ['notes', 'activeFilename', 'activeFilenamePrevious'],
   emits: ['note-activate', 'note-close', 'note-move'],
   data() {
     return {
@@ -63,6 +63,12 @@ export default {
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
+
+      if (event.ctrlKey && event.code == 'KeyO') {
+        this.activeFilenamePrevious && this.$emit('note-activate', this.activeFilenamePrevious);
+        event.preventDefault();
+        return;
+      }
 
       if (event.ctrlKey && (event.code == 'KeyJ' || event.code == 'KeyK')) {
         const index = this.notes.findIndex(note => note.Filename === this.activeFilename);
