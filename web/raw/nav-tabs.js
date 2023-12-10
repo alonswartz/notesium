@@ -70,10 +70,10 @@ export default {
         return;
       }
 
-      if (event.ctrlKey && (event.code == 'KeyJ' || event.code == 'KeyK')) {
+      if (event.ctrlKey && (event.code == 'KeyH' || event.code == 'KeyL')) {
         const index = this.notes.findIndex(note => note.Filename === this.activeFilename);
         if (index === -1) return;
-        const movement = event.code === 'KeyJ' ? 1 : -1;
+        const movement = event.code === 'KeyL' ? 1 : -1;
         const newIndex = (index + movement + this.notes.length) % this.notes.length;
         this.$emit('note-activate', this.notes[newIndex].Filename);
         event.preventDefault();

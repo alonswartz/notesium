@@ -40,8 +40,8 @@ export default {
         ['global', 'filter-open-list-mtime', 'space n m', 'Open list with prefixed date modified, sorted by mtime'],
         ['global', 'filter-open-links', 'space n k', 'Open list of related notes to open note, or all note links if none open'],
         ['global', 'filter-open-search', 'space n s', 'Open full text search'],
-        ['filter', 'filter-entry-next', 'ctrl j', 'Select next entry'],
-        ['filter', 'filter-entry-previous', 'ctrl k', 'Select previous entry'],
+        ['filter', 'filter-entry-down', 'ctrl j', 'Select next entry (down)'],
+        ['filter', 'filter-entry-up', 'ctrl k', 'Select previous entry (up)'],
         ['filter', 'filter-entry-select', 'enter', 'Submit selected entry'],
         ['filter', 'filter-preview-toggle', 'ctrl p', 'Toggle preview'],
         ['filter', 'filter-dismiss', 'esc', 'Dismiss filter'],
@@ -49,9 +49,9 @@ export default {
         ['note', 'note-save', 'ctrl s', 'Save note'],
         ['note', 'note-focus', 'tab', 'Insert editing mode'],
         ['note', 'note-unfocus', 'esc', 'Exit editing mode'],
-        ['tab', 'tab-next', 'ctrl j', 'Switch to next tab'],
-        ['tab', 'tab-previous', 'ctrl k', 'Switch to previous tab'],
-        ['tab', 'tab-previous-active', 'ctrl o', 'Switch to previously active tab'],
+        ['tab', 'tab-left', 'ctrl h', 'Switch to previous tab (left)'],
+        ['tab', 'tab-right', 'ctrl l', 'Switch to next tab (right)'],
+        ['tab', 'tab-previous', 'ctrl o', 'Switch to previously active tab'],
       ]
     }
   },
