@@ -148,6 +148,7 @@ export default {
       placeholder: '# title',
       lineNumbers: false,
       styleActiveLine: false,
+      tabSize: 4,
       theme: 'notesium-light',
       mode: {
         name: "gfm",
