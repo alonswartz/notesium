@@ -11,15 +11,15 @@ var t = `
           class="rounded px-10 pt-2 pb-1 text-xs shadow-sm">Save</button>
       <div class="flex w-auto mt-0 ml-auto items-center space-x-5 pr-1">
         <span title="conceal formatting" @click="conceal=!conceal" class="cursor-pointer text-gray-400 hover:text-gray-700">
-          <Icon name="outline-code" size="4" />
+          <Icon name="outline-code" size="h-4 w-4" />
         </span>
         <template v-if="note.Path">
           <span title="links" @click="$emit('filter-open', '/api/raw/links?color=true&filename=' + this.note.Filename)"
             class="cursor-pointer text-gray-400 hover:text-gray-700">
-            <Icon name="mini-arrows-right-left" size="3" />
+            <Icon name="mini-arrows-right-left" size="h-3 w-3" />
           </span>
           <a title="open via xdg" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
-            <Icon name="outline-external-link" size="4" />
+            <Icon name="outline-external-link" size="h-4 w-4" />
           </a>
         </template>
       </div>
@@ -48,14 +48,14 @@ var t = `
             title="list notes modified same day"
             @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
             <span>Modified</span>
-            <Icon name="mini-bars-three-bottom-left" size="3" />
+            <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
           </dt>
           <dd class="mt-4 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Ctime)"></dd>
           <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
             title="list notes created same day"
             @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
             <span>Created</span>
-            <Icon name="mini-bars-three-bottom-left" size="3" />
+            <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
           </dt>
         </div>
       </dl>

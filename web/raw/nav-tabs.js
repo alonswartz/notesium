@@ -18,7 +18,7 @@ var t = `
         <span v-text="note.Title"></span>
       </span>
       <span @click.stop="$emit('note-close', note.Filename)" class="hover:bg-gray-300 hover:rounded-full">
-        <Icon name="mini-x-mark" size="4" />
+        <Icon name="mini-x-mark" size="h-4 w-4" />
       </span>
     </div>
     <div :class="(note.Filename == activeFilename) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
