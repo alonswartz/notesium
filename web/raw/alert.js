@@ -3,8 +3,8 @@ var t = `
   <div class="p-4">
     <div class="flex items-start">
       <div class="flex-shrink-0">
-        <div v-if="alert.type == 'error'" class="text-red-400"><Icon name="outline-exclamation-circle" size="6" /></div>
-        <div v-if="alert.type == 'success'" class="text-green-400"><Icon name="outline-check-circle" size="6" /></div>
+        <div v-if="alert.type == 'error'" class="text-red-400"><Icon name="outline-exclamation-circle" size="h-6 w-6" /></div>
+        <div v-if="alert.type == 'success'" class="text-green-400"><Icon name="outline-check-circle" size="h-6 w-6" /></div>
       </div>
       <div class="ml-3 w-0 flex-1 pt-0.5">
         <p class="text-sm font-medium text-gray-900" v-text="alert.title"></p>
@@ -13,7 +13,7 @@ var t = `
       <div v-show="alert.sticky" class="ml-4 flex flex-shrink-0">
         <button @click="dismiss()" type="button" class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500">
           <span class="sr-only">Close</span>
-          <Icon name="mini-x-mark" size="5" />
+          <Icon name="mini-x-mark" size="h-5 w-5" />
         </button>
       </div>
     </div>

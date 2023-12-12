@@ -6,7 +6,7 @@ var t = `
       <div class="flex items-center justify-between p-4 text-sm font-medium cursor-pointer hover:bg-gray-100 rounded-xl"
         @click="$emit(entry.emit[0], entry.emit[1])">
         <div class="flex items-center space-x-4 text-gray-500">
-          <Icon :name="entry.icon" size="4" />
+          <Icon :name="entry.icon" size="h-4 w-4" />
           <span v-text="entry.title"></span>
         </div>
         <span class="whitespace-nowrap text-gray-900 font-mono mt-1" v-text="entry.keybind"></span>
