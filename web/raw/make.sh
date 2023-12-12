@@ -7,7 +7,9 @@ cat<<EOF
 Usage: $0 COMMAND [OPTIONS]
 
 Commands:
+  all                   handle vendor, tailwind
   vendor                download, verify and concatenate vendor files
+  tailwind [--watch]    build tailwind.css
 
 EOF
 exit 1
@@ -58,11 +60,21 @@ _vendor() {
     sha256sum vendor.css
 }
 
+_tailwind() {
+    # tailwindcss v3.1.6
+    OPTS="$@"
+    command -v tailwindcss >/dev/null || fatal "tailwindcss not found"
+    [ -e "tailwind.input.css" ] || fatal "tailwind.input.css not found"
+    [ -e "tailwind.config.js" ] || fatal "tailwind.config.js not found"
+    tailwindcss $OPTS --minify -i tailwind.input.css -o tailwind.css
+}
+
 main() {
     cd $(dirname $(realpath $0))
     case $1 in
         ""|-h|--help|help)      usage;;
         vendor)                 _vendor;;
+        tailwind)               shift; _tailwind $@;;
         *)                      fatal "unrecognized command: $1";;
     esac
 }
