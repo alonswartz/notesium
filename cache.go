@@ -123,6 +123,10 @@ func readNote(dir string, filename string) (*Note, error) {
 		return nil, err
 	}
 
+	if title == "" {
+		title = "untitled"
+	}
+
 	note := &Note{
 		Filename:      filename,
 		Title:         title,
