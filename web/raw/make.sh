@@ -73,6 +73,7 @@ main() {
     cd $(dirname $(realpath $0))
     case $1 in
         ""|-h|--help|help)      usage;;
+        all)                    _vendor; _tailwind;;
         vendor)                 _vendor;;
         tailwind)               shift; _tailwind $@;;
         *)                      fatal "unrecognized command: $1";;
