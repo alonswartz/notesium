@@ -1,4 +1,4 @@
-vendor/
+.vendor/
 vendor.js
 vendor.css
 tailwind.css

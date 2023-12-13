@@ -43,13 +43,13 @@ _vendor_get_verify() {
 }
 
 _vendor() {
-    mkdir -p vendor
+    mkdir -p .vendor
     rm -f vendor.js vendor.css
     command -v curl >/dev/null || fatal "curl not found"
     command -v sha256sum >/dev/null || fatal "sha256sum not found"
 
     while IFS=' ' read -r HASH SRC; do
-        local DST="vendor/$(basename $SRC)"
+        local DST=".vendor/$(basename $SRC)"
         _vendor_get_verify "$SRC" "$DST" "$HASH"
         case "$DST" in
             *.js)  cat "$DST" >> vendor.js ;;
