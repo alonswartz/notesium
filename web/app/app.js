@@ -218,14 +218,30 @@ export default {
         }
       }
     },
+    handleHeartbeat(action) {
+      const sendHeartbeat = () => {
+        fetch("/api/heartbeat").then(r => { !r.ok && this.handleHeartbeat('stop') });
+      };
+      switch (action) {
+        case 'start':
+          !this.heartbeatInterval && (this.heartbeatInterval = setInterval(sendHeartbeat, 5000));
+          break;
+        case 'stop':
+          this.heartbeatInterval && clearInterval(this.heartbeatInterval);
+          this.heartbeatInterval = null;
+          break;
+      }
+    },
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
+    this.handleHeartbeat('start');
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
+    this.handleHeartbeat('stop');
   },
   template: t
 }
