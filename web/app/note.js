@@ -176,7 +176,7 @@ export default {
     });
 
     this.cm.on('mousedown', (cm, e) => {
-      let el = e.path[0];
+      let el = e.composedPath()[0];
       if (el.classList.contains('cm-link') || el.classList.contains('cm-url')) {
         const getNextNSibling = (element, n) => { for (; n > 0 && element; n--, element = element.nextElementSibling); return element; };
 
