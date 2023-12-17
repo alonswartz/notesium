@@ -20,9 +20,9 @@ import (
 
 var version = "dev"
 
-//go:embed completion.bash web/graph
+//go:embed completion.bash web/graph web/app web/index.html
 var embedfs embed.FS
-var embedfsWebRoot = "web/graph"
+var embedfsWebRoot = "web"
 
 func main() {
 	cmd, err := parseOptions(os.Args[1:])
