@@ -16,6 +16,10 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="mini-magnifying-glass" size="h-4 w-4" />
   </span>
+  <a title="graph" target="_blank" href="/graph/?noxdg"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="graph" size="h-4 w-4" />
+  </a>
   <span title="settings" @click="$emit('settings-open')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-ellipsis-vertical" size="h-5 w-5" />
