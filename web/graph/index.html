@@ -333,6 +333,7 @@
           .then(data => {
             document.getElementById("preview-panel").hidden = false;
             document.getElementById("preview-panel-editlink").href = 'notesium://' + data.Path;
+            document.getElementById("preview-panel-editlink").hidden = hideEditLink;
             document.getElementById("preview-panel-content-body").innerHTML = markdownify(data.Content);
 
             var backlinks = ""
@@ -355,6 +356,8 @@
 
           });
       }
+
+      const hideEditLink = new URLSearchParams(window.location.search).has('noxdg');
 
       const graphData = {
         "nodes": [],
