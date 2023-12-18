@@ -199,7 +199,8 @@ func notesiumLinks(dir string, opts linksOptions, w io.Writer) {
 		return
 	}
 
-	for _, note := range noteCache {
+	notes := getSortedNotes("alpha")
+	for _, note := range notes {
 		for _, link := range note.OutgoingLinks {
 			linkNote, exists := noteCache[link.Filename]
 			linkTitle := link.Filename
