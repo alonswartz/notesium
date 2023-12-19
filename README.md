@@ -6,7 +6,7 @@ It aspires and is designed to:
 
 - Do one thing, and do it well - per the unix philosophy.
 - Support the concepts of [Evergreen notes](https://notes.andymatuschak.org/z4SDCZQeRo4xFEQ8H4qrSqd68ucpgE6LU155C) and [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten).
-- Be used with your own text editor (e.g., [Vim integration](#vim)).
+- Be used with your own text editor (e.g., [Vim integration](#vim)) or embedded [Web app](#web).
 - Be used with a local folder of markdown files.
 - Be as close to zero friction as possible.
 - Be lightweight and fast.
@@ -21,9 +21,13 @@ It aspires and is designed to:
     - [Installation](#installation)
     - [Shell completion](#shell-completion)
     - [Usage](#usage)
+- [Web](#web)
+    - [Keybindings](#keybindings)
+    - [Filter search syntax](#filter-search-syntax)
+    - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
 - [Vim](#vim)
     - [Example integration](#example-integration)
-    - [Keybindings](#keybindings)
+    - [Keybindings](#keybindings-1)
     - [Fzf search syntax](#fzf-search-syntax)
     - [Related Vim settings](#related-vim-settings)
 - [Custom URI protocol](#custom-uri-protocol)
@@ -42,9 +46,10 @@ It aspires and is designed to:
 
 ## Features
 
-- Blazingly fast and powerful fuzzy search (fzf).
-- Preview notes and links, with line highlighting where relevant (bat).
-- Explore notes, their links, and clusters with the force graph view (D3.js).
+- Blazingly fast and powerful search.
+- Preview notes and links, with line highlighting where relevant.
+- Explore notes, their links, and clusters with the force graph view.
+- Create and edit notes with your own editor or the embedded web app.
 - No need to think about file names or folder locations.
 - Instantly create a new note with a keybinding.
 - Structure emerges organically through bi-directional links.
@@ -69,7 +74,13 @@ It aspires and is designed to:
     - Optionally prefix each line with the note title for context.
 - **Stats**
     - View counts of notes, labels, orphans, links, lines, words, etc.
-- **Web (forcegraph)**
+- **Web (app)**
+    - Completely self-contained and runs locally.
+    - Create and edit notes with web based editor.
+    - Markdown syntax highlighting, special char and links concealment.
+    - Open multiple notes in tabs, drag to re-order, keybindings to switch.
+    - Integrated filter integration for List, Links and Lines with preview.
+- **Web (graph)**
     - Visual overview of notes structure with a force graph view.
     - Cluster nodes based on links, inferred from titles or creation date.
     - Adjust node size dynamically based on bi-directional link count.
@@ -145,6 +156,7 @@ Or build from source.
 ```bash
 git clone https://github.com/alonswartz/notesium.git
 cd notesium
+./web/app/make.sh all
 ./web/graph/make.sh all
 go build -ldflags "-s -w -X main.version=$(git describe | sed 's/^v//; s/-/+/')"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
@@ -192,6 +204,7 @@ Commands:
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
+    --writable      Allow writing of notes in NOTESIUM_DIR via API
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
 
@@ -199,11 +212,59 @@ Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
 ```
 
+## Web
+
+Notesium ships with an embedded web interface which is self contained
+and runs locally. To allow writing of notes, be sure to specify the
+`--writable` flag.
+
+```bash
+notesium web --writable --open-browser
+```
+
+### Keybindings
+
+| Mode   | Binding     | Comment
+| ----   | --------    | -------
+| edit   | `[[`        | Opens note list, insert selection as markdown formatted link
+| edit   | `ctrl+s`    | Save note
+| global | `space n n` | Opens new note for editing
+| global | `space n l` | List with prefixed label, sorted by alphabetically
+| global | `space n m` | List with prefixed date modified, sorted by mtime
+| global | `space n c` | List with prefixed date created in custom format, sorted by ctime
+| global | `space n k` | List all links related to this note
+| global | `space n s` | Full text search
+| filter | `C-k` `C-j` | Move up and down in filter window
+| filter | `enter`     | Open selection
+| filter | `C-p`       | Toggle preview
+| tab    | `C-h` `C-l` | Switch to previous (left) or next tab (right)
+| tab    | `C-o`       | Switch to previous active tab
+
+For more keybindings see the integrated settings.
+
+### Filter search syntax
+
+| Token        | Match Type                 | Comment
+| ------------ | ----------                 | -------
+| `word`       | exact-match                | Items that include `word`
+| `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
+
+### Syntax highlighting and concealment
+
+The editor is configured to syntax highlight based on `markdown`
+formatting.
+
+By default, special characters used for **bold**, *italic* and `code`
+will be concealed except on the active-line. In addition, links will
+also be concealed and only display the title. This setting can be
+toggled using the icon in the note sidebar.
+
 ## Vim
 
-Notesium is not a Vim plugin, it is up to the user to write their own
-Vim commands and configure keybindings. That said, below are some fairly
-generic commands, with preferences configured in the keybindings.
+Notesium does not supply a Vim plugin, it is up to the user to write
+their own Vim commands and configure keybindings. That said, below are
+some fairly generic commands, with preferences configured in the
+keybindings.
 
 - Dependencies: [fzf](https://github.com/junegunn/fzf) and [fzf.vim](https://github.com/junegunn/fzf.vim).
 - Recommended: [bat](https://github.com/sharkdp/bat) for syntax highlighting in the preview.
@@ -224,7 +285,7 @@ autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complet
 command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
-command! -bang NotesiumGraph
+command! -bang NotesiumWeb
   \ let options = "--stop-on-idle --open-browser" |
   \ execute ":silent !nohup notesium web ".options." > /dev/null 2>&1 &"
 
@@ -253,7 +314,7 @@ nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=200
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
-nnoremap <silent> <Leader>ng :NotesiumGraph<CR>
+nnoremap <silent> <Leader>nw :NotesiumWeb<CR>
 
 " overrides for journal
 if $NOTESIUM_DIR =~ '**/journal/*'
@@ -267,7 +328,7 @@ endif
 | ----   | --------          | -------
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
-| normal | `<Leader>ng`      | Opens browser with graph view (auto stop webserver on idle)
+| normal | `<Leader>nw`      | Opens browser with web view (auto stop webserver on idle)
 | normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically (mtime if journal)
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
@@ -347,9 +408,9 @@ xdg-open notesium:///home/user/notes
 xdg-open notesium:///home/user/notes/625d563f.md
 ```
 
-Opening the listing is useful when integrated with a launcher or desktop
-keybinding. Opening a note for editing is useful, for example, when
-using the `web` force graph view.
+For Vim users, opening the listing is useful when integrated with a
+launcher or desktop keybinding. Opening a note for editing is useful,
+for example, when using the `web` force graph view.
 
 ### Handler registration
 
@@ -457,7 +518,8 @@ Notesium assumes note links use the inline markdown syntax, for example:
 insert links with a keybinding.
 
 Even though links are short, for an improved reading experience in Vim
-consider enabling `conceallevel` (see [Related Vim settings](#related-vim-settings)).
+consider enabling `conceallevel` (see [Related Vim settings](#related-vim-settings)). This is
+implemented in the web app and enabled by default.
 
 ## Versioning
 
