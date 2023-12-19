@@ -108,28 +108,52 @@ It aspires and is designed to:
 ![image: force graph zoom](https://www.notesium.com/images/screenshot-1682941869.png)
 <br/>
 
-*List: prefixed with associated labels and sorted alphabetically*
-![image: prefixed label](https://www.notesium.com/images/screenshot-1681733208.png)
+*[Web] List: prefixed with associated labels and sorted alphabetically*
+![image: web prefixed label](https://www.notesium.com/images/screenshot-1702907201.png)
 <br/>
 
-*List: prefixed with modification date and sorted per modification time*
-![image: prefixed mtime](https://www.notesium.com/images/screenshot-1681733355.png)
+*[Web] List: prefixed with modification date and sorted per modification time*
+![image: web prefixed mtime](https://www.notesium.com/images/screenshot-1702907446.png)
 <br/>
 
-*Links: display all links*
-![image: links all](https://www.notesium.com/images/screenshot-1681733482.png)
+*[Web] Links: display all links*
+![image: web links all](https://www.notesium.com/images/screenshot-1702908693.png)
 <br/>
 
-*Links: display links related to the current note*
-![image: links related](https://www.notesium.com/images/screenshot-1681733712.png)
+*[Web] Links: display links related to the current note*
+![image: web links related](https://www.notesium.com/images/screenshot-1702908878.png)
 <br/>
 
-*Links: link insertion triggered by `[[`*
-![image: link insertion](https://www.notesium.com/images/screenshot-1681734183.png)
+*[Web] Links: link insertion triggered by `[[`*
+![image: web link insertion](https://www.notesium.com/images/screenshot-1702909758.png)
 <br/>
 
-*Lines: full text search (light theme)*
-![image: full text search light](https://www.notesium.com/images/screenshot-1681734555.png)
+*[Web] Lines: full text search*
+![image: web full text search](https://www.notesium.com/images/screenshot-1702909937.png)
+<br/>
+
+*[Vim] List: prefixed with associated labels and sorted alphabetically*
+![image: vim prefixed label](https://www.notesium.com/images/screenshot-1681733208.png)
+<br/>
+
+*[Vim] List: prefixed with modification date and sorted per modification time*
+![image: vim prefixed mtime](https://www.notesium.com/images/screenshot-1681733355.png)
+<br/>
+
+*[Vim] Links: display all links*
+![image: vim links all](https://www.notesium.com/images/screenshot-1681733482.png)
+<br/>
+
+*[Vim] Links: display links related to the current note*
+![image: vim links related](https://www.notesium.com/images/screenshot-1681733712.png)
+<br/>
+
+*[Vim] Links: link insertion triggered by `[[`*
+![image: vim link insertion](https://www.notesium.com/images/screenshot-1681734183.png)
+<br/>
+
+*[Vim] Lines: full text search (light theme)*
+![image: vim full text search light](https://www.notesium.com/images/screenshot-1681734555.png)
 <br/>
 
 ## CLI
