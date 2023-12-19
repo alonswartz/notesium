@@ -1,3 +1,74 @@
+## 0.5.0
+
+Notesium now includes an embedded Web App which is completely
+self-contained and runs locally. It includes an Editor to view and edit
+notes with syntax highlighting, and a Finder which mimics the Vim
+user-experience example integration (Fzf, bats, keybindings, etc.).
+
+This version includes **backwards incompatible changes**.
+
+Added:
+
+- Web: `--writable` option to allow writing of notes in NOTESIUM_DIR via API.
+- Graph: XDG edit links will be hidden if `?noxdg` parameter is set.
+- Links: Accepts `--filename=` as alternative to filename as argument.
+
+- API: Initial specification documented in `API.md`.
+- API: Note creation provided via `POST  /api/notes/`.
+- API: Note updating provided via `PATCH /api/notes/:filename`.
+- API: Note updating refusal if provided `lastMtime` mismatch to filesystem.
+- API: Experimental CLI pass-through commands: `/api/raw/list|links|lines`.
+
+- Web/App: Finder opening via keybind sequences similar to Vim.
+- Web/App: Finder for displaying `list` `links` `lines` results.
+- Web/App: Finder filtering exact-match and multi-match (AND).
+- Web/App: Finder preview with syntax and linenumber highlighting.
+- Web/App: Finder preview toggle via keybinding.
+- Web/App: Finder keybindings for navigation in addition to mouse.
+- Web/App: Finder initial query filter support.
+- Web/App: Finder selection will open note:linenumber or switch if open.
+- Web/App: Tabs support for opening multiple notes concurrently.
+- Web/App: Tabs open right of source Tab or last if via Finder.
+- Web/App: Tabs visual indicator of unsaved changes.
+- Web/App: Tabs close refusal if note has unsaved changes.
+- Web/App: Tabs close will switch to previously active or last.
+- Web/App: Tabs switching keybindings for next, previous, previously active.
+- Web/App: Tabs re-ordering via mouse drag.
+- Web/App: Tabs note.IncomingLinks update on Save for potential changes.
+- Web/App: Editor link-insertion Finder without preview via `[[` keybinding.
+- Web/App: Editor markdown syntax and active-line highlighting.
+- Web/App: Editor conceal links and formatting unless active-line (toggable).
+- Web/App: Editor inline-link click support if concealed, edit or view mode.
+- Web/App: Editor keybinding for Save when in edit-mode.
+- Web/App: Editor changeSet markClean on successful Save.
+- Web/App: Note sidebar actions: Conceal-formatting. Related-links. XDG-open.
+- Web/App: Note sidebar stats: Lines, Words, Characters.
+- Web/App: Note sidebar dates: Modified, Created. Open Finder of same day.
+- Web/App: Note sidebar backlinks: Links to `source:ln` of IncomingLinks.
+- Web/App: Note sidebar backlinks: Updated when referenced note is saved.
+- Web/App: Note link clicks will open note or switch if open.
+- Web/App: Warn on closing browser tab if any notes have unsaved changes.
+- Web/App: Navbar actions: new, list, links, lines, graph, keybindings.
+- Web/App: Empty state: new, list, lines quickstart.
+- Web/App: Settings overlay for keybindings with filter search.
+- Web/App: Alert notifications on errors - auto-dismiss or sticky.
+- Web/App: Heartbeat support for Web option `--stop-on-idle`.
+- Web/App: Embedded build includes minified, concatenated vendor files.
+
+Changed:
+
+- Links are sorted alphabetically if filename not specified.
+- Note titles will be returned as `untitled` if no Title was enumerated.
+- API notes list Incoming/OutgoingLinks now include dst/src note `Title`.
+
+- Embedded webroot set to `web` instead of `web/graph` (redirect to `/app`).
+- Embedded `web/graph` now located at `/graph` instead of `/`.
+- Readme Vim Graph command changed to Web command.
+- Readme updated to include `web/app` and related screenshots.
+
+- Cache population will be skipped if already exists.
+- API errors are returned as JSON `{Error, Code}`.
+
 ## 0.4.2
 
 Fixed:
