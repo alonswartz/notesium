@@ -4,15 +4,15 @@ var t = `
   <nav class="flex bg-gray-200 text-gray-800">
     <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
       @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-    <NavActions @note-new="newNote" @filter-open="openFilter" @settings-open="showSettings=true" />
+    <NavActions @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" />
   </nav>
 
   <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
-    @note-open="openNote" @note-save="saveNote" @filter-open="openFilter"/>
+    @note-open="openNote" @note-save="saveNote" @finder-open="openFinder"/>
 
-  <Empty v-if="notes.length == 0" @note-new="newNote" @filter-open="openFilter" />
+  <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
   <Settings v-if="showSettings" @settings-close="showSettings=false"/>
-  <Filter v-if="showFilter" :uri=filterUri :initialQuery=filterQuery @filter-selection="handleFilterSelection" />
+  <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
   <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
@@ -24,7 +24,7 @@ var t = `
 </div>
 `
 
-import Filter from './filter.js'
+import Finder from './finder.js'
 import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
 import Note from './note.js'
@@ -32,29 +32,29 @@ import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Filter, NavTabs, NavActions, Note, Empty, Alert, Settings },
+  components: { Finder, NavTabs, NavActions, Note, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
       activeFilename: '',
       activeFilenamePrevious: '',
-      filterUri: '',
-      filterQuery: '',
-      showFilter: false,
+      finderUri: '',
+      finderQuery: '',
+      showFinder: false,
       showSettings: false,
       keySequence: [],
       alerts: [],
     }
   },
   methods: {
-    openFilter(uri, query) {
-      this.filterUri = uri;
-      this.filterQuery = query;
-      this.showFilter = true;
+    openFinder(uri, query) {
+      this.finderUri = uri;
+      this.finderQuery = query;
+      this.showFinder = true;
     },
-    handleFilterSelection(value) {
-      this.showFilter = false;
-      this.filterQuery = '';
+    handleFinderSelection(value) {
+      this.showFinder = false;
+      this.finderQuery = '';
       if (value !== null) {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {
@@ -191,25 +191,25 @@ export default {
 
         switch(this.keySequence.join(' ')) {
           case `${leaderKey} KeyN KeyL`:
-            this.openFilter('/api/raw/list?color=true&prefix=label&sort=alpha');
+            this.openFinder('/api/raw/list?color=true&prefix=label&sort=alpha');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyC`:
-            this.openFilter('/api/raw/list?color=true&prefix=ctime&sort=ctime');
+            this.openFinder('/api/raw/list?color=true&prefix=ctime&sort=ctime');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyM`:
-            this.openFilter('/api/raw/list?color=true&prefix=mtime&sort=mtime');
+            this.openFinder('/api/raw/list?color=true&prefix=mtime&sort=mtime');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyK`:
             this.activeFilename
-              ? this.openFilter('/api/raw/links?color=true&filename=' + this.activeFilename)
-              : this.openFilter('/api/raw/links?color=true');
+              ? this.openFinder('/api/raw/links?color=true&filename=' + this.activeFilename)
+              : this.openFinder('/api/raw/links?color=true');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyS`:
-            this.openFilter('/api/raw/lines?color=true&prefix=title');
+            this.openFinder('/api/raw/lines?color=true&prefix=title');
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyN`:

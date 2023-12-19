@@ -23,7 +23,7 @@ It aspires and is designed to:
     - [Usage](#usage)
 - [Web](#web)
     - [Keybindings](#keybindings)
-    - [Filter search syntax](#filter-search-syntax)
+    - [Finder search syntax](#finder-search-syntax)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
 - [Vim](#vim)
     - [Example integration](#example-integration)
@@ -79,7 +79,7 @@ It aspires and is designed to:
     - Create and edit notes with web based editor.
     - Markdown syntax highlighting, special char and links concealment.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
-    - Integrated filter integration for List, Links and Lines with preview.
+    - Finder integration for List, Links and Lines with preview.
 - **Web (graph)**
     - Visual overview of notes structure with a force graph view.
     - Cluster nodes based on links, inferred from titles or creation date.
@@ -258,15 +258,15 @@ notesium web --writable --open-browser
 | global | `space n c` | List with prefixed date created in custom format, sorted by ctime
 | global | `space n k` | List all links related to this note
 | global | `space n s` | Full text search
-| filter | `C-k` `C-j` | Move up and down in filter window
-| filter | `enter`     | Open selection
-| filter | `C-p`       | Toggle preview
+| finder | `C-k` `C-j` | Move selection up and down
+| finder | `enter`     | Open selection
+| finder | `C-p`       | Toggle preview
 | tab    | `C-h` `C-l` | Switch to previous (left) or next tab (right)
 | tab    | `C-o`       | Switch to previous active tab
 
 For more keybindings see the integrated settings.
 
-### Filter search syntax
+### Finder search syntax
 
 | Token        | Match Type                 | Comment
 | ------------ | ----------                 | -------
