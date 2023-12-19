@@ -39,7 +39,7 @@ import Preview from './preview.js'
 export default {
   components: { Preview },
   props: ['uri', 'small', 'initialQuery'],
-  emits: ['filter-selection'],
+  emits: ['finder-selection'],
   data() {
     return {
       query: '',
@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     handleSelection(selected) {
-      this.$emit('filter-selection', selected !== null ? this.filteredItems[selected] : null);
+      this.$emit('finder-selection', selected !== null ? this.filteredItems[selected] : null);
     },
     selectUp() {
       if (this.selected !== 0) {

@@ -14,7 +14,7 @@ var t = `
           <Icon name="outline-code" size="h-4 w-4" />
         </span>
         <template v-if="note.Path">
-          <span title="links" @click="$emit('filter-open', '/api/raw/links?color=true&filename=' + this.note.Filename)"
+          <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + this.note.Filename)"
             class="cursor-pointer text-gray-400 hover:text-gray-700">
             <Icon name="mini-arrows-right-left" size="h-3 w-3" />
           </span>
@@ -46,14 +46,14 @@ var t = `
           <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Mtime)"></dd>
           <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
             title="list notes modified same day"
-            @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
+            @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
             <span>Modified</span>
             <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
           </dt>
           <dd class="mt-4 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Ctime)"></dd>
           <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
             title="list notes created same day"
-            @click="$emit('filter-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
+            @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
             <span>Created</span>
             <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
           </dt>
@@ -71,21 +71,20 @@ var t = `
       </div>
     </div>
 
-    <!-- <pre class="p-2 font-mono text-gray-800 text-xs" v-text="note"></pre> -->
   </div>
-  <Filter v-if="showFilter" uri="/api/raw/list?sort=mtime" small=true @filter-selection="handleFilterSelection" />
+  <Finder v-if="showFinder" uri="/api/raw/list?sort=mtime" small=true @finder-selection="handleFinderSelection" />
 </div>
 `
 
-import Filter from './filter.js'
+import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
-  components: { Filter, Icon },
+  components: { Finder, Icon },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'filter-open'],
+  emits: ['note-open', 'note-save', 'finder-open'],
   data() {
     return {
-      showFilter: false,
+      showFinder: false,
       conceal: true,
     }
   },
@@ -95,13 +94,13 @@ export default {
       const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
       const prevChar = this.cm.getRange(startPos, cursorPos);
       if (prevChar === '[') {
-        this.showFilter = true;
+        this.showFinder = true;
       } else {
         this.cm.replaceRange('[', cursorPos, cursorPos);
       }
     },
-    handleFilterSelection(value) {
-      this.showFilter = false;
+    handleFinderSelection(value) {
+      this.showFinder = false;
       if (value !== null) {
         const cursorPos = this.cm.getCursor();
         const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };

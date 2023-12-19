@@ -19,7 +19,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  emits: ['note-new', 'filter-open'],
+  emits: ['note-new', 'finder-open'],
   data() {
     return {
       entries: [
@@ -33,13 +33,13 @@ export default {
           title: 'List notes',
           keybind: 'space n l',
           icon: 'mini-bars-three-bottom-left',
-          emit: ['filter-open', '/api/raw/list?color=true&prefix=label&sort=alpha'],
+          emit: ['finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha'],
         },
         {
           title: 'Search notes',
           keybind: 'space n s',
           icon: 'mini-magnifying-glass',
-          emit: ['filter-open', '/api/raw/lines?color=true&prefix=title'],
+          emit: ['finder-open', '/api/raw/lines?color=true&prefix=title'],
         },
       ],
     }
