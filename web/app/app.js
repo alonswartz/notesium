@@ -4,10 +4,11 @@ var t = `
   <nav class="flex bg-gray-200 text-gray-800">
     <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
       @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-    <NavActions @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" />
+    <NavActions :activeFilename=activeFilename
+      @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
   </nav>
 
-  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
+  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
     @note-open="openNote" @note-save="saveNote" @finder-open="openFinder"/>
 
   <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
@@ -42,6 +43,7 @@ export default {
       finderQuery: '',
       showFinder: false,
       showSettings: false,
+      showNoteSidebar: true,
       keySequence: [],
       alerts: [],
     }
@@ -77,7 +79,6 @@ export default {
         .catch(e => {
           this.alerts.push({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
         });
-      ;
     },
     saveNote(filename, content, lastmtime) {
       let uri;

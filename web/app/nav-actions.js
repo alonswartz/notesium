@@ -16,10 +16,14 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="mini-magnifying-glass" size="h-4 w-4" />
   </span>
-  <a title="graph" target="_blank" href="/graph/?noxdg"
+  <a title="graph" target="_blank" href="/graph/?noxdg" tabindex="-1"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="graph" size="h-4 w-4" />
   </a>
+  <span v-show="activeFilename.endsWith('.md')" title="note sidebar" @click="$emit('notesidebar-toggle')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="panel-right" size="h-5 w-5" />
+  </span>
   <span title="settings" @click="$emit('settings-open')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-ellipsis-vertical" size="h-5 w-5" />
@@ -30,6 +34,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  emits: ['note-new', 'finder-open', 'settings-open'],
+  props: ['activeFilename'],
+  emits: ['note-new', 'finder-open', 'settings-open', 'notesidebar-toggle'],
   template: t
 }
