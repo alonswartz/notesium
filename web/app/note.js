@@ -8,10 +8,6 @@ var t = `
     <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
       :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
       class="rounded px-10 pt-2 pb-1 text-xs">Save</button>
-    <span v-show="!note.ghost" @click="showSidebar=!showSidebar"
-      class="relative inline-flex items-center rounded-r-md border border-gray-200 -ml-1 h-7 px-3 cursor-pointer bg-white text-gray-400 hover:text-gray-600">
-      <Icon name="mini-chevron-down" size="h-4 w-4" />
-    </span>
   </div>
 
   <div v-if="showSidebar && !note.ghost" class="relative overflow-y-auto w-[40rem] rounded-lg border border-gray-200 bg-white">
@@ -23,18 +19,13 @@ var t = `
         <span title="conceal formatting" @click="conceal=!conceal" class="cursor-pointer text-gray-400 hover:text-gray-700">
           <Icon name="outline-code" size="h-4 w-4" />
         </span>
-        <template v-if="note.Path">
-          <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + this.note.Filename)"
-            class="cursor-pointer text-gray-400 hover:text-gray-700">
-            <Icon name="mini-arrows-right-left" size="h-3 w-3" />
-          </span>
-          <a title="open via xdg" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
-            <Icon name="outline-external-link" size="h-4 w-4" />
-          </a>
-        </template>
-        <span title="close sidebar" @click="showSidebar=false" class="cursor-pointer text-gray-400 hover:text-gray-700">
-          <Icon name="mini-x-mark" size="h-4 w-4" />
+        <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + this.note.Filename)"
+          class="cursor-pointer text-gray-400 hover:text-gray-700">
+          <Icon name="mini-arrows-right-left" size="h-3 w-3" />
         </span>
+        <a title="open via xdg" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
+          <Icon name="outline-external-link" size="h-4 w-4" />
+        </a>
       </div>
     </div>
 
@@ -91,12 +82,11 @@ import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
   components: { Finder, Icon },
-  props: ['note'],
+  props: ['note', 'showSidebar'],
   emits: ['note-open', 'note-save', 'finder-open'],
   data() {
     return {
       showFinder: false,
-      showSidebar: true,
       conceal: true,
     }
   },
