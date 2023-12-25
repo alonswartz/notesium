@@ -1,10 +1,10 @@
 var t = `
 <div class="flex h-full w-full overflow-x-auto gap-1 p-2">
-  <div class="relative overflow-y-auto w-4/6">
+  <div class="relative overflow-y-auto w-full">
     <div :class="{ 'conceal': conceal }" class="p-2 h-full" ref="codemirror"></div>
   </div>
 
-  <div class="relative overflow-y-auto w-2/6 rounded-lg border border-gray-200 bg-white">
+  <div class="relative overflow-y-auto w-[40rem] rounded-lg border border-gray-200 bg-white">
     <div class="flex p-2 border-b">
         <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
           :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
