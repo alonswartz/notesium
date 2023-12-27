@@ -1,3 +1,24 @@
+## 0.5.1
+
+Added:
+
+- Web/App: Note LinkTree providing an expandable list of note links.
+- Web/App: Note LinkTree links include linenumber where applicable.
+- Web/App: Note LinkTree expanded note links include direction badges.
+
+- Web/App: Note sidebar incoming and outgoing links displayed as LinkTrees.
+- Web/App: Note sidebar includes incoming and outgoing link counts.
+- Web/App: Note sidebar includes dangling links list, with direct link.
+
+- Web/App: Note sidebar global toggle functionality.
+- Web/App: Note sidebar will be hidden on new unsaved notes (ghost).
+- Web/App: Note `save` floating button when sidebar hidden.
+
+Changed:
+
+- Web/App: Note sidebar is now fixed width.
+- Web/App: Note sidebar backlinks list replaced with LinkTree.
+
 ## 0.5.0
 
 Notesium now includes an embedded Web App which is completely
