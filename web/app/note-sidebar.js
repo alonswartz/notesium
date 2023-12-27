@@ -53,8 +53,11 @@ var t = `
     </div>
   </dl>
 
-  <div v-if="note.IncomingLinks && note.IncomingLinks.length > 0" class="m-2 p-2 overflow-hidden">
-    <p class="mt-1 text-sm font-semibold tracking-tight text-gray-900">Backlinks</p>
+  <div class="m-2 overflow-hidden rounded-lg bg-gray-50 pl-4 pr-2 py-2">
+    <div class="flex justify-between mt-1 mb-2 text-sm">
+      <h3 class="font-semibold text-gray-900">Incoming links</h3>
+      <span class="font-medium text-gray-500 mr-2" v-text="countIncomingLinks"></span>
+    </div>
     <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
       <li v-for="link in sortedIncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
       :title="link.Filename + ' (line:' + link.LineNumber + ')'"
@@ -88,7 +91,10 @@ export default {
   },
   computed: {
     sortedIncomingLinks() {
-      return this.note.IncomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
+      return this.note.IncomingLinks?.sort((a, b) => a.Title.localeCompare(b.Title)) || [];
+    },
+    countIncomingLinks() {
+      return this.note.IncomingLinks?.length || 0;
     },
   },
   template: t
