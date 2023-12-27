@@ -64,6 +64,17 @@ var t = `
       class="cursor-pointer hover:underline truncate">
       </li>
     </ul>
+
+    <div class="flex justify-between mt-4 mb-2 text-sm">
+      <h3 class="font-semibold text-gray-900">Outgoing links</h3>
+      <span class="font-medium text-gray-500 mr-2" v-text="countOutgoingLinks"></span>
+    </div>
+    <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
+      <li v-for="link in existingOutgoingLinks" @click="$emit('note-open', link.Filename)" v-text="link.Title"
+      :title="link.Filename"
+      class="cursor-pointer hover:underline truncate">
+      </li>
+    </ul>
   </div>
 
 </aside>
@@ -95,6 +106,12 @@ export default {
     },
     countIncomingLinks() {
       return this.note.IncomingLinks?.length || 0;
+    },
+    existingOutgoingLinks() {
+      return this.note.OutgoingLinks?.filter(l => l.Title !== '') || [];
+    },
+    countOutgoingLinks() {
+      return this.note.OutgoingLinks?.length || 0;
     },
   },
   template: t
