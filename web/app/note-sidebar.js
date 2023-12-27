@@ -60,7 +60,7 @@ var t = `
     </div>
     <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
       <li v-for="link in sortedIncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
-      :title="link.Filename + ' (line:' + link.LineNumber + ')'"
+      :title="link.Filename + ' (line ' + link.LineNumber + ')'"
       class="cursor-pointer hover:underline truncate">
       </li>
     </ul>
@@ -73,6 +73,10 @@ var t = `
       <li v-for="link in existingOutgoingLinks" @click="$emit('note-open', link.Filename)" v-text="link.Title"
       :title="link.Filename"
       class="cursor-pointer hover:underline truncate">
+      </li>
+      <li v-for="link in danglingOutgoingLinks" @click="$emit('note-open', note.Filename, link.LineNumber)"
+      v-text="link.Filename + ' (line ' + link.LineNumber + ')'"
+      class="text-red-700 cursor-pointer hover:underline truncate">
       </li>
     </ul>
   </div>
@@ -109,6 +113,9 @@ export default {
     },
     existingOutgoingLinks() {
       return this.note.OutgoingLinks?.filter(l => l.Title !== '') || [];
+    },
+    danglingOutgoingLinks() {
+      return this.note.OutgoingLinks?.filter(l => l.Title == '') || [];
     },
     countOutgoingLinks() {
       return this.note.OutgoingLinks?.length || 0;
