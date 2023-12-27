@@ -58,35 +58,37 @@ var t = `
       <h3 class="font-semibold text-gray-900">Incoming links</h3>
       <span class="font-medium text-gray-500 mr-2" v-text="countIncomingLinks"></span>
     </div>
-    <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
-      <li v-for="link in sortedIncomingLinks" @click="$emit('note-open', link.Filename, link.LineNumber)" v-text="link.Title"
-      :title="link.Filename + ' (line ' + link.LineNumber + ')'"
-      class="cursor-pointer hover:underline truncate">
-      </li>
-    </ul>
+    <LinkTree v-for="link in sortedIncomingLinks"
+      :title="link.Title" :filename="link.Filename" :linenum="link.LineNumber" :key="link.Filename + link.LineNumber"
+      @note-open="(...args) => $emit('note-open', ...args)" />
 
     <div class="flex justify-between mt-4 mb-2 text-sm">
       <h3 class="font-semibold text-gray-900">Outgoing links</h3>
       <span class="font-medium text-gray-500 mr-2" v-text="countOutgoingLinks"></span>
     </div>
-    <ul class="my-2 pl-px text-sm text-indigo-700 list-disc list-inside space-y-1">
-      <li v-for="link in existingOutgoingLinks" @click="$emit('note-open', link.Filename)" v-text="link.Title"
-      :title="link.Filename"
-      class="cursor-pointer hover:underline truncate">
-      </li>
-      <li v-for="link in danglingOutgoingLinks" @click="$emit('note-open', note.Filename, link.LineNumber)"
-      v-text="link.Filename + ' (line ' + link.LineNumber + ')'"
-      class="text-red-700 cursor-pointer hover:underline truncate">
-      </li>
-    </ul>
+    <LinkTree v-for="link in existingOutgoingLinks"
+      :title="link.Title" :filename="link.Filename" linenum="1" :key="link.Filename + link.LineNumber"
+      @note-open="(...args) => $emit('note-open', ...args)" />
+
+    <div v-for="link in danglingOutgoingLinks" class="flex justify-between text-sm text-red-700 my-1">
+      <div class="overflow-hidden truncate">
+        <span class="font-mono pr-2">!</span>
+        <span class="cursor-pointer hover:underline"
+          @click="$emit('note-open', note.Filename, link.LineNumber)"
+          v-text="link.Filename + ' (line ' + link.LineNumber + ')'">
+        </span>
+      </div>
+      <span class="mr-1 inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset bg-red-50 ring-red-500/10">dangling</span>
+    </div>
   </div>
 
 </aside>
 `
 
 import Icon from './icon.js'
+import LinkTree from './link-tree.js'
 export default {
-  components: { Icon },
+  components: { Icon, LinkTree },
   props: ['note'],
   emits: ['note-open', 'note-save', 'finder-open', 'conceal-toggle'],
   methods: {
