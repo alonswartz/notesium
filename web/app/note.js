@@ -1,7 +1,7 @@
 var t = `
 <div class="flex h-full w-full overflow-x-auto gap-1 p-2">
   <div class="relative overflow-y-auto w-full">
-    <div :class="{ 'conceal': conceal }" class="p-2 h-full" ref="codemirror"></div>
+    <div :class="{'cm-conceal cm-unconceal': conceal }" class="h-full p-2 cm-links-hover" ref="codemirror"></div>
   </div>
 
   <div v-if="!showSidebar || note.ghost" class="absolute right-0 mr-2 h-7 z-50 inline-flex items-center">
