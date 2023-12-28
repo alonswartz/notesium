@@ -1,5 +1,5 @@
 var t = `
-<div class="h-full conceal-noactive" ref="preview"></div>
+<div class="h-full cm-conceal" ref="preview"></div>
 `
 
 export default {
