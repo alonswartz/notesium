@@ -19,7 +19,7 @@ var t = `
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
-  <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6">
+  <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end sm:items-start p-2 z-50">
     <div class="flex w-full flex-col items-center space-y-2 sm:items-end">
       <Alert :alert=alert :index=index v-for="(alert, index) in alerts" :key="index" @alert-dismiss="dismissAlert" />
     </div>
