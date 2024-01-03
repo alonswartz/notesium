@@ -1,17 +1,20 @@
 var t = `
-<div class="relative flex flex-col max-h-screen h-screen overflow-y bg-gray-50">
+<div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <nav class="flex bg-gray-200 text-gray-800">
-    <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
-      @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-    <NavActions :activeFilename=activeFilename
-      @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
-  </nav>
+  <div class="flex flex-col h-full w-full">
+    <nav class="flex bg-gray-200 text-gray-800">
+      <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
+        @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
+      <NavActions :activeFilename=activeFilename
+        @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
+    </nav>
+    <main class="h-full overflow-hidden bg-gray-50">
+      <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
+      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
+        @note-open="openNote" @note-save="saveNote" @finder-open="openFinder"/>
+    </main>
+  </div>
 
-  <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
-    @note-open="openNote" @note-save="saveNote" @finder-open="openFinder"/>
-
-  <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
   <Settings v-if="showSettings" @settings-close="showSettings=false"/>
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
