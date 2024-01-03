@@ -1,5 +1,5 @@
 var t = `
-<aside class="relative overflow-y-auto w-[40rem] rounded-lg border border-gray-200 bg-white">
+<aside class="flex-none overflow-y-auto my-2 mr-2 w-[28rem] rounded-lg border border-gray-200 bg-white">
 
   <div class="flex p-2 border-b">
     <button type="button" :disabled="!note.isModified" @click="$emit('note-save')"
