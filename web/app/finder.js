@@ -20,8 +20,8 @@ var t = `
       <ul role="listbox" class="max-h-full overflow-y-auto py-1 text-sm font-mono text-gray-800 focus:outline-none">
         <template v-for="item, index in filteredItems">
           <li :id="'item'+index" @click="selected = index" @dblclick="handleSelection(index)" role="option"
-            :class="(index === selected) ? '!bg-blue-500 text-white' : ''"
-            class="hover:bg-indigo-600/10 cursor-pointer select-none px-4 py-1 whitespace-nowrap">
+            :class="{'!bg-blue-500 text-white': index === selected }"
+            class="hover:bg-indigo-600/10 cursor-pointer select-none px-4 py-1 whitespace-nowrap truncate">
             <b v-if="item.Colored" v-text="item.Colored"></b> {{ item.Content }}
           </li>
         </template>
