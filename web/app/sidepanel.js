@@ -20,20 +20,26 @@ var t = `
   </ul>
 </div>
 
-<div class="flex-none overflow-y-auto w-96">
-  <div class="flex items-center justify-items-center px-4 space-x-2 h-9 border-b border-gray-200 text-xs">
-    <span>Sort:</span>
-    <button :class="{ 'underline' : sortBy == 'title' }" class="hover:underline" @click="sortBy='title'">title</button>
-    <button :class="{ 'underline' : sortBy == 'mtime' }" class="hover:underline" @click="sortBy='mtime'">mtime</button>
+<div class="flex-none w-96">
+  <div class="flex flex-col h-full">
+    <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200">
+      <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
+        @keyup.esc="query = ''; $refs.queryInput.blur();"
+        class="h-full w-full rounded-l-md px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
+      <div class="bg-gray-100 text-xs h-full">
+        <button :class="{ 'underline' : sortBy == 'title' }" class="hover:underline" @click="sortBy='title'">title</button>
+        <button :class="{ 'underline' : sortBy == 'mtime' }" class="hover:underline" @click="sortBy='mtime'">mtime</button>
+      </div>
+    </div>
+    <ul role="list" class="divide-y divide-gray-100 h-full overflow-y-scroll">
+      <li v-for="note in filteredNotes" :key="note.Filename"
+        @click="$emit('note-open', note.Filename)"
+        class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+        <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+        <div class="text-xs leading-6 text-gray-400" v-text="note.Mtime.split('T')[0]"></div>
+      </li>
+    </ul>
   </div>
-  <ul role="list" class="divide-y divide-gray-100">
-    <li v-for="note in sortedNotes" :key="note.Filename"
-      @click="$emit('note-open', note.Filename)"
-      class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
-      <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
-      <div class="text-xs leading-6 text-gray-400" v-text="note.Mtime.split('T')[0]"></div>
-    </li>
-  </ul>
 </div>
 `
 
@@ -42,6 +48,7 @@ export default {
   emits: ['note-open', 'finder-open'],
   data() {
     return {
+      query: '',
       sortBy: 'title',
       notes: [],
       labels: [],
@@ -72,6 +79,13 @@ export default {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
         case 'mtime': return this.notes.sort((a, b) => new Date(b.Mtime) - new Date(a.Mtime));
       }
+    },
+    filteredNotes() {
+      const maxNotes = 300;
+      const queryWords = this.query.toLowerCase().split(' ');
+      return !this.query
+        ? this.sortedNotes.slice(0, maxNotes)
+        : this.sortedNotes.filter(note => (queryWords.every(queryWord => note.Title.includes(queryWord)))).slice(0, maxNotes);
     },
   },
   created() {
