@@ -1,10 +1,14 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <SidePanel :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
+  <SidePanel v-if="showSidePanel" :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
 
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
+      <span title="side panel" @click="showSidePanel=!showSidePanel"
+        class="cursor-pointer text-gray-400 hover:text-gray-700 my-2 ml-2">
+        <Icon name="panel-left" size="h-5 w-5" />
+      </span>
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :activeFilename=activeFilename
@@ -30,6 +34,7 @@ var t = `
 </div>
 `
 
+import Icon from './icon.js'
 import Finder from './finder.js'
 import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
@@ -39,7 +44,7 @@ import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
+  components: { Icon, Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
@@ -50,6 +55,7 @@ export default {
       showFinder: false,
       showSettings: false,
       showNoteSidebar: true,
+      showSidePanel: true,
       keySequence: [],
       alerts: [],
       lastSave: null,
