@@ -89,6 +89,7 @@ export default {
               Title: note.Title,
               Mtime: note.Mtime,
               Labels: labels,
+              SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
             };
           })
         })
@@ -109,7 +110,7 @@ export default {
       const queryWords = this.query.toLowerCase().split(' ');
       return !this.query
         ? this.sortedNotes.slice(0, maxNotes)
-        : this.sortedNotes.filter(note => (queryWords.every(queryWord => note.Title.includes(queryWord)))).slice(0, maxNotes);
+        : this.sortedNotes.filter(note => (queryWords.every(queryWord => note.SearchStr.includes(queryWord)))).slice(0, maxNotes);
     },
   },
   created() {
