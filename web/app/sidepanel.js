@@ -14,18 +14,15 @@ var t = `
       class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
       <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
       <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
-        class="text-gray-500 hover:text-gray-100 p-1">
-        <Icon name="mini-arrows-right-left" size="h-3 w-3" />
+        class="text-gray-500 hover:text-gray-100" v-text="label.IncomingLinks?.length || 0">
       </span>
     </li>
   </ul>
 </div>
 `
 
-import Icon from './icon.js'
 export default {
   props: ['lastSave'],
-  components: { Icon },
   emits: ['note-open', 'finder-open'],
   data() {
     return {
@@ -40,17 +37,13 @@ export default {
   },
   methods: {
     fetchLabels() {
-      fetch('/api/raw/list?labels=true&sort=alpha')
-        .then(response => response.text())
-        .then(text => {
-          const PATTERN = /^(.*?):(.*?):\s*(.*)$/
-          this.labels = text.trim().split('\n').map(line => {
-            const matches = PATTERN.exec(line);
-            if (!matches) return null;
-            const Filename = matches[1];
-            const Title = matches[3];
-            return { Filename, Title };
-          }).filter(Boolean);
+      fetch("/api/notes")
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        .then(notes => {
+          this.labels = Object.values(notes).filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+        })
+        .catch(e => {
+          console.error(e);
         });
     },
   },
