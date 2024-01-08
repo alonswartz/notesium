@@ -46,7 +46,7 @@ var t = `
           <span v-text="note.Mtime.split('T')[0]" />
           <template v-for="label in note.Labels">
             <span>·</span>
-            <span v-text="label" />
+            <span class="hover:underline" v-text="label" @click.stop="sortBy='title', query=label + ' '"></span>
           </template>
         </div>
       </li>
