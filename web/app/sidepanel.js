@@ -1,5 +1,5 @@
 var t = `
-<div class="flex-none overflow-y-auto w-48 bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-600">
+<div class="hidden flex-none overflow-y-auto w-48 bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-600">
   <ul class="space-y-1 cursor-pointer py-2">
     <li v-for="finder in staticFinders" :key="finder.name" :title="finder.hover"
       @click="$emit('finder-open', finder.uri)"
@@ -19,6 +19,17 @@ var t = `
     </li>
   </ul>
 </div>
+
+<div class="flex-none overflow-y-auto w-96">
+  <ul role="list" class="divide-y divide-gray-100">
+    <li v-for="note in notes" :key="note.Filename"
+      @click="$emit('note-open', note.Filename)"
+      class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+      <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+      <div class="text-xs leading-6 text-gray-400" v-text="note.Mtime.split('T')[0]"></div>
+    </li>
+  </ul>
+</div>
 `
 
 export default {
@@ -26,6 +37,7 @@ export default {
   emits: ['note-open', 'finder-open'],
   data() {
     return {
+      notes: [],
       labels: [],
       staticFinders: [
         { title: 'all', hover: 'notes sorted alphabetically', uri: '/api/raw/list?color=true&prefix=label&sort=alpha' },
@@ -36,11 +48,12 @@ export default {
     }
   },
   methods: {
-    fetchLabels() {
+    fetchNotes() {
       fetch("/api/notes")
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(notes => {
-          this.labels = Object.values(notes).filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+          this.notes = Object.values(notes);
+          this.labels = this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
         })
         .catch(e => {
           console.error(e);
@@ -48,10 +61,10 @@ export default {
     },
   },
   created() {
-    this.fetchLabels();
+    this.fetchNotes();
   },
   watch: {
-    'lastSave': function() { this.fetchLabels(); },
+    'lastSave': function() { this.fetchNotes(); },
   },
   template: t
 }
