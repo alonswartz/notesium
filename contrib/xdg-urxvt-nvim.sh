@@ -33,7 +33,7 @@ _list_absolute() {
     [ "$1" = "/" ] && fatal "directory not specified"
     export BAT_STYLE="plain"
     export NOTESIUM_DIR="$1"
-    opts="-geometry 120x45+250+0"
+    opts="-geometry 150x45+50+0"
     vimcmd="NotesiumList --prefix=label --sort=alpha --color"
     if [ "$THEME" = "light" ]; then
         export BAT_THEME="OneHalfLight"
