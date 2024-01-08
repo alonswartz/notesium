@@ -22,15 +22,21 @@ var t = `
 
 <div class="flex-none w-96">
   <div class="flex flex-col h-full">
-    <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200">
+    <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200 bg-gray-100 ">
       <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
         @keyup.esc="query = ''; $refs.queryInput.blur();"
-        class="h-full w-full rounded-l-md px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
-      <div class="bg-gray-100 text-xs h-full">
-        <button :class="{ 'underline' : sortBy == 'title' }" class="hover:underline" @click="sortBy='title'">title</button>
-        <button :class="{ 'underline' : sortBy == 'mtime' }" class="hover:underline" @click="sortBy='mtime'">mtime</button>
+        class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
+      <div class="relative group cursor-pointer inline-flex items-center justify-items-center mt-3 m-2 h-full">
+        <span class="group-hover:hidden text-gray-400">
+          <Icon name="outline-bars-arrow-down" size="h-5 w-5" />
+        </span>
+        <div class="hidden group-hover:flex text-gray-700 space-x-1 font-medium text-xs whitespace-nowrap">
+          <span class="hover:underline" @click="sortBy='title'">Title</span>
+          <span class="hover:underline" @click="sortBy='mtime'">Modified</span>
+        </div>
       </div>
     </div>
+
     <ul role="list" class="divide-y divide-gray-100 h-full overflow-y-scroll">
       <li v-for="note in filteredNotes" :key="note.Filename"
         @click="$emit('note-open', note.Filename)"
@@ -43,9 +49,11 @@ var t = `
 </div>
 `
 
+import Icon from './icon.js'
 export default {
   props: ['lastSave'],
   emits: ['note-open', 'finder-open'],
+  components: { Icon },
   data() {
     return {
       query: '',
