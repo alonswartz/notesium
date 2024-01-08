@@ -42,7 +42,13 @@ var t = `
         @click="$emit('note-open', note.Filename)"
         class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
         <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
-        <div class="text-xs leading-6 text-gray-400" v-text="note.Mtime.split('T')[0]"></div>
+        <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
+          <span v-text="note.Mtime.split('T')[0]" />
+          <template v-for="label in note.Labels">
+            <span>·</span>
+            <span v-text="label" />
+          </template>
+        </div>
       </li>
     </ul>
   </div>
@@ -72,9 +78,19 @@ export default {
     fetchNotes() {
       fetch("/api/notes")
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
-        .then(notes => {
-          this.notes = Object.values(notes);
-          this.labels = this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+        .then(response => {
+          const notes = Object.values(response);
+          this.labels = notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+          this.notes = notes.map(note => {
+            const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])];
+            const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
+            return {
+              Filename: note.Filename,
+              Title: note.Title,
+              Mtime: note.Mtime,
+              Labels: labels,
+            };
+          })
         })
         .catch(e => {
           console.error(e);
