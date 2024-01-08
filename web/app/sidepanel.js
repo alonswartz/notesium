@@ -4,16 +4,22 @@ var t = `
     <li v-show="labels.length == 0" class="p-2 cursor-default" title="1-word titled notes are considered labels">no labels found</li>
     <li v-for="label in labels" :key="label.Filename"
       @click="$emit('note-open', label.Filename)"
-      class="flex p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
-      <span class="overflow-hidden truncate" v-text="label.Title" />
+      class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
+      <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
+      <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
+        class="text-gray-500 hover:text-gray-100 p-1">
+        <Icon name="mini-arrows-right-left" size="h-3 w-3" />
+      </span>
     </li>
   </ul>
 </div>
 `
 
+import Icon from './icon.js'
 export default {
   props: ['lastSave'],
-  emits: ['note-open'],
+  components: { Icon },
+  emits: ['note-open', 'finder-open'],
   data() {
     return {
       labels: [],

@@ -1,7 +1,7 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <SidePanel :lastSave="lastSave" @note-open="openNote" />
+  <SidePanel :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
 
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
