@@ -12,6 +12,7 @@ var t = `
 `
 
 export default {
+  props: ['lastSave'],
   emits: ['note-open'],
   data() {
     return {
@@ -36,6 +37,9 @@ export default {
   },
   created() {
     this.fetchLabels();
+  },
+  watch: {
+    'lastSave': function() { this.fetchLabels(); },
   },
   template: t
 }
