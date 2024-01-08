@@ -7,6 +7,10 @@ usage() {
 cat<<EOF
 Usage: $(basename "$0") notesium:///path/to/dir/[xxxxxxxx.md]
 
+Environment:
+  THEME=light   sets urxvt -name URxvtlight, BAT_THEME=OneHalfLight
+  TITLE=title   sets urxvt -title (default: Notesium)
+
 EOF
 exit 1
 }
@@ -15,12 +19,13 @@ _open_absolute() {
     [ -f "$1" ] || fatal "$1 does not exist or not file"
     export BAT_STYLE="plain"
     export NOTESIUM_DIR="$(dirname "$1")"
-    opts="-title Notesium -geometry 120x45+250+0"
+    opts="-geometry 120x45+250+0"
     if [ "$THEME" = "light" ]; then
         export BAT_THEME="OneHalfLight"
         opts="$opts -name URxvtlight"
     fi
-    urxvt $opts -e nvim $1 2>/dev/null &
+    title="${TITLE:-Notesium}"
+    urxvt $opts -t "$title" -e nvim $1 2>/dev/null &
 }
 
 _list_absolute() {
@@ -28,13 +33,14 @@ _list_absolute() {
     [ "$1" = "/" ] && fatal "directory not specified"
     export BAT_STYLE="plain"
     export NOTESIUM_DIR="$1"
+    opts="-geometry 120x45+250+0"
     vimcmd="NotesiumList --prefix=label --sort=alpha --color"
-    opts="-title Notesium -geometry 150x45+50+0"
     if [ "$THEME" = "light" ]; then
         export BAT_THEME="OneHalfLight"
         opts="$opts -name URxvtlight"
     fi
-    urxvt $opts -e nvim -c "$vimcmd" 2>/dev/null &
+    title="${TITLE:-Notesium}"
+    urxvt $opts -title "$title" -e nvim -c "$vimcmd" 2>/dev/null &
 }
 
 main() {
