@@ -1,6 +1,8 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
+  <SidePanel @note-open="openNote" />
+
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
@@ -31,12 +33,13 @@ var t = `
 import Finder from './finder.js'
 import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
+import SidePanel from './sidepanel.js'
 import Note from './note.js'
 import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Finder, NavTabs, NavActions, Note, Empty, Alert, Settings },
+  components: { Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
