@@ -1,7 +1,7 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <SidePanel @note-open="openNote" />
+  <SidePanel :lastSave="lastSave" @note-open="openNote" />
 
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
@@ -52,6 +52,7 @@ export default {
       showNoteSidebar: true,
       keySequence: [],
       alerts: [],
+      lastSave: null,
     }
   },
   methods: {
@@ -104,6 +105,9 @@ export default {
           const index = this.notes.findIndex(n => n.Filename === filename);
           this.notes[index] = note;
           this.activateNote(note.Filename);
+
+          // track lastSave to force sidepanel refresh
+          this.lastSave = note.Mtime;
 
           // update other notes IncomingLinks due to potential changes
           this.notes.forEach(openNote => {
