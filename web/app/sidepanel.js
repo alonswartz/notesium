@@ -21,8 +21,13 @@ var t = `
 </div>
 
 <div class="flex-none overflow-y-auto w-96">
+  <div class="flex items-center justify-items-center px-4 space-x-2 h-9 border-b border-gray-200 text-xs">
+    <span>Sort:</span>
+    <button :class="{ 'underline' : sortBy == 'title' }" class="hover:underline" @click="sortBy='title'">title</button>
+    <button :class="{ 'underline' : sortBy == 'mtime' }" class="hover:underline" @click="sortBy='mtime'">mtime</button>
+  </div>
   <ul role="list" class="divide-y divide-gray-100">
-    <li v-for="note in notes" :key="note.Filename"
+    <li v-for="note in sortedNotes" :key="note.Filename"
       @click="$emit('note-open', note.Filename)"
       class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
       <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
@@ -37,6 +42,7 @@ export default {
   emits: ['note-open', 'finder-open'],
   data() {
     return {
+      sortBy: 'title',
       notes: [],
       labels: [],
       staticFinders: [
@@ -58,6 +64,14 @@ export default {
         .catch(e => {
           console.error(e);
         });
+    },
+  },
+  computed: {
+    sortedNotes() {
+      switch(this.sortBy) {
+        case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
+        case 'mtime': return this.notes.sort((a, b) => new Date(b.Mtime) - new Date(a.Mtime));
+      }
     },
   },
   created() {
