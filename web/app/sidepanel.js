@@ -44,11 +44,13 @@ var t = `
         class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
         <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
         <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-          <span v-text="note.Mtime.split('T')[0]" />
-          <template v-for="label in note.Labels">
-            <span>·</span>
-            <span class="hover:underline" v-text="label" @click.stop="sortBy='title', query=label + ' '"></span>
-          </template>
+          <span v-text="note.MtimeFormatted" />
+          <div class="space-x-1 overflow-hidden truncate">
+            <template v-for="label in note.Labels">
+              <span>·</span>
+              <span class="hover:text-gray-600" v-text="label" @click.stop="query=label + ' '"></span>
+            </template>
+          </div>
         </div>
       </li>
     </ul>
@@ -64,7 +66,7 @@ export default {
   data() {
     return {
       query: '',
-      sortBy: 'title',
+      sortBy: 'mtime',
       notes: [],
       labels: [],
     }
@@ -83,6 +85,7 @@ export default {
               Filename: note.Filename,
               Title: note.Title,
               Mtime: note.Mtime,
+              MtimeFormatted: this.formatDate(note.Mtime),
               Labels: labels,
               SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
             };
@@ -91,6 +94,29 @@ export default {
         .catch(e => {
           console.error(e);
         });
+    },
+    formatDate(dateStr) {
+      const now = new Date();
+      const nowTime = now.getTime();
+      const date = new Date(dateStr);
+      const dateTime = date.getTime();
+      const diff = nowTime - dateTime;
+
+      const minutes = Math.floor(diff / 60000); // 60 * 1000
+      const hours = Math.floor(diff / 3600000); // 60 * 60 * 1000
+
+      if (minutes < 1) {
+        return 'Just now';
+      } else if (minutes < 60) {
+        return `${minutes}m ago`;
+      } else if (hours < 24) {
+        return `${hours}h ago`;
+      } else if (hours < 48) {
+        return `Yesterday`;
+      } else {
+        const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate().toString().padStart(2, '0')}`;
+        return now.getFullYear() === date.getFullYear() ? formattedDate : `${formattedDate}, ${date.getFullYear()}`;
+      }
     },
   },
   computed: {
