@@ -1,14 +1,17 @@
 var t = `
-<div class="flex-none overflow-y-auto w-48 bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-700">
+<div v-if="showLabels" class="flex-none overflow-y-auto w-48 bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-700">
   <ul class="space-y-1 cursor-pointer py-2">
-    <li title="notes sorted alphabetically" @click="sortBy='title', query=''"
+    <li title="notes sorted alphabetically"
+      @click="showNotes ? (sortBy='title', query='') : $emit('finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
       class="p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">All</li>
-    <li title="notes sorted by modication date" @click="sortBy='mtime', query=''"
+    <li title="notes sorted by modification date"
+      @click="showNotes ? (sortBy='mtime', query='') : $emit('finder-open', '/api/raw/list?color=true&prefix=mtime&sort=mtime')"
       class="p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">Recent</li>
   </ul>
-  <ul v-show="labels.length > 0" class="space-y-1 cursor-pointer py-2">
+  <ul class="space-y-1 cursor-pointer py-2">
+    <li v-show="labels.length == 0" class="cursor-help p-2" title="notes with 1-word titles are considered labels">No labels found</li>
     <li v-for="label in labels" :key="label.Filename"
-      @click="sortBy='title', query=label.Title + ' '"
+      @click="showNotes ? (sortBy='title', query=label.Title + ' ') : $emit('note-open', label.Filename)"
       class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
       <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
       <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
@@ -18,7 +21,7 @@ var t = `
   </ul>
 </div>
 
-<div class="flex-none w-96">
+<div v-if="showNotes" class="flex-none w-96">
   <div class="flex flex-col h-full">
     <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200 bg-gray-100 ">
       <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
@@ -55,7 +58,7 @@ var t = `
 
 import Icon from './icon.js'
 export default {
-  props: ['lastSave'],
+  props: ['showLabels', 'showNotes', 'lastSave'],
   emits: ['note-open', 'finder-open'],
   components: { Icon },
   data() {

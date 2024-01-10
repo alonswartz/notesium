@@ -1,11 +1,17 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <SidePanel v-if="showSidePanel" :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
+  <SidePanel v-if="showLabelsPanel || showNotesPanel"
+    :showLabels=showLabelsPanel :showNotes=showNotesPanel :lastSave="lastSave"
+    @note-open="openNote" @finder-open="openFinder" />
 
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
-      <span title="side panel" @click="showSidePanel=!showSidePanel"
+      <span title="labels panel" @click="showLabelsPanel=!showLabelsPanel"
+        class="cursor-pointer text-gray-400 hover:text-gray-700 my-2 ml-2">
+        <Icon name="panel-left" size="h-5 w-5" />
+      </span>
+      <span title="notes panel" @click="showNotesPanel=!showNotesPanel"
         class="cursor-pointer text-gray-400 hover:text-gray-700 my-2 ml-2">
         <Icon name="panel-left" size="h-5 w-5" />
       </span>
@@ -55,7 +61,8 @@ export default {
       showFinder: false,
       showSettings: false,
       showNoteSidebar: true,
-      showSidePanel: true,
+      showLabelsPanel: false,
+      showNotesPanel: false,
       keySequence: [],
       alerts: [],
       lastSave: null,
