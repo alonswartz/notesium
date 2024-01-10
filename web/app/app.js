@@ -5,7 +5,7 @@ var t = `
     :showLabels=showLabelsPanel :showNotes=showNotesPanel :lastSave="lastSave"
     @note-open="openNote" @finder-open="openFinder" />
 
-  <div class="flex flex-col h-full w-full">
+  <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
