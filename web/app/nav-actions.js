@@ -20,18 +20,29 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="graph" size="h-4 w-4" />
   </a>
-  <span title="labels panel" @click="$emit('labelspanel-toggle')"
-    class="cursor-pointer text-gray-400 hover:text-gray-700">
-    <Icon name="outline-tag" size="h-4 w-4" />
-  </span>
-  <span title="notes panel" @click="$emit('notespanel-toggle')"
-    class="cursor-pointer text-gray-400 hover:text-gray-700">
-    <Icon name="panel-left" size="h-5 w-5" />
-  </span>
-  <span v-show="activeFilename.endsWith('.md')" title="note sidebar" @click="$emit('notesidebar-toggle')"
-    class="cursor-pointer text-gray-400 hover:text-gray-700">
-    <Icon name="panel-right" size="h-5 w-5" />
-  </span>
+
+  <div class="relative inline-block text-left">
+    <span title="panels" @click="showPanelsDropdown=!showPanelsDropdown"
+      :class="showPanelsDropdown ? 'text-gray-700' : 'text-gray-400'" class="cursor-pointer hover:text-gray-700">
+      <Icon name="outline-view-columns" size="h-5 w-5" />
+    </span>
+    <div v-show="showPanelsDropdown" @click="showPanelsDropdown=false" class="fixed inset-0 z-40" aria-hidden="true"></div>
+    <div v-show="showPanelsDropdown" class="absolute right-0 z-50 mt-2 w-64 origin-top-right rounded-md bg-white shadow-md border border-gray-200">
+      <ul class="divide-y divide-gray-100">
+        <li v-for="entry in panelsDropdownEntries" :key="entry.prop" @click="$emit(entry.emit)"
+          class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer" >
+          <div class="flex space-x-4 select-none">
+            <span class="text-gray-400"><Icon :name="entry.icon" size="h-5 w-5" /></span>
+            <p class="text-sm text-gray-600" v-text="entry.title"></p>
+          </div>
+          <span v-show="this[entry.prop]" class="text-indigo-600">
+            <Icon name="mini-check" size="h-5 w-5" />
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <span title="settings" @click="$emit('settings-open')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-ellipsis-vertical" size="h-5 w-5" />
@@ -42,7 +53,17 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['activeFilename'],
+  props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'],
   emits: ['note-new', 'finder-open', 'settings-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
+  data() {
+    return {
+      showPanelsDropdown: false,
+      panelsDropdownEntries: [
+        { title: "Labels panel",  emit: "labelspanel-toggle", prop: 'showLabelsPanel', icon: "outline-tag" },
+        { title: "Notes panel",   emit: "notespanel-toggle",  prop: 'showNotesPanel',  icon: "outline-queue-list" },
+        { title: "Note metadata", emit: "notesidebar-toggle", prop: 'showNoteSidebar', icon: "panel-right", },
+      ],
+    }
+  },
   template: t
 }
