@@ -7,18 +7,11 @@ var t = `
 
   <div class="flex flex-col h-full w-full">
     <nav class="flex bg-gray-200 text-gray-800">
-      <span title="labels panel" @click="showLabelsPanel=!showLabelsPanel"
-        class="cursor-pointer text-gray-400 hover:text-gray-700 my-2 ml-2">
-        <Icon name="panel-left" size="h-5 w-5" />
-      </span>
-      <span title="notes panel" @click="showNotesPanel=!showNotesPanel"
-        class="cursor-pointer text-gray-400 hover:text-gray-700 my-2 ml-2">
-        <Icon name="panel-left" size="h-5 w-5" />
-      </span>
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :activeFilename=activeFilename
-        @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
+        @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar"
+        @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
@@ -40,7 +33,6 @@ var t = `
 </div>
 `
 
-import Icon from './icon.js'
 import Finder from './finder.js'
 import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
@@ -50,7 +42,7 @@ import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Icon, Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
+  components: { Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
