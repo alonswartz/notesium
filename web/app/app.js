@@ -9,7 +9,7 @@ var t = `
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-      <NavActions :activeFilename=activeFilename
+      <NavActions :showNoteSidebar=showNoteSidebar :showLabelsPanel=showLabelsPanel :showNotesPanel=showNotesPanel
         @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar"
         @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel" />
     </nav>
