@@ -20,6 +20,14 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="graph" size="h-4 w-4" />
   </a>
+  <span title="labels panel" @click="$emit('labelspanel-toggle')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="outline-tag" size="h-4 w-4" />
+  </span>
+  <span title="notes panel" @click="$emit('notespanel-toggle')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="panel-left" size="h-5 w-5" />
+  </span>
   <span v-show="activeFilename.endsWith('.md')" title="note sidebar" @click="$emit('notesidebar-toggle')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="panel-right" size="h-5 w-5" />
@@ -35,6 +43,6 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['activeFilename'],
-  emits: ['note-new', 'finder-open', 'settings-open', 'notesidebar-toggle'],
+  emits: ['note-new', 'finder-open', 'settings-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
   template: t
 }
