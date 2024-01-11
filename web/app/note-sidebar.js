@@ -20,51 +20,55 @@ var t = `
   </div>
 
   <dl class="m-2 grid grid-cols-3 gap-2">
-    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
-      <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="note.Lines"></dd>
-      <dt class="text-sm font-medium text-gray-500">Lines</dt>
+    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-3 space-y-2">
+      <dd class="text-sm font-semibold text-gray-700" v-text="note.Lines"></dd>
+      <dt class="text-sm text-gray-400">Lines</dt>
     </div>
-    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
-      <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="note.Words"></dd>
-      <dt class="text-sm font-medium text-gray-500">Words</dt>
+    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-3 space-y-2">
+      <dd class="text-sm font-semibold text-gray-700" v-text="note.Words"></dd>
+      <dt class="text-sm text-gray-400">Words</dt>
     </div>
-    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
-      <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="note.Chars"></dd>
-      <dt class="text-sm font-medium text-gray-500">Chars</dt>
+    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-3 space-y-2">
+      <dd class="text-sm font-semibold text-gray-700" v-text="note.Chars"></dd>
+      <dt class="text-sm text-gray-400">Chars</dt>
     </div>
   </dl>
 
   <dl class="m-2 grid grid-cols-1 gap-2">
-    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-2">
-      <dd class="mt-1 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Mtime)"></dd>
-      <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
-        title="list notes modified same day"
-        @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
-        <span>Modified</span>
-        <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
-      </dt>
-      <dd class="mt-4 text-sm font-semibold tracking-tight text-gray-900" v-text="formatDate(note.Ctime)"></dd>
-      <dt class="text-sm font-medium text-gray-500 hover:text-gray-700 hover:cursor-pointer flex items-center space-x-1"
-        title="list notes created same day"
-        @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
-        <span>Created</span>
-        <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
-      </dt>
+    <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-3 space-y-6">
+      <div class="space-y-2">
+        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formatDate(note.Mtime)"></dd>
+        <dt class="text-sm text-gray-400 hover:underline cursor-pointer flex items-center space-x-2"
+          title="list notes modified same day"
+          @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
+          <span>Modified</span>
+          <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
+        </dt>
+      </div>
+      <div class="space-y-2">
+        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formatDate(note.Ctime)"></dd>
+        <dt class="text-sm text-gray-400 hover:underline cursor-pointer flex items-center space-x-2"
+          title="list notes created same day"
+          @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
+          <span>Created</span>
+          <Icon name="mini-bars-three-bottom-left" size="h-3 w-3" />
+        </dt>
+      </div>
     </div>
   </dl>
 
-  <div class="m-2 overflow-hidden rounded-lg bg-gray-50 pl-4 pr-2 py-2">
+  <div class="m-2 overflow-hidden rounded-lg bg-gray-50 pl-4 pr-2 py-3">
     <div class="flex justify-between mt-1 mb-2 text-sm">
-      <h3 class="font-semibold text-gray-900">Incoming links</h3>
-      <span class="font-medium text-gray-500 mr-2" v-text="countIncomingLinks"></span>
+      <h3 class="leading-6 font-semibold tracking-tight text-gray-700">Links incoming</h3>
+      <span class="text-gray-400 mr-2" v-text="countIncomingLinks"></span>
     </div>
     <LinkTree v-for="link in sortedIncomingLinks"
       :title="link.Title" :filename="link.Filename" :linenum="link.LineNumber" :key="link.Filename + link.LineNumber"
       @note-open="(...args) => $emit('note-open', ...args)" />
 
     <div class="flex justify-between mt-4 mb-2 text-sm">
-      <h3 class="font-semibold text-gray-900">Outgoing links</h3>
-      <span class="font-medium text-gray-500 mr-2" v-text="countOutgoingLinks"></span>
+      <h3 class="leading-6 font-semibold tracking-tight text-gray-700">Links outgoing</h3>
+      <span class="text-gray-400 mr-2" v-text="countOutgoingLinks"></span>
     </div>
     <LinkTree v-for="link in existingOutgoingLinks"
       :title="link.Title" :filename="link.Filename" linenum="1" :key="link.Filename + link.LineNumber"
@@ -95,15 +99,12 @@ export default {
     formatDate(dateStr) {
       if (!dateStr) return '';
       const date = new Date(dateStr);
-      const day = date.getDate();
+      const day = date.getDate().toString().padStart(2, '0');
       const month = date.toLocaleString('default', { month: 'short' });
       const year = date.getFullYear();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const seconds = date.getSeconds();
-      const formattedDate = `${day} ${month} ${year}`;
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      return `${formattedDate} at ${formattedTime}`;
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${month} ${day} ${year} at ${hours}:${minutes}`;
     },
   },
   computed: {
