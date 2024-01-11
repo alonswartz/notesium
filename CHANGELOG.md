@@ -1,3 +1,35 @@
+## 0.5.2
+
+Fixed:
+
+- Web/App: Editor activeline unconceal only if focused and editable.
+- Web/App: Finder entries overflow hidden and truncated.
+- Web/App: Alerts positioning and always in front.
+
+Added:
+
+- Web/App: Sidepanels for Notes and Labels, independently usable/toggleable.
+- Web/App: Sidepanels auto-update on lastSave timestamp change.
+
+- Web/App: Notes sidepanel entries with `title`, `mtime` elapsed and `labels`.
+- Web/App: Notes sidepanel entries `label` click sets filter query.
+- Web/App: Notes sidepanel filter by `title` and associated `labels`.
+- Web/App: Notes sidepanel sortable by `title` or `mtime`.
+
+- Web/App: Labels sidepanel with All, Recent and `labels` including count.
+- Web/App: Labels sidepanel Notes sidepanel filter query integration if open.
+- Web/App: Labels sidepanel Finder integration if Notes sidepanel not open.
+
+- Web/App: Customized vertical and horizontal scrollbar styling.
+
+Changed:
+
+- Web/App: Navbar action note-sidebar toggle replaced with Panels dropdown.
+- Web/App: Notes sidebar actions header sticky.
+- Web/App: Notes sidebar tweaked styling.
+
+- Contrib: XDG URxvt example script support for custom title.
+
 ## 0.5.1
 
 Added:
