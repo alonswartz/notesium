@@ -22,7 +22,7 @@ var t = `
 </div>
 
 <div v-if="showNotes" class="flex-none w-96">
-  <div class="flex flex-col h-full">
+  <div class="flex flex-col h-full border-r border-gray-200">
     <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200 bg-gray-100 ">
       <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
         @keyup.esc="query = ''; $refs.queryInput.blur();"

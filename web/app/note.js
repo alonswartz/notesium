@@ -1,10 +1,10 @@
 var t = `
 <div class="relative flex h-full">
   <div class="grow overflow-y-auto">
-    <div :class="{'cm-conceal cm-unconceal': conceal }" class="h-full p-2 cm-links-hover" ref="codemirror"></div>
+    <div :class="{'cm-conceal cm-unconceal': conceal }" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
   </div>
 
-  <div v-if="!showSidebar || note.ghost" class="absolute right-0 m-2 h-7 z-10 inline-flex items-center">
+  <div v-if="!showSidebar || note.ghost" class="absolute right-0 mt-2 mr-6 h-7 z-10 inline-flex items-center">
     <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
       :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
       class="rounded px-10 pt-2 pb-1 text-xs">Save</button>
