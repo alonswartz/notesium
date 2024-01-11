@@ -80,6 +80,7 @@ It aspires and is designed to:
     - Markdown syntax highlighting, special char and links concealment.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
+    - Sidepanels for labels, notes list and note metadata with linktrees.
 - **Web (graph)**
     - Visual overview of notes structure with a force graph view.
     - Cluster nodes based on links, inferred from titles or creation date.
@@ -106,6 +107,10 @@ It aspires and is designed to:
 
 *Graph: zoomed out large note collection (dark mode)*
 ![image: force graph zoom](https://www.notesium.com/images/screenshot-1682941869.png)
+<br/>
+
+*[Web] Panels: Toggleable labels, notes list and note metadata sidepanels*
+![image: web panels](https://www.notesium.com/images/screenshot-1704976637.png)
 <br/>
 
 *[Web] List: prefixed with associated labels and sorted alphabetically*
@@ -167,7 +172,7 @@ Download the [latest release](https://github.com/alonswartz/notesium/releases/la
 executable permissions and available in your `PATH`.
 
 ```bash
-# Example for linux amd64
+# Example for Linux 64-bit
 curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-linux-amd64
 curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt
 sha256sum --check --ignore-missing checksums.txt && rm checksums.txt
@@ -592,4 +597,4 @@ PAUSE=y bats tests/list.bats --tap
 
 The MIT License (MIT)
 
-Copyright (c) 2023 Alon Swartz
+Copyright (c) 2023-2024 Alon Swartz
