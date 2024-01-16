@@ -4,6 +4,7 @@ var t = `
 
 export default {
   props: ['graphData'],
+  emits: ['label-click'],
   methods: {
     initGraph() {
       const vm = this;
@@ -46,6 +47,7 @@ export default {
         .enter()
         .append("text")
         .classed("label", true)
+        .on("click", function(event, node) { vm.$emit('label-click', node.id); })
         .text(node => node.title);
 
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
