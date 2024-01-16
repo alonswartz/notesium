@@ -26,6 +26,7 @@ f34f273fc3cb90d1be6556b9588e388aade167e11ee635f8b9637241b3788241 $CODEMIRROR/mod
 2d2fc6f219c5ec536fe6bfe38fa241a8aba9045cf79b6e3599c906995644487b $CODEMIRROR/addon/mode/overlay.min.js
 bbca0b4ba03a94163a1eaa604b45ef038c12d8572b7cc16a41dd287b40cc998c $CODEMIRROR/addon/selection/active-line.min.js
 60e02d1780eb8a3c337f9d65af3229c5e73902c07e21ece8b6823efb83990ef2 $CODEMIRROR/addon/display/placeholder.min.js
+d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c https://d3js.org/d3.v7.min.js
 EOF
 }
 

@@ -10,8 +10,9 @@ var t = `
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :showNoteSidebar=showNoteSidebar :showLabelsPanel=showLabelsPanel :showNotesPanel=showNotesPanel
-        @note-new="newNote" @finder-open="openFinder" @settings-open="showSettings=true" @notesidebar-toggle="showNoteSidebar=!showNoteSidebar"
-        @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel" />
+        @note-new="newNote" @finder-open="openFinder" @graph-open="showGraph=true" @settings-open="showSettings=true"
+        @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel"
+        @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" />
@@ -20,7 +21,8 @@ var t = `
     </main>
   </div>
 
-  <Settings v-if="showSettings" @settings-close="showSettings=false"/>
+  <Graph v-if="showGraph" @graph-close="showGraph=false" />
+  <Settings v-if="showSettings" @settings-close="showSettings=false" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
@@ -38,11 +40,12 @@ import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
 import SidePanel from './sidepanel.js'
 import Note from './note.js'
+import Graph from './graph.js'
 import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 export default {
-  components: { Finder, NavTabs, NavActions, SidePanel, Note, Empty, Alert, Settings },
+  components: { Finder, NavTabs, NavActions, SidePanel, Note, Graph, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
@@ -50,6 +53,7 @@ export default {
       activeFilenamePrevious: '',
       finderUri: '',
       finderQuery: '',
+      showGraph: false,
       showFinder: false,
       showSettings: false,
       showNoteSidebar: true,
