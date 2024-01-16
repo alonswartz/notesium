@@ -20,6 +20,10 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="graph" size="h-4 w-4" />
   </a>
+  <span title="graph" @click="$emit('graph-open')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="graph" size="h-4 w-4" />
+  </span>
 
   <div class="relative inline-block text-left">
     <span title="panels" @click="showPanelsDropdown=!showPanelsDropdown"
@@ -54,7 +58,7 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'],
-  emits: ['note-new', 'finder-open', 'settings-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
+  emits: ['note-new', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
   data() {
     return {
       showPanelsDropdown: false,
