@@ -21,7 +21,7 @@ var t = `
     </main>
   </div>
 
-  <Graph v-if="showGraph" @graph-close="showGraph=false" />
+  <Graph v-if="showGraph" @graph-close="showGraph=false" @note-open="openNote" />
   <Settings v-if="showSettings" @settings-close="showSettings=false" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>

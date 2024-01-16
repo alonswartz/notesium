@@ -9,7 +9,7 @@ var t = `
             class="cursor-pointer text-gray-400 hover:text-gray-700 absolute top-0 right-0 p-4">
             <Icon name="mini-x-mark" size="h-5 w-5" />
           </div>
-          <GraphD3 v-if="graphData" :graphData=graphData />
+          <GraphD3 v-if="graphData" :graphData=graphData @label-click="$emit('note-open', $event)" />
         </div>
       </div>
     </div>
@@ -21,7 +21,7 @@ import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
   components: { Icon, GraphD3 },
-  emits: ['graph-close'],
+  emits: ['graph-close', 'note-open'],
   data() {
     return {
       graphData: null,
