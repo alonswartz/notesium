@@ -3,7 +3,7 @@ var t = `
 `
 
 export default {
-  props: ['graphData', 'emphasizeNodes'],
+  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius'],
   emits: ['title-click'],
   methods: {
     initGraph() {
@@ -111,6 +111,14 @@ export default {
           node.attr("fill-opacity", 1)
           title.attr("fill-opacity", 1).attr("font-weight", "normal");
           link.attr("stroke", "currentColor").attr("stroke-opacity", 1);
+        }
+      });
+
+      vm.$watch('dynamicNodeRadius', function(enabled) {
+        if (enabled) {
+          node.attr("r", (n) => vm.graphData.links.reduce((i, l) => (l.source === n.id || l.target === n.id) ? i + 0.1 : i, 1));
+        } else {
+          node.attr("r", 2);
         }
       });
 
