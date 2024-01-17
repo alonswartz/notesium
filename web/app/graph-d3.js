@@ -115,8 +115,24 @@ export default {
       });
 
       vm.$watch('dynamicNodeRadius', function(enabled) {
+        function getLinkCount(nodeId) {
+          return vm.graphData.links.reduce((count, link) => (link.source === nodeId || link.target === nodeId) ? count + 1 : count, 0);
+        }
+
         if (enabled) {
-          node.attr("r", (n) => vm.graphData.links.reduce((i, l) => (l.source === n.id || l.target === n.id) ? i + 0.1 : i, 1));
+          const totalNodes = vm.graphData.nodes.length;
+          const linkCounts = vm.graphData.nodes.map(n => getLinkCount(n.id));
+          const maxLinks = Math.max(...linkCounts);
+
+          const minBaseRadius = 1;
+          const maxBaseRadius = 5;
+          const baseRadius = Math.max(minBaseRadius, Math.min(maxBaseRadius, 5 - totalNodes / 5));
+
+          const minRadiusIncrement = 0.1;
+          const maxRadiusIncrement = 0.5;
+          const radiusIncrement =  Math.max(minRadiusIncrement, Math.min(maxRadiusIncrement, 5 / maxLinks));
+
+          node.attr("r", n => baseRadius + (getLinkCount(n.id) * radiusIncrement));
         } else {
           node.attr("r", 2);
         }
