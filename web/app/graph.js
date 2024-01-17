@@ -6,17 +6,22 @@ var t = `
       <div class="pointer-events-auto max-w-2xl">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
-          <div class="absolute top-0 right-0 w-full p-4 text-sm">
+          <div class="absolute top-0 right-0 w-full p-4 text-sm flex space-x-2">
+            <div class="backdrop-blur-sm bg-gray-400/10 rounded-lg ">
+              <span title="settings" @click="showSettings=!showSettings"
+                class="h-12 px-3 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
+                <Icon name="outline-adjustments-horizontal" size="h-6 w-6" />
+              </span>
+              <ul v-show="showSettings" class="w-48 text-gray-500 text-xs p-4 border-t border-gray-200 whitespace-nowrap">
+                <li class="flex items-center justify-items-center space-x-3">
+                  <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                  <label for="dynamicNodeRadius">size nodes per links</label>
+                </li>
+              </ul>
+            </div>
             <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
               @blur="$refs.queryInput && $refs.queryInput.focus()"
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
-
-            <ul class="w-48 text-sm text-gray-500 py-2 whitespace-nowrap">
-              <li class="flex items-center justify-items-center space-x-3">
-                <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
-                <label for="dynamicNodeRadius">size nodes per links</label>
-              </li>
-            </ul>
           </div>
 
           <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems :dynamicNodeRadius=dynamicNodeRadius
@@ -29,15 +34,17 @@ var t = `
 </div>
 `
 
+import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
-  components: { GraphD3 },
+  components: { Icon, GraphD3 },
   emits: ['graph-close', 'note-open'],
   data() {
     return {
       query: '',
       nodes: [],
       graphData: null,
+      showSettings: false,
       dynamicNodeRadius: false,
     }
   },
