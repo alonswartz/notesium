@@ -12,7 +12,7 @@ var t = `
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
           </div>
 
-          <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems @label-click="$emit('note-open', $event)" />
+          <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems @title-click="$emit('note-open', $event)" />
 
         </div>
       </div>
