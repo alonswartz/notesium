@@ -12,7 +12,11 @@ var t = `
                 class="h-12 px-3 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
                 <Icon name="outline-adjustments-horizontal" size="h-6 w-6" />
               </span>
-              <ul v-show="showSettings" class="w-48 text-gray-500 text-xs p-4 border-t border-gray-200 whitespace-nowrap">
+              <ul v-show="showSettings" class="w-48 text-gray-500 text-xs p-4 border-t border-gray-200 whitespace-nowrap space-y-3">
+                <li class="flex items-center justify-items-center space-x-3">
+                  <input id="showTitles" v-model="showTitles" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                  <label for="showTitles">show titles</label>
+                </li>
                 <li class="flex items-center justify-items-center space-x-3">
                   <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
                   <label for="dynamicNodeRadius">size nodes per links</label>
@@ -24,7 +28,7 @@ var t = `
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
           </div>
 
-          <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems :dynamicNodeRadius=dynamicNodeRadius
+          <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems :dynamicNodeRadius=dynamicNodeRadius :showTitles=showTitles
             @title-click="$emit('note-open', $event)" />
 
         </div>
@@ -45,6 +49,7 @@ export default {
       nodes: [],
       graphData: null,
       showSettings: false,
+      showTitles: true,
       dynamicNodeRadius: false,
     }
   },

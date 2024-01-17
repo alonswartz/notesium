@@ -3,7 +3,7 @@ var t = `
 `
 
 export default {
-  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius'],
+  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius', 'showTitles'],
   emits: ['title-click'],
   methods: {
     initGraph() {
@@ -136,6 +136,10 @@ export default {
         } else {
           node.attr("r", 2);
         }
+      });
+
+      vm.$watch('showTitles', function(enabled) {
+        svg.selectAll('.title').classed("hidden", !enabled);
       });
 
     },
