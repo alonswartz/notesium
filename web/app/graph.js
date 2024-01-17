@@ -41,7 +41,7 @@ export default {
           let links = [];
           const notes = Object.values(response);
           notes.forEach(note => {
-            nodes.push({ id: note.Filename, title: note.Title });
+            nodes.push({ id: note.Filename, title: note.Title, isLabel: note.IsLabel });
             if (note.OutgoingLinks) {
               note.OutgoingLinks.forEach(link => {
                 if (link.Title !== '') links.push({ source: note.Filename, target: link.Filename });

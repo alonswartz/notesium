@@ -39,6 +39,7 @@ export default {
         .join("circle")
         .attr("r", 2)
         .classed("node", true)
+        .classed("node-label", n => (n.isLabel))
         .call(drag(simulation));
 
       const title = svg.append("g")
