@@ -3,7 +3,7 @@ var t = `
 `
 
 export default {
-  props: ['graphData'],
+  props: ['graphData', 'emphasizeNodes'],
   emits: ['label-click'],
   methods: {
     initGraph() {
@@ -88,6 +88,31 @@ export default {
           .on("drag", dragged)
           .on("end", dragended);
       }
+
+      vm.$watch('emphasizeNodes', function(nodeIds) {
+        if (nodeIds && nodeIds.length > 0) {
+          const linkedNodeIds = Array.from(new Set(vm.graphData.links
+            .filter(l => nodeIds.includes(l.source) || nodeIds.includes(l.target))
+            .flatMap(l => [l.source, l.target])));
+
+          node.attr("fill-opacity", 0.1);
+          label.attr("fill-opacity", 0.3).attr("font-weight", "normal");
+          link.attr("stroke", "currentColor").attr("stroke-opacity", 0.3);
+
+          node.filter(n => linkedNodeIds.includes(n.id)).attr("fill-opacity", 0.3)
+          label.filter(l => linkedNodeIds.includes(l.id)).attr("fill-opacity", 1)
+
+          node.filter(n => nodeIds.includes(n.id)).attr("fill-opacity", 1)
+          label.filter(l => nodeIds.includes(l.id)).attr("fill-opacity", 1).attr("font-weight", "bold")
+          link.filter(l => nodeIds.includes(l.source.id) || nodeIds.includes(l.target.id)).attr("stroke-opacity", 1);
+
+        } else {
+          node.attr("fill-opacity", 1)
+          label.attr("fill-opacity", 1).attr("font-weight", "normal");
+          link.attr("stroke", "currentColor").attr("stroke-opacity", 1);
+        }
+      });
+
     },
   },
   mounted() {
