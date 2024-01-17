@@ -18,6 +18,10 @@ var t = `
                   <label for="showTitles">show titles</label>
                 </li>
                 <li class="flex items-center justify-items-center space-x-3">
+                  <input id="scaleTitles" v-model="scaleTitles" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
+                  <label for="scaleTitles">auto-scale titles</label>
+                </li>
+                <li class="flex items-center justify-items-center space-x-3">
                   <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
                   <label for="dynamicNodeRadius">size nodes per links</label>
                 </li>
@@ -28,7 +32,12 @@ var t = `
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
           </div>
 
-          <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodes=filteredItems :dynamicNodeRadius=dynamicNodeRadius :showTitles=showTitles
+          <GraphD3 v-if="graphData"
+            :graphData=graphData
+            :emphasizeNodes=filteredItems
+            :dynamicNodeRadius=dynamicNodeRadius
+            :scaleTitles=scaleTitles
+            :showTitles=showTitles
             @title-click="$emit('note-open', $event)" />
 
         </div>
@@ -50,6 +59,7 @@ export default {
       graphData: null,
       showSettings: false,
       showTitles: true,
+      scaleTitles: true,
       dynamicNodeRadius: false,
     }
   },
