@@ -3,7 +3,7 @@ var t = `
 `
 
 export default {
-  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius', 'showTitles'],
+  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius', 'showTitles', 'scaleTitles'],
   emits: ['title-click'],
   methods: {
     initGraph() {
@@ -53,6 +53,7 @@ export default {
 
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
         svg.selectAll('g').attr('transform', event.transform);
+        if (vm.scaleTitles) scaleTitlesByZoomLevel(event.transform.k);
       });
       svg.call(zoom);
 
@@ -89,6 +90,20 @@ export default {
           .on("drag", dragged)
           .on("end", dragended);
       }
+
+      function scaleTitlesByZoomLevel(k) {
+        const titleSize = k > 0.9 ? 5 - k : 0;
+        svg.selectAll('.title').transition().style("font-size", titleSize + "px");
+      }
+
+      vm.$watch('scaleTitles', function(enabled) {
+        const k = enabled ? d3.zoomTransform(svg.node()).k : 1;
+        scaleTitlesByZoomLevel(k);
+      });
+
+      vm.$watch('showTitles', function(enabled) {
+        svg.selectAll('.title').classed("hidden", !enabled);
+      });
 
       vm.$watch('emphasizeNodes', function(nodeIds) {
         if (nodeIds && nodeIds.length > 0) {
@@ -136,10 +151,6 @@ export default {
         } else {
           node.attr("r", 2);
         }
-      });
-
-      vm.$watch('showTitles', function(enabled) {
-        svg.selectAll('.title').classed("hidden", !enabled);
       });
 
     },
