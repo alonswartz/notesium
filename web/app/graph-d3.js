@@ -4,7 +4,7 @@ var t = `
 
 export default {
   props: ['graphData', 'emphasizeNodes'],
-  emits: ['label-click'],
+  emits: ['title-click'],
   methods: {
     initGraph() {
       const vm = this;
@@ -41,13 +41,13 @@ export default {
         .classed("node", true)
         .call(drag(simulation));
 
-      const label = svg.append("g")
+      const title = svg.append("g")
         .selectAll("circle")
         .data(nodes)
         .enter()
         .append("text")
-        .classed("label", true)
-        .on("click", function(event, node) { vm.$emit('label-click', node.id); })
+        .classed("title", true)
+        .on("click", function(event, node) { vm.$emit('title-click', node.id); })
         .text(node => node.title);
 
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
@@ -64,7 +64,7 @@ export default {
         node
           .attr("cx", d => d.x)
           .attr("cy", d => d.y);
-        label
+        title
           .attr('x', d => d.x + 4).attr('y', d => d.y);
       });
 
@@ -96,19 +96,19 @@ export default {
             .flatMap(l => [l.source, l.target])));
 
           node.attr("fill-opacity", 0.1);
-          label.attr("fill-opacity", 0.3).attr("font-weight", "normal");
+          title.attr("fill-opacity", 0.3).attr("font-weight", "normal");
           link.attr("stroke", "currentColor").attr("stroke-opacity", 0.3);
 
-          node.filter(n => linkedNodeIds.includes(n.id)).attr("fill-opacity", 0.3)
-          label.filter(l => linkedNodeIds.includes(l.id)).attr("fill-opacity", 1)
+          node.filter(n => linkedNodeIds.includes(n.id)).attr("fill-opacity", 0.3);
+          title.filter(t => linkedNodeIds.includes(t.id)).attr("fill-opacity", 1);
 
-          node.filter(n => nodeIds.includes(n.id)).attr("fill-opacity", 1)
-          label.filter(l => nodeIds.includes(l.id)).attr("fill-opacity", 1).attr("font-weight", "bold")
+          node.filter(n => nodeIds.includes(n.id)).attr("fill-opacity", 1);
+          title.filter(t => nodeIds.includes(t.id)).attr("fill-opacity", 1).attr("font-weight", "bold");
           link.filter(l => nodeIds.includes(l.source.id) || nodeIds.includes(l.target.id)).attr("stroke-opacity", 1);
 
         } else {
           node.attr("fill-opacity", 1)
-          label.attr("fill-opacity", 1).attr("font-weight", "normal");
+          title.attr("fill-opacity", 1).attr("font-weight", "normal");
           link.attr("stroke", "currentColor").attr("stroke-opacity", 1);
         }
       });
