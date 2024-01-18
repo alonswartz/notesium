@@ -6,63 +6,45 @@ var t = `
       <div class="pointer-events-auto max-w-2xl">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
-          <div class="absolute top-0 right-0 w-full p-4 text-sm flex space-x-2">
+          <div class="absolute top-0 left-0 w-full p-4 text-sm flex space-x-2">
             <div class="backdrop-blur-sm bg-gray-400/10 rounded-lg ">
               <span title="settings" @click="showSettings=!showSettings"
                 class="h-12 px-3 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
                 <Icon name="outline-adjustments-horizontal" size="h-6 w-6" />
               </span>
-              <ul v-show="showSettings" class="w-48 text-gray-500 text-xs p-4 border-t border-gray-200 whitespace-nowrap space-y-3">
-                <li class="flex items-center justify-items-center space-x-3">
-                  <input id="showTitles" v-model="showTitles" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
-                  <label for="showTitles">show titles</label>
-                </li>
-                <li class="flex items-center justify-items-center space-x-3">
-                  <input id="scaleTitles" v-model="scaleTitles" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
-                  <label for="scaleTitles">auto-scale titles</label>
-                </li>
-                <li class="flex items-center justify-items-center space-x-3">
-                  <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
-                  <label for="dynamicNodeRadius">size nodes per links</label>
-                </li>
-                <li class="space-y-1">
-                  <div class="flex items-center justify-between">
-                    <span>repel force</span>
-                    <span v-text="forceChargeStrength"></span>
-                  </div>
-                  <input v-model="forceChargeStrength" class="w-full" type="range" min="-100" max="0" step="1">
-                </li>
-                <li class="space-y-1">
-                  <div class="flex items-center justify-between">
-                    <span>collide radius</span>
-                    <span v-text="forceCollideRadius"></span>
-                  </div>
-                  <input v-model="forceCollideRadius" class="w-full" type="range" min="1" max="50" step="1">
-                </li>
-                <li class="space-y-1">
-                  <div class="flex items-center justify-between">
-                    <span>collide strength</span>
-                    <span v-text="forceCollideStrength"></span>
-                  </div>
-                  <input v-model="forceCollideStrength" class="w-full" type="range" min="0" max="1" step="0.05">
-                </li>
-              </ul>
             </div>
-
             <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
               @blur="$refs.queryInput && $refs.queryInput.focus()"
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
           </div>
 
+          <div v-show="showSettings" class="absolute top-14 left-0 p-4">
+            <div class="backdrop-blur-sm bg-gray-100/10 border border-gray-200 rounded-lg w-48 text-gray-600 text-xs whitespace-nowrap p-2">
+              <p class="text-sm text-gray-900 py-2">display</p>
+              <ul class="divide-y divide-gray-200">
+                <li v-for="(option, key) in display" :key="key" class="flex items-center justify-items-center justify-between py-3">
+                  <label :for="key" v-text="option.title"></label>
+                  <input :id="key" v-model="option.value" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                </li>
+              </ul>
+              <p class="text-sm text-gray-900 py-2">forces</p>
+              <ul class="divide-y divide-gray-200">
+                <li v-for="(force, key) in forces" :key="key" class="space-y-1 py-2">
+                  <div class="flex items-center justify-between">
+                    <span v-text="force.title"></span>
+                    <span v-text="force.value"></span>
+                  </div>
+                  <input class="w-full" type="range" v-model="force.value" :min="force.min" :max="force.max" :step="force.step" />
+                </li>
+              </ul>
+            </div>
+          </div>
+
           <GraphD3 v-if="graphData"
             :graphData=graphData
             :emphasizeNodes=filteredItems
-            :dynamicNodeRadius=dynamicNodeRadius
-            :scaleTitles=scaleTitles
-            :showTitles=showTitles
-            :forceChargeStrength=forceChargeStrength
-            :forceCollideRadius=forceCollideRadius
-            :forceCollideStrength=forceCollideStrength
+            :display=display
+            :forces=forces
             @title-click="$emit('note-open', $event)" />
 
         </div>
@@ -83,12 +65,16 @@ export default {
       nodes: [],
       graphData: null,
       showSettings: false,
-      showTitles: true,
-      scaleTitles: true,
-      dynamicNodeRadius: false,
-      forceChargeStrength: -30,
-      forceCollideRadius: 1,
-      forceCollideStrength: 0.5,
+      display: {
+        showTitles:        { value: true,  title: 'show titles' },
+        scaleTitles:       { value: true,  title: 'auto-scale titles' },
+        dynamicNodeRadius: { value: false, title: 'size nodes per links' },
+      },
+      forces: {
+        chargeStrength:  { value: -30, min: -100, max: 0,  step: 1,    title: 'repel force' },
+        collideRadius:   { value: 1,   min: 1,    max: 50, step: 1,    title: 'collide radius' },
+        collideStrength: { value: 0.5, min: 0,    max: 1,  step: 0.05, title: 'collide strength' },
+      },
     }
   },
   methods: {
