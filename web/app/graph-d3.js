@@ -6,12 +6,8 @@ export default {
   props: [
     'graphData',
     'emphasizeNodes',
-    'dynamicNodeRadius',
-    'showTitles',
-    'scaleTitles',
-    'forceChargeStrength',
-    'forceCollideRadius',
-    'forceCollideStrength',
+    'display',
+    'forces',
   ],
   emits: ['title-click'],
   methods: {
@@ -62,7 +58,7 @@ export default {
 
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
         svg.selectAll('g').attr('transform', event.transform);
-        if (vm.scaleTitles) scaleTitlesByZoomLevel(event.transform.k);
+        if (vm.display.scaleTitles.value) scaleTitlesByZoomLevel(event.transform.k);
       });
       svg.call(zoom);
 
@@ -105,12 +101,12 @@ export default {
         svg.selectAll('.title').transition().style("font-size", titleSize + "px");
       }
 
-      vm.$watch('scaleTitles', function(enabled) {
+      vm.$watch('display.scaleTitles.value', function(enabled) {
         const k = enabled ? d3.zoomTransform(svg.node()).k : 1;
         scaleTitlesByZoomLevel(k);
       });
 
-      vm.$watch('showTitles', function(enabled) {
+      vm.$watch('display.showTitles.value', function(enabled) {
         svg.selectAll('.title').classed("hidden", !enabled);
       });
 
@@ -138,7 +134,7 @@ export default {
         }
       });
 
-      vm.$watch('dynamicNodeRadius', function(enabled) {
+      vm.$watch('display.dynamicNodeRadius.value', function(enabled) {
         function getLinkCount(nodeId) {
           return vm.graphData.links.reduce((count, link) => (link.source === nodeId || link.target === nodeId) ? count + 1 : count, 0);
         }
@@ -162,17 +158,17 @@ export default {
         }
       });
 
-      vm.$watch('forceChargeStrength', function(value) {
+      vm.$watch('forces.chargeStrength.value', function(value) {
         simulation.force("charge", d3.forceManyBody().strength(value));
         simulation.alpha(1).restart();
       });
 
-      vm.$watch('forceCollideRadius', function(value) {
+      vm.$watch('forces.collideRadius.value', function(value) {
         simulation.force("collide").radius(value);
         simulation.alpha(1).restart();
       });
 
-      vm.$watch('forceCollideStrength', function(value) {
+      vm.$watch('forces.collideStrength.value', function(value) {
         simulation.force("collide").strength(value);
         simulation.alpha(1).restart();
       });
