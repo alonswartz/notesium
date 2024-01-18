@@ -25,8 +25,30 @@ var t = `
                   <input id="dynamicNodeRadius" v-model="dynamicNodeRadius" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500">
                   <label for="dynamicNodeRadius">size nodes per links</label>
                 </li>
+                <li class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span>repel force</span>
+                    <span v-text="forceChargeStrength"></span>
+                  </div>
+                  <input v-model="forceChargeStrength" class="w-full" type="range" min="-100" max="0" step="1">
+                </li>
+                <li class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span>collide radius</span>
+                    <span v-text="forceCollideRadius"></span>
+                  </div>
+                  <input v-model="forceCollideRadius" class="w-full" type="range" min="1" max="50" step="1">
+                </li>
+                <li class="space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span>collide strength</span>
+                    <span v-text="forceCollideStrength"></span>
+                  </div>
+                  <input v-model="forceCollideStrength" class="w-full" type="range" min="0" max="1" step="0.05">
+                </li>
               </ul>
             </div>
+
             <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
               @blur="$refs.queryInput && $refs.queryInput.focus()"
               class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
@@ -38,6 +60,9 @@ var t = `
             :dynamicNodeRadius=dynamicNodeRadius
             :scaleTitles=scaleTitles
             :showTitles=showTitles
+            :forceChargeStrength=forceChargeStrength
+            :forceCollideRadius=forceCollideRadius
+            :forceCollideStrength=forceCollideStrength
             @title-click="$emit('note-open', $event)" />
 
         </div>
@@ -61,6 +86,9 @@ export default {
       showTitles: true,
       scaleTitles: true,
       dynamicNodeRadius: false,
+      forceChargeStrength: -30,
+      forceCollideRadius: 1,
+      forceCollideStrength: 0.5,
     }
   },
   methods: {

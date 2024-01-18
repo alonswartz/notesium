@@ -3,7 +3,16 @@ var t = `
 `
 
 export default {
-  props: ['graphData', 'emphasizeNodes', 'dynamicNodeRadius', 'showTitles', 'scaleTitles'],
+  props: [
+    'graphData',
+    'emphasizeNodes',
+    'dynamicNodeRadius',
+    'showTitles',
+    'scaleTitles',
+    'forceChargeStrength',
+    'forceCollideRadius',
+    'forceCollideStrength',
+  ],
   emits: ['title-click'],
   methods: {
     initGraph() {
@@ -151,6 +160,21 @@ export default {
         } else {
           node.attr("r", 2);
         }
+      });
+
+      vm.$watch('forceChargeStrength', function(value) {
+        simulation.force("charge", d3.forceManyBody().strength(value));
+        simulation.alpha(1).restart();
+      });
+
+      vm.$watch('forceCollideRadius', function(value) {
+        simulation.force("collide").radius(value);
+        simulation.alpha(1).restart();
+      });
+
+      vm.$watch('forceCollideStrength', function(value) {
+        simulation.force("collide").strength(value);
+        simulation.alpha(1).restart();
       });
 
     },
