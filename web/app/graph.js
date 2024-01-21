@@ -71,7 +71,7 @@ var t = `
               </span>
             </div>
             <div class="h-full pl-4 pb-4 mr-1">
-              <Preview :filename=previewFilename />
+              <Preview clickableLinks=true :filename=previewFilename @note-open="previewFilename = $event" />
             </div>
           </div>
 

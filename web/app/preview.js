@@ -1,9 +1,10 @@
 var t = `
-<div class="h-full cm-conceal" ref="preview"></div>
+<div :class="{ 'cm-links-hover': clickableLinks }" class="h-full cm-conceal" ref="preview"></div>
 `
 
 export default {
-  props: ['filename', 'lineNumber'],
+  props: ['filename', 'lineNumber', 'clickableLinks'],
+  emits: ['note-open'],
   methods: {
     fetchNote() {
       fetch("/api/notes/" + this.filename)
@@ -32,6 +33,38 @@ export default {
         highlightFormatting: true,
       },
     });
+
+    if (this.clickableLinks) {
+      this.cm.on('mousedown', (cm, e) => {
+        let el = e.composedPath()[0];
+        if (el.classList.contains('cm-link') || el.classList.contains('cm-url')) {
+          const getNextNSibling = (element, n) => { for (; n > 0 && element; n--, element = element.nextElementSibling); return element; };
+
+          if (el.classList.contains('cm-formatting')) {
+            switch (el.textContent) {
+              case '[': el = getNextNSibling(el, 4); break;
+              case ']': el = getNextNSibling(el, 2); break;
+              case '(': el = getNextNSibling(el, 1); break;
+              case ')': el = el.previousElementSibling; break;
+              default: return;
+            }
+            if (!el?.classList.contains('cm-url')) return;
+          }
+
+          if (el.classList.contains('cm-link')) {
+            const potentialUrlElement = getNextNSibling(el, 3);
+            el = potentialUrlElement?.classList.contains('cm-url') ? potentialUrlElement : el;
+          }
+
+          const link = el.textContent;
+          const isMdFile = /^[0-9a-f]{8}\.md$/i.test(link);
+          const hasProtocol = /^[a-zA-Z]+:\/\//.test(link);
+          (isMdFile) ? this.$emit('note-open', link) : window.open(hasProtocol ? link : 'https://' + link, '_blank');
+          e.preventDefault();
+        }
+      });
+    }
+
     this.fetchNote();
   },
   watch: {
