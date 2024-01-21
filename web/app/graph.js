@@ -59,7 +59,7 @@ var t = `
             </div>
           </div>
 
-          <div v-if="display.fullScreen.value && previewFilename" class="absolute top-0 right-0 w-[36rem] h-full bg-white shadow-xl">
+          <div v-if="display.fullScreen.value && previewFilename" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
             <div class="flex items-center justify-end mx-2 pt-2 space-x-3">
               <span title="open for editing" @click="$emit('note-open', previewFilename); $emit('graph-close')"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
@@ -71,7 +71,7 @@ var t = `
               </span>
             </div>
             <div class="h-full pl-4 pb-4 mr-1">
-              <Preview clickableLinks=true :filename=previewFilename @note-open="previewFilename = $event" />
+              <Preview clickableLinks=true appendIncomingLinks=true :filename=previewFilename @note-open="previewFilename = $event" />
             </div>
           </div>
 
