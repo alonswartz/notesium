@@ -77,7 +77,7 @@ var t = `
 
           <GraphD3 v-if="graphData"
             :graphData=graphData
-            :emphasizeNodes=filteredItems
+            :emphasizeNodes=emphasizeNodes
             :display=display
             :forces=forces
             @title-click="display.fullScreen.value ? (previewFilename = $event, query='') : $emit('note-open', $event)" />
@@ -141,7 +141,8 @@ export default {
     },
   },
   computed: {
-    filteredItems() {
+    emphasizeNodes() {
+      if (!this.query && this.display.fullScreen.value && this.previewFilename) return [this.previewFilename];
       const queryWords = this.query.toLowerCase().split(' ');
       return !this.query
         ? []
