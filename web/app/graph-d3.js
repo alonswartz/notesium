@@ -116,9 +116,9 @@ export default {
             .filter(l => nodeIds.includes(l.source) || nodeIds.includes(l.target))
             .flatMap(l => [l.source, l.target])));
 
-          node.attr("fill-opacity", 0.1);
-          title.attr("fill-opacity", 0.3).attr("font-weight", "normal");
-          link.attr("stroke", "currentColor").attr("stroke-opacity", 0.3);
+          node.attr("fill-opacity", 0.05);
+          title.attr("fill-opacity", 0.15).attr("font-weight", "normal");
+          link.attr("stroke", "currentColor").attr("stroke-opacity", 0.15);
 
           node.filter(n => linkedNodeIds.includes(n.id)).attr("fill-opacity", 0.3);
           title.filter(t => linkedNodeIds.includes(t.id)).attr("fill-opacity", 1);
