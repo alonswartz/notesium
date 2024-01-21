@@ -59,12 +59,28 @@ var t = `
             </div>
           </div>
 
+          <div v-if="display.fullScreen.value && previewFilename" class="absolute top-0 right-0 w-[36rem] h-full bg-white shadow-xl">
+            <div class="flex items-center justify-end mx-2 pt-2 space-x-3">
+              <span title="open for editing" @click="$emit('note-open', previewFilename); $emit('graph-close')"
+                class="cursor-pointer text-gray-400 hover:text-gray-700">
+                <Icon name="pencil-solid" size="h-4 w-4" />
+              </span>
+              <span title="close preview" @click="previewFilename=null"
+                class="cursor-pointer text-gray-400 hover:text-gray-700">
+                <Icon name="mini-x-mark" size="h-5 w-5" />
+              </span>
+            </div>
+            <div class="h-full pl-4 pb-4 mr-1">
+              <Preview :filename=previewFilename />
+            </div>
+          </div>
+
           <GraphD3 v-if="graphData"
             :graphData=graphData
             :emphasizeNodes=filteredItems
             :display=display
             :forces=forces
-            @title-click="display.fullScreen.value ? (display.fullScreen.value = false, $emit('note-open', $event)) : $emit('note-open', $event)" />
+            @title-click="display.fullScreen.value ? (previewFilename = $event, query='') : $emit('note-open', $event)" />
         </div>
       </div>
     </div>
@@ -74,14 +90,16 @@ var t = `
 
 import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
+import Preview from './preview.js'
 export default {
-  components: { Icon, GraphD3 },
+  components: { Icon, GraphD3, Preview },
   emits: ['graph-close', 'note-open'],
   data() {
     return {
       query: '',
       nodes: [],
       graphData: null,
+      previewFilename: null,
       showSettings: false,
       showSettingsDisplay: false,
       showSettingsForces: false,
