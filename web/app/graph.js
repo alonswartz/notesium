@@ -6,37 +6,50 @@ var t = `
       <div class="pointer-events-auto max-w-2xl">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
-          <div class="absolute top-0 left-0 w-full p-4 text-sm flex space-x-2">
-            <div class="backdrop-blur-sm bg-gray-400/10 rounded-lg ">
-              <span title="settings" @click="showSettings=!showSettings"
-                class="h-12 px-3 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
-                <Icon name="outline-adjustments-horizontal" size="h-6 w-6" />
-              </span>
-            </div>
-            <input ref="queryInput" v-model="query" autofocus placeholder="filter..." autocomplete="off" spellcheck="false"
-              @blur="$refs.queryInput && $refs.queryInput.focus()"
-              class="h-12 w-full border-0 rounded-lg px-4 ring-0 focus:outline-none backdrop-blur-sm bg-gray-400/10 text-gray-900 placeholder:text-gray-400" />
-          </div>
-
-          <div v-show="showSettings" class="absolute top-14 left-0 p-4">
-            <div class="backdrop-blur-sm bg-gray-100/10 border border-gray-200 rounded-lg w-48 text-gray-600 text-xs whitespace-nowrap p-2">
-              <p class="text-sm text-gray-900 py-2">display</p>
-              <ul class="divide-y divide-gray-200">
-                <li v-for="(option, key) in display" :key="key" class="flex items-center justify-items-center justify-between py-3">
-                  <label :for="key" v-text="option.title"></label>
-                  <input :id="key" v-model="option.value" type="checkbox" class="h-4 w-4 rounded text-indigo-600 focus:ring-indigo-500" />
-                </li>
-              </ul>
-              <p class="text-sm text-gray-900 py-2">forces</p>
-              <ul class="divide-y divide-gray-200">
-                <li v-for="(force, key) in forces" :key="key" class="space-y-1 py-2">
-                  <div class="flex items-center justify-between">
-                    <span v-text="force.title"></span>
-                    <span v-text="force.value"></span>
-                  </div>
-                  <input class="w-full" type="range" v-model="force.value" :min="force.min" :max="force.max" :step="force.step" />
-                </li>
-              </ul>
+          <div class="absolute top-0 left-0 w-60 p-3">
+            <div class="flex flex-1 flex-col overflow-y-auto border border-gray-200 rounded-md backdrop-blur-md bg-gray-50/10 space-y-1">
+              <div class="flex space-x-1" :class="{ 'border-b border-gray-200': showSettings }">
+                <span title="settings" @click="showSettings=!showSettings"
+                  class="h-10 px-2 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
+                  <Icon name="outline-adjustments-horizontal" size="h-5 w-5" />
+                </span>
+                <input ref="queryInput" v-model="query" autofocus placeholder="filter notes..." autocomplete="off" spellcheck="false"
+                  @blur="$refs.queryInput && $refs.queryInput.focus()"
+                  class="h-10 w-full py-2 pr-2 focus:outline-none backdrop-blur-md bg-inherit text-sm text-gray-700 placeholder:text-gray-400" />
+              </div>
+              <div v-show="showSettings">
+                <div @click="showSettingsDisplay=!showSettingsDisplay"
+                  class="hover:bg-gray-50 cursor-pointer flex items-center w-full text-left p-2 space-x-3">
+                  <span class="text-gray-400 shrink-0" :class="{ 'rotate-90' : showSettingsDisplay }">
+                    <Icon name="chevron-right" size="h-5 w-5" />
+                  </span>
+                  <span class="text-sm leading-6 text-gray-700">display</span>
+                </div>
+                <ul v-show="showSettingsDisplay" class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
+                  <li v-for="(option, key) in display" :key="key" @click="option.value=!option.value"
+                    class="flex items-center justify-items-center justify-between hover:bg-gray-50 block rounded-md py-2 pr-2 pl-8">
+                    <label v-text="option.title"></label>
+                    <input v-model="option.value" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500" />
+                  </li>
+                </ul>
+                <div @click="showSettingsForces=!showSettingsForces"
+                  class="hover:bg-gray-50 cursor-pointer flex items-center w-full text-left p-2 gap-x-3">
+                  <span class="text-gray-400 shrink-0" :class="{ 'rotate-90' : showSettingsForces }">
+                    <Icon name="chevron-right" size="h-5 w-5" />
+                  </span>
+                  <span class="text-sm leading-6 text-gray-700">forces</span>
+                </div>
+                <ul v-show="showSettingsForces" class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
+                  <li v-for="(option, key) in forces" :key="key"
+                    class="items-center justify-items-center justify-between block rounded-md py-2 pr-2 pl-8">
+                    <div class="flex items-center justify-between">
+                      <span v-text="option.title"></span>
+                      <span v-text="option.value"></span>
+                    </div>
+                    <input class="w-full" type="range" v-model="option.value" :min="option.min" :max="option.max" :step="option.step" />
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -65,6 +78,8 @@ export default {
       nodes: [],
       graphData: null,
       showSettings: false,
+      showSettingsDisplay: false,
+      showSettingsForces: false,
       display: {
         showTitles:        { value: true,  title: 'show titles' },
         scaleTitles:       { value: true,  title: 'auto-scale titles' },
