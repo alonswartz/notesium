@@ -14,7 +14,9 @@ export default {
         });
     },
     lineNumberHL() {
+      if (!Number.isInteger(this.lineNumber) || this.lineNumber === undefined) return;
       this.$nextTick(() => {
+        this.cm.setOption("styleActiveLine", true);
         this.cm.setCursor({line: this.lineNumber - 1, ch: 0});
       });
     },
@@ -23,7 +25,7 @@ export default {
     this.cm = new CodeMirror(this.$refs.preview, {
       value: '',
       readOnly: true,
-      styleActiveLine: true,
+      styleActiveLine: false,
       theme: 'notesium-light',
       mode: {
         name: "gfm",
