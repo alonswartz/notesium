@@ -3,8 +3,14 @@ var t = `
   <div @click="$emit('graph-close');" class="fixed inset-0" aria-hidden="true"></div>
   <div class="absolute inset-0 overflow-hidden">
     <div class="pointer-events-none fixed inset-y-0 right-0 flex">
-      <div class="pointer-events-auto max-w-2xl">
+      <div :class="display.fullScreen.value ? 'w-screen' : 'max-w-2xl'" class="pointer-events-auto">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
+
+
+          <div title="close" @click="$emit('graph-close')"
+            class="cursor-pointer text-gray-400 hover:text-gray-700 absolute top-0 right-0 p-4">
+            <Icon name="mini-x-mark" size="h-5 w-5" />
+          </div>
 
           <div class="absolute top-0 left-0 w-60 p-3">
             <div class="flex flex-1 flex-col overflow-y-auto border border-gray-200 rounded-md backdrop-blur-md bg-gray-50/10 space-y-1">
@@ -58,8 +64,7 @@ var t = `
             :emphasizeNodes=filteredItems
             :display=display
             :forces=forces
-            @title-click="$emit('note-open', $event)" />
-
+            @title-click="display.fullScreen.value ? (display.fullScreen.value = false, $emit('note-open', $event)) : $emit('note-open', $event)" />
         </div>
       </div>
     </div>
@@ -81,6 +86,7 @@ export default {
       showSettingsDisplay: false,
       showSettingsForces: false,
       display: {
+        fullScreen:        { value: false,  title: 'fullscreen' },
         showTitles:        { value: true,  title: 'show titles' },
         scaleTitles:       { value: true,  title: 'auto-scale titles' },
         dynamicNodeRadius: { value: false, title: 'size nodes per links' },
