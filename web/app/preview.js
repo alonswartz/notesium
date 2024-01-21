@@ -3,16 +3,24 @@ var t = `
 `
 
 export default {
-  props: ['filename', 'lineNumber', 'clickableLinks'],
+  props: ['filename', 'lineNumber', 'clickableLinks', 'appendIncomingLinks'],
   emits: ['note-open'],
   methods: {
     fetchNote() {
       fetch("/api/notes/" + this.filename)
         .then(response => response.json())
         .then(note => {
-          this.cm.setValue(note.Content);
+          let content = note.Content.replace(/\n+$/, '');
+          if (this.appendIncomingLinks) content += this.incomingLinksMd(note.IncomingLinks);
+          this.cm.setValue(content);
           this.lineNumberHL();
         });
+    },
+    incomingLinksMd(incomingLinks) {
+      if (!incomingLinks?.length) return '';
+      const sortedIncomingLinks = incomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
+      const linksMd = sortedIncomingLinks.map(link => `- [${link.Title}](${link.Filename})`).join('\n');
+      return `\n\n--\n\n## incoming links\n\n${linksMd}\n`;
     },
     lineNumberHL() {
       if (!Number.isInteger(this.lineNumber) || this.lineNumber === undefined) return;
