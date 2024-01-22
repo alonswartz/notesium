@@ -263,6 +263,7 @@ notesium web --writable --open-browser
 | global | `space n c` | List with prefixed date created in custom format, sorted by ctime
 | global | `space n k` | List all links related to this note
 | global | `space n s` | Full text search
+| global | `space n g` | Opens force graph view
 | finder | `C-k` `C-j` | Move selection up and down
 | finder | `enter`     | Open selection
 | finder | `C-p`       | Toggle preview
