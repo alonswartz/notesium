@@ -104,7 +104,7 @@ export default {
       showSettingsDisplay: false,
       showSettingsForces: false,
       display: {
-        fullScreen:        { value: false,  title: 'fullscreen' },
+        fullScreen:        { value: true,  title: 'fullscreen' },
         showTitles:        { value: true,  title: 'show titles' },
         scaleTitles:       { value: true,  title: 'auto-scale titles' },
         dynamicNodeRadius: { value: false, title: 'size nodes per links' },
