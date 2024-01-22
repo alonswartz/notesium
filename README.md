@@ -186,7 +186,6 @@ Or build from source.
 git clone https://github.com/alonswartz/notesium.git
 cd notesium
 ./web/app/make.sh all
-./web/graph/make.sh all
 go build -ldflags "-s -w -X main.version=$(git describe | sed 's/^v//; s/-/+/')"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 ```

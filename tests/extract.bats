@@ -12,11 +12,11 @@ setup_file() {
     echo "$output"
     [ $status -eq 0 ]
     assert_line "completion.bash"
-    assert_line "web/graph/index.html"
+    assert_line "web/app/index.html"
 }
 
 @test "extract: print file content" {
-    run notesium extract web/graph/index.html
+    run notesium extract web/app/index.html
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "<!DOCTYPE html>" ]
