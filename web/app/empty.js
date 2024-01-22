@@ -41,6 +41,12 @@ export default {
           icon: 'mini-magnifying-glass',
           emit: ['finder-open', '/api/raw/lines?color=true&prefix=title'],
         },
+        {
+          title: 'Graph view',
+          keybind: 'space n g',
+          icon: 'graph',
+          emit: ['graph-open'],
+        },
       ],
     }
   },

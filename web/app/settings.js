@@ -40,6 +40,7 @@ export default {
         ['global', 'finder-open-list-mtime', 'space n m', 'Open list with prefixed date modified, sorted by mtime'],
         ['global', 'finder-open-links', 'space n k', 'Open list of related notes to open note, or all note links if none open'],
         ['global', 'finder-open-search', 'space n s', 'Open full text search'],
+        ['global', 'graph-open', 'space n g', 'Open force graph view'],
         ['finder', 'finder-entry-down', 'ctrl j', 'Select next entry (down)'],
         ['finder', 'finder-entry-up', 'ctrl k', 'Select previous entry (up)'],
         ['finder', 'finder-entry-select', 'enter', 'Submit selected entry'],
