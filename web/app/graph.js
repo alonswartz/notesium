@@ -6,7 +6,6 @@ var t = `
       <div :class="display.fullScreen.value ? 'w-screen' : 'max-w-2xl'" class="pointer-events-auto">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
-
           <div title="close" @click="$emit('graph-close')"
             class="cursor-pointer text-gray-400 hover:text-gray-700 absolute top-0 right-0 p-4">
             <Icon name="mini-x-mark" size="h-5 w-5" />
@@ -59,28 +58,29 @@ var t = `
             </div>
           </div>
 
-          <div v-if="display.fullScreen.value && previewFilename" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
+          <div v-if="display.fullScreen.value && selectedNodeId" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
             <div class="flex items-center justify-end mx-2 pt-2 space-x-3">
-              <span title="open for editing" @click="$emit('note-open', previewFilename); $emit('graph-close')"
+              <span title="open for editing" @click="$emit('note-open', selectedNodeId); $emit('graph-close')"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
                 <Icon name="pencil-solid" size="h-4 w-4" />
               </span>
-              <span title="close preview" @click="previewFilename=null"
+              <span title="close preview" @click="selectedNodeId=''"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
                 <Icon name="mini-x-mark" size="h-5 w-5" />
               </span>
             </div>
             <div class="h-full pl-4 pb-4 mr-1">
-              <Preview clickableLinks=true appendIncomingLinks=true :filename=previewFilename @note-open="previewFilename = $event" />
+              <Preview clickableLinks=true appendIncomingLinks=true :filename=selectedNodeId @note-open="selectedNodeId = $event" />
             </div>
           </div>
 
           <GraphD3 v-if="graphData"
             :graphData=graphData
-            :emphasizeNodes=emphasizeNodes
+            :emphasizeNodeIds=emphasizeNodeIds
             :display=display
             :forces=forces
-            @title-click="display.fullScreen.value ? (previewFilename = $event, query='') : $emit('note-open', $event)" />
+            @title-click="(query = '', selectedNodeId = $event, (!display.fullScreen.value) ? $emit('note-open', $event) : undefined)"
+          />
         </div>
       </div>
     </div>
@@ -99,7 +99,7 @@ export default {
       query: '',
       nodes: [],
       graphData: null,
-      previewFilename: null,
+      selectedNodeId: '',
       showSettings: false,
       showSettingsDisplay: false,
       showSettingsForces: false,
@@ -133,7 +133,7 @@ export default {
             }
           });
           this.nodes = nodes;
-          this.graphData = { nodes: nodes, links };
+          this.graphData = { nodes, links };
         })
         .catch(e => {
           console.error(e);
@@ -141,12 +141,12 @@ export default {
     },
   },
   computed: {
-    emphasizeNodes() {
-      if (!this.query && this.display.fullScreen.value && this.previewFilename) return [this.previewFilename];
-      const queryWords = this.query.toLowerCase().split(' ');
-      return !this.query
-        ? []
-        : this.nodes.filter(node => queryWords.every(queryWord => node.title.toLowerCase().includes(queryWord))).map(node => node.id);
+    emphasizeNodeIds() {
+      if (this.query) {
+        const queryWords = this.query.toLowerCase().split(' ');
+        return this.nodes.filter(node => queryWords.every(queryWord => node.title.toLowerCase().includes(queryWord))).map(node => node.id);
+      }
+      return this.selectedNodeId ? [this.selectedNodeId] : [];
     }
   },
   mounted() {
