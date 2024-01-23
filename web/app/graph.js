@@ -3,12 +3,18 @@ var t = `
   <div @click="$emit('graph-close');" class="fixed inset-0" aria-hidden="true"></div>
   <div class="absolute inset-0 overflow-hidden">
     <div class="pointer-events-none fixed inset-y-0 right-0 flex">
-      <div :class="display.fullScreen.value ? 'w-screen' : 'max-w-2xl'" class="pointer-events-auto">
+      <div :class="fullscreen ? 'w-screen' : 'max-w-2xl'" class="pointer-events-auto">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
-          <div title="close" @click="$emit('graph-close')"
-            class="cursor-pointer text-gray-400 hover:text-gray-700 absolute top-0 right-0 p-4">
-            <Icon name="mini-x-mark" size="h-5 w-5" />
+          <div class="absolute top-0 right-0 flex items-center justify-items-center space-x-3 p-2">
+            <div title="toggle fullscreen" @click="fullscreen=!fullscreen"
+              :class="fullscreen ? 'border-r-4' : 'border-t-4'"
+              class="cursor-pointer h-3.5 w-3.5 border border-gray-400 hover:border-gray-700 rounded-sm">
+            </div>
+            <div title="close" @click="$emit('graph-close')"
+              class="cursor-pointer text-gray-400 hover:text-gray-700">
+              <Icon name="mini-x-mark" size="h-6 w-6" />
+            </div>
           </div>
 
           <div class="absolute top-0 left-0 w-60 p-3">
@@ -58,15 +64,15 @@ var t = `
             </div>
           </div>
 
-          <div v-if="display.fullScreen.value && selectedNodeId" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
-            <div class="flex items-center justify-end mx-2 pt-2 space-x-3">
+          <div v-if="fullscreen && selectedNodeId" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
+            <div class="flex items-center justify-end mx-2 pt-2 space-x-2">
               <span title="open for editing" @click="$emit('note-open', selectedNodeId); $emit('graph-close')"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
-                <Icon name="pencil-solid" size="h-4 w-4" />
+                <Icon name="pencil-solid" size="h-5 w-5 p-px" />
               </span>
               <span title="close preview" @click="selectedNodeId=''"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
-                <Icon name="mini-x-mark" size="h-5 w-5" />
+                <Icon name="mini-x-mark" size="h-6 w-6" />
               </span>
             </div>
             <div class="h-full pl-4 pb-4 mr-1">
@@ -80,7 +86,7 @@ var t = `
             :display=display
             :forces=forces
             @click="(query = '', selectedNodeId = '')"
-            @title-click="(query = '', selectedNodeId = $event, (!display.fullScreen.value) ? $emit('note-open', $event) : undefined)"
+            @title-click="(query = '', selectedNodeId = $event, (!fullscreen) ? $emit('note-open', $event) : undefined)"
           />
         </div>
       </div>
@@ -102,11 +108,11 @@ export default {
       nodes: [],
       graphData: null,
       selectedNodeId: '',
+      fullscreen: true,
       showSettings: false,
-      showSettingsDisplay: false,
+      showSettingsDisplay: true,
       showSettingsForces: false,
       display: {
-        fullScreen:        { value: true,  title: 'fullscreen' },
         showTitles:        { value: true,  title: 'show titles' },
         scaleTitles:       { value: true,  title: 'auto-scale titles' },
         dynamicNodeRadius: { value: false, title: 'size nodes per links' },
@@ -153,7 +159,7 @@ export default {
   },
   mounted() {
     this.selectedNodeId = this.config.selectedNodeId;
-    this.display.fullScreen.value = this.config.fullscreen;
+    this.fullscreen = this.config.fullscreen;
     this.fetchGraph();
   },
   created() {
