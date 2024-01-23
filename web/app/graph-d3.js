@@ -110,7 +110,7 @@ export default {
         svg.selectAll('.title').classed("hidden", !enabled);
       });
 
-      vm.$watch('emphasizeNodeIds', function(nodeIds) {
+      function emphasizeNodes(nodeIds) {
         if (nodeIds && nodeIds.length > 0) {
           const linkedNodeIds = Array.from(new Set(vm.graphData.links
             .filter(l => nodeIds.includes(l.source) || nodeIds.includes(l.target))
@@ -132,7 +132,10 @@ export default {
           title.attr("fill-opacity", 1).attr("font-weight", "normal");
           link.attr("stroke", "currentColor").attr("stroke-opacity", 1);
         }
-      });
+      }
+
+      vm.$watch('emphasizeNodeIds', nodeIds => emphasizeNodes(nodeIds));
+      if (this.emphasizeNodeIds?.length > 0) emphasizeNodes(this.emphasizeNodeIds);
 
       vm.$watch('display.dynamicNodeRadius.value', function(enabled) {
         function getLinkCount(nodeId) {

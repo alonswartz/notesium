@@ -10,18 +10,18 @@ var t = `
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :showNoteSidebar=showNoteSidebar :showLabelsPanel=showLabelsPanel :showNotesPanel=showNotesPanel
-        @note-new="newNote" @finder-open="openFinder" @graph-open="showGraph=true" @settings-open="showSettings=true"
+        @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true"
         @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel"
         @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
-      <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" @graph-open="showGraph=true" />
+      <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" />
       <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
-        @note-open="openNote" @note-save="saveNote" @finder-open="openFinder"/>
+        @note-open="openNote" @note-save="saveNote" @finder-open="openFinder" @graph-open="openGraph" />
     </main>
   </div>
 
-  <Graph v-if="showGraph" @graph-close="showGraph=false" @note-open="openNote" />
+  <Graph v-if="showGraph" :config=graphConfig @graph-close="closeGraph" @note-open="openNote" />
   <Settings v-if="showSettings" @settings-close="showSettings=false" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -53,6 +53,7 @@ export default {
       activeFilenamePrevious: '',
       finderUri: '',
       finderQuery: '',
+      graphConfig: {},
       showGraph: false,
       showFinder: false,
       showSettings: false,
@@ -82,6 +83,14 @@ export default {
           this.fetchNote(value.Filename, value.Linenum);
         }
       }
+    },
+    openGraph(filename = '') {
+      this.graphConfig = { selectedNodeId: filename };
+      this.showGraph = true;
+    },
+    closeGraph() {
+      this.showGraph = false;
+      this.graphConfig = {};
     },
     fetchNote(filename, linenum, insertAfterActive = false) {
       fetch("/api/notes/" + filename)
@@ -236,7 +245,7 @@ export default {
             this.newNote('');
             break;
           case `${leaderKey} KeyN KeyG`:
-            this.showGraph = true;
+            this.openGraph();
             break;
         }
       }
