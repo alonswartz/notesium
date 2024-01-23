@@ -85,7 +85,7 @@ export default {
       }
     },
     openGraph(filename = '') {
-      this.graphConfig = { selectedNodeId: filename };
+      this.graphConfig = { selectedNodeId: filename, fullscreen: filename === '' };
       this.showGraph = true;
     },
     closeGraph() {
