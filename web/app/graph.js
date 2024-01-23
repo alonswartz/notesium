@@ -153,6 +153,7 @@ export default {
   },
   mounted() {
     this.selectedNodeId = this.config.selectedNodeId;
+    this.display.fullScreen.value = this.config.fullscreen;
     this.fetchGraph();
   },
   created() {
