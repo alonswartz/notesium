@@ -5,7 +5,7 @@ var t = `
 export default {
   props: [
     'graphData',
-    'emphasizeNodes',
+    'emphasizeNodeIds',
     'display',
     'forces',
   ],
@@ -110,7 +110,7 @@ export default {
         svg.selectAll('.title').classed("hidden", !enabled);
       });
 
-      vm.$watch('emphasizeNodes', function(nodeIds) {
+      vm.$watch('emphasizeNodeIds', function(nodeIds) {
         if (nodeIds && nodeIds.length > 0) {
           const linkedNodeIds = Array.from(new Set(vm.graphData.links
             .filter(l => nodeIds.includes(l.source) || nodeIds.includes(l.target))
