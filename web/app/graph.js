@@ -79,6 +79,7 @@ var t = `
             :emphasizeNodeIds=emphasizeNodeIds
             :display=display
             :forces=forces
+            @click="(query = '', selectedNodeId = '')"
             @title-click="(query = '', selectedNodeId = $event, (!display.fullScreen.value) ? $emit('note-open', $event) : undefined)"
           />
         </div>
