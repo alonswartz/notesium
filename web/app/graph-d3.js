@@ -53,7 +53,7 @@ export default {
         .enter()
         .append("text")
         .classed("title", true)
-        .on("click", function(event, node) { vm.$emit('title-click', node.id); })
+        .on("click", function(event, node) { event.stopPropagation(); vm.$emit('title-click', node.id); })
         .text(node => node.title);
 
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
