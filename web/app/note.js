@@ -14,7 +14,8 @@ var t = `
     @conceal-toggle="conceal=!conceal"
     @note-save="handleSave()"
     @note-open="(...args) => $emit('note-open', ...args)"
-    @finder-open="(...args) => $emit('finder-open', ...args)" />
+    @finder-open="(...args) => $emit('finder-open', ...args)"
+    @graph-open="(...args) => $emit('graph-open', ...args)" />
 
   <Finder v-if="showFinder" uri="/api/raw/list?sort=mtime" small=true @finder-selection="handleFinderSelection" />
 </div>
@@ -26,7 +27,7 @@ import Icon from './icon.js'
 export default {
   components: { NoteSidebar, Finder, Icon },
   props: ['note', 'showSidebar'],
-  emits: ['note-open', 'note-save', 'finder-open'],
+  emits: ['note-open', 'note-save', 'finder-open', 'graph-open'],
   data() {
     return {
       showFinder: false,
