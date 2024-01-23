@@ -1,5 +1,6 @@
 var t = `
-<div @keyup.esc="$emit('graph-close');" class="relative inset-0 z-50" aria-labelledby="settings" role="dialog" aria-modal="true">
+<div @keyup.esc="selectedNodeId ? (query = '', selectedNodeId = '') : $emit('graph-close');"
+  class="relative inset-0 z-50" aria-labelledby="graph" role="dialog" aria-modal="true">
   <div @click="$emit('graph-close');" class="fixed inset-0" aria-hidden="true"></div>
   <div class="absolute inset-0 overflow-hidden">
     <div class="pointer-events-none fixed inset-y-0 right-0 flex">
