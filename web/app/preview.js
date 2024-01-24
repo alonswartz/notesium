@@ -10,17 +10,15 @@ export default {
       fetch("/api/notes/" + this.filename)
         .then(response => response.json())
         .then(note => {
-          let content = note.Content.replace(/\n+$/, '');
-          if (this.appendIncomingLinks) content += this.incomingLinksMd(note.IncomingLinks);
-          this.cm.setValue(content);
-          this.lineNumberHL();
+          if (this.appendIncomingLinks && note.IncomingLinks?.length) {
+            const sortedIncomingLinks = note.IncomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
+            const linksMd = sortedIncomingLinks.map(link => `- [${link.Title}](${link.Filename})`).join('\n');
+            this.cm.setValue(`${note.Content.replace(/\n+$/, '')}\n\n---\n**Incoming links**\n\n${linksMd}`);
+          } else {
+            this.cm.setValue(note.Content);
+            this.lineNumberHL();
+          }
         });
-    },
-    incomingLinksMd(incomingLinks) {
-      if (!incomingLinks?.length) return '';
-      const sortedIncomingLinks = incomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
-      const linksMd = sortedIncomingLinks.map(link => `- [${link.Title}](${link.Filename})`).join('\n');
-      return `\n\n--\n\n## incoming links\n\n${linksMd}\n`;
     },
     lineNumberHL() {
       if (!Number.isInteger(this.lineNumber) || this.lineNumber === undefined) return;
