@@ -1,6 +1,5 @@
 var t = `
-<div @keyup.esc="selectedNodeId ? (query = '', selectedNodeId = '') : $emit('graph-close');"
-  class="relative inset-0 z-50" aria-labelledby="graph" role="dialog" aria-modal="true">
+<div class="relative inset-0 z-50" aria-labelledby="graph" role="dialog" aria-modal="true">
   <div @click="$emit('graph-close');" class="fixed inset-0" aria-hidden="true"></div>
   <div class="absolute inset-0 overflow-hidden">
     <div class="pointer-events-none fixed inset-y-0 right-0 flex">
@@ -26,6 +25,9 @@ var t = `
                   <Icon name="outline-adjustments-horizontal" size="h-5 w-5" />
                 </span>
                 <input ref="queryInput" v-model="query" autofocus placeholder="filter notes..." autocomplete="off" spellcheck="false"
+                  @keyup.esc="selectedNodeId ? (query = '', selectedNodeId = '') : $emit('graph-close');"
+                  @keyup.enter.prevent="(emphasizeNodeIds.length === 1) ? selectedNodeId = emphasizeNodeIds[0] : undefined"
+                  @keydown.tab.prevent
                   @blur="$refs.queryInput && $refs.queryInput.focus()"
                   class="h-10 w-full py-2 pr-2 focus:outline-none backdrop-blur-md bg-inherit text-sm text-gray-700 placeholder:text-gray-400" />
               </div>
