@@ -65,7 +65,7 @@ var t = `
             </div>
           </div>
 
-          <div v-if="fullscreen && selectedNodeId" class="absolute top-0 right-0 w-[38rem] h-full bg-white shadow-xl">
+          <div v-if="fullscreen && selectedNodeId" class="absolute top-0 right-0 w-[38rem] flex flex-col h-full bg-white shadow-xl">
             <div class="flex items-center justify-end mx-2 pt-2 space-x-2">
               <span title="open for editing" @click="$emit('note-open', selectedNodeId); $emit('graph-close')"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
@@ -76,7 +76,7 @@ var t = `
                 <Icon name="mini-x-mark" size="h-6 w-6" />
               </span>
             </div>
-            <div class="h-full pl-4 pb-4 mr-1">
+            <div class="h-full pl-4 pb-4 mr-1 overflow-y-auto">
               <Preview clickableLinks=true appendIncomingLinks=true :filename=selectedNodeId @note-open="selectedNodeId = $event" />
             </div>
           </div>
