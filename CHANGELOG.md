@@ -1,3 +1,48 @@
+## 0.5.3
+
+The `web/graph` has been rewritten and implemented in `web/app`, with
+all of same features (except cluster settings and darkmode), tighter
+integration, and additional improvements.
+
+Fixed:
+
+- Web/App: Preview activeline disabled if lineNumber not specified.
+
+Added:
+
+- Web/App: Graph to visualize the relationships between notes.
+- Web/App: Graph search filter to emphasize nodes and their links.
+- Web/App: Graph node and immediate links emphasis on title click.
+- Web/App: Graph emphasis removal via graph-empty-space click.
+- Web/App: Graph dynamic node radius based on bi-directional link count.
+- Web/App: Graph title visibility toggle and auto-scale per zoom level.
+- Web/App: Graph customizable force, collide radius and strength.
+- Web/App: Graph drag, pan and zoom for a better view or focus.
+- Web/App: Graph different node color for notes considered labels.
+- Web/App: Graph toggleable settings and sub-setting sections.
+- Web/App: Graph toggleable context aware fullscreen and overlay views.
+
+- Web/App: Graph fullscreen open via navbar, welcome screen and keybind.
+- Web/App: Graph fullscreen node title click opens note preview overlay.
+- Web/App: Graph fullscreen filter single-match `enter` opens note preview.
+- Web/App: Graph fullscreen preview includes section with incoming-links.
+- Web/App: Graph fullscreen preview link clicks switch preview and node emphasis.
+- Web/App: Graph fullscreen preview edit icon to open note for editing.
+- Web/App: Graph fullscreen preview close via `x` icon, `esc` or outside click.
+- Web/App: Graph fullscreen close via `x` icon or `esc`.
+
+- Web/App: Graph overlay open via node-sidebar with note emphasized.
+- Web/App: Graph overlay node title click opens note for editing.
+- Web/App: Graph overlay close via `x` icon, `esc` or outside click.
+
+- Web/App: Editor conceal support for `~~strikethrough~~`.
+- Web/App: Editor conceal support and highlight for `---` (horizontal rule).
+
+Changed:
+
+- Web/App: Graph navbar icon opens integrated graph (was `/graph?noxdg`).
+- Embedded webroot set to `web/app` (`web/graph` no longer included).
+
 ## 0.5.2
 
 Fixed:
