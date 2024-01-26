@@ -48,7 +48,7 @@ It aspires and is designed to:
 
 - Blazingly fast and powerful search.
 - Preview notes and links, with line highlighting where relevant.
-- Explore notes, their links, and clusters with the force graph view.
+- Visualize the relationships between notes with an interactive graph view.
 - Create and edit notes with your own editor or the embedded web app.
 - No need to think about file names or folder locations.
 - Instantly create a new note with a keybinding.
@@ -74,42 +74,37 @@ It aspires and is designed to:
     - Optionally prefix each line with the note title for context.
 - **Stats**
     - View counts of notes, labels, orphans, links, lines, words, etc.
-- **Web (app)**
+- **Web**
     - Completely self-contained and runs locally.
     - Create and edit notes with web based editor.
     - Markdown syntax highlighting, special char and links concealment.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
     - Sidepanels for labels, notes list and note metadata with linktrees.
-- **Web (graph)**
-    - Visual overview of notes structure with a force graph view.
-    - Cluster nodes based on links, inferred from titles or creation date.
-    - Adjust node size dynamically based on bi-directional link count.
-    - Emphasize nodes and their links using search filter or node click.
-    - Preview notes in a side panel. Open for editing via `notesium://` link.
-    - Tweak forces such as repel force, collide radius, and strength.
-    - Drag, pan, or zoom the graph for a better view or focus.
-    - Customize label visibility or automatically scale per zoom level.
+    - Force graph to visualize and explore the relationship between notes.
+        - Context aware fullscreen and overlay views.
+        - Emphasize nodes and their links using search filter or node click.
+        - Note preview in side panel with inline incoming-links (fullscreen)
+        - Adjust node size dynamically based on bi-directional link count.
+        - Toggle title visibility and automatically scale per zoom level.
+        - Tweak forces such as repel force, collide radius, and strength.
+        - Drag, pan, or zoom the graph for a better view or focus.
 
 ## Screenshots
 
-*Graph: display all notes and their links in a force graph view*
-![image: force graph cluster links](https://www.notesium.com/images/screenshot-1688650369.png)
+*[Web] Graph: visualize the relationships between notes with an interactive force graph*
+![image: force graph fullscreen](https://www.notesium.com/images/screenshot-1706274658.png)
 <br/>
 
-*Graph: cluster notes based on their titles instead of links*
-![image: force graph cluster titles](https://www.notesium.com/images/screenshot-1687865971.png)
+*[Web] Graph: filter notes with emphasized matches, and preview note*
+![image: force graph note preview](https://www.notesium.com/images/screenshot-1706274787.png)
 <br/>
 
-*Graph: filter notes with emphasized matches. preview note content (dark mode)*
-![image: force graph note preview](https://www.notesium.com/images/screenshot-1690971723.png)
+*[Web] Graph: display current note relationships in an overlay while editing*
+![image: force graph overlay](https://www.notesium.com/images/screenshot-1706274220.png)
 <br/>
 
-*Graph: zoomed out large note collection (dark mode)*
-![image: force graph zoom](https://www.notesium.com/images/screenshot-1682941869.png)
-<br/>
-
-*[Web] Panels: Toggleable labels, notes list and note metadata sidepanels*
+*[Web] Panels: toggleable labels, notes list and note metadata sidepanels*
 ![image: web panels](https://www.notesium.com/images/screenshot-1704976637.png)
 <br/>
 
@@ -283,10 +278,10 @@ For more keybindings see the integrated settings.
 The editor is configured to syntax highlight based on `markdown`
 formatting.
 
-By default, special characters used for **bold**, *italic* and `code`
-will be concealed except on the active-line. In addition, links will
-also be concealed and only display the title. This setting can be
-toggled using the icon in the note sidebar.
+By default, special characters such as those used for **bold**, *italic*
+and `code` will be concealed except on the active-line. In addition,
+links will also be concealed and only display the title. This setting
+can be toggled using the icon in the note sidebar.
 
 ## Vim
 
@@ -439,7 +434,7 @@ xdg-open notesium:///home/user/notes/625d563f.md
 
 For Vim users, opening the listing is useful when integrated with a
 launcher or desktop keybinding. Opening a note for editing is useful,
-for example, when using the `web` force graph view.
+for example, when using the `web/app` or `web/graph`.
 
 ### Handler registration
 
