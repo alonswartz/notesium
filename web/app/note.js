@@ -61,6 +61,9 @@ export default {
         this.$emit('note-save', this.note.Filename, this.cm.getValue(), this.note.Mtime );
       }
     },
+    handleFormatTable() {
+      formatTable(this.cm, this.conceal);
+    },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
       this.$nextTick(() => {
@@ -86,7 +89,7 @@ export default {
         "[": this.handleLeftBracket,
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
         "Ctrl-S": this.handleSave,
-        "Alt-T": function(cm) { formatTable(cm); },
+        "Alt-T": this.handleFormatTable,
       },
     });
 

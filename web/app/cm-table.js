@@ -18,13 +18,13 @@ function getColumnAlignments(cm, lineNum) {
   });
 }
 
-function getColumnMaxLengths(cm, startLine, endLine) {
+function getColumnMaxLengths(cm, startLine, endLine, conceal) {
   let maxLengths = [];
   for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
     if (lineNum == startLine + 1) continue;
     const columns = cm.getLine(lineNum).trim().split('|').map(col => col.trim());
     columns.slice(1, -1).forEach((col, index) => {
-      const colLength = col.length;
+      const colLength = conceal ? getConcealLength(col) : col.length;
       if (!maxLengths[index] || colLength > maxLengths[index]) {
         maxLengths[index] = colLength;
       }
@@ -47,13 +47,14 @@ function formatRowSep(cm, lineNum, colMaxLengths, colAlignments) {
   cm.replaceRange(columns.join('|'), {line: lineNum, ch: 0}, {line: lineNum, ch: line.length});
 }
 
-function formatRow(cm, lineNum, colMaxLengths, colAlignments) {
+function formatRow(cm, lineNum, colMaxLengths, colAlignments, conceal) {
   const line = cm.getLine(lineNum);
   let columns = line.split('|');
   columns = columns.map((col, index) => {
     if (index === 0 || index === columns.length - 1) return col;
     const colTrimmed = col.trim();
-    const paddingLength = Math.max(0, colMaxLengths[index - 1] - colTrimmed.length);
+    const colLength = conceal ? getConcealLength(colTrimmed) : colTrimmed.length;
+    const paddingLength = Math.max(0, colMaxLengths[index - 1] - colLength);
     const halfPadding = Math.floor(paddingLength / 2);
     switch (colAlignments[index - 1]) {
       case 'center': return ` ${' '.repeat(halfPadding)}${colTrimmed}${' '.repeat(paddingLength - halfPadding)} `;
@@ -64,20 +65,29 @@ function formatRow(cm, lineNum, colMaxLengths, colAlignments) {
   cm.replaceRange(columns.join('|'), {line: lineNum, ch: 0}, {line: lineNum, ch: line.length});
 }
 
-export function formatTable(cm) {
+export function formatTable(cm, conceal) {
   const cursorPos = cm.getCursor();
   if (!isTableRow(cm, cursorPos.line)) return;
 
   const { startLine, endLine } = findTableBoundaries(cm, cursorPos.line);
   const colAlignments = getColumnAlignments(cm, startLine + 1);
-  const colMaxLengths = getColumnMaxLengths(cm, startLine, endLine);
+  const colMaxLengths = getColumnMaxLengths(cm, startLine, endLine, conceal);
 
   for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
     if (lineNum == startLine + 1) {
       formatRowSep(cm, lineNum, colMaxLengths, colAlignments);
     } else {
-      formatRow(cm, lineNum, colMaxLengths, colAlignments);
+      formatRow(cm, lineNum, colMaxLengths, colAlignments, conceal);
     }
   }
 }
 
+function getConcealLength(s) {
+  s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Links
+  s = s.replace(/(\*\*\*|___)(.*?)\1/g, '$2'); // Bold + Italic
+  s = s.replace(/(\*\*|__)(.*?)\1/g, '$2'); // Bold
+  s = s.replace(/(\*|_)(.*?)\1/g, '$2'); // Italic
+  s = s.replace(/(~~)(.*?)\1/g, '$2'); // Strikethrough
+  s = s.replace(/(`)(.*?)\1/g, '$2'); // Inline code
+  return s.length;
+}
