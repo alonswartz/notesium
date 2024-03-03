@@ -21,6 +21,7 @@ var t = `
 </div>
 `
 
+import { formatTable } from './cm-table.js';
 import NoteSidebar from './note-sidebar.js'
 import Finder from './finder.js'
 import Icon from './icon.js'
@@ -85,6 +86,7 @@ export default {
         "[": this.handleLeftBracket,
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
         "Ctrl-S": this.handleSave,
+        "Alt-T": function(cm) { formatTable(cm); },
       },
     });
 
