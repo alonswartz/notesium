@@ -12,6 +12,7 @@ function findTableBoundaries(cm, lineNum) {
 function getColumnMaxLengths(cm, startLine, endLine) {
   let maxLengths = [];
   for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
+    if (lineNum == startLine + 1) continue;
     const columns = cm.getLine(lineNum).trim().split('|').map(col => col.trim());
     columns.slice(1, -1).forEach((col, index) => {
       const colLength = col.length;
@@ -21,6 +22,16 @@ function getColumnMaxLengths(cm, startLine, endLine) {
     });
   }
   return maxLengths;
+}
+
+function formatRowSep(cm, lineNum, colMaxLengths) {
+  const line = cm.getLine(lineNum);
+  let columns = line.split('|');
+  columns = columns.map((col, index) => {
+    if (index === 0 || index === columns.length - 1) return col;
+    return ` ${"-".repeat(colMaxLengths[index - 1])} `;
+  });
+  cm.replaceRange(columns.join('|'), {line: lineNum, ch: 0}, {line: lineNum, ch: line.length});
 }
 
 function formatRow(cm, lineNum, colMaxLengths) {
@@ -43,7 +54,11 @@ export function formatTable(cm) {
   const colMaxLengths = getColumnMaxLengths(cm, startLine, endLine);
 
   for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
-    formatRow(cm, lineNum, colMaxLengths);
+    if (lineNum == startLine + 1) {
+      formatRowSep(cm, lineNum, colMaxLengths);
+    } else {
+      formatRow(cm, lineNum, colMaxLengths);
+    }
   }
 }
 
