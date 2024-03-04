@@ -21,7 +21,7 @@ var t = `
 </div>
 `
 
-import { formatTable } from './cm-table.js';
+import * as Table from './cm-table.js';
 import NoteSidebar from './note-sidebar.js'
 import Finder from './finder.js'
 import Icon from './icon.js'
@@ -61,8 +61,13 @@ export default {
         this.$emit('note-save', this.note.Filename, this.cm.getValue(), this.note.Mtime );
       }
     },
+    handleTab() {
+      if (!Table.isCursorInTable(this.cm)) return CodeMirror.Pass;
+      Table.moveToNextColumnOrCreate(this.cm, this.conceal);
+    },
     handleFormatTable() {
-      formatTable(this.cm, this.conceal);
+      if (!Table.isCursorInTable(this.cm)) return;
+      Table.formatTable(this.cm, this.conceal);
     },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
@@ -90,6 +95,7 @@ export default {
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
         "Ctrl-S": this.handleSave,
         "Alt-T": this.handleFormatTable,
+        "Tab": this.handleTab,
       },
     });
 

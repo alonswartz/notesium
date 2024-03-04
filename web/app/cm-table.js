@@ -18,6 +18,14 @@ function getColumnAlignments(cm, lineNum) {
   });
 }
 
+function getColumnPositions(cm, lineNum) {
+  const lineText = cm.getLine(lineNum);
+  let positions = [];
+  let pos = lineText.indexOf('|');
+  while (pos !== -1) { positions.push(pos); pos = lineText.indexOf('|', pos + 1); }
+  return positions;
+}
+
 function getColumnMaxLengths(cm, startLine, endLine, conceal) {
   let maxLengths = [];
   for (let lineNum = startLine; lineNum <= endLine; lineNum++) {
@@ -65,6 +73,11 @@ function formatRow(cm, lineNum, colMaxLengths, colAlignments, conceal) {
   cm.replaceRange(columns.join('|'), {line: lineNum, ch: 0}, {line: lineNum, ch: line.length});
 }
 
+export function isCursorInTable(cm) {
+  const cursorPos = cm.getCursor();
+  return isTableRow(cm, cursorPos.line);
+}
+
 export function formatTable(cm, conceal) {
   const cursorPos = cm.getCursor();
   if (!isTableRow(cm, cursorPos.line)) return;
@@ -79,6 +92,23 @@ export function formatTable(cm, conceal) {
     } else {
       formatRow(cm, lineNum, colMaxLengths, colAlignments, conceal);
     }
+  }
+}
+
+export function moveToNextColumnOrCreate(cm, conceal) {
+  const cursorPos = cm.getCursor();
+  if (!isTableRow(cm, cursorPos.line)) return;
+
+  const currentPositions = getColumnPositions(cm, cursorPos.line);
+  const currentColumn = currentPositions.filter(pos => pos < cursorPos.ch).length;
+
+  if (currentColumn == currentPositions.length) {
+    cm.replaceRange('|', {line: cursorPos.line, ch: cm.getLine(cursorPos.line).length});
+    formatTable(cm, conceal);
+  } else {
+    formatTable(cm, conceal);
+    const newPositions = getColumnPositions(cm, cursorPos.line);
+    cm.setCursor(cursorPos.line, newPositions[currentColumn] + 2);
   }
 }
 
