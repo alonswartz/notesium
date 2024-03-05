@@ -95,6 +95,28 @@ export function formatTable(cm, conceal) {
   }
 }
 
+function addOrUpdateRowSep(cm) {
+  const cursorPos = cm.getCursor();
+  const { startLine, endLine } = findTableBoundaries(cm, cursorPos.line);
+  if (startLine !== cursorPos.line) return;
+
+  const columnsCount = getColumnPositions(cm, startLine).length;
+  if (startLine == endLine) {
+    cm.replaceRange("\n" + `${"|".repeat(columnsCount)}`, {line: startLine, ch: cm.getLine(startLine).length});
+    return;
+  }
+
+  const sepLineNum = startLine + 1;
+  const sepLineText = cm.getLine(sepLineNum);
+  const columnsCountSep = getColumnPositions(cm, sepLineNum).length;
+  if (columnsCount > columnsCountSep) {
+    cm.replaceRange(`${"|".repeat(columnsCount - columnsCountSep)}`, {line: sepLineNum, ch: sepLineText.length});
+  } else {
+    const newSepLineText = sepLineText.split('|').slice(0, columnsCount).join('|') + '|';
+    cm.replaceRange(newSepLineText, {line: sepLineNum, ch: 0}, {line: sepLineNum, ch: sepLineText.length});
+  }
+}
+
 export function moveToNextColumnOrCreate(cm, conceal) {
   const cursorPos = cm.getCursor();
   if (!isTableRow(cm, cursorPos.line)) return;
@@ -104,7 +126,9 @@ export function moveToNextColumnOrCreate(cm, conceal) {
 
   if (currentColumn == currentPositions.length) {
     cm.replaceRange('|', {line: cursorPos.line, ch: cm.getLine(cursorPos.line).length});
+    addOrUpdateRowSep(cm);
     formatTable(cm, conceal);
+    cm.setCursor(cursorPos.line, cm.getLine(cursorPos.line).length);
   } else {
     formatTable(cm, conceal);
     const newPositions = getColumnPositions(cm, cursorPos.line);
