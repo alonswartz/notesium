@@ -96,7 +96,11 @@ export default {
         "Ctrl-S": this.handleSave,
         "Alt-T": this.handleFormatTable,
         "Tab": this.handleTab,
-        "Shift-Tab": function(cm) { Table.moveToPreviousColumn(cm); },
+        "Shift-Tab": function(cm) { return Table.navigateTable(cm, 'left'); },
+        "Alt-Up": function(cm) { return Table.navigateTable(cm, 'up'); },
+        "Alt-Down": function(cm) { return Table.navigateTable(cm, 'down'); },
+        "Alt-Left": function(cm) { return Table.navigateTable(cm, 'left'); },
+        "Alt-Right": function(cm) { return Table.navigateTable(cm, 'right'); },
       },
     });
 

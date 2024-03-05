@@ -136,17 +136,42 @@ export function moveToNextColumnOrCreate(cm, conceal) {
   }
 }
 
-export function moveToPreviousColumn(cm) {
+export function navigateTable(cm, direction) {
   const cursorPos = cm.getCursor();
-  if (!isTableRow(cm, cursorPos.line)) return;
+  if (!isTableRow(cm, cursorPos.line)) return CodeMirror.Pass;
 
   const currentPositions = getColumnPositions(cm, cursorPos.line);
   const currentColumn = currentPositions.filter(pos => pos < cursorPos.ch).length;
-  if (currentColumn > 1) {
-    cm.setCursor(cursorPos.line, currentPositions[currentColumn - 2] + 2);
+
+  const moveCursorVertically = (targetLine) => {
+    const targetPositions = getColumnPositions(cm, targetLine);
+    const targetCh = currentColumn <= targetPositions.length
+      ? targetPositions[currentColumn - 1] + 2
+      : cm.getLine(targetLine).length;
+    cm.setCursor(targetLine, targetCh);
+  };
+
+  switch (direction) {
+    case 'left':
+      if (currentColumn > 1) {
+        cm.setCursor(cursorPos.line, currentPositions[currentColumn - 2] + 2);
+      }
+      break;
+    case 'right':
+      if (currentColumn < currentPositions.length) {
+        cm.setCursor(cursorPos.line, currentPositions[currentColumn] + 2);
+      }
+      break;
+    case 'up':
+      const {startLine} = findTableBoundaries(cm, cursorPos.line);
+      if (cursorPos.line > startLine) moveCursorVertically(cursorPos.line - 1);
+      break;
+    case 'down':
+      const {endLine} = findTableBoundaries(cm, cursorPos.line);
+      if (cursorPos.line < endLine) moveCursorVertically(cursorPos.line + 1);
+      break;
   }
 }
-
 
 function getConcealLength(s) {
   s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Links
