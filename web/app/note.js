@@ -96,6 +96,7 @@ export default {
         "Ctrl-S": this.handleSave,
         "Alt-T": this.handleFormatTable,
         "Tab": this.handleTab,
+        "Shift-Tab": function(cm) { Table.moveToPreviousColumn(cm); },
       },
     });
 

@@ -136,6 +136,18 @@ export function moveToNextColumnOrCreate(cm, conceal) {
   }
 }
 
+export function moveToPreviousColumn(cm) {
+  const cursorPos = cm.getCursor();
+  if (!isTableRow(cm, cursorPos.line)) return;
+
+  const currentPositions = getColumnPositions(cm, cursorPos.line);
+  const currentColumn = currentPositions.filter(pos => pos < cursorPos.ch).length;
+  if (currentColumn > 1) {
+    cm.setCursor(cursorPos.line, currentPositions[currentColumn - 2] + 2);
+  }
+}
+
+
 function getConcealLength(s) {
   s = s.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'); // Links
   s = s.replace(/(\*\*\*|___)(.*?)\1/g, '$2'); // Bold + Italic
