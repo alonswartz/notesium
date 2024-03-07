@@ -73,12 +73,7 @@ function formatRow(cm, lineNum, colMaxLengths, colAlignments, conceal) {
   cm.replaceRange(columns.join('|'), {line: lineNum, ch: 0}, {line: lineNum, ch: line.length});
 }
 
-export function isCursorInTable(cm) {
-  const cursorPos = cm.getCursor();
-  return isTableRow(cm, cursorPos.line);
-}
-
-export function formatTable(cm, conceal) {
+function formatRows(cm, conceal) {
   const cursorPos = cm.getCursor();
   if (!isTableRow(cm, cursorPos.line)) return;
 
@@ -117,7 +112,12 @@ function addOrUpdateRowSep(cm) {
   }
 }
 
-export function moveToNextColumnOrCreate(cm, conceal) {
+export function isCursorInTable(cm) {
+  const cursorPos = cm.getCursor();
+  return isTableRow(cm, cursorPos.line);
+}
+
+export function formatTableAndAdvance(cm, conceal) {
   const cursorPos = cm.getCursor();
   if (!isTableRow(cm, cursorPos.line)) return;
 
@@ -127,10 +127,10 @@ export function moveToNextColumnOrCreate(cm, conceal) {
   if (currentColumn == currentPositions.length) {
     cm.replaceRange('|', {line: cursorPos.line, ch: cm.getLine(cursorPos.line).length});
     addOrUpdateRowSep(cm);
-    formatTable(cm, conceal);
+    formatRows(cm, conceal);
     cm.setCursor(cursorPos.line, cm.getLine(cursorPos.line).length);
   } else {
-    formatTable(cm, conceal);
+    formatRows(cm, conceal);
     const newPositions = getColumnPositions(cm, cursorPos.line);
     cm.setCursor(cursorPos.line, newPositions[currentColumn] + 2);
   }

@@ -62,12 +62,11 @@ export default {
       }
     },
     handleTab() {
-      if (!Table.isCursorInTable(this.cm)) return CodeMirror.Pass;
-      Table.moveToNextColumnOrCreate(this.cm, this.conceal);
-    },
-    handleFormatTable() {
-      if (!Table.isCursorInTable(this.cm)) return;
-      Table.formatTable(this.cm, this.conceal);
+      if (Table.isCursorInTable(this.cm)) {
+        Table.formatTableAndAdvance(this.cm, this.conceal);
+        return;
+      }
+      return CodeMirror.Pass;
     },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
@@ -94,7 +93,6 @@ export default {
         "[": this.handleLeftBracket,
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
         "Ctrl-S": this.handleSave,
-        "Alt-T": this.handleFormatTable,
         "Tab": this.handleTab,
         "Shift-Tab": function(cm) { return Table.navigateTable(cm, 'left'); },
         "Alt-Up": function(cm) { return Table.navigateTable(cm, 'up'); },
