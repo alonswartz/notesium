@@ -25,6 +25,7 @@ It aspires and is designed to:
     - [Keybindings](#keybindings)
     - [Finder search syntax](#finder-search-syntax)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
+    - [Table formatting and navigation](#table-formatting-and-navigation)
 - [Vim](#vim)
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings-1)
@@ -78,6 +79,7 @@ It aspires and is designed to:
     - Completely self-contained and runs locally.
     - Create and edit notes with web based editor.
     - Markdown syntax highlighting, special char and links concealment.
+    - Markdown table formatting and navigation.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
     - Sidepanels for labels, notes list and note metadata with linktrees.
@@ -250,7 +252,9 @@ notesium web --writable --open-browser
 | Mode   | Binding     | Comment
 | ----   | --------    | -------
 | edit   | `[[`        | Opens note list, insert selection as markdown formatted link
-| edit   | `ctrl+s`    | Save note
+| edit   | `C-s`       | Save note
+| edit   | `tab`       | Format table and advance column
+| edit   | `A-arrow`   | Navigate table rows and columns
 | global | `space n n` | Opens new note for editing
 | global | `space n l` | List with prefixed label, sorted by alphabetically
 | global | `space n m` | List with prefixed date modified, sorted by mtime
@@ -261,7 +265,7 @@ notesium web --writable --open-browser
 | finder | `C-k` `C-j` | Move selection up and down
 | finder | `enter`     | Open selection
 | finder | `C-p`       | Toggle preview
-| tab    | `C-h` `C-l` | Switch to previous (left) or next tab (right)
+| tab    | `C-h` `C-l` | Switch to previous (left) or next (right) tab
 | tab    | `C-o`       | Switch to previous active tab
 
 For more keybindings see the integrated settings.
@@ -282,6 +286,31 @@ By default, special characters such as those used for **bold**, *italic*
 and `code` will be concealed except on the active-line. In addition,
 links will also be concealed and only display the title. This setting
 can be toggled using the icon in the note sidebar.
+
+## Table formatting and navigation
+
+The editor will recognize when the cursor is placed within a table
+structure (identified by lines starting with the `|` character), and
+provide formatting and navigation.
+
+- **Automatic table formatting**: Pressing `Tab` not only navigates
+  through the table but also automatically formats it. This includes
+  adjusting cell padding to align text according to the column
+  specifications defined in the header row.
+- **Column alignment**: The alignment for each column is determined by
+  the syntax used in the header separator row (`---` left, `:---:`
+  center, `---:` right).
+- **Dynamic column adjustment**: If the cursor is at the end of a row
+  and `Tab` is pressed, a new column will be added. When the cursor is
+  on the header row, pressing `Tab` ensures the header separator row
+  exists and matches the column count of the header, adjusting as
+  necessary.
+- **Concealment support**: When [concealment](#syntax-highlighting-and-concealment) is enabled, the formatting
+  logic takes this into account, calculating the maximum length of each
+  column without the concealed text, ensuring a visually consistent
+  table layout.
+- **Navigation**: Move across table cells and rows with the provided
+  [keybindings](#keybindings).
 
 ## Vim
 
