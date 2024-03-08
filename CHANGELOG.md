@@ -1,3 +1,14 @@
+## 0.5.4
+
+Added:
+
+- Web/App: Editor table automatic formatting on `Tab`.
+- Web/App: Editor table formatting with column alignment.
+- Web/App: Editor table formatting with dynamic column adjustment.
+- Web/App: Editor table formatting with concealment support.
+- Web/App: Editor table header separator auto-match header column count.
+- Web/App: Editor table navigation via `Tab`, `Shift-Tab` and `Alt-Arrow`.
+
 ## 0.5.3
 
 The `web/graph` has been rewritten and implemented in `web/app`, with
