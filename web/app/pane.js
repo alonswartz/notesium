@@ -5,9 +5,9 @@ var t = `
   </div>
   <div v-show="resizing" v-text="paneWidth + 'px'" class="absolute bottom-0 right-0 p-4 text-gray-400 text-xs"></div>
   <div @dblclick="paneWidth=initialWidth" @mousedown="startResize"
-    :class="direction == 'right' ? 'left-full' : 'right-full'"
-    class="z-50 absolute group inset-y-0 cursor-ew-resize flex items-center px-2">
-    <div class="h-6 w-1 rounded-full group-hover:bg-gray-300"></div>
+    :class="direction == 'right' ? 'left-full pl-1.5 mr-1.5' : 'right-full pr-1.5 ml-1.5'"
+    class="z-50 absolute group inset-y-0 cursor-ew-resize flex items-center">
+    <div class="h-8 w-1 rounded-full group-hover:bg-gray-300"></div>
   </div>
 </div>
 `
