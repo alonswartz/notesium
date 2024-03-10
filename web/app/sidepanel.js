@@ -23,8 +23,8 @@ var t = `
   </div>
 </Pane>
 
-<Pane v-if="showNotes" :initialWidth="380" :minWidth="100">
-  <div class="flex items-center justify-items-center h-9 border-b border-r border-gray-200 bg-gray-100 ">
+<Pane v-if="showNotes" :initialWidth="380" :minWidth="100" class="border-r border-gray-200">
+  <div class="flex items-center justify-items-center h-9 border-b border-gray-200 bg-gray-100 ">
     <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
       @keyup.esc="query = ''; $refs.queryInput.blur();"
       class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
