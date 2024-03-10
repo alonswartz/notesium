@@ -21,6 +21,7 @@ export default {
   data() {
     return {
       paneWidth: null,
+      maxWidth: null,
       startResizeClientX: null,
       startResizePaneWidth: null,
       resizing: false,
@@ -30,6 +31,7 @@ export default {
     startResize(event) {
       this.startResizeClientX = event.clientX;
       this.startResizePaneWidth = this.paneWidth;
+      this.maxWidth = this.$el.parentElement.offsetWidth - 50;
       this.resizing = true;
       event.preventDefault();
       document.addEventListener('mousemove', this.doResize);
@@ -39,7 +41,7 @@ export default {
       let draggedDistance = event.clientX - this.startResizeClientX;
       if (this.direction === 'left') draggedDistance = -draggedDistance;
       const newWidth = this.startResizePaneWidth + draggedDistance;
-      if (newWidth >= this.minWidth) this.paneWidth = newWidth;
+      if (newWidth <= this.maxWidth && newWidth >= this.minWidth ) this.paneWidth = newWidth;
     },
     stopResize() {
       this.resizing = false;
