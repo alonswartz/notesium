@@ -1,5 +1,5 @@
 var t = `
-<div class="relative flex-none border-r border-gray-200" :style="{ width: paneWidth + 'px' }">
+<div class="relative flex-none" :style="{ width: paneWidth + 'px' }">
   <div class="flex flex-col h-full w-full">
     <slot></slot>
   </div>
