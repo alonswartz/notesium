@@ -21,25 +21,25 @@ var t = `
     <Icon name="graph" size="h-4 w-4" />
   </span>
 
-  <div class="relative inline-block text-left">
-    <span title="panels" @click="showPanelsDropdown=!showPanelsDropdown"
-      :class="showPanelsDropdown ? 'text-gray-700' : 'text-gray-400'" class="cursor-pointer hover:text-gray-700">
+  <div class="relative group inline-block text-left">
+    <span title="panels" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
       <Icon name="outline-view-columns" size="h-5 w-5" />
     </span>
-    <div v-show="showPanelsDropdown" @click="showPanelsDropdown=false" class="fixed inset-0 z-40" aria-hidden="true"></div>
-    <div v-show="showPanelsDropdown" class="absolute right-0 z-50 mt-2 w-64 origin-top-right rounded-md bg-white shadow-md border border-gray-200">
-      <ul class="divide-y divide-gray-100">
-        <li v-for="entry in panelsDropdownEntries" :key="entry.prop" @click="$emit(entry.emit)"
-          class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer" >
-          <div class="flex space-x-4 select-none">
-            <span class="text-gray-400"><Icon :name="entry.icon" size="h-5 w-5" /></span>
-            <p class="text-sm text-gray-600" v-text="entry.title"></p>
-          </div>
-          <span v-show="this[entry.prop]" class="text-indigo-600">
-            <Icon name="mini-check" size="h-5 w-5" />
-          </span>
-        </li>
-      </ul>
+    <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
+      <div class="rounded-md bg-white shadow-md border border-gray-200">
+        <ul class="divide-y divide-gray-100">
+          <li v-for="entry in panelsDropdownEntries" :key="entry.prop" @click="$emit(entry.emit)"
+            class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer" >
+            <div class="flex space-x-4 select-none">
+              <span class="text-gray-400"><Icon :name="entry.icon" size="h-5 w-5" /></span>
+              <p class="text-sm text-gray-600" v-text="entry.title"></p>
+            </div>
+            <span v-show="this[entry.prop]" class="text-indigo-600">
+              <Icon name="mini-check" size="h-5 w-5" />
+            </span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -57,7 +57,6 @@ export default {
   emits: ['note-new', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
   data() {
     return {
-      showPanelsDropdown: false,
       panelsDropdownEntries: [
         { title: "Labels panel",  emit: "labelspanel-toggle", prop: 'showLabelsPanel', icon: "outline-tag" },
         { title: "Notes panel",   emit: "notespanel-toggle",  prop: 'showNotesPanel',  icon: "outline-queue-list" },
