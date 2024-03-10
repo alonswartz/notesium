@@ -1,5 +1,6 @@
 var t = `
-<aside class="flex-none overflow-y-auto my-2 mr-2 w-96 rounded-lg border border-gray-200 bg-white">
+<Pane :initialWidth="384" :minWidth="200" direction="left">
+<aside class="h-full overflow-y-auto my-2 mr-2 rounded-lg border border-gray-200 bg-white">
 
   <div class="flex p-2 border-b sticky top-0 z-10 bg-white">
     <button type="button" :disabled="!note.isModified" @click="$emit('note-save')"
@@ -91,12 +92,14 @@ var t = `
   </div>
 
 </aside>
+</Pane>
 `
 
+import Pane from './pane.js'
 import Icon from './icon.js'
 import LinkTree from './link-tree.js'
 export default {
-  components: { Icon, LinkTree },
+  components: { Pane, Icon, LinkTree },
   props: ['note'],
   emits: ['note-open', 'note-save', 'finder-open', 'graph-open', 'conceal-toggle'],
   methods: {
