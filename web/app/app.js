@@ -196,6 +196,7 @@ export default {
       this.alerts.splice(index, 1);
     },
     handleBeforeUnload(event) {
+      this.savePanelState();
       if (this.notes.some(note => note.isModified)) {
         const message = 'You have unsaved changes.';
         event.returnValue = message;
@@ -264,10 +265,20 @@ export default {
           break;
       }
     },
+    savePanelState() {
+      const panels = ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'];
+      panels.forEach(key => { sessionStorage.setItem(key, this[key]); });
+    },
+    loadPanelState() {
+      const getBoolSessionItem = (k, dv) => { const v = sessionStorage.getItem(k); return v !== null ? v === 'true' : dv; };
+      const panels = ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'];
+      panels.forEach(key => { this[key] = getBoolSessionItem(key, this[key]); });
+    },
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
+    this.loadPanelState();
     this.handleHeartbeat('start');
   },
   beforeUnmount() {
