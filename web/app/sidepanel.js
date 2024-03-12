@@ -1,5 +1,5 @@
 var t = `
-<Pane v-if="showLabels" :initialWidth="195" :minWidth="100">
+<Pane v-if="showLabels" name="labelsPanel" :defaultWidth="195" :minWidth="100">
   <div class="h-full overflow-y-auto bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-700">
     <ul class="space-y-1 cursor-pointer py-2">
       <li title="notes sorted alphabetically"
@@ -23,7 +23,7 @@ var t = `
   </div>
 </Pane>
 
-<Pane v-if="showNotes" :initialWidth="380" :minWidth="100" class="border-r border-gray-200">
+<Pane v-if="showNotes" name="notesPanel" :defaultWidth="380" :minWidth="100" class="border-r border-gray-200">
   <div class="flex items-center justify-items-center h-9 border-b border-gray-200 bg-gray-100 ">
     <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
       @keyup.esc="query = ''; $refs.queryInput.blur();"
