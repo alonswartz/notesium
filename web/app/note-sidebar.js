@@ -1,5 +1,5 @@
 var t = `
-<Pane :initialWidth="384" :minWidth="200" direction="left">
+<Pane name="noteSidebar" :defaultWidth="384" :minWidth="200" direction="left">
 <aside class="h-full overflow-y-auto my-2 mr-2 rounded-lg border border-gray-200 bg-white">
 
   <div class="flex p-2 border-b sticky top-0 z-10 bg-white">

@@ -4,7 +4,7 @@ var t = `
     <slot></slot>
   </div>
   <div v-show="resizing" v-text="paneWidth + 'px'" class="absolute bottom-0 right-0 p-4 text-gray-400 text-xs"></div>
-  <div @dblclick="paneWidth=initialWidth" @mousedown="startResize"
+  <div @dblclick="setDefaultWidth()" @mousedown="startResize"
     :class="direction == 'right' ? 'left-full pl-1.5 mr-1.5' : 'right-full pr-1.5 ml-1.5'"
     class="z-50 absolute group inset-y-0 cursor-ew-resize flex items-center">
     <div class="h-8 w-1 rounded-full group-hover:bg-gray-300"></div>
@@ -14,7 +14,8 @@ var t = `
 
 export default {
   props: {
-    initialWidth: { type: Number, default: 200 },
+    name: { type: String },
+    defaultWidth: { type: Number, default: 200 },
     minWidth: { type: Number, default: 100 },
     direction: { type: String, default: "right" },
   },
@@ -45,12 +46,25 @@ export default {
     },
     stopResize() {
       this.resizing = false;
+      this.savePreferredWidth();
       document.removeEventListener('mousemove', this.doResize);
       document.removeEventListener('mouseup', this.stopResize);
     },
+    setDefaultWidth() {
+      this.paneWidth = this.defaultWidth;
+      this.savePreferredWidth()
+    },
+    savePreferredWidth() {
+      const key = `${this.name}Width`;
+      sessionStorage.setItem(key, this.paneWidth);
+    },
+    loadPreferredWidth() {
+      const key = `${this.name}Width`;
+      this.paneWidth = parseInt(sessionStorage.getItem(key), 10) || this.defaultWidth;
+    },
   },
   mounted() {
-    this.paneWidth = this.initialWidth;
+    this.loadPreferredWidth();
   },
   template: t
 }
