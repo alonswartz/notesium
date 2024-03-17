@@ -33,6 +33,7 @@ type Note struct {
 }
 
 var noteCache map[string]*Note
+var fileRegex = regexp.MustCompile(`^[0-9a-f]{8}\.md$`)
 var linkRegex = regexp.MustCompile(`\]\(([0-9a-f]{8}\.md)\)`)
 
 func populateCache(dir string) {
@@ -48,8 +49,8 @@ func populateCache(dir string) {
 	}
 
 	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), ".md") {
-			filename := file.Name()
+		filename := file.Name()
+		if !file.IsDir() && fileRegex.MatchString(filename) {
 			note, err := readNote(dir, filename)
 			if err != nil {
 				log.Fatalf("could not read note: %s\n", err)

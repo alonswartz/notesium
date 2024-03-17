@@ -123,7 +123,7 @@ teardown_file() {
 }
 
 @test "write: change note that does not exist" {
-    run _patch_jq 'api/notes/xxxxxxxx.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Error'
+    run _patch_jq 'api/notes/aaaaaaaa.md' '{"Content": "# test", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Note not found" ]
 }
@@ -136,7 +136,7 @@ teardown_file() {
 }
 
 @test "write: new note with filename" {
-    run _post_jq 'api/notes/xxxxxxxx.md' '{"Content": "# new note"}' '.Error'
+    run _post_jq 'api/notes/aaaaaaaa.md' '{"Content": "# new note"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Filename should not be specified" ]
 }
