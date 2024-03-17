@@ -62,11 +62,12 @@ export default {
       }
     },
     handleTab() {
+      if (this.cm.somethingSelected()) return CodeMirror.Pass;
       if (Table.isCursorInTable(this.cm)) {
         Table.formatTableAndAdvance(this.cm, this.conceal);
-        return;
+      } else {
+        this.cm.execCommand('insertSoftTab');
       }
-      return CodeMirror.Pass;
     },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
@@ -84,6 +85,7 @@ export default {
       lineNumbers: false,
       styleActiveLine: false,
       tabSize: 4,
+      indentUnit: 4,
       theme: 'notesium-light',
       mode: {
         name: "gfm",
