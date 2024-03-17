@@ -82,7 +82,7 @@ It aspires and is designed to:
     - Markdown table formatting and navigation.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
-    - Sidepanels for labels, notes list and note metadata with linktrees.
+    - Resizable sidepanels for labels, notes list and note metadata with linktrees.
     - Force graph to visualize and explore the relationship between notes.
         - Context aware fullscreen and overlay views.
         - Emphasize nodes and their links using search filter or node click.
