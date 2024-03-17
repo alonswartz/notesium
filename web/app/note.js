@@ -69,6 +69,18 @@ export default {
         this.cm.execCommand('insertSoftTab');
       }
     },
+    handleBackspace() {
+      if (this.cm.somethingSelected()) return CodeMirror.Pass;
+      const cursorPos = this.cm.getCursor();
+      const indentUnit = this.cm.getOption('indentUnit');
+      const spacesForIndentUnit = ' '.repeat(indentUnit);
+      const checkFrom = {line: cursorPos.line, ch: Math.max(0, cursorPos.ch - indentUnit)};
+      if (this.cm.getRange(checkFrom, cursorPos) === spacesForIndentUnit) {
+        this.cm.execCommand('indentLess');
+      } else {
+        return CodeMirror.Pass;
+      }
+    },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
       this.$nextTick(() => {
@@ -96,6 +108,7 @@ export default {
         "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
         "Ctrl-S": this.handleSave,
         "Tab": this.handleTab,
+        "Backspace": this.handleBackspace,
         "Shift-Tab": function(cm) { return Table.navigateTable(cm, 'left'); },
         "Alt-Up": function(cm) { return Table.navigateTable(cm, 'up'); },
         "Alt-Down": function(cm) { return Table.navigateTable(cm, 'down'); },
