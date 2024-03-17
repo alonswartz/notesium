@@ -76,7 +76,7 @@ export default {
       const spacesForIndentUnit = ' '.repeat(indentUnit);
       const checkFrom = {line: cursorPos.line, ch: Math.max(0, cursorPos.ch - indentUnit)};
       if (this.cm.getRange(checkFrom, cursorPos) === spacesForIndentUnit) {
-        this.cm.execCommand('indentLess');
+        this.cm.replaceRange('', checkFrom, cursorPos);
       } else {
         return CodeMirror.Pass;
       }
