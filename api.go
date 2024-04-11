@@ -161,7 +161,7 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			return
 		}
 
-		if info.ModTime() != notePatch.LastMtime {
+		if !info.ModTime().UTC().Equal(notePatch.LastMtime.UTC()) {
 			respondWithError(w, "Refusing to overwrite. File changed on disk.", http.StatusConflict)
 			return
 		}
