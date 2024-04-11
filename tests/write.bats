@@ -83,7 +83,12 @@ teardown_file() {
 }
 
 @test "write: change note" {
-    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "2023-01-16T05:05:00+02:00"}' '.Title'
+    run _get_jq 'api/notes/64214a1d.md' '.Mtime'
+    LastMtime="$output"
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run _patch_jq 'api/notes/64214a1d.md' '{"Content": "# mr. richard feynman", "LastMtime": "'"$LastMtime"'"}' '.Title'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "mr. richard feynman" ]
