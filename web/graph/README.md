@@ -74,10 +74,10 @@ $EDITOR web/graph/index.html
 -    <!--
      <script src="https://cdn.tailwindcss.com"></script>
      <script>tailwind.config = { darkMode: 'class' }</script>
-     <script src="https://d3js.org/d3.v7.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 -    -->
 -    <link href="tailwind.css" rel="stylesheet">
--    <script src="d3.v7.min.js"></script>
+-    <script src="d3.min.js"></script>
      <script src="forcegraph.js"></script>
 ```
 

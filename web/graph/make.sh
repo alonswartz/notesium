@@ -15,7 +15,7 @@ EOF
 exit 1
 }
 
-D3JS_URL="https://d3js.org/d3.v7.min.js"
+D3JS_URL="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
 D3JS_HASH="d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c"
 
 __vendor() {
