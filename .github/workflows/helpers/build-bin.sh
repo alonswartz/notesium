@@ -7,7 +7,7 @@ info() { echo "[$SCRIPT_NAME] INFO: $*"; }
 
 usage() {
 cat<<EOF
-Syntax: $SCRIPT_NAME /path/to/outdir
+Syntax: $SCRIPT_NAME /path/to/outdir all|os-arch
 Helper script to build release binaries
 EOF
 exit 1
@@ -25,7 +25,6 @@ _build_binary() {
 
 _generate_checksums() {
     cd $OUTDIR
-    info "generating checksums.txt ..."
     sha256sum notesium-* | tee checksums.txt
 }
 
@@ -44,9 +43,17 @@ main() {
     GIT_VERSION="$(git describe --tags | sed 's/^v//; s/-/+/')"
     [ -n "$GIT_VERSION" ] || fatal "could not determine GIT_VERSION"
 
-    _build_binary linux amd64
-    _build_binary darwin amd64
-    _build_binary windows amd64
+    case "$2" in
+        all)                    _build_binary linux amd64;
+                                _build_binary darwin amd64;
+                                _build_binary windows amd64;;
+        linux-amd64)            _build_binary linux amd64;;
+        darwin-amd64)           _build_binary darwin amd64;;
+        windows-amd64)          _build_binary windows amd64;;
+        *)                      fatal "unrecognized os-arch: $2";;
+    esac
+
+    info "generating checksums.txt ..."
     _generate_checksums
 
     info "listing $OUTDIR/"
