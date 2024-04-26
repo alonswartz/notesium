@@ -1,44 +1,28 @@
 #!/bin/sh
 set -e
 
-fatal() { echo "FATAL: $*" 1>&2; exit 1; }
+SCRIPT_NAME="$(basename "$0")"
+fatal() { echo "[$SCRIPT_NAME] FATAL: $*" 1>&2; exit 1; }
+info() { echo "[$SCRIPT_NAME] INFO: $*"; }
 
 usage() {
 cat<<EOF
-Usage: $(basename "$0")
-
+Usage: $SCRIPT_NAME
+Helper script to mimic .github/workflow/main.yml
 EOF
 exit 1
 }
 
-_build() {
-    os="$1"
-    arch="$2"
-    # flags="-X main.version=$VERSION_GIT"
-    flags="-s -w -X main.version=$VERSION_GIT"
-    outfile="build/${VERSION_GIT}/notesium-${os}-${arch}"
-    [ "$os" = "windows" ] && outfile="$outfile.exe"
-    echo "info: $outfile ..."
-    GOOS="$os" GOARCH="$arch" go build -o $outfile -ldflags "$flags"
-}
-
-_checksums() {
-    cd build/${VERSION_GIT}
-    echo "info: build/checksums.txt ..."
-    sha256sum notesium-* | tee checksums.txt
-    cd -
-}
-
 _verify_version() {
-    echo "info: version.git:       $VERSION_GIT"
-    echo "info: version.changelog: $VERSION_CHANGELOG"
-    [ "$VERSION_GIT" = "$VERSION_CHANGELOG" ] && return 0
+    info "version.git:       $GIT_VERSION"
+    info "version.changelog: $CHL_VERSION"
+    [ "$GIT_VERSION" = "$CHL_VERSION" ] && return 0
     return 1
 }
 
 _verify_branch() {
     branch="$(git rev-parse --abbrev-ref HEAD)"
-    echo "info: branch: $branch"
+    info "branch: $branch"
     [ "$branch" = "master" ] && return 0
     return 1
 }
@@ -51,17 +35,12 @@ _verify_branch_clean() {
     return 0
 }
 
-_release_notes() {
-    gh_url="https://github.com/alonswartz/notesium"
-    echo "${gh_url}/releases/new?tag=v${VERSION_CHANGELOG}\n"
-
-    anchor="$(echo $VERSION_CHANGELOG | sed 's/\.//g')"
-    changelog="${gh_url}/blob/master/CHANGELOG.md#${anchor}"
-    echo "The changelog for this release is available [here]($changelog).\n" 
-    echo "Note: These binaries are not CI built, and are only provided for convenience.\n"
-
-    echo "\n$(pwd)/build/${VERSION_GIT}"
-    ls -lh build/${VERSION_GIT}
+_get_gitref() {
+    if [ "${GIT_VERSION}" = "${CHL_VERSION}" ]; then
+        echo "refs/tags/v${GIT_VERSION}"
+    else
+        echo "refs/heads/$(git rev-parse --abbrev-ref HEAD)"
+    fi
 }
 
 _ask() {
@@ -73,42 +52,37 @@ _ask() {
 
 main() {
     case $1 in -h|--help|help) usage;; esac
-    command -v go >/dev/null || fatal "go not found"
-    command -v git >/dev/null || fatal "git not found"
-    command -v bats >/dev/null || fatal "bats not found"
-    command -v sha256sum >/dev/null || fatal "sha256sum not found"
     cd "$(dirname "$(dirname "$(realpath "$0")")")"
+    export GITHUB_WORKSPACE="$(pwd)"
 
-    [ -e "CHANGELOG.md" ] || fatal "CHANGELOG.md not found"
-    VERSION_CHANGELOG="$(awk 'FNR==1{print $2}' CHANGELOG.md)"
-    VERSION_GIT="$(git describe | sed 's/^v//; s/-/+/')"
+    GIT_VERSION="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    [ -n "$GIT_VERSION" ] || fatal "could not determine GIT_VERSION"
+
+    CHL_VERSION="$(awk 'FNR==1{print $2}' CHANGELOG.md)"
+    [ -n "$CHL_VERSION" ] || fatal "could not determine CHL_VERSION"
+
+    OUTDIR="build/$GIT_VERSION"
+    [ -e "$OUTDIR" ] && fatal "$OUTDIR already exists"
 
     _verify_version || _ask "WARNING: version mismatch"
     _verify_branch || _ask "WARNING: branch not master"
     _verify_branch_clean || _ask "WARNING: branch is dirty"
 
-    echo "info: web/graph/make.sh all\n"
-    ./web/graph/make.sh all
-
-    echo "info: web/app/make.sh all\n"
+    info "Build web"
     ./web/app/make.sh all
 
-    mkdir -p build/$VERSION_GIT
-    _build "linux" "amd64"
-    _build "darwin" "amd64"
-    _build "windows" "amd64"
-    _checksums
+    info "Build binaries"
+    .github/workflows/helpers/build-bin.sh $OUTDIR/ all
 
-    _ask "WARNING: about to overwrite notesium binary and perform tests"
-    echo "\ninfo: testing ${VERSION_GIT}/notesium-linux-amd64 ..."
-    cp build/${VERSION_GIT}/notesium-linux-amd64 notesium
-    bats tests/
+    info "Run tests"
+    .github/workflows/helpers/run-tests.sh $OUTDIR/notesium-linux-amd64
 
-    [ "$(./notesium version)" = "$VERSION_GIT" ] || fatal "VERSION CMD FAIL"
-    _verify_version >/dev/null || fatal "VERSION MISMATCH - DO NOT RELEASE!"
+    gref="$(_get_gitref)"
+    info "Generate release notes (${gref})"
+    .github/workflows/helpers/release-notes.sh $gref > $OUTDIR/release-notes.md
 
-    echo "info: release notes\n"
-    _release_notes
+    info "$OUTDIR/"
+    ls -lh $OUTDIR/
 }
 
 main "$@"
