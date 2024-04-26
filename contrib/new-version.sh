@@ -8,7 +8,7 @@ cat<<EOF
 Usage: $(basename "$0") COMMAND
 
 Commands:
-  changelog         Print changelog section reference for new patch version
+  changelog         Print commits as reference for new changelog entry
   tag               Print commands for new version tagging
 
 EOF
@@ -16,12 +16,9 @@ exit 1
 }
 
 _changelog() {
-    t_old="$(git tag --sort=committerdate --list | tail -1)"
-    t_new="$(echo "$t_old" | awk -F "." -vOFS="." '{$3++; print $1, $2, $3}')"
-    v_new="$(echo "$t_new" | sed 's/^v//')"
-    echo "## $v_new\n"
-    git --no-pager log ${t_old}..HEAD --reverse --pretty=format:'- %s'
-    echo "\n"
+    branch="$(git rev-parse --abbrev-ref HEAD)"
+    GITHUB_WORKSPACE="$(pwd)" \
+        .github/workflows/helpers/release-notes.sh refs/heads/${branch}
 }
 
 _tag() {
