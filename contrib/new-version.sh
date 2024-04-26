@@ -22,13 +22,7 @@ _changelog() {
 }
 
 _tag() {
-    [ -e "CHANGELOG.md" ] || "CHANGELOG.md does not exist"
-    t_new="v$(awk 'FNR==1{print $2}' CHANGELOG.md)"
-    t_old="$(git tag --sort=committerdate --list | tail -1)"
-    [ "$t_old" = "$t_new" ] && fatal "changelog and latest tag match: $t_old"
-    echo "cd $(pwd)"
-    echo "git tag $t_new -a -m \"$t_new\""
-    echo "git push $(git remote show) $t_new"
+    fatal "deprecated: use contrib/tag-release.sh"
 }
 
 main() {
