@@ -10,6 +10,7 @@ cat<<EOF
 Usage: $SCRIPT_NAME COMMAND [ARGS]
 
 Commands:
+  info          Print local and remote version/sha information
   commits       Print commits as reference for new changelog entry
   build         Mimic gh-action build and test
   tag SEMVER    Verify, tag release and push to trigger gh-action (vX.Y.Z)
@@ -93,6 +94,26 @@ _verify_actual_remote() {
     return 1
 }
 
+print_info() {
+    command -v jq >/dev/null || fatal "jq not found"
+    command -v curl >/dev/null || fatal "curl not found"
+
+    gh="https://api.github.com/repos/alonswartz/notesium"
+    gh_master_sha="$(curl -s "$gh/branches/master" | jq -r '.commit.sha')"
+    gh_release="$(curl -s "$gh/releases/latest" | jq -r '.tag_name')"
+    gh_tag_name="$(curl -s "$gh/tags" | jq -r '.[0] | .name')"
+    echo "master         $(git rev-parse master)"
+    echo "github/master  $(git rev-parse remotes/github/master) (local)"
+    echo "github/master  $gh_master_sha (actual)"
+    echo "github/release $gh_release"
+    echo "github/tag     $gh_tag_name"
+    echo "tag            $(git tag --list | sort -V | tail -n 1)"
+    echo "changelog      $(awk 'FNR==1{print $2}' CHANGELOG.md)"
+    echo "version        $(git describe --tags | sed 's/^v//; s/-/+/')"
+    echo "binary         $(./notesium version)"
+    echo "branch         $(git rev-parse --abbrev-ref HEAD)"
+}
+
 print_commits() {
     export GITHUB_WORKSPACE="$(pwd)"
     gref="refs/heads/$(git rev-parse --abbrev-ref HEAD)"
@@ -171,6 +192,7 @@ main() {
     cd "$(dirname "$(dirname "$(realpath "$0")")")"
 
     case $1 in
+        info)       shift; print_info $@;;
         commits)    shift; print_commits $@;;
         build)      shift; build_release $@;;
         tag)        shift; tag_release $@;;
