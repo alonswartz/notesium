@@ -183,7 +183,7 @@ Or build from source.
 git clone https://github.com/alonswartz/notesium.git
 cd notesium
 ./web/app/make.sh all
-go build -ldflags "-s -w -X main.version=$(git describe | sed 's/^v//; s/-/+/')"
+go build -ldflags "-s -w -X main.version=$(git describe --tags | sed 's/^v//; s/-/+/')"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 ```
 
@@ -287,7 +287,7 @@ and `code` will be concealed except on the active-line. In addition,
 links will also be concealed and only display the title. This setting
 can be toggled using the icon in the note sidebar.
 
-## Table formatting and navigation
+### Table formatting and navigation
 
 The editor will recognize when the cursor is placed within a table
 structure (identified by lines starting with the `|` character), and
