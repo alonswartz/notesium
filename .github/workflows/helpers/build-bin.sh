@@ -20,7 +20,8 @@ _build_binary() {
     [ "$os" = "windows" ] && outfile="${outfile}.exe"
 
     info "building $outfile ($GIT_VERSION) ..."
-    GOOS=$os GOARCH=$arch go build -o $OUTDIR/$outfile -ldflags "$flags"
+    GOOS=$os GOARCH=$arch CGO_ENABLED=0 \
+        go build -o $OUTDIR/$outfile -ldflags "$flags"
 }
 
 _generate_checksums() {
