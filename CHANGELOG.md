@@ -1,3 +1,32 @@
+## 0.5.5
+
+Fixed:
+
+- Cache: Skip `non-hex8.md` files instead of hard-fail.
+- API: Note update `lastMtime` verification now uses UTC for comparison.
+- Tests: Use `Mtime` from API instead of hardcoding (timezones).
+
+Added:
+
+- Web/App: Editor softTab insertion on `Tab`.
+- Web/App: Editor softTab removal if left-of-cursor on `Bksp`.
+- Web/App: Documented default indentation keybindings (Auto, Less, More).
+
+- Web/App: Sidepanel resize support (Labels, Notes list and Note metadata).
+- Web/App: Sidepanel resize via click-and-drag and dbl-click to restore.
+- Web/App: Sidepanel width preservation with sessionStorage.
+- Web/App: Sidepanel show-state preservation with sessionStorage.
+
+- CI/CD: Github Actions scripts (install-deps, build-bin, run-tests, release-notes).
+- CI/CD: Github Actions workflow for pull-requests.
+- CI/CD: Github Actions workflow for merges into master and tagged releases.
+- CI/CD: Contrib `release.sh tag` for verification to reduce human error.
+
+Changed:
+
+- Web/App: Navbar sidepanels dropdown on hover instead of click.
+- Web: App and Graph updated to use d3.js versioned URL.
+
 ## 0.5.4
 
 Added:
