@@ -1,3 +1,9 @@
+## 0.5.6
+
+Fixed:
+
+- CI/CD: Disable CGO to ensure static binary compilation.
+
 ## 0.5.5
 
 Fixed:
