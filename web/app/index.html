@@ -4,10 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Notesium Web</title>
-    <script src="vendor.js"></script>
-    <link rel="stylesheet" href="vendor.css" />
-    <link rel="stylesheet" href="tailwind.css" />
-    <link rel="shortcut icon" href="favicon.svg">
+    <!-- <link rel="stylesheet" href="vendor.css" /> -->
+    <!-- <link rel="stylesheet" href="tailwind.css" /> -->
+    <link rel="shortcut icon" href="assets/favicon.svg">
     <style>
       ::-webkit-scrollbar { width: 5px; }
       ::-webkit-scrollbar-track { margin: 6px 0px 6px 0px; }
@@ -52,10 +51,6 @@
   </head>
   <body tabindex="-1">
     <div id="app"></div>
-    <script type="module">
-      const { createApp } = Vue
-      import App from './app.js'
-      createApp(App).mount('#app')
-    </script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

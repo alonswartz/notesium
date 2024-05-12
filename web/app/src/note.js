@@ -21,10 +21,20 @@ var t = `
 </div>
 `
 
-import * as Table from './cm-table.js';
+import CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+// import 'codemirror/theme/material.css'
+import 'codemirror/mode/markdown/markdown'
+import 'codemirror/mode/gfm/gfm'
+import 'codemirror/addon/mode/overlay'
+import 'codemirror/addon/selection/active-line'
+import 'codemirror/addon/display/placeholder'
+
+import * as Table from './cm-table.js'
 import NoteSidebar from './note-sidebar.js'
 import Finder from './finder.js'
 import Icon from './icon.js'
+
 export default {
   components: { NoteSidebar, Finder, Icon },
   props: ['note', 'showSidebar'],
