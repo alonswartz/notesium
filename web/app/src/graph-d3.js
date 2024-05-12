@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 var t = `
 <div class="forcegraph h-full w-full overflow-hidden text-gray-200" ref="forcegraph"></div>
 `

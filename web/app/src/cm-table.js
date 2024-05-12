@@ -1,3 +1,5 @@
+import CodeMirror from 'codemirror'
+
 function isTableRow(cm, lineNum) {
   return cm.getLine(lineNum).trim().startsWith('|');
 }

@@ -1,3 +1,5 @@
+import CodeMirror from 'codemirror'
+
 var t = `
 <div :class="{ 'cm-links-hover': clickableLinks }" class="h-full cm-conceal" ref="preview"></div>
 `
