@@ -28,7 +28,7 @@ var t = `
 
   <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end sm:items-start p-2 z-50">
     <div class="flex w-full flex-col items-center space-y-2 sm:items-end">
-      <Alert :alert=alert :index=index v-for="(alert, index) in alerts" :key="index" @alert-dismiss="dismissAlert" />
+      <Alert :alert=alert v-for="alert in alerts" :key="alert.id" @alert-dismiss="dismissAlert" />
     </div>
   </div>
 
@@ -102,7 +102,7 @@ export default {
           this.activateNote(note.Filename);
         })
         .catch(e => {
-          this.alerts.push({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
+          this.addAlert({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
         });
     },
     saveNote(filename, content, lastmtime) {
@@ -138,7 +138,7 @@ export default {
           });
         })
         .catch(e => {
-          this.alerts.push({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
+          this.addAlert({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
         });
     },
     newNote(content) {
@@ -163,8 +163,8 @@ export default {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
       if (this.notes[index].isModified && !this.notes[index].ghost) {
-          this.alerts.push({type: 'error', title: 'Note has unsaved changes'});
-          return;
+        this.addAlert({type: 'error', title: 'Note has unsaved changes'});
+        return;
       }
       this.notes.splice(index, 1);
       const notesLength = this.notes.length;
@@ -192,8 +192,12 @@ export default {
       if (index === -1) return;
       this.notes.splice(newIndex, 0, this.notes.splice(index, 1)[0]);
     },
-    dismissAlert(index) {
-      this.alerts.splice(index, 1);
+    addAlert({type, title, body, sticky = false}) {
+      this.alerts.push({type, title, body, sticky, id: Date.now().toString(36)});
+    },
+    dismissAlert(id) {
+      const index = this.alerts.findIndex(alert => alert.id === id);
+      if (index !== -1) this.alerts.splice(index, 1);
     },
     handleBeforeUnload(event) {
       this.savePanelState();

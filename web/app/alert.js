@@ -24,11 +24,11 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['alert', 'index'],
+  props: ['alert'],
   emits: ['alert-dismiss'],
   methods: {
     dismiss() {
-      this.$emit('alert-dismiss', this.index);
+      this.$emit('alert-dismiss', this.alert.id);
     },
   },
   mounted() {
