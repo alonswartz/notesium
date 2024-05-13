@@ -11,8 +11,10 @@ import (
 const usage = `Usage: notesium COMMAND [OPTIONS]
 
 Commands:
-  new               Print path for a new note
   home              Print path to notes directory
+  new               Print path for a new note
+    --verbose       Output key:value pairs of related info
+    --ctime=        Use specified ctime instead of now (YYYY-MM-DDThh:mm:ss)
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)
@@ -47,6 +49,11 @@ Environment:
 type Command struct {
 	Name    string
 	Options interface{}
+}
+
+type newOptions struct {
+	ctime   string
+	verbose bool
 }
 
 type listOptions struct {
@@ -106,10 +113,25 @@ func parseOptions(args []string) (Command, error) {
 		cmd.Name = "version"
 		return cmd, nil
 
-	case "new", "home":
+	case "home":
 		if len(args) > 1 {
 			return cmd, fmt.Errorf("unrecognized option: %s", args[1])
 		}
+		return cmd, nil
+
+	case "new":
+		opts := newOptions{}
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--verbose":
+				opts.verbose = true
+			case strings.HasPrefix(opt, "--ctime="):
+				opts.ctime = strings.TrimPrefix(opt, "--ctime=")
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	case "list":

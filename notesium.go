@@ -48,7 +48,7 @@ func main() {
 	case "home":
 		fmt.Println(notesiumDir)
 	case "new":
-		notesiumNew(notesiumDir)
+		notesiumNew(notesiumDir, cmd.Options.(newOptions), os.Stdout)
 	case "list":
 		notesiumList(notesiumDir, cmd.Options.(listOptions), os.Stdout)
 	case "links":
@@ -64,11 +64,29 @@ func main() {
 	}
 }
 
-func notesiumNew(dir string) {
-	epochInt := time.Now().Unix()
+func notesiumNew(dir string, opts newOptions, w io.Writer) {
+	ctime := time.Now()
+	if opts.ctime != "" {
+		var err error
+		ctime, err = time.ParseInLocation("2006-01-02T15:04:05", opts.ctime, time.Local)
+		if err != nil {
+			log.Fatalf("invalid ctime format: %v", err)
+		}
+	}
+
+	epochInt := ctime.Unix()
 	epochHex := fmt.Sprintf("%x", epochInt)
-	newPath := filepath.Join(dir, fmt.Sprintf("%s.md", epochHex))
-	fmt.Println(newPath)
+	filename := fmt.Sprintf("%s.md", epochHex)
+	path := filepath.Join(dir, filename)
+
+	if opts.verbose {
+		fmt.Fprintf(w, "path:%s\n", path)
+		fmt.Fprintf(w, "filename:%s\n", filename)
+		fmt.Fprintf(w, "epoch:%d\n", epochInt)
+		fmt.Fprintf(w, "ctime:%s\n", ctime.Format("2006-01-02T15:04:05-07:00"))
+	} else {
+		fmt.Fprintf(w, "%s\n", path)
+	}
 }
 
 func notesiumList(dir string, opts listOptions, w io.Writer) {
