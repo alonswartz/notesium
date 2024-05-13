@@ -204,8 +204,10 @@ $ notesium help
 Usage: notesium COMMAND [OPTIONS]
 
 Commands:
-  new               Print path for a new note
   home              Print path to notes directory
+  new               Print path for a new note
+    --verbose       Output key:value pairs of related info
+    --ctime=        Use specified ctime instead of now (YYYY-MM-DDThh:mm:ss)
   list              Print list of notes
     --color         Color code prefix using ansi escape sequences
     --labels        Limit list to only label notes (ie. one word title)

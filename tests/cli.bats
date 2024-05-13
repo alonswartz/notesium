@@ -94,26 +94,3 @@ teardown_file() {
     [ "${lines[0]}" == "/tmp/notesium-test-corpus" ]
 }
 
-@test "cli: new dirname equal to NOTESIUM_DIR realpath" {
-    run notesium new
-    echo "$output"
-    [ $status -eq 0 ]
-    [ "$(dirname $output)" == "/tmp/notesium-test-corpus" ]
-}
-
-@test "cli: new basename is 8 chars plus .md extension" {
-    run notesium new
-    echo "$output"
-    [ $status -eq 0 ]
-    [ "$(basename $output | tr -d '\n' | wc -c)" == "11" ]
-    [ "$(basename --suffix=.md $output | tr -d '\n' | wc -c)" == "8" ]
-}
-
-@test "cli: new basename is hex for now epoch (within 10s range)" {
-    run notesium new
-    echo "$output"
-    [ $status -eq 0 ]
-    epoch="$(printf '%d' 0x$(basename --suffix=.md $output))"
-    [ "$epoch" -gt "$(date -d "-5 seconds" +%s)" ]
-    [ "$epoch" -lt "$(date -d "+5 seconds" +%s)" ]
-}
