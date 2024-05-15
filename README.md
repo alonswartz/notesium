@@ -362,7 +362,18 @@ command! -bang -nargs=* NotesiumSearch
   \   'notesium lines '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
 
+command! -bang -nargs=* NotesiumDaily
+  \ let cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
+  \ let output = system('notesium new --verbose --ctime='.cdate.'T00:00:00') |
+  \ let filepath = matchstr(output, 'path:\zs[^\n]*') |
+  \ execute 'edit ' . filepath |
+  \ if getline(1) =~ '^\s*$' |
+  \   let epoch = matchstr(output, 'epoch:\zs[^\n]*') |
+  \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', epoch)) |
+  \ endif
+
 nnoremap <Leader>nn :NotesiumNew<CR>
+nnoremap <Leader>nd :NotesiumDaily<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
@@ -383,6 +394,7 @@ endif
 | ----   | --------          | -------
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
+| normal | `<Leader>nd`      | Opens new or existing daily note
 | normal | `<Leader>nw`      | Opens browser with web view (auto stop webserver on idle)
 | normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically (mtime if journal)
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
