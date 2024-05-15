@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 setup_file() {
+    export TZ="UTC"
     [ -e "/tmp/notesium-test-corpus" ] && exit 1
     run mkdir /tmp/notesium-test-corpus
     export NOTESIUM_DIR="/tmp/notesium-test-corpus"
@@ -46,10 +47,10 @@ teardown_file() {
 @test "new: verbose output for specified ctime" {
     run notesium new --ctime=2023-01-16T05:05:00 --verbose
     echo "$output"
-    [ "${lines[0]}" == "path:/tmp/notesium-test-corpus/63c4bedc.md" ]
-    [ "${lines[1]}" == "filename:63c4bedc.md" ]
-    [ "${lines[2]}" == "epoch:1673838300" ]
-    [ "${lines[3]}" == "ctime:$(date --date=@1673838300 '+%FT%T%:z')" ]
+    [ "${lines[0]}" == "path:/tmp/notesium-test-corpus/63c4dafc.md" ]
+    [ "${lines[1]}" == "filename:63c4dafc.md" ]
+    [ "${lines[2]}" == "epoch:1673845500" ]
+    [ "${lines[3]}" == "ctime:2023-01-16T05:05:00+00:00" ]
 }
 
 @test "new: invalid specified ctime" {
