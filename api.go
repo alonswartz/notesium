@@ -257,6 +257,8 @@ func apiRaw(dir string, w http.ResponseWriter, r *http.Request) {
 	defer writer.Flush()
 
 	switch cmd.Name {
+	case "new":
+		notesiumNew(dir, cmd.Options.(newOptions), writer)
 	case "list":
 		notesiumList(dir, cmd.Options.(listOptions), writer)
 	case "links":

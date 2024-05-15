@@ -6,6 +6,7 @@ _curl()    { curl -qs "http://localhost:8881/${1}" ; }
 
 setup_file() {
     command -v curl >/dev/null
+    export TZ="UTC"
     export NOTESIUM_DIR="$BATS_TEST_DIRNAME/fixtures"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
     [ "$(pidof notesium)" == "" ]
@@ -14,6 +15,24 @@ setup_file() {
 @test "api/raw: start with custom port and stop-on-idle" {
     run notesium web  --port=8881 --stop-on-idle &
     echo "$output"
+}
+
+@test "api/raw: new default" {
+    run _curl 'api/raw/new'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "$(dirname $output)" == "$BATS_TEST_DIRNAME/fixtures" ]
+    epoch="$(printf '%d' 0x$(basename --suffix=.md $output))"
+    [ "$epoch" -gt "$(date -d "-5 seconds" +%s)" ]
+    [ "$epoch" -lt "$(date -d "+5 seconds" +%s)" ]
+}
+
+@test "api/raw: new verbose with custom ctime" {
+    run _curl 'api/raw/new?verbose=true&ctime=2023-01-16T05:05:00'
+    echo "$output"
+    [ "${lines[1]}" == "filename:63c4dafc.md" ]
+    [ "${lines[2]}" == "epoch:1673845500" ]
+    [ "${lines[3]}" == "ctime:2023-01-16T05:05:00+00:00" ]
 }
 
 @test "api/raw: list default" {

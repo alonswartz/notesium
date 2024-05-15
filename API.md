@@ -12,6 +12,7 @@
     - [Retrieve a note](#retrieve-a-note)
     - [List all notes](#list-all-notes)
 - [Raw command](#raw-command)
+    - [New](#new)
     - [List](#list)
     - [Links](#links)
     - [Lines](#lines)
@@ -70,7 +71,7 @@ GET   /api/notes
 
 This object represents a note in Notesium. Use it to create a new note,
 update an existing note, retrieve a specific note along with its
-metadata and content, as well as retreive a list of all notes.
+metadata and content, as well as retrieve a list of all notes.
 
 See `Raw` for alternative listing endpoints.
 
@@ -230,17 +231,39 @@ A list of `note` objects (excluding `Content` and `Path` fields).
 > Endpoints
 
 ```
+GET   /api/raw/new
 GET   /api/raw/list
 GET   /api/raw/links
 GET   /api/raw/lines
 ```
 
 The API provides an **experimental** `raw/:cmd` endpoint, acting as a
-pass-through for some existing CLI commands, such as `list`, `links`,
-and `lines`.
+pass-through for some existing CLI commands, such as `new`, `list`,
+`links`, and `lines`.
 
 The same options as the CLI are supported. Boolean options must have
 a value of `true` or `false`. Responses are returned as `text`.
+
+### New
+
+> New command
+
+```shell
+$ curl "$BASE_URL/raw/new?verbose=true"
+```
+
+Print path for a new note
+
+#### Attributes
+
+Key     | Type     | Comment
+---     | ----     | -------
+verbose | `bool`   | Output key:value pairs of related info
+ctime   | `string` | Use specified ctime instead of now (YYYY-MM-DDThh:mm:ss)
+
+#### Returns
+
+Buffered raw text output of the command.
 
 ### List
 
