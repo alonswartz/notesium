@@ -19,7 +19,8 @@ type NoteResponse struct {
 }
 
 type NotePost struct {
-	Content string `json:"Content"`
+	Content string    `json:"Content"`
+	Ctime   time.Time `json:"Ctime"`
 }
 
 type NotePatch struct {
@@ -94,7 +95,12 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			return
 		}
 
-		epochInt := time.Now().Unix()
+		if notePost.Ctime.IsZero() {
+			respondWithError(w, "Ctime field is required", http.StatusBadRequest)
+			return
+		}
+
+		epochInt := notePost.Ctime.Unix()
 		epochHex := fmt.Sprintf("%x", epochInt)
 		filename = fmt.Sprintf("%s.md", epochHex)
 
