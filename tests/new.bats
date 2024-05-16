@@ -47,10 +47,20 @@ teardown_file() {
 @test "new: verbose output for specified ctime" {
     run notesium new --ctime=2023-01-16T05:05:00 --verbose
     echo "$output"
+    [ "${#lines[@]}" -eq 5 ]
     [ "${lines[0]}" == "path:/tmp/notesium-test-corpus/63c4dafc.md" ]
     [ "${lines[1]}" == "filename:63c4dafc.md" ]
     [ "${lines[2]}" == "epoch:1673845500" ]
     [ "${lines[3]}" == "ctime:2023-01-16T05:05:00+00:00" ]
+    [ "${lines[4]}" == "exists:false" ]
+}
+
+@test "new: verbose output for specified ctime exists" {
+    touch /tmp/notesium-test-corpus/63c4dafc.md
+    run notesium new --ctime=2023-01-16T05:05:00 --verbose
+    echo "$output"
+    [ "${lines[4]}" == "exists:true" ]
+    rm /tmp/notesium-test-corpus/63c4dafc.md
 }
 
 @test "new: invalid specified ctime" {
