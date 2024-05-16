@@ -142,9 +142,34 @@ export default {
         });
     },
     newNote(content) {
-      const note = {Filename: 'ghost-' + Date.now().toString(36), Title: 'untitled', Content: content, isModified: false, Mtime: '0', ghost: true};
-      this.notes.push(note);
-      this.activateNote(note.Filename);
+      fetch('/api/raw/new?verbose=true')
+        .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
+        .then(text => {
+          const noteInfo = text.trim().split('\n').reduce((dict, line) => {
+            const [key, value] = line.split(/:(.+)/); dict[key] = value;
+            return dict;
+          }, {});
+
+          if (noteInfo.exists === "true") { this.openNote(noteInfo.filename, 1); return; }
+
+          const index = this.notes.findIndex(note => note.Filename === noteInfo.filename);
+          if (index !== -1) { this.activateNote(noteInfo.filename); return; }
+
+          const ghost = {
+            Filename: noteInfo.filename,
+            Title: 'untitled',
+            Content: content,
+            isModified: false,
+            Mtime: '0',
+            Ctime: noteInfo.ctime,
+            ghost: true,
+          };
+          this.notes.push(ghost);
+          this.activateNote(ghost.Filename);
+        })
+        .catch(e => {
+          this.addAlert({type: 'error', title: 'Error retrieving new note metadata', body: e.Error, sticky: true});
+        });
     },
     openNote(filename, linenum) {
       const index = this.notes.findIndex(note => note.Filename === filename);
