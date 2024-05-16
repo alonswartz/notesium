@@ -30,9 +30,11 @@ setup_file() {
 @test "api/raw: new verbose with custom ctime" {
     run _curl 'api/raw/new?verbose=true&ctime=2023-01-16T05:05:00'
     echo "$output"
+    [ "${#lines[@]}" -eq 5 ]
     [ "${lines[1]}" == "filename:63c4dafc.md" ]
     [ "${lines[2]}" == "epoch:1673845500" ]
     [ "${lines[3]}" == "ctime:2023-01-16T05:05:00+00:00" ]
+    [ "${lines[4]}" == "exists:false" ]
 }
 
 @test "api/raw: list default" {

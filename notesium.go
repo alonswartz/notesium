@@ -79,11 +79,15 @@ func notesiumNew(dir string, opts newOptions, w io.Writer) {
 	filename := fmt.Sprintf("%s.md", epochHex)
 	path := filepath.Join(dir, filename)
 
+	_, err := os.Stat(path)
+	fileExists := !os.IsNotExist(err)
+
 	if opts.verbose {
 		fmt.Fprintf(w, "path:%s\n", path)
 		fmt.Fprintf(w, "filename:%s\n", filename)
 		fmt.Fprintf(w, "epoch:%d\n", epochInt)
 		fmt.Fprintf(w, "ctime:%s\n", ctime.Format("2006-01-02T15:04:05-07:00"))
+		fmt.Fprintf(w, "exists:%t\n", fileExists)
 	} else {
 		fmt.Fprintf(w, "%s\n", path)
 	}
