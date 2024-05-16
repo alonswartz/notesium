@@ -1,8 +1,12 @@
 var t = `
 <div class="flex w-auto py-2 mt-0 ml-auto items-center space-x-5 pr-5">
-  <span title="new" @click="$emit('note-new', '')"
+  <span title="new" @click="$emit('note-new')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-plus" size="h-4 w-4" />
+  </span>
+  <span title="daily" @click="$emit('note-daily')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="outline-calendar" size="h-4 w-4" />
   </span>
   <span title="list" @click="$emit('finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
@@ -54,7 +58,7 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'],
-  emits: ['note-new', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
+  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
   data() {
     return {
       panelsDropdownEntries: [

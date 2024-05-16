@@ -19,7 +19,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  emits: ['note-new', 'finder-open'],
+  emits: ['note-new', 'note-daily', 'finder-open'],
   data() {
     return {
       entries: [
@@ -27,7 +27,13 @@ export default {
           title: 'New note',
           keybind: 'space n n',
           icon: 'outline-plus',
-          emit: ['note-new', ''],
+          emit: ['note-new'],
+        },
+        {
+          title: 'Daily note',
+          keybind: 'space n d',
+          icon: 'outline-calendar',
+          emit: ['note-daily'],
         },
         {
           title: 'List notes',
