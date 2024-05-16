@@ -197,8 +197,10 @@ export default {
       }
     },
     activateNote(filename) {
-      this.activeFilenamePrevious = this.activeFilename;
-      this.activeFilename = filename;
+      if (filename !== this.activeFilename) {
+        this.activeFilenamePrevious = this.activeFilename;
+        this.activeFilename = filename;
+      }
     },
     closeNote(filename) {
       const index = this.notes.findIndex(note => note.Filename === filename);
