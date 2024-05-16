@@ -138,7 +138,8 @@ Content       | `string` | Note content
 ```shell
 $ curl -X POST $BASE_URL/notes/ \
   -H 'Content-Type: application/json' \
-  -d '{"Content": "# new note\n\nthis is a new note\n"}'
+  -d '{"Content": "# new note\n\nthis is a new note\n",
+       "Ctime": "2023-11-30T14:20:00+02:00"}'
 ```
 
 A cache update will be triggered automatically upon a successful
@@ -152,6 +153,7 @@ is started with the `--writable` option.
 Key     | Type     | Comment
 ---     | ----     | -------
 Content | `string` | Note content
+Ctime   | `time`   | The creation datetime
 
 #### Returns
 

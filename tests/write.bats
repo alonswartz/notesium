@@ -134,14 +134,32 @@ teardown_file() {
 }
 
 @test "write: new note" {
-    run _post_jq 'api/notes/' '{"Content": "# new note"}' '.Title'
+    run _post_jq 'api/notes/' '{"Content": "# new note", "Ctime": "2023-11-30T14:20:00+02:00"}' '.Title'
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == "new note" ]
 }
 
+@test "write: new note with conflicting ctime" {
+    run _post_jq 'api/notes/' '{"Content": "# new note", "Ctime": "2023-11-30T14:20:00+02:00"}' '.Error'
+    echo "$output"
+    [ "${lines[0]}" == "File already exists" ]
+}
+
+@test "write: new note without specifying ctime" {
+    run _post_jq 'api/notes/' '{"Content": "# new note"}' '.Error'
+    echo "$output"
+    [ "${lines[0]}" == "Ctime field is required" ]
+}
+
+@test "write: new note with malformed ctime" {
+    run _post_jq 'api/notes/' '{"Content": "# new note", "Ctime": "2023-11-30"}' '.Code'
+    echo "$output"
+    [ "${lines[0]}" == "400" ]
+}
+
 @test "write: new note with filename" {
-    run _post_jq 'api/notes/aaaaaaaa.md' '{"Content": "# new note"}' '.Error'
+    run _post_jq 'api/notes/aaaaaaaa.md' '{"Content": "# new note", "Ctime": "2023-11-30T14:20:00+02:00"}' '.Error'
     echo "$output"
     [ "${lines[0]}" == "Filename should not be specified" ]
 }
