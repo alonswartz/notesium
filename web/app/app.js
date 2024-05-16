@@ -10,12 +10,12 @@ var t = `
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :showNoteSidebar=showNoteSidebar :showLabelsPanel=showLabelsPanel :showNotesPanel=showNotesPanel
-        @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true"
+        @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true"
         @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel"
         @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
-      <Empty v-if="notes.length == 0" @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" />
+      <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
       <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
         @note-open="openNote" @note-save="saveNote" @finder-open="openFinder" @graph-open="openGraph" />
     </main>
@@ -141,8 +141,12 @@ export default {
           this.addAlert({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
         });
     },
-    newNote(content) {
-      fetch('/api/raw/new?verbose=true')
+    newNote(ctime, content) {
+      const baseUri = '/api/raw/new';
+      let params = new URLSearchParams({ verbose: 'true' });
+      if (ctime) params.append('ctime', ctime);
+      const uri = `${baseUri}?${params.toString()}`;
+      fetch(uri)
         .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
         .then(text => {
           const noteInfo = text.trim().split('\n').reduce((dict, line) => {
@@ -158,8 +162,8 @@ export default {
           const ghost = {
             Filename: noteInfo.filename,
             Title: 'untitled',
-            Content: content,
-            isModified: false,
+            Content: content ? content : '',
+            isModified: content ? true : false,
             Mtime: '0',
             Ctime: noteInfo.ctime,
             ghost: true,
@@ -170,6 +174,18 @@ export default {
         .catch(e => {
           this.addAlert({type: 'error', title: 'Error retrieving new note metadata', body: e.Error, sticky: true});
         });
+    },
+    dailyNote() {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const month_s = date.toLocaleString('en-US', { month: 'short' });
+      const day = date.getDate().toString().padStart(2, '0');
+      const day_s = date.toLocaleString('en-US', { weekday: 'long' });
+
+      const ctime = `${year}-${month}-${day}T00:00:00`;
+      const content = `# ${month_s} ${day}, ${year} (${day_s})`;
+      this.newNote(ctime, content);
     },
     openNote(filename, linenum) {
       const index = this.notes.findIndex(note => note.Filename === filename);
@@ -272,7 +288,10 @@ export default {
             this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyN`:
-            this.newNote('');
+            this.newNote();
+            break;
+          case `${leaderKey} KeyN KeyD`:
+            this.dailyNote();
             break;
           case `${leaderKey} KeyN KeyG`:
             this.openGraph();
