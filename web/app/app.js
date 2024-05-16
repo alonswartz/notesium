@@ -105,17 +105,17 @@ export default {
           this.addAlert({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
         });
     },
-    saveNote(filename, content, lastmtime) {
+    saveNote(filename, content, timestamp, isGhost) {
       let uri;
       let params = { method: null, body: null, headers: {"Content-type": "application/json"} }
-      if (filename.startsWith('ghost-')) {
+      if (isGhost) {
         uri = "/api/notes/";
         params.method = "POST";
-        params.body = JSON.stringify({Content: content});
+        params.body = JSON.stringify({Content: content, Ctime: timestamp});
       } else {
         uri = "/api/notes/" + filename;
         params.method = "PATCH"
-        params.body = JSON.stringify({ Content: content, LastMtime: lastmtime });
+        params.body = JSON.stringify({ Content: content, LastMtime: timestamp });
       }
       fetch(uri, params)
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
