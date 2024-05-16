@@ -58,7 +58,8 @@ export default {
     },
     handleSave() {
       if (this.note.isModified) {
-        this.$emit('note-save', this.note.Filename, this.cm.getValue(), this.note.Mtime );
+        const timestamp = this.note.ghost ? this.note.Ctime : this.note.Mtime;
+        this.$emit('note-save', this.note.Filename, this.cm.getValue(), timestamp, this.note.ghost);
       }
     },
     handleTab() {
