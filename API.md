@@ -118,7 +118,7 @@ See `Raw` for alternative listing endpoints.
 Key           | Type     | Comment
 ---           | ----     | -------
 Filename      | `string` | Note filename
-Title         | `int`    | Note title
+Title         | `string` | Note title
 IsLabel       | `bool`   | Whether note is considered a label note
 OutgoingLinks | `list`   | List of outgoing links
 IncomingLinks | `list`   | List of incoming links
@@ -166,7 +166,7 @@ The `note` object.
 $ curl -X PATCH $BASE_URL/notes/64214a1d.md \
   -H 'Content-Type: application/json' \
   -d '{"Content": "# mr. richard feynman\n...",
-       "LastMtime: "2023-11-30T14:22:44+02:00"}'
+       "LastMtime": "2023-11-30T14:22:44+02:00"}'
 ```
 
 If the last modified time does not match the current modified time of
