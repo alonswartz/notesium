@@ -4,10 +4,27 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-plus" size="h-4 w-4" />
   </span>
-  <span title="daily" @click="$emit('note-daily')"
-    class="cursor-pointer text-gray-400 hover:text-gray-700">
-    <Icon name="outline-calendar" size="h-4 w-4" />
-  </span>
+
+  <div class="relative group inline-block text-left">
+    <span title="daily" class="cursor-pointer text-gray-400 group-hover:text-gray-700"
+      @click="$emit('note-daily')"
+      @mouseover="dailyNoteDate = new Date().toISOString().substring(0, 10);">
+      <Icon name="outline-calendar" size="h-4 w-4" />
+    </span>
+    <div class="hidden group-hover:block absolute right-0 z-50 w-56 pt-3 -mt-1 origin-top-right">
+      <div class="rounded-md bg-white shadow-md border border-gray-200">
+        <div class="flex divide-x divide-gray-100">
+          <input class="w-full px-3 text-sm text-gray-600 hover:bg-gray-50 hover:cursor-text focus:outline-none"
+            type="date" min="1970-01-01" max="2029-12-31" v-model="dailyNoteDate" ref="dailyNoteDateInput" />
+          <button class="py-2 px-4 text-white rounded-r-md disabled:opacity-25 bg-gray-200 bg-indigo-600 text-sm hover:bg-indigo-500"
+            type="button" :disabled="!isDailyNoteDateValid" @click="$emit('note-daily', dailyNoteDate)">Go</button>
+        </div>
+      </div>
+      <!-- hack to not loose focus on calendar close -->
+      <div class="h-72"></div>
+    </div>
+  </div>
+
   <span title="list" @click="$emit('finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="mini-bars-three-bottom-left" size="h-4 w-4" />
@@ -66,7 +83,14 @@ export default {
         { title: "Notes panel",   emit: "notespanel-toggle",  prop: 'showNotesPanel',  icon: "outline-queue-list" },
         { title: "Note metadata", emit: "notesidebar-toggle", prop: 'showNoteSidebar', icon: "panel-right", },
       ],
+      dailyNoteDate: null,
     }
+  },
+  computed: {
+    isDailyNoteDateValid() {
+      if (!this.dailyNoteDate) return false;
+      return this.$refs.dailyNoteDateInput.validity.valid;
+    },
   },
   template: t
 }
