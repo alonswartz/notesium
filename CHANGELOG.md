@@ -1,3 +1,32 @@
+## 0.5.7
+
+Setting a custom `ctime` for new notes is now supported, enabling
+deterministic note filenames. Using the `00:00:00` convention, daily
+notes are now supported in the embedded Web App and in Vim via the
+`NotesiumDaily` command.
+
+Fixed:
+
+- Web/App: Avoid losing editor focus on the first save of a new note.
+- Web/App: Skip updating `activeFilenamePrevious` if there is no change.
+- Web/App: Alert dismissal race condition.
+
+Added:
+
+- CLI: `new` command now supports `--ctime=` and `--verbose` options.
+- API: `api/raw/new` is now available.
+- Tests: Added CLI and Web tests for the `new` options.
+
+- Vim: `NotesiumDaily` command/keybinding to open new or existing daily note.
+- Web/App: Daily note icon and keybinding to open new or existing daily note.
+- Web/App: Daily note custom date selector on icon hover.
+
+Changed:
+
+- API: Note creation now requires `Ctime` argument.
+- Web/App: newNote updated to use `api/raw/new` with verbose output.
+- Web/App: saveNote updated to include `Ctime` requirement.
+
 ## 0.5.6
 
 Fixed:
