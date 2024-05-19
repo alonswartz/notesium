@@ -175,8 +175,8 @@ export default {
           this.addAlert({type: 'error', title: 'Error retrieving new note metadata', body: e.Error, sticky: true});
         });
     },
-    dailyNote() {
-      const date = new Date();
+    dailyNote(customDate = null) {
+      const date = customDate ? new Date(customDate) : new Date();
       const year = date.getFullYear();
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const month_s = date.toLocaleString('en-US', { month: 'short' });
