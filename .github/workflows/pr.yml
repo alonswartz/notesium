@@ -20,6 +20,9 @@ jobs:
       with:
         go-version: '1.20.5'
 
+    - name: Run unit tests
+      run: go test -v ./...
+
     - name: Install dependencies
       run: .github/workflows/helpers/install-deps.sh
 
@@ -29,6 +32,9 @@ jobs:
     - name: Build linux binary
       run: .github/workflows/helpers/build-bin.sh build/ linux-amd64
 
-    - name: Run tests
+    - name: Run integration tests
       run: .github/workflows/helpers/run-tests.sh build/notesium-linux-amd64
+
+    - name: Print version
+      run: build/notesium-linux-amd64 version --verbose
 
