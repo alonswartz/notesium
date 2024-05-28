@@ -184,7 +184,6 @@ git clone https://github.com/alonswartz/notesium.git
 cd notesium
 ./web/app/make.sh all
 go build -ldflags "
-    -X main.version=$(git describe --tags | sed 's/^v//; s/-/+/')
     -X main.gitversion=$(git describe --tags --long --always --dirty) \
     -X main.buildtime=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 ln -s $(pwd)/notesium $HOME/.local/bin/notesium
