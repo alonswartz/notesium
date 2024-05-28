@@ -15,13 +15,16 @@ exit 1
 
 _build_binary() {
     local os=$1 arch=$2
-    local flags="-s -w -X main.version=$GIT_VERSION"
     local outfile="notesium-${os}-${arch}"
     [ "$os" = "windows" ] && outfile="${outfile}.exe"
 
     info "building $outfile ($GIT_VERSION) ..."
-    GOOS=$os GOARCH=$arch CGO_ENABLED=0 \
-        go build -o $OUTDIR/$outfile -ldflags "$flags"
+    GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -o $OUTDIR/$outfile -ldflags "
+        -s -w \
+        -X main.version=$VERSION \
+        -X main.gitversion=$GIT_VERSION \
+        -X main.buildtime=$BUILD_TIME \
+    "
 }
 
 _generate_checksums() {
@@ -41,8 +44,14 @@ main() {
     OUTDIR="$(realpath "$1")"
     [ -d "$OUTDIR" ] || mkdir -p "$OUTDIR"
 
-    GIT_VERSION="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    VERSION="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    [ -n "$VERSION" ] || fatal "could not determine VERSION"
+
+    GIT_VERSION="$(git describe --tags --long --always --dirty)"
     [ -n "$GIT_VERSION" ] || fatal "could not determine GIT_VERSION"
+
+    BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    [ -n "$BUILD_TIME" ] || fatal "could not determine BUILD_TIME"
 
     case "$2" in
         all)                    _build_binary linux amd64;
