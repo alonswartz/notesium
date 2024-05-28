@@ -19,6 +19,8 @@ import (
 )
 
 var version = "dev"
+var buildtime = "unset"
+var gitversion = "unset"
 
 //go:embed completion.bash web/app
 var embedfs embed.FS
@@ -423,6 +425,8 @@ func notesiumExtract(opts extractOptions) {
 func notesiumVersion(opts versionOptions) {
 	if opts.verbose {
 		fmt.Printf("version:%s\n", version)
+		fmt.Printf("gitversion:%s\n", gitversion)
+		fmt.Printf("buildtime:%s\n", buildtime)
 		fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
 	} else {
 		fmt.Println(version)
