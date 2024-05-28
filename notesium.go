@@ -32,11 +32,11 @@ func main() {
 
 	switch cmd.Name {
 	case "help":
-		fmt.Println(usage)
+		fmt.Print(usage)
 		os.Exit(1)
 	case "version":
-		fmt.Println(version)
-		os.Exit(0)
+		notesiumVersion(cmd.Options.(versionOptions))
+		return
 	}
 
 	notesiumDir, err := getNotesiumDir()
@@ -417,6 +417,15 @@ func notesiumExtract(opts extractOptions) {
 			log.Fatalf("Failed to read file: %s", err)
 		}
 		fmt.Println(string(content))
+	}
+}
+
+func notesiumVersion(opts versionOptions) {
+	if opts.verbose {
+		fmt.Printf("version:%s\n", version)
+		fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+	} else {
+		fmt.Println(version)
 	}
 }
 

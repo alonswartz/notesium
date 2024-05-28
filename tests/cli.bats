@@ -47,6 +47,10 @@ teardown_file() {
     run notesium version
     echo "$output"
     [ $status -eq 0 ]
+
+    run notesium version --verbose
+    echo "$output"
+    [ $status -eq 0 ]
 }
 
 @test "cli: unrecognized command fatal error" {
