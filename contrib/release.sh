@@ -43,8 +43,8 @@ _verify_gitver_matches_changelog() {
     info "verify gitversion matches changelog ..."
     [ -e "CHANGELOG.md" ] || fatal "CHANGELOG.md not found"
     version_changelog="$(awk 'FNR==1{print $2}' CHANGELOG.md)"
-    version_git="$(git describe --tags | sed 's/^v//; s/-/+/')"
-    [ "${version_changelog}" = "${version_git}" ] && return 0
+    version="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    [ "${version_changelog}" = "${version}" ] && return 0
     return 1
 }
 
@@ -110,7 +110,9 @@ print_info() {
     echo "tag            $(git tag --list | sort -V | tail -n 1)"
     echo "changelog      $(awk 'FNR==1{print $2}' CHANGELOG.md)"
     echo "version        $(git describe --tags | sed 's/^v//; s/-/+/')"
-    echo "binary         $(./notesium version)"
+    echo "bin.version    $(./notesium version)"
+    echo "gitversion     $(git describe --tags --long --always --dirty)"
+    echo "bin.gitversion $(./notesium version --verbose | grep gitversion | cut -d: -f2)"
     echo "branch         $(git rev-parse --abbrev-ref HEAD)"
 }
 
@@ -123,7 +125,10 @@ print_commits() {
 build_release() {
     export GITHUB_WORKSPACE="$(pwd)"
 
-    version_git="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    version="$(git describe --tags | sed 's/^v//; s/-/+/')"
+    [ -n "$version" ] || fatal "could not determine version"
+
+    version_git="$(git describe --tags --long --always --dirty)"
     [ -n "$version_git" ] || fatal "could not determine version_git"
 
     version_changelog="$(awk 'FNR==1{print $2}' CHANGELOG.md)"
@@ -132,13 +137,14 @@ build_release() {
     outdir="build/$version_git"
     [ -e "$outdir" ] && fatal "$outdir already exists"
 
+    info "version:           $version"
     info "version.git:       $version_git"
     info "version.changelog: $version_changelog"
-    if [ "${version_git}" = "${version_changelog}" ]; then
-        gref="refs/tags/v${version_git}"
+    if [ "${version}" = "${version_changelog}" ]; then
+        gref="refs/tags/v${version}"
     else
         gref="refs/heads/$(git rev-parse --abbrev-ref HEAD)"
-        _ask "WARNING: version mismatch"
+        _ask "WARNING: version/changelog mismatch"
     fi
 
     _verify_branch_master || _ask "WARNING: branch not master"

@@ -18,7 +18,6 @@ import (
 	"time"
 )
 
-var version = "dev"
 var buildtime = "unset"
 var gitversion = "unset"
 
@@ -423,6 +422,8 @@ func notesiumExtract(opts extractOptions) {
 }
 
 func notesiumVersion(opts versionOptions) {
+	version := getVersion(gitversion)
+
 	if opts.verbose {
 		fmt.Printf("version:%s\n", version)
 		fmt.Printf("gitversion:%s\n", gitversion)

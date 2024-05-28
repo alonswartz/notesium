@@ -21,7 +21,6 @@ _build_binary() {
     info "building $outfile ($GIT_VERSION) ..."
     GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build -o $OUTDIR/$outfile -ldflags "
         -s -w \
-        -X main.version=$VERSION \
         -X main.gitversion=$GIT_VERSION \
         -X main.buildtime=$BUILD_TIME \
     "
@@ -43,9 +42,6 @@ main() {
 
     OUTDIR="$(realpath "$1")"
     [ -d "$OUTDIR" ] || mkdir -p "$OUTDIR"
-
-    VERSION="$(git describe --tags | sed 's/^v//; s/-/+/')"
-    [ -n "$VERSION" ] || fatal "could not determine VERSION"
 
     GIT_VERSION="$(git describe --tags --long --always --dirty)"
     [ -n "$GIT_VERSION" ] || fatal "could not determine GIT_VERSION"
