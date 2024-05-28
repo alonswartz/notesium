@@ -150,14 +150,20 @@ build_release() {
     _verify_branch_master || _ask "WARNING: branch not master"
     _verify_branch_clean || _ask "WARNING: branch is dirty"
 
+    info "Run unit tests"
+    go test -v ./...
+
     info "Build web"
     ./web/app/make.sh all
 
     info "Build binaries"
     .github/workflows/helpers/build-bin.sh $outdir/ all
 
-    info "Run tests"
+    info "Run integration tests"
     .github/workflows/helpers/run-tests.sh $outdir/notesium-linux-amd64
+
+    info "Print version"
+    $outdir/notesium-linux-amd64 version --verbose
 
     info "Generate release notes"
     .github/workflows/helpers/release-notes.sh $gref > $outdir/release-notes.md
