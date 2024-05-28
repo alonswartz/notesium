@@ -234,6 +234,7 @@ Commands:
     --writable      Allow writing of notes in NOTESIUM_DIR via API
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
+    --verbose       Output key:value pairs of related info
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)

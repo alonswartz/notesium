@@ -41,6 +41,7 @@ Commands:
     --writable      Allow writing of notes in NOTESIUM_DIR via API
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
+    --verbose       Output key:value pairs of related info
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
@@ -93,6 +94,10 @@ type extractOptions struct {
 	path string
 }
 
+type versionOptions struct {
+	verbose bool
+}
+
 type Color struct {
 	Code  string
 	Reset string
@@ -109,8 +114,10 @@ func parseOptions(args []string) (Command, error) {
 		cmd.Name = "help"
 		return cmd, nil
 
-	case "-v", "--version", "version":
+	// backwards compat.
+	case "-v", "--version":
 		cmd.Name = "version"
+		cmd.Options = versionOptions{}
 		return cmd, nil
 
 	case "home":
@@ -261,6 +268,19 @@ func parseOptions(args []string) (Command, error) {
 			}
 			if !webroot.IsDir() {
 				return Command{}, fmt.Errorf("webroot not directory: %v", err)
+			}
+		}
+		cmd.Options = opts
+		return cmd, nil
+
+	case "version":
+		opts := versionOptions{}
+		for _, opt := range args[1:] {
+			switch {
+			case opt == "--verbose":
+				opts.verbose = true
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
 		}
 		cmd.Options = opts
