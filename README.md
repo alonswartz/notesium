@@ -237,6 +237,7 @@ Commands:
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
     --verbose       Output key:value pairs of related info
+    --latest        Retrieve and display latest release information
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)

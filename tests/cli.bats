@@ -35,7 +35,7 @@ teardown_file() {
     [ "${lines[0]}" == 'Usage: notesium COMMAND [OPTIONS]' ]
 }
 
-@test "cli: version command sniff test" {
+@test "cli: version command sniff" {
     run notesium -v
     echo "$output"
     [ $status -eq 0 ]
@@ -49,6 +49,18 @@ teardown_file() {
     [ $status -eq 0 ]
 
     run notesium version --verbose
+    echo "$output"
+    [ $status -eq 0 ]
+}
+
+@test "cli: version command sniff latest" {
+    [ "$TEST_VERSION_LATEST" ] || skip "TEST_VERSION_LATEST not set"
+
+    run notesium version --latest
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run notesium version --latest --verbose
     echo "$output"
     [ $status -eq 0 ]
 }
