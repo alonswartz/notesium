@@ -422,15 +422,30 @@ func notesiumExtract(opts extractOptions) {
 }
 
 func notesiumVersion(opts versionOptions) {
-	version := getVersion(gitversion)
+	if opts.latest {
+		latest, err := getLatestReleaseInfo()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	if opts.verbose {
-		fmt.Printf("version:%s\n", version)
-		fmt.Printf("gitversion:%s\n", gitversion)
-		fmt.Printf("buildtime:%s\n", buildtime)
-		fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+		if opts.verbose {
+			fmt.Printf("version:%s\n", latest.Version)
+			fmt.Printf("published:%s\n", latest.PublishedAt)
+			fmt.Printf("url:%s\n", latest.HtmlUrl)
+		} else {
+			fmt.Println(latest.Version)
+		}
 	} else {
-		fmt.Println(version)
+		version := getVersion(gitversion)
+
+		if opts.verbose {
+			fmt.Printf("version:%s\n", version)
+			fmt.Printf("gitversion:%s\n", gitversion)
+			fmt.Printf("buildtime:%s\n", buildtime)
+			fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+		} else {
+			fmt.Println(version)
+		}
 	}
 }
 
