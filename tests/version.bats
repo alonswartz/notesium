@@ -8,13 +8,13 @@ _gobuild() {
     go build -o /tmp/notesium-test-version/$gitversion -ldflags "
         -X main.gitversion=$gitversion \
         -X main.buildtime=2024-01-02T01:02:03Z \
-        -X main.latestReleaseUrl=http://127.0.0.1:8881"
+        -X main.latestReleaseUrl=http://127.0.0.1:8882"
 }
 
 _mock_latest_release() {
     tagname="$1"
     response='{"tag_name": "'$tagname'", "html_url": "https://github.com/alonswartz/notesium/releases/tag/'$tagname'", "published_at": "2024-02-02T01:02:03Z"}'
-    echo -en "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ${#response}\r\n\r\n${response}" | nc -C -l -s 127.0.0.1 -p 8881 -q 1 -w 5
+    echo -en "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ${#response}\r\n\r\n${response}" | nc -C -l -s 127.0.0.1 -p 8882 -q 1 -w 5
 }
 
 setup_file() {
@@ -107,6 +107,7 @@ teardown_file() {
 
 @test "version: check - older" {
     run _mock_latest_release "v0.1.3" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check
     echo "$output"
     [ $status -eq 0 ]
@@ -117,6 +118,7 @@ teardown_file() {
 
 @test "version: check verbose - older" {
     run _mock_latest_release "v0.1.3" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -135,6 +137,7 @@ teardown_file() {
 
 @test "version: check verbose - match" {
     run _mock_latest_release "v0.1.2" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -145,6 +148,7 @@ teardown_file() {
 
 @test "version: check verbose - newer" {
     run _mock_latest_release "v0.1.1" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -155,6 +159,7 @@ teardown_file() {
 
 @test "version: check verbose - older - patched" {
     run _mock_latest_release "v0.1.3" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -167,6 +172,7 @@ teardown_file() {
 
 @test "version: check verbose - match - patched" {
     run _mock_latest_release "v0.1.2" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -179,6 +185,7 @@ teardown_file() {
 
 @test "version: check verbose - match - patched and dirty" {
     run _mock_latest_release "v0.1.2" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.1.2-2-g1234567-dirty version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -191,6 +198,7 @@ teardown_file() {
 
 @test "version: check verbose - older - beta" {
     run _mock_latest_release "v0.2.0" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -203,6 +211,7 @@ teardown_file() {
 
 @test "version: check verbose - newer - beta" {
     run _mock_latest_release "v0.1.2" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -215,6 +224,7 @@ teardown_file() {
 
 @test "version: check verbose - match - beta" {
     run _mock_latest_release "v0.2.0" &
+    [ "$GITHUB_WORKSPACE" ] && run sleep 1
     run /tmp/notesium-test-version/v0.2.1-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
