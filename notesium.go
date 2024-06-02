@@ -422,30 +422,51 @@ func notesiumExtract(opts extractOptions) {
 }
 
 func notesiumVersion(opts versionOptions) {
-	if opts.latest {
+	version := getVersion(gitversion)
+
+	if opts.check {
 		latest, err := getLatestReleaseInfo()
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if opts.verbose {
-			fmt.Printf("version:%s\n", latest.Version)
-			fmt.Printf("published:%s\n", latest.PublishedAt)
-			fmt.Printf("url:%s\n", latest.HtmlUrl)
-		} else {
-			fmt.Println(latest.Version)
+		fmt.Printf("Notesium %s (%s/%s)\n", version, runtime.GOOS, runtime.GOARCH)
+
+		comparison := compareVersions(version, latest.Version)
+		switch comparison {
+		case -1:
+			publishedAt := latest.PublishedAt
+			if parsedTime, err := time.Parse(time.RFC3339, latest.PublishedAt); err == nil {
+				publishedAt = parsedTime.Local().Format("2006-01-02 15:04")
+			}
+			fmt.Printf("A new release is available: %s (%s)\n", latest.Version, publishedAt)
+			fmt.Printf("https://github.com/alonswartz/notesium/releases\n")
+		case 0:
+			fmt.Println("You are using the latest version")
+		case 1:
+			fmt.Printf("You are using a newer version than latest: %s\n", latest.Version)
 		}
-	} else {
-		version := getVersion(gitversion)
 
 		if opts.verbose {
+			fmt.Printf("\ncomparison:%d\n", comparison)
 			fmt.Printf("version:%s\n", version)
 			fmt.Printf("gitversion:%s\n", gitversion)
 			fmt.Printf("buildtime:%s\n", buildtime)
 			fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
-		} else {
-			fmt.Println(version)
+			fmt.Printf("latest.version:%s\n", latest.Version)
+			fmt.Printf("latest.published:%s\n", latest.PublishedAt)
+			fmt.Printf("latest.release:%s\n", latest.HtmlUrl)
 		}
+		return
+	}
+
+	if opts.verbose {
+		fmt.Printf("version:%s\n", version)
+		fmt.Printf("gitversion:%s\n", gitversion)
+		fmt.Printf("buildtime:%s\n", buildtime)
+		fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+	} else {
+		fmt.Println(version)
 	}
 }
 

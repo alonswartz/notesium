@@ -42,7 +42,7 @@ Commands:
   extract [path]    Print list of embedded files or contents of file path
   version           Print version
     --verbose       Output key:value pairs of related info
-    --latest        Retrieve and display latest release information
+    --check         Check if a newer version is available
 
 Environment:
   NOTESIUM_DIR      Path to notes directory (default: $HOME/notes)
@@ -97,7 +97,7 @@ type extractOptions struct {
 
 type versionOptions struct {
 	verbose bool
-	latest  bool
+	check   bool
 }
 
 type Color struct {
@@ -281,8 +281,8 @@ func parseOptions(args []string) (Command, error) {
 			switch {
 			case opt == "--verbose":
 				opts.verbose = true
-			case opt == "--latest":
-				opts.latest = true
+			case opt == "--check":
+				opts.check = true
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}

@@ -53,14 +53,14 @@ teardown_file() {
     [ $status -eq 0 ]
 }
 
-@test "cli: version command sniff latest" {
-    [ "$TEST_VERSION_LATEST" ] || skip "TEST_VERSION_LATEST not set"
+@test "cli: version command sniff check" {
+    [ "$TEST_VERSION_CHECK" ] || skip "TEST_VERSION_CHECK not set"
 
-    run notesium version --latest
+    run notesium version --check
     echo "$output"
     [ $status -eq 0 ]
 
-    run notesium version --latest --verbose
+    run notesium version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
 }
