@@ -56,6 +56,18 @@ teardown_file() {
     [ $status -eq 0 ]
 }
 
+@test "version: backwards compat. -v --version flags" {
+    run /tmp/notesium-test-version/v0.1.2-0-g1234567 -v
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == '0.1.2' ]
+
+    run /tmp/notesium-test-version/v0.1.2-0-g1234567 --version
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == '0.1.2' ]
+}
+
 @test "version: default" {
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version
     echo "$output"
