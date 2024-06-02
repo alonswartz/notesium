@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -71,4 +72,48 @@ func getLatestReleaseInfo() (releaseInfo, error) {
 
 	release.Version = strings.TrimPrefix(release.TagName, "v")
 	return release, nil
+}
+
+func compareVersions(v1, v2 string) int {
+	// returns -1 if v1 < v2, 1 if v1 > v2, and 0 if they are equal.
+	// v1: +build is ignored. -prerelease will decrement patch
+	// v2: +build is ignored. -prerelease not supported (set to 0.0.0)
+	normalize := func(v string, handlePreRelease bool) []int {
+		v = strings.SplitN(v, "+", 2)[0]
+		parts := strings.SplitN(v, "-", 2)
+		isPreRelease := len(parts) > 1
+
+		if isPreRelease && !handlePreRelease {
+			return []int{0, 0, 0}
+		}
+
+		versionParts := strings.Split(parts[0], ".")
+		for len(versionParts) < 3 {
+			versionParts = append(versionParts, "0")
+		}
+
+		intParts := make([]int, 3)
+		for i, part := range versionParts {
+			intParts[i], _ = strconv.Atoi(part)
+		}
+
+		if isPreRelease && handlePreRelease {
+			intParts[2]--
+		}
+
+		return intParts
+	}
+
+	v1Parts := normalize(v1, true)
+	v2Parts := normalize(v2, false)
+
+	for i := 0; i < 3; i++ {
+		if v1Parts[i] < v2Parts[i] {
+			return -1
+		} else if v1Parts[i] > v2Parts[i] {
+			return 1
+		}
+	}
+
+	return 0
 }
