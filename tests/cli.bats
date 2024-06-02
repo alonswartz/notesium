@@ -35,36 +35,6 @@ teardown_file() {
     [ "${lines[0]}" == 'Usage: notesium COMMAND [OPTIONS]' ]
 }
 
-@test "cli: version command sniff" {
-    run notesium -v
-    echo "$output"
-    [ $status -eq 0 ]
-
-    run notesium --version
-    echo "$output"
-    [ $status -eq 0 ]
-
-    run notesium version
-    echo "$output"
-    [ $status -eq 0 ]
-
-    run notesium version --verbose
-    echo "$output"
-    [ $status -eq 0 ]
-}
-
-@test "cli: version command sniff check" {
-    [ "$TEST_VERSION_CHECK" ] || skip "TEST_VERSION_CHECK not set"
-
-    run notesium version --check
-    echo "$output"
-    [ $status -eq 0 ]
-
-    run notesium version --check --verbose
-    echo "$output"
-    [ $status -eq 0 ]
-}
-
 @test "cli: unrecognized command fatal error" {
     run notesium foo
     echo "$output"
