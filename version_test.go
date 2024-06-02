@@ -31,7 +31,44 @@ func TestGetVersion(t *testing.T) {
 		t.Run(tt.input, func(t *testing.T) {
 			result := getVersion(tt.input)
 			if result != tt.expected {
-				t.Errorf("got %s, want %s", result, tt.expected)
+				t.Errorf("getVersion(%s), want %s", result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestCompareVersions(t *testing.T) {
+	// -1 if v1 < v2, 1 if v1 > v2, and 0 if they are equal.
+	tests := []struct {
+		v1       string
+		v2       string
+		expected int
+	}{
+		{"", "", 0},
+		{"1.2.3", "", 1},
+		{"0.0.0", "", 0},
+		{"0.0.0-dev", "", -1},
+		{"0.0.0-dev", "1.2.3", -1},
+		{"1.2.3", "1.2.2", 1},
+		{"1.2.3", "1.2.3", 0},
+		{"1.2.3", "1.2.4", -1},
+		{"1.2.3+2", "1.2.2", 1},
+		{"1.2.3+2", "1.2.3", 0},
+		{"1.2.3+2", "1.2.4", -1},
+		{"1.2.3-beta", "1.2.1", 1},
+		{"1.2.3-beta", "1.2.2", 0},
+		{"1.2.3-beta", "1.2.3", -1},
+		{"1.2.3-beta", "1.2.4", -1},
+		{"1.2.0-beta", "1.2.0", -1},
+		{"1.2.0-beta", "1.2.4-beta", 1},
+		{"1.2.1-beta.2", "1.2.1", -1},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.v1+"_"+tt.v2, func(t *testing.T) {
+			result := compareVersions(tt.v1, tt.v2)
+			if result != tt.expected {
+				t.Errorf("compareVersions(%s, %s) = %d; want %d", tt.v1, tt.v2, result, tt.expected)
 			}
 		})
 	}
