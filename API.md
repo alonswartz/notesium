@@ -9,6 +9,7 @@
     - [The note object](#the-note-object)
     - [Create a note](#create-a-note)
     - [Update a note](#update-a-note)
+    - [Delete a note](#delete-a-note)
     - [Retrieve a note](#retrieve-a-note)
     - [List all notes](#list-all-notes)
 - [Raw command](#raw-command)
@@ -63,10 +64,11 @@ error in the body of the response.
 > Endpoints
 
 ```
-POST  /api/notes/
-PATCH /api/notes/:filename
-GET   /api/notes/:filename
-GET   /api/notes
+POST   /api/notes/
+PATCH  /api/notes/:filename
+DELETE /api/notes/:filename
+GET    /api/notes/:filename
+GET    /api/notes
 ```
 
 This object represents a note in Notesium. Use it to create a new note,
@@ -190,6 +192,39 @@ LastMtime | `time`   | The last modified datetime
 #### Returns
 
 The `note` object.
+
+
+### Delete a note
+
+> Delete a note
+
+```shell
+$ curl -X DELETE $BASE_URL/notes/64214a1d.md \
+  -H 'Content-Type: application/json' \
+  -d '{"LastMtime": "2023-11-30T14:22:44+02:00"}'
+```
+
+If the last modified time does not match the current modified time of
+the note on disk, deleting the note will be refused as a fail-safe.
+
+If the note has incoming links, deleting the note will be refused as to
+not result in dangling links.
+
+A cache update will be triggered automatically upon a successful
+request.
+
+This endpoint will return a `Forbidden` error response unless the daemon
+is started with the `--writable` option.
+
+#### Parameters
+
+Key       | Type   | Comment
+---       | ----   | -------
+LastMtime | `time` | The last modified datetime
+
+#### Returns
+
+Returns an object with `Filename` and `Deleted` parameter on success.
 
 
 ### Retrieve a note

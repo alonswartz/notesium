@@ -28,6 +28,10 @@ type NotePatch struct {
 	LastMtime time.Time `json:"LastMtime"`
 }
 
+type NoteDelete struct {
+	LastMtime time.Time `json:"LastMtime"`
+}
+
 type ErrorResponse struct {
 	Error string `json:"Error"`
 	Code  int    `json:"Code"`
@@ -179,6 +183,81 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 
 		noteCache = nil
 		populateCache(dir)
+
+	case "DELETE":
+		if readOnly {
+			respondWithError(w, "NOTESIUM_DIR is set to read-only mode", http.StatusForbidden)
+			return
+		}
+
+		if filename == "" {
+			respondWithError(w, "Filename not specified", http.StatusBadRequest)
+			return
+		}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			respondWithError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+
+		var noteDelete NoteDelete
+		if err := json.Unmarshal(body, &noteDelete); err != nil {
+			respondWithError(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if noteDelete.LastMtime.IsZero() {
+			respondWithError(w, "LastMtime field is required", http.StatusBadRequest)
+			return
+		}
+
+		note, ok := noteCache[filename]
+		if !ok {
+			respondWithError(w, "Note not found", http.StatusNotFound)
+			return
+		}
+
+		path := filepath.Join(dir, filename)
+		info, err := os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				respondWithError(w, "File does not exist: "+err.Error(), http.StatusNotFound)
+			} else {
+				respondWithError(w, "Error accessing file: "+err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		if !info.ModTime().UTC().Equal(noteDelete.LastMtime.UTC()) {
+			respondWithError(w, "Refusing to delete. File changed on disk.", http.StatusConflict)
+			return
+		}
+
+		if len(note.IncomingLinks) > 0 {
+			respondWithError(w, "Refusing to delete. Note has IncomingLinks.", http.StatusConflict)
+			return
+		}
+
+		err = os.Remove(path)
+		if err != nil {
+			respondWithError(w, "Error deleting file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		noteCache = nil
+		populateCache(dir)
+
+		response := map[string]interface{}{
+			"Filename": filename,
+			"Deleted":  true,
+		}
+		jsonResponse, _ := json.Marshal(response)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResponse)
+		return
 
 	default:
 		respondWithError(w, "Method not supported", http.StatusMethodNotAllowed)
