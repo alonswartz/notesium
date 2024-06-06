@@ -17,7 +17,7 @@ var t = `
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
       <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
-        @note-open="openNote" @note-save="saveNote" @finder-open="openFinder" @graph-open="openGraph" />
+        @note-open="openNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" @graph-open="openGraph" />
     </main>
   </div>
 
@@ -139,6 +139,41 @@ export default {
         })
         .catch(e => {
           this.addAlert({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
+        });
+    },
+    deleteNote(filename, timestamp) {
+      const note = this.notes.find(note => note.Filename === filename);
+      if (!note) return;
+      if (note.ghost) return;
+      if (note.isModified) { this.addAlert({type: 'error', title: 'Note has unsaved changes'}); return; }
+      if ((note.IncomingLinks?.length || 0) > 0) { this.addAlert({type: 'error', title: 'Refusing deletion, note has incoming links'}); return; }
+      const confirmMsg = "Are you sure you want to delete this note? This action cannot be undone.";
+      if (!confirm(`${confirmMsg}\n\n${note.Filename}: ${note.Title}`)) return;
+
+      let params = {};
+      params.method = 'DELETE';
+      params.body = JSON.stringify({ LastMtime: timestamp });
+      params.headers = {"Content-type": "application/json"};
+      fetch("/api/notes/" + filename, params)
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        .then(response => {
+          this.addAlert({type: 'success', title: 'Note deleted successfully'});
+          this.closeNote(filename);
+
+          // update lastSave to force sidepanel refresh
+          this.lastSave = new Date().toISOString();
+
+          // update other notes IncomingLinks due to potential changes
+          this.notes.forEach(openNote => {
+            if (openNote.ghost) return;
+            fetch("/api/notes/" + openNote.Filename)
+              .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+              .then(fetchedNote => { openNote.IncomingLinks = fetchedNote.IncomingLinks; })
+              .catch(e => { console.error('Error fetching note for IncomingLinks: ', e); });
+          });
+        })
+        .catch(e => {
+          this.addAlert({type: 'error', title: 'Error deleting note', body: e.Error, sticky: true})
         });
     },
     newNote(ctime, content) {

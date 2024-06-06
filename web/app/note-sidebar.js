@@ -18,6 +18,10 @@ var t = `
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="graph" size="h-3 w-3" />
       </span>
+      <span title="delete note" @click="$emit('note-delete', note.Filename, note.Mtime)"
+        class="cursor-pointer text-gray-400 hover:text-red-700">
+        <Icon name="outline-trash" size="h-4 w-4" />
+      </span>
       <a title="open via xdg" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
         <Icon name="outline-external-link" size="h-4 w-4" />
       </a>
@@ -101,7 +105,7 @@ import LinkTree from './link-tree.js'
 export default {
   components: { Pane, Icon, LinkTree },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'finder-open', 'graph-open', 'conceal-toggle'],
+  emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open', 'conceal-toggle'],
   methods: {
     formatDate(dateStr) {
       if (!dateStr) return '';
