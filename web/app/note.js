@@ -1,7 +1,7 @@
 var t = `
 <div class="relative flex h-full">
   <div class="grow overflow-y-auto">
-    <div :class="{'cm-conceal cm-unconceal': conceal }" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
+    <div :class="{'cm-conceal cm-unconceal': conceal}" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
   </div>
 
   <div v-if="!showSidebar || note.ghost" class="absolute right-0 mt-2 mr-6 h-7 z-10 inline-flex items-center">
@@ -34,6 +34,7 @@ export default {
     return {
       showFinder: false,
       conceal: true,
+      selectedLines: [],
     }
   },
   methods: {
@@ -131,6 +132,21 @@ export default {
     });
     this.cm.on('changes', (cm, changes) => {
       this.note.isModified = !cm.doc.isClean();
+    });
+    this.cm.on('cursorActivity', (cm, e) => {
+      if (!this.conceal) return;
+      this.selectedLines.forEach(line => {
+        cm.removeLineClass(line, 'wrap', 'CodeMirror-selectedline');
+      });
+      this.selectedLines = [];
+      if (cm.somethingSelected()) {
+        const from = cm.getCursor("from").line;
+        const to = cm.getCursor("to").line;
+        for (let line = from; line <= to; line++) {
+          cm.addLineClass(line, 'wrap', 'CodeMirror-selectedline');
+          this.selectedLines.push(line);
+        }
+      }
     });
 
     this.cm.on('mousedown', (cm, e) => {
