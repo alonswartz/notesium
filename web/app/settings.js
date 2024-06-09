@@ -17,6 +17,7 @@ var t = `
           </div>
           <div class="h-full w-[40rem] pr-1 mt-2">
             <KeyBinds v-if="active == 'keybinds'" />
+            <About v-else-if="active == 'about'" />
           </div>
         </div>
       </div>
@@ -26,14 +27,16 @@ var t = `
 `
 
 import KeyBinds from './settings-keybinds.js'
+import About from './settings-about.js'
 export default {
-  components: { KeyBinds },
+  components: { KeyBinds, About },
   emits: ['settings-close'],
   data() {
     return {
       active: 'keybinds',
       sections: [
         ['keybinds', 'Key Bindings'],
+        ['about', 'About'],
       ],
     }
   },
