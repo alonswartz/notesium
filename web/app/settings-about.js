@@ -7,9 +7,19 @@ var t = `
           <dt class="text-xs font-semibold leading-6 text-gray-900">Resources</dt>
         </div>
         <div class="divide-y divide-gray-100 w-full">
-          <a target="_blank" :href="resource[1]" v-for="resource in resources"
+          <a target="_blank" href="https://www.notesium.com"
             class="flex w-full px-6 py-2 flex-none items-center justify-items-center justify-between hover:bg-gray-50">
-            <dt class="text-xs font-medium leading-6 text-gray-900" v-text="resource[0]"></dt>
+            <dt class="text-xs font-medium leading-6 text-gray-900">Website</dt>
+            <dd><Icon name="outline-external-link" size="h-4 w-4" /></dd>
+          </a>
+          <a target="_blank" href="https://github.com/alonswartz/notesium"
+            class="flex w-full px-6 py-2 flex-none items-center justify-items-center justify-between hover:bg-gray-50">
+            <dt class="text-xs font-medium leading-6 text-gray-900">Github</dt>
+            <dd><Icon name="outline-external-link" size="h-4 w-4" /></dd>
+          </a>
+          <a target="_blank" :href="issueUrl"
+            class="flex w-full px-6 py-2 flex-none items-center justify-items-center justify-between hover:bg-gray-50">
+            <dt class="text-xs font-medium leading-6 text-gray-900">Report an issue</dt>
             <dd><Icon name="outline-external-link" size="h-4 w-4" /></dd>
           </a>
         </div>
@@ -38,11 +48,6 @@ export default {
   data() {
     return {
       versionInfo: {},
-      resources: [
-        ['Website', 'https://www.notesium.com'],
-        ['GitHub', 'https://github.com/alonswartz/notesium'],
-        ['Report an issue', 'https://github.com/alonswartz/notesium/issues/new'],
-      ],
     }
   },
   methods: {
@@ -58,6 +63,19 @@ export default {
         .catch(e => {
           console.log(e.Error);
         });
+    },
+  },
+  computed: {
+    issueUrl() {
+      let body
+      body = "```\n";
+      body += `version:${this.versionInfo.version}\n`;
+      body += `gitversion:${this.versionInfo.gitversion}\n`;
+      body += `buildtime:${this.versionInfo.buildtime}\n`;
+      body += `platform:${this.versionInfo.platform}\n`;
+      body += "```\n\n";
+      const params = new URLSearchParams({ body: body });
+      return `https://github.com/alonswartz/notesium/issues/new?${params.toString()}`;
     },
   },
   created() {
