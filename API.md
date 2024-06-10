@@ -17,6 +17,7 @@
     - [List](#list)
     - [Links](#links)
     - [Lines](#lines)
+    - [Version](#version)
 - [Heartbeat](#heartbeat)
 
 ## Introduction
@@ -272,11 +273,11 @@ GET   /api/raw/new
 GET   /api/raw/list
 GET   /api/raw/links
 GET   /api/raw/lines
+GET   /api/raw/version
 ```
 
 The API provides an **experimental** `raw/:cmd` endpoint, acting as a
-pass-through for some existing CLI commands, such as `new`, `list`,
-`links`, and `lines`.
+pass-through for most of the CLI commands.
 
 The same options as the CLI are supported. Boolean options must have
 a value of `true` or `false`. Responses are returned as `text`.
@@ -367,6 +368,27 @@ Key    | Type     | Comment
 ---    | ----     | -------
 color  | `bool`   | Color code prefix using ansi escape sequences
 prefix | `string` | Prefix each line with note title (title)
+
+#### Returns
+
+Buffered raw text output of the command.
+
+### Version
+
+> Version command
+
+```shell
+$ curl "$BASE_URL/raw/version?verbose=true"
+```
+
+Get version information
+
+#### Attributes
+
+Key     | Type   | Comment
+---     | ----   | -------
+verbose | `bool` | Output key:value pairs of related info
+check   | `bool` | Check if a newer version is available
 
 #### Returns
 

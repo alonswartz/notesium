@@ -350,6 +350,8 @@ func apiRaw(dir string, w http.ResponseWriter, r *http.Request) {
 		notesiumLinks(dir, cmd.Options.(linksOptions), writer)
 	case "lines":
 		notesiumLines(dir, cmd.Options.(linesOptions), writer)
+	case "version":
+		notesiumVersion(cmd.Options.(versionOptions), writer)
 	default:
 		http.Error(w, fmt.Sprintf("unrecognized command: %s", command), http.StatusBadRequest)
 		return

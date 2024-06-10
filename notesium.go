@@ -36,7 +36,7 @@ func main() {
 		fmt.Print(usage)
 		os.Exit(1)
 	case "version":
-		notesiumVersion(cmd.Options.(versionOptions))
+		notesiumVersion(cmd.Options.(versionOptions), os.Stdout)
 		return
 	}
 
@@ -421,16 +421,17 @@ func notesiumExtract(opts extractOptions) {
 	}
 }
 
-func notesiumVersion(opts versionOptions) {
+func notesiumVersion(opts versionOptions, w io.Writer) {
 	version := getVersion(gitversion)
 
 	if opts.check {
 		latest, err := getLatestReleaseInfo()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(w, "Error getting latest release info: %v\n", err)
+			return
 		}
 
-		fmt.Printf("Notesium %s (%s/%s)\n", version, runtime.GOOS, runtime.GOARCH)
+		fmt.Fprintf(w, "Notesium %s (%s/%s)\n", version, runtime.GOOS, runtime.GOARCH)
 
 		comparison := compareVersions(version, latest.Version)
 		switch comparison {
@@ -439,34 +440,34 @@ func notesiumVersion(opts versionOptions) {
 			if parsedTime, err := time.Parse(time.RFC3339, latest.PublishedAt); err == nil {
 				publishedAt = parsedTime.Local().Format("2006-01-02 15:04")
 			}
-			fmt.Printf("A new release is available: %s (%s)\n", latest.Version, publishedAt)
-			fmt.Printf("https://github.com/alonswartz/notesium/releases\n")
+			fmt.Fprintf(w, "A new release is available: %s (%s)\n", latest.Version, publishedAt)
+			fmt.Fprintf(w, "https://github.com/alonswartz/notesium/releases\n")
 		case 0:
-			fmt.Println("You are using the latest version")
+			fmt.Fprintf(w, "You are using the latest version\n")
 		case 1:
-			fmt.Printf("You are using a newer version than latest: %s\n", latest.Version)
+			fmt.Fprintf(w, "You are using a newer version than latest: %s\n", latest.Version)
 		}
 
 		if opts.verbose {
-			fmt.Printf("\ncomparison:%d\n", comparison)
-			fmt.Printf("version:%s\n", version)
-			fmt.Printf("gitversion:%s\n", gitversion)
-			fmt.Printf("buildtime:%s\n", buildtime)
-			fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
-			fmt.Printf("latest.version:%s\n", latest.Version)
-			fmt.Printf("latest.published:%s\n", latest.PublishedAt)
-			fmt.Printf("latest.release:%s\n", latest.HtmlUrl)
+			fmt.Fprintf(w, "\ncomparison:%d\n", comparison)
+			fmt.Fprintf(w, "version:%s\n", version)
+			fmt.Fprintf(w, "gitversion:%s\n", gitversion)
+			fmt.Fprintf(w, "buildtime:%s\n", buildtime)
+			fmt.Fprintf(w, "platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+			fmt.Fprintf(w, "latest.version:%s\n", latest.Version)
+			fmt.Fprintf(w, "latest.published:%s\n", latest.PublishedAt)
+			fmt.Fprintf(w, "latest.release:%s\n", latest.HtmlUrl)
 		}
 		return
 	}
 
 	if opts.verbose {
-		fmt.Printf("version:%s\n", version)
-		fmt.Printf("gitversion:%s\n", gitversion)
-		fmt.Printf("buildtime:%s\n", buildtime)
-		fmt.Printf("platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
+		fmt.Fprintf(w, "version:%s\n", version)
+		fmt.Fprintf(w, "gitversion:%s\n", gitversion)
+		fmt.Fprintf(w, "buildtime:%s\n", buildtime)
+		fmt.Fprintf(w, "platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
 	} else {
-		fmt.Println(version)
+		fmt.Fprintf(w, "%s\n", version)
 	}
 }
 
