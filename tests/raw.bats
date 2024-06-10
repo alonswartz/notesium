@@ -100,6 +100,16 @@ setup_file() {
     assert_line "64214930.md:5: particles."
 }
 
+@test "api/raw: version verbose sniff test" {
+    run _curl 'api/raw/version?verbose=true'
+    echo "$output"
+    [ $status -eq 0 ]
+    [[ "${lines[0]}" =~ "version:" ]]
+    [[ "${lines[1]}" =~ "gitversion:v" ]]
+    [[ "${lines[2]}" =~ "buildtime:" ]]
+    [[ "${lines[3]}" =~ "platform:linux/amd64" ]]
+}
+
 @test "api/raw: no command specified error" {
     run _curl 'api/raw/'
     echo "$output"
