@@ -57,7 +57,7 @@ func main() {
 	case "lines":
 		notesiumLines(notesiumDir, cmd.Options.(linesOptions), os.Stdout)
 	case "stats":
-		notesiumStats(notesiumDir, cmd.Options.(statsOptions))
+		notesiumStats(notesiumDir, cmd.Options.(statsOptions), os.Stdout)
 	case "web":
 		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
 	case "extract":
@@ -278,7 +278,7 @@ func notesiumLines(dir string, opts linesOptions, w io.Writer) {
 	}
 }
 
-func notesiumStats(dir string, opts statsOptions) {
+func notesiumStats(dir string, opts statsOptions, w io.Writer) {
 	populateCache(dir)
 
 	labels := 0
@@ -310,14 +310,14 @@ func notesiumStats(dir string, opts statsOptions) {
 	}
 
 	keyFormat := opts.color.Code + (map[bool]string{true: "%-9s", false: "%s"}[opts.table]) + opts.color.Reset
-	fmt.Printf(keyFormat+" %d\n", "notes", len(noteCache))
-	fmt.Printf(keyFormat+" %d\n", "labels", labels)
-	fmt.Printf(keyFormat+" %d\n", "orphans", orphans)
-	fmt.Printf(keyFormat+" %d\n", "links", links)
-	fmt.Printf(keyFormat+" %d\n", "dangling", dangling)
-	fmt.Printf(keyFormat+" %d\n", "lines", lines)
-	fmt.Printf(keyFormat+" %d\n", "words", words)
-	fmt.Printf(keyFormat+" %d\n", "chars", chars)
+	fmt.Fprintf(w, keyFormat+" %d\n", "notes", len(noteCache))
+	fmt.Fprintf(w, keyFormat+" %d\n", "labels", labels)
+	fmt.Fprintf(w, keyFormat+" %d\n", "orphans", orphans)
+	fmt.Fprintf(w, keyFormat+" %d\n", "links", links)
+	fmt.Fprintf(w, keyFormat+" %d\n", "dangling", dangling)
+	fmt.Fprintf(w, keyFormat+" %d\n", "lines", lines)
+	fmt.Fprintf(w, keyFormat+" %d\n", "words", words)
+	fmt.Fprintf(w, keyFormat+" %d\n", "chars", chars)
 }
 
 func notesiumWeb(dir string, opts webOptions) {

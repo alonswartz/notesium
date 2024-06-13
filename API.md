@@ -17,6 +17,7 @@
     - [List](#list)
     - [Links](#links)
     - [Lines](#lines)
+    - [Stats](#stats)
     - [Version](#version)
 - [Heartbeat](#heartbeat)
 
@@ -368,6 +369,27 @@ Key    | Type     | Comment
 ---    | ----     | -------
 color  | `bool`   | Color code prefix using ansi escape sequences
 prefix | `string` | Prefix each line with note title (title)
+
+#### Returns
+
+Buffered raw text output of the command.
+
+### Stats
+
+> Stats command
+
+```shell
+$ curl "$BASE_URL/raw/stats"
+```
+
+Get statistics
+
+#### Attributes
+
+Key   | Type   | Comment
+---   | ----   | -------
+color | `bool` | Color code prefix using ansi escape sequences
+table | `bool` | Format as table with whitespace delimited columns
 
 #### Returns
 
