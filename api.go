@@ -350,6 +350,8 @@ func apiRaw(dir string, w http.ResponseWriter, r *http.Request) {
 		notesiumLinks(dir, cmd.Options.(linksOptions), writer)
 	case "lines":
 		notesiumLines(dir, cmd.Options.(linesOptions), writer)
+	case "stats":
+		notesiumStats(dir, cmd.Options.(statsOptions), writer)
 	case "version":
 		notesiumVersion(cmd.Options.(versionOptions), writer)
 	default:

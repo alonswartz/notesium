@@ -100,6 +100,20 @@ setup_file() {
     assert_line "64214930.md:5: particles."
 }
 
+@test "api/raw: stats default" {
+    run _curl 'api/raw/stats'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${lines[0]}" == "notes 8" ]
+    [ "${lines[1]}" == "labels 2" ]
+    [ "${lines[2]}" == "orphans 2" ]
+    [ "${lines[3]}" == "links 7" ]
+    [ "${lines[4]}" == "dangling 1" ]
+    [ "${lines[5]}" == "lines 28" ]
+    [ "${lines[6]}" == "words 213" ]
+    [ "${lines[7]}" == "chars 1396" ]
+}
+
 @test "api/raw: version verbose sniff test" {
     run _curl 'api/raw/version?verbose=true'
     echo "$output"
