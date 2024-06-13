@@ -17,6 +17,7 @@ var t = `
           </div>
           <div class="h-full w-[40rem] pr-1 mt-2">
             <KeyBinds v-if="active == 'keybinds'" />
+            <Stats v-else-if="active == 'stats'" @finder-open="(...args) => $emit('finder-open', ...args)" />
             <About v-else-if="active == 'about'" />
           </div>
         </div>
@@ -28,14 +29,16 @@ var t = `
 
 import KeyBinds from './settings-keybinds.js'
 import About from './settings-about.js'
+import Stats from './settings-stats.js'
 export default {
-  components: { KeyBinds, About },
-  emits: ['settings-close'],
+  components: { KeyBinds, About, Stats },
+  emits: ['settings-close', 'finder-open'],
   data() {
     return {
       active: 'keybinds',
       sections: [
         ['keybinds', 'Key Bindings'],
+        ['stats', 'Statistics'],
         ['about', 'About'],
       ],
     }
