@@ -64,17 +64,25 @@ var t = `
     </div>
   </div>
 
-  <span title="settings" @click="$emit('settings-open')"
+  <span v-if="versionCheck.comparison == '-1'" title="An update is available" @click="$emit('settings-open')"
+    class="py-1 -my-1 cursor-pointer text-red-700 hover:text-red-700 bg-red-100 hover:bg-red-200 ring-1 ring-inset ring-red-700 rounded-2xl">
+    <div class="flex items-center justify-items-center px-1">
+      <span class="text-xs mt-1 pl-2 font-semibold ">Update</span>
+      <Icon name="outline-ellipsis-vertical" size="h-5 w-5" />
+    </div>
+  </span>
+  <span v-else title="settings" @click="$emit('settings-open')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-ellipsis-vertical" size="h-5 w-5" />
   </span>
+
 </div>
 `
 
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'],
+  props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel', 'versionCheck'],
   emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
   data() {
     return {
