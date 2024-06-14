@@ -7,15 +7,15 @@ var t = `
         <dl class="flex w-full px-6 py-2 bg-gray-100 border-b border-gray-200 items-center justify-items-center justify-between">
           <dt class="text-xs leading-6 text-gray-900 font-semibold">Software update</dt>
           <dd v-if="versionCheck.inprogress" class="mt-1 text-blue-700"><Icon name="spinner-circle" size="h-4 w-4" /></dd>
-          <dd v-else class="text-xs leading-6 text-blue-700 hover:text-blue-600 hover:cursor-pointer" @click="checkVersion">Check for updates</dd>
+          <dd v-else class="text-xs leading-6 text-blue-700 hover:text-blue-600 hover:cursor-pointer" @click="$emit('version-check')">Check for updates</dd>
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
-          <dt class="text-xs font-medium leading-6 text-gray-900">Current version</dt>
+          <dt class="text-xs font-medium leading-6 text-gray-900">Runtime version</dt>
           <dd class="text-xs font-mono leading-6 text-gray-900" v-text="versionInfo.version || 'unknown'"></dd>
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
           <dt class="text-xs font-medium leading-6 text-gray-900">Latest release</dt>
-          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="versionCheck.latest_version || 'unknown'"></dd>
+          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="versionCheck.latestVersion || 'unknown'"></dd>
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
           <dt class="text-xs font-medium leading-6 text-gray-900">Last check</dt>
@@ -81,43 +81,14 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
+  emits: ['version-check'],
+  props: ['versionCheck'],
   data() {
     return {
       versionInfo: {},
-      versionCheck: {},
     }
   },
   methods: {
-    checkVersion() {
-      this.versionCheck.error = '';
-      this.versionCheck.comparison = '';
-      this.versionCheck.latest_version = '';
-      this.versionCheck.inprogress = true;
-      fetch('/api/raw/version?verbose=true&check=true')
-        .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
-        .then(text => {
-          if (text.toLowerCase().startsWith('error')) {
-            this.versionCheck.error = text.trim();
-            return;
-          }
-          const lines = text.split('\n');
-          lines.forEach(line => {
-            const [key, ...rest] = line.split(':');
-            const value = rest.join(':').trim();
-            switch (key) {
-              case 'comparison': this.versionCheck.comparison = value; break;
-              case 'latest.version': this.versionCheck.latest_version = value; break;
-            }
-          });
-        })
-        .catch(e => {
-          this.versionCheck.error = e.Error;
-        })
-        .finally(() => {
-          this.versionCheck.inprogress = false;
-          this.versionCheck.date = new Date();
-        });
-    },
     getVersionInfo() {
       fetch('/api/raw/version?verbose=true')
         .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
