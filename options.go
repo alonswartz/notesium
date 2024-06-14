@@ -242,6 +242,7 @@ func parseOptions(args []string) (Command, error) {
 		opts.host = "127.0.0.1"
 		opts.port = 0
 		opts.readOnly = true
+		opts.webroot = "embedded"
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
@@ -263,14 +264,19 @@ func parseOptions(args []string) (Command, error) {
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
 		}
-		if opts.webroot != "" {
-			webroot, err := os.Stat(opts.webroot)
+		if opts.webroot != "embedded" {
+			webrootAbs, err := filepath.Abs(opts.webroot)
+			if err != nil {
+				return Command{}, fmt.Errorf("failed to get absolute path: %v", err)
+			}
+			webrootInfo, err := os.Stat(webrootAbs)
 			if err != nil {
 				return Command{}, fmt.Errorf("webroot does not exist: %v", err)
 			}
-			if !webroot.IsDir() {
-				return Command{}, fmt.Errorf("webroot not directory: %v", err)
+			if !webrootInfo.IsDir() {
+				return Command{}, fmt.Errorf("webroot is not a directory: %v", err)
 			}
+			opts.webroot = webrootAbs
 		}
 		cmd.Options = opts
 		return cmd, nil
