@@ -381,6 +381,14 @@ export default {
           break;
       }
     },
+    handleRuntimeWebOpts() {
+      fetch("/api/runtime")
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        .then(runtime => {
+          if (runtime.web["stop-on-idle"]) this.handleHeartbeat('start');
+        })
+        .catch(e => { console.error(e); });
+    },
     savePanelState() {
       const panels = ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'];
       panels.forEach(key => { sessionStorage.setItem(key, this[key]); });
@@ -395,7 +403,7 @@ export default {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.loadPanelState();
-    this.handleHeartbeat('start');
+    this.handleRuntimeWebOpts()
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
