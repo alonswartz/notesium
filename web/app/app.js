@@ -22,7 +22,7 @@ var t = `
   </div>
 
   <Graph v-if="showGraph" :config=graphConfig @graph-close="closeGraph" @note-open="openNote" />
-  <Settings v-if="showSettings" @settings-close="showSettings=false" />
+  <Settings v-if="showSettings" :versionCheck=versionCheck @settings-close="showSettings=false" @version-check="checkVersion" @finder-open="openFinder" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
@@ -60,6 +60,7 @@ export default {
       showNoteSidebar: true,
       showLabelsPanel: false,
       showNotesPanel: false,
+      versionCheck: {},
       keySequence: [],
       alerts: [],
       lastSave: null,
@@ -276,6 +277,36 @@ export default {
     dismissAlert(id) {
       const index = this.alerts.findIndex(alert => alert.id === id);
       if (index !== -1) this.alerts.splice(index, 1);
+    },
+    checkVersion() {
+      this.versionCheck.error = '';
+      this.versionCheck.comparison = '';
+      this.versionCheck.latestVersion = '';
+      this.versionCheck.inprogress = true;
+      fetch('/api/raw/version?verbose=true&check=true')
+        .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
+        .then(text => {
+          if (text.toLowerCase().startsWith('error')) {
+            this.versionCheck.error = text.trim();
+            return;
+          }
+          const lines = text.split('\n');
+          lines.forEach(line => {
+            const [key, ...rest] = line.split(':');
+            const value = rest.join(':').trim();
+            switch (key) {
+              case 'comparison': this.versionCheck.comparison = value; break;
+              case 'latest.version': this.versionCheck.latestVersion = value; break;
+            }
+          });
+        })
+        .catch(e => {
+          this.versionCheck.error = e.Error;
+        })
+        .finally(() => {
+          this.versionCheck.inprogress = false;
+          this.versionCheck.date = new Date();
+        });
     },
     handleBeforeUnload(event) {
       this.savePanelState();

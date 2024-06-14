@@ -18,7 +18,7 @@ var t = `
           <div class="h-full w-[40rem] pr-1 mt-2">
             <KeyBinds v-if="active == 'keybinds'" />
             <Stats v-else-if="active == 'stats'" @finder-open="(...args) => $emit('finder-open', ...args)" />
-            <About v-else-if="active == 'about'" />
+            <About v-else-if="active == 'about'" @version-check="(...args) => $emit('version-check', ...args)" :versionCheck=versionCheck />
           </div>
         </div>
       </div>
@@ -32,7 +32,8 @@ import About from './settings-about.js'
 import Stats from './settings-stats.js'
 export default {
   components: { KeyBinds, About, Stats },
-  emits: ['settings-close', 'finder-open'],
+  props: ['versionCheck'],
+  emits: ['settings-close', 'version-check', 'finder-open'],
   data() {
     return {
       active: 'keybinds',
@@ -42,6 +43,9 @@ export default {
         ['about', 'About'],
       ],
     }
+  },
+  created() {
+    if (this.versionCheck.comparison == '-1') this.active = 'about';
   },
   template: t
 }
