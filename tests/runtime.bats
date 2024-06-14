@@ -55,6 +55,19 @@ setup_file() {
     [[ "${lines[3]}" =~ "latest-release-url: http" ]]
 }
 
+@test "runtime: memory" {
+    run _curl_jq 'api/runtime' '.memory | to_entries[] | "\(.key): \(.value)"'
+    echo "$output"
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 6 ]
+    [[ "${lines[0]}" =~ "alloc:" ]]
+    [[ "${lines[1]}" =~ "total-alloc:" ]]
+    [[ "${lines[2]}" =~ "sys:" ]]
+    [[ "${lines[3]}" =~ "lookups:" ]]
+    [[ "${lines[4]}" =~ "mallocs:" ]]
+    [[ "${lines[5]}" =~ "frees:" ]]
+}
+
 @test "runtime: stop by sending terminate signal" {
     # force stop otherwise bats will block until timeout (bats-core/issues/205)
     run pidof notesium
