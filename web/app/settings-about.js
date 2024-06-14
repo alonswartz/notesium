@@ -11,7 +11,7 @@ var t = `
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
           <dt class="text-xs font-medium leading-6 text-gray-900">Runtime version</dt>
-          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="versionInfo.version || 'unknown'"></dd>
+          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="runtime.version || 'unknown'"></dd>
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
           <dt class="text-xs font-medium leading-6 text-gray-900">Latest release</dt>
@@ -64,13 +64,30 @@ var t = `
     <div class="rounded-md border border-gray-200">
       <dl class="flex flex-wrap">
         <div class="flex-auto pl-6 py-2 bg-gray-100 border-b border-gray-200">
-          <dt class="text-xs font-semibold leading-6 text-gray-900">Runtime</dt>
+          <dt class="text-xs font-semibold leading-6 text-gray-900 hover:cursor-pointer" @click="getRuntime()" title="click to refresh">Runtime</dt>
         </div>
-        <div v-for="key in ['version', 'gitversion', 'buildtime', 'platform']"
-          class="px-6 py-2 flex w-full flex-none items-center justify-center justify-between bg-gray-50">
-          <dt class="text-xs font-medium leading-6 text-gray-900 capitalize" v-text="key"></dt>
-          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="versionInfo[key] || 'unknown'"></dd>
-        </div>
+        <template v-for="(val, key) in runtime" :key="key">
+          <template v-if="typeof val === 'object' && val !== null">
+            <details class="text-xs flex w-full flex-none bg-gray-50">
+              <summary class="flex w-full pl-6 pr-5 py-2 flex-none items-center justify-between hover:bg-gray-100 hover:cursor-pointer focus:outline-none">
+                <dt class="text-xs font-medium leading-6 text-gray-900" v-text="key"></dt>
+                <dd><Icon name="chevron-right" size="h-4 w-4" /></dd>
+              </summary>
+              <div class="ml-6 pr-6 border-l-2 border-dotted border-gray-200">
+                <div v-for="(subVal, subKey) in val" :key="key + subKey" class="pl-3 py-2 flex w-full flex-none items-center justify-between">
+                  <dt class="text-xs font-medium leading-6 text-gray-900 whitespace-nowrap" v-text="subKey"></dt>
+                  <dd class="text-xs font-mono leading-6 text-gray-900 truncate ml-10" :title="subVal" v-text="subVal"></dd>
+                </div>
+              </div>
+            </details>
+          </template>
+          <template v-else>
+            <div class="px-6 py-2 flex w-full flex-none items-center justify-between bg-gray-50">
+              <dt class="text-xs font-medium leading-6 text-gray-900 whitespace-nowrap" v-text="key"></dt>
+              <dd class="text-xs font-mono leading-6 text-gray-900 truncate ml-10" :title="val" v-text="val"></dd>
+            </div>
+          </template>
+        </template>
       </dl>
     </div>
 
@@ -85,22 +102,15 @@ export default {
   props: ['versionCheck'],
   data() {
     return {
-      versionInfo: {},
+      runtime: {},
     }
   },
   methods: {
-    getVersionInfo() {
-      fetch('/api/raw/version?verbose=true')
-        .then(r => r.ok ? r.text() : r.text().then(e => Promise.reject(e)))
-        .then(text => {
-          this.versionInfo = text.trim().split('\n').reduce((dict, line) => {
-            const [key, val] = line.split(/:(.+)/); dict[key] = val;
-            return dict;
-          }, {});
-        })
-        .catch(e => {
-          console.log(e.Error);
-        });
+    getRuntime() {
+      fetch("/api/runtime")
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        .then(response => { this.runtime = response; })
+        .catch(e => { console.error(e); });
     },
     formatDate(date) {
       if (date) {
@@ -116,19 +126,21 @@ export default {
   },
   computed: {
     issueUrl() {
+      const url = "https://github.com/alonswartz/notesium/issues/new";
+      if (Object.keys(this.runtime).length === 0) return url
       let body
       body = "```\n";
-      body += `version:${this.versionInfo.version}\n`;
-      body += `gitversion:${this.versionInfo.gitversion}\n`;
-      body += `buildtime:${this.versionInfo.buildtime}\n`;
-      body += `platform:${this.versionInfo.platform}\n`;
+      body += `version:${this.runtime.version}\n`;
+      body += `gitversion:${this.runtime.build.gitversion}\n`;
+      body += `buildtime:${this.runtime.build.buildtime}\n`;
+      body += `platform:${this.runtime.platform}\n`;
       body += "```\n\n";
       const params = new URLSearchParams({ body: body });
-      return `https://github.com/alonswartz/notesium/issues/new?${params.toString()}`;
+      return `${url}?${params.toString()}`;
     },
   },
   created() {
-    this.getVersionInfo();
+    this.getRuntime();
   },
   template: t
 }
