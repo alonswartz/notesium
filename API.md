@@ -12,6 +12,9 @@
     - [Delete a note](#delete-a-note)
     - [Retrieve a note](#retrieve-a-note)
     - [List all notes](#list-all-notes)
+- [Runtime](#runtime)
+    - [The runtime object](#the-runtime-object)
+    - [Get runtime object](#get-runtime-object)
 - [Raw command](#raw-command)
     - [New](#new)
     - [List](#list)
@@ -263,6 +266,72 @@ None.
 #### Returns
 
 A list of `note` objects (excluding `Content` and `Path` fields).
+
+
+## Runtime
+
+> Endpoints
+
+```
+GET  /api/runtime
+```
+
+This object represents the configuration, build details and host
+platform of the running Notesium binary.
+
+### The runtime object
+
+> The runtime object
+
+```json
+{
+  "home": "/home/github/notesium/notesium/tmp/dir/",
+  "version": "0.1.2",
+  "platform": "linux/amd64",
+  "web": {
+    "webroot": "embedded",
+    "writable": true,
+    "stop-on-idle": false
+  },
+  "build": {
+    "gitversion": "v0.1.2-0-gda91f63",
+    "buildtime": "2024-01-01T12:34:56Z",
+    "goversion": "go1.20.5",
+    "latest-release-url": "https://api.github.com/...notesium/releases/latest"
+  }
+}
+```
+
+#### Attributes
+
+Key                      | Type     | Comment
+---                      | ----     | -------
+home                     | `string` | Path of notes directory
+version                  | `string` | Version as determined from `gitversion`
+platform                 | `string` | Operating system and architecture
+web.webroot              | `string` | Path to webroot or `embedded`
+web.writable             | `bool`   | Whether writing is allowed via API
+web.stop-on-idle         | `bool`   | Whether to auto-stop on no activity
+build.gitversion         | `string` | Git version set at build
+build.buildtime          | `time`   | Datetime of build
+build.goversion          | `string` | GoLang version used to build
+build.latest-release-url | `string` | URL to retrieve latest release version
+
+### Get runtime object
+
+```shell
+$ curl $BASE_URL/runtime
+```
+
+Retrieve runtime information.
+
+#### Parameters
+
+None
+
+#### Returns
+
+The `runtime` object.
 
 
 ## Raw command

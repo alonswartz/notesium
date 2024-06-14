@@ -352,6 +352,10 @@ func notesiumWeb(dir string, opts webOptions) {
 		apiNote(dir, w, r, opts.readOnly)
 	}))
 
+	http.HandleFunc("/api/runtime", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
+		apiRuntime(dir, w, r, opts)
+	}))
+
 	http.HandleFunc("/api/raw/", heartbeatF(func(w http.ResponseWriter, r *http.Request) {
 		apiRaw(dir, w, r)
 	}))
