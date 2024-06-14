@@ -292,6 +292,18 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 	w.Write(jsonResponse)
 }
 
+func apiRuntime(dir string, w http.ResponseWriter, r *http.Request, opts webOptions) {
+	runtimeResponse := GetRuntimeInfo(dir, opts)
+	jsonResponse, err := json.Marshal(runtimeResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
+}
+
 //////////////////////////////// experimental ////////////////////////////////
 
 type bufferedResponseWriter struct {
