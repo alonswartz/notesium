@@ -12,8 +12,8 @@ setup_file() {
     [ "$(pidof notesium)" == "" ]
 }
 
-@test "runtime: start with custom port and stop-on-idle" {
-    run notesium web  --port=8881 --stop-on-idle &
+@test "runtime: start with custom port, stop-on-idle and no-check" {
+    run notesium web  --port=8881 --stop-on-idle --no-check &
     echo "$output"
 }
 
@@ -38,10 +38,11 @@ setup_file() {
     run _curl_jq 'api/runtime' '.web | to_entries[] | "\(.key): \(.value)"'
     echo "$output"
     [ $status -eq 0 ]
-    [ "${#lines[@]}" -eq 3 ]
+    [ "${#lines[@]}" -eq 4 ]
     [ "${lines[0]}" == "webroot: embedded" ]
     [ "${lines[1]}" == "writable: false" ]
     [ "${lines[2]}" == "stop-on-idle: true" ]
+    [ "${lines[3]}" == "daily-version-check: false" ]
 }
 
 @test "runtime: build" {

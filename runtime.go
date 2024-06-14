@@ -6,9 +6,10 @@ import (
 )
 
 type WebInfo struct {
-	Webroot    string `json:"webroot"`
-	Writable   bool   `json:"writable"`
-	StopOnIdle bool   `json:"stop-on-idle"`
+	Webroot      string `json:"webroot"`
+	Writable     bool   `json:"writable"`
+	StopOnIdle   bool   `json:"stop-on-idle"`
+	VersionCheck bool   `json:"daily-version-check"`
 }
 
 type BuildInfo struct {
@@ -45,9 +46,10 @@ func GetRuntimeInfo(dir string, webOpts webOptions) RuntimeResponse {
 		Version:  getVersion(gitversion),
 		Platform: fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
 		Web: WebInfo{
-			Webroot:    webOpts.webroot,
-			Writable:   !webOpts.readOnly,
-			StopOnIdle: webOpts.heartbeat,
+			Webroot:      webOpts.webroot,
+			Writable:     !webOpts.readOnly,
+			StopOnIdle:   webOpts.heartbeat,
+			VersionCheck: webOpts.check,
 		},
 		Build: BuildInfo{
 			GitVersion:       gitversion,

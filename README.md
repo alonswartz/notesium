@@ -233,6 +233,7 @@ Commands:
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
+    --no-check      Disable daily new version checks
     --writable      Allow writing of notes in NOTESIUM_DIR via API
   extract [path]    Print list of embedded files or contents of file path
   version           Print version

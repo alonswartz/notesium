@@ -381,11 +381,24 @@ export default {
           break;
       }
     },
+    handleCheckVersion(action) {
+      switch (action) {
+        case 'start':
+          this.checkVersion();
+          !this.checkVersionInterval && (this.checkVersionInterval = setInterval(this.checkVersion, 86400000)); // 24 hours
+          break;
+        case 'stop':
+          this.checkVersionInterval && clearInterval(this.checkVersionInterval);
+          this.checkVersionInterval = null;
+          break;
+      }
+    },
     handleRuntimeWebOpts() {
       fetch("/api/runtime")
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(runtime => {
           if (runtime.web["stop-on-idle"]) this.handleHeartbeat('start');
+          if (runtime.web["daily-version-check"]) this.handleCheckVersion('start');
         })
         .catch(e => { console.error(e); });
     },
@@ -403,12 +416,13 @@ export default {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.loadPanelState();
-    this.handleRuntimeWebOpts()
+    this.handleRuntimeWebOpts();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
     this.handleHeartbeat('stop');
+    this.handleCheckVersion('stop');
   },
   template: t
 }
