@@ -325,7 +325,7 @@ func notesiumWeb(dir string, opts webOptions) {
 
 	var httpfs http.FileSystem
 
-	if opts.webroot == "" {
+	if opts.webroot == "embedded" {
 		subfs, err := fs.Sub(embedfs, embedfsWebRoot)
 		if err != nil {
 			log.Fatalf("embedded webroot sub error: %v", err)
