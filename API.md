@@ -291,7 +291,8 @@ and memory usage of the running Notesium binary.
   "web": {
     "webroot": "embedded",
     "writable": true,
-    "stop-on-idle": false
+    "stop-on-idle": false,
+    "daily-version-check": false
   },
   "build": {
     "gitversion": "v0.1.2-0-gda91f63",
@@ -320,6 +321,7 @@ platform                 | `string` | Operating system and architecture
 web.webroot              | `string` | Path to webroot or `embedded`
 web.writable             | `bool`   | Whether writing is allowed via API
 web.stop-on-idle         | `bool`   | Whether to auto-stop on no activity
+web.daily-version-check  | `bool`   | Whether to auto-check for new versions
 build.gitversion         | `string` | Git version set at build
 build.buildtime          | `time`   | Datetime of build
 build.goversion          | `string` | GoLang version used to build
