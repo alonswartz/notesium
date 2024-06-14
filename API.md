@@ -276,8 +276,8 @@ A list of `note` objects (excluding `Content` and `Path` fields).
 GET  /api/runtime
 ```
 
-This object represents the configuration, build details and host
-platform of the running Notesium binary.
+This object represents the configuration, build details, host platform,
+and memory usage of the running Notesium binary.
 
 ### The runtime object
 
@@ -298,6 +298,14 @@ platform of the running Notesium binary.
     "buildtime": "2024-01-01T12:34:56Z",
     "goversion": "go1.20.5",
     "latest-release-url": "https://api.github.com/...notesium/releases/latest"
+  },
+  "memory": {
+    "alloc": "510.0 KB",
+    "total-alloc": "510.0 KB",
+    "sys": "3.1 MB",
+    "lookups": 0,
+    "mallocs": 1866,
+    "frees": 61
   }
 }
 ```
@@ -316,6 +324,12 @@ build.gitversion         | `string` | Git version set at build
 build.buildtime          | `time`   | Datetime of build
 build.goversion          | `string` | GoLang version used to build
 build.latest-release-url | `string` | URL to retrieve latest release version
+memory.alloc             | `string` | Allocated heap objects
+memory.total-alloc       | `string` | Total heap allocated
+memory.sys               | `string` | Memory obtained from system
+memory.lookups           | `uint64` | Number of pointer lookups
+memory.mallocs           | `uint64` | Number of malloc calls
+memory.frees             | `uint64` | Number of free calls
 
 ### Get runtime object
 
