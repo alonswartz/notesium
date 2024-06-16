@@ -83,6 +83,7 @@ It aspires and is designed to:
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
     - Resizable sidepanels for labels, notes list and note metadata with linktrees.
+    - Note deletion with incoming-links verification and confirmation.
     - Force graph to visualize and explore the relationship between notes.
         - Context aware fullscreen and overlay views.
         - Emphasize nodes and their links using search filter or node click.
@@ -634,7 +635,7 @@ PAUSE=y bats tests/list.bats --tap
 - Sonke Ahrens: How to take smart notes (book).
 - Junegunn Choi: Fzf and Vim plugins.
 - The people behind Vim and Neovim.
-- The people behind D3.js.
+- The people behind VueJS, Codemirror, TailwindCSS and D3.js.
 - Projects such as Obsidian, Logseq, Roam Research, and countless others...
 
 ## License
