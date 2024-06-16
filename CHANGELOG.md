@@ -1,3 +1,54 @@
+## 0.5.8
+
+The Web/App now supports note deletion, first verifying there are no
+incoming links to avoid dangling links, followed by a confirmation
+dialog prior to deletion.
+
+Checking for software updates is now supported via the CLI and the
+Web/App, along with detailed version and runtime information. A handy
+`Report an issue link` is included with the body preset to include
+version information. The Web/App also features a high-level statistics
+count section integrated with the Finder.
+
+Fixed:
+
+- Web/App: Editor concealment has been improved for selected lines.
+- Web/App: Editor concealed `hr` is now centered horizontally, and darker.
+- Web/App: Heartbeat will only start if `stop-on-idle` is set.
+- Web: Absolute path of webroot will be used if set.
+
+Added:
+
+- Web/App: Note deletion with incoming-links verification and confirmation.
+- Web/App: Settings Stats - Counts with integrated Finder links.
+- Web/App: Settings About - Software update, Resources and Runtime.
+- Web/App: Settings About - Runtime webOptions, build info and memory usage.
+- Web/App: Settings About - Report an issue link with version info as body.
+- Web/App: Nav actions visual notification if new version available.
+
+- CLI: `version` command now supports `--check` and `--verbose` options.
+- CLI: `web` command now supports `--no-check` option to disable daily check.
+
+- API: `api/runtime` `GET` is now supported.
+- API: `api/raw/stats` `GET` is now supported.
+- API: `api/raw/version` `GET` is now supported.
+- API: `api/notes/:filename` `DELETE` is now supported.
+- API: New endpoints added to specification.
+
+- Tests: Unit tests for deriving semantic version.
+- Tests: Unit tests for comparing semantic version and latest version.
+- Tests: Integration tests with custom builds and mock release response.
+- Tests: Integration tests for semantic version and new version comparisons.
+- Tests: Integration tests for note deletion via API.
+- Tests: Integration tests for runtime via API.
+- Tests: Integration tests for stats via API.
+- CI/CD: Github Actions updated to run unit tests and print version.
+
+Changed:
+
+- Building from source now uses `gitversion` and `buildtime` flags.
+- Notesium version is now derived from `gitversion`.
+
 ## 0.5.7
 
 Setting a custom `ctime` for new notes is now supported, enabling
