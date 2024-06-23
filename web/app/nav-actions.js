@@ -49,13 +49,13 @@ var t = `
     <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
       <div class="rounded-md bg-white shadow-md border border-gray-200">
         <ul class="divide-y divide-gray-100">
-          <li v-for="entry in panelsDropdownEntries" :key="entry.prop" @click="$emit(entry.emit)"
+          <li v-for="entry in panelsDropdownEntries" :key="entry.key" @click="toggleState(entry.key)"
             class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer" >
             <div class="flex space-x-4 select-none">
               <span class="text-gray-400"><Icon :name="entry.icon" size="h-5 w-5" /></span>
               <p class="text-sm text-gray-600" v-text="entry.title"></p>
             </div>
-            <span v-show="this[entry.prop]" class="text-indigo-600">
+            <span v-show="$notesiumState[entry.key]" class="text-indigo-600">
               <Icon name="mini-check" size="h-5 w-5" />
             </span>
           </li>
@@ -82,17 +82,22 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel', 'versionCheck'],
-  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle', 'labelspanel-toggle'],
+  props: ['showNoteSidebar', 'showNotesPanel', 'versionCheck'],
+  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle'],
   data() {
     return {
       panelsDropdownEntries: [
-        { title: "Labels panel",  emit: "labelspanel-toggle", prop: 'showLabelsPanel', icon: "outline-tag" },
-        { title: "Notes panel",   emit: "notespanel-toggle",  prop: 'showNotesPanel',  icon: "outline-queue-list" },
-        { title: "Note metadata", emit: "notesidebar-toggle", prop: 'showNoteSidebar', icon: "panel-right", },
+        { title: "Labels panel",  key: 'showLabelsPanel', icon: "outline-tag" },
+        { title: "Notes panel",   key: 'showNotesPanel',  icon: "outline-queue-list" },
+        { title: "Note metadata", key: 'showNoteSidebar', icon: "panel-right" },
       ],
       dailyNoteDate: null,
     }
+  },
+  methods: {
+    toggleState(key) {
+      this.$notesiumState[key] ? this.$notesiumState[key] = false : this.$notesiumState[key] = true;
+    },
   },
   computed: {
     isDailyNoteDateValid() {

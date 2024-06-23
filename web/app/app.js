@@ -1,22 +1,19 @@
 var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
-  <SidePanel v-if="showLabelsPanel || showNotesPanel"
-    :showLabels=showLabelsPanel :showNotes=showNotesPanel :lastSave="lastSave"
-    @note-open="openNote" @finder-open="openFinder" />
+  <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
+    :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
-      <NavActions :showNoteSidebar=showNoteSidebar :showLabelsPanel=showLabelsPanel :showNotesPanel=showNotesPanel :versionCheck=versionCheck
-        @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true"
-        @notespanel-toggle="showNotesPanel=!showNotesPanel" @labelspanel-toggle="showLabelsPanel=!showLabelsPanel"
-        @notesidebar-toggle="showNoteSidebar=!showNoteSidebar" />
+      <NavActions :versionCheck=versionCheck
+        @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
-      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :showSidebar=showNoteSidebar
+      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
         @note-open="openNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" @graph-open="openGraph" />
     </main>
   </div>
@@ -57,9 +54,6 @@ export default {
       showGraph: false,
       showFinder: false,
       showSettings: false,
-      showNoteSidebar: true,
-      showLabelsPanel: false,
-      showNotesPanel: false,
       versionCheck: {},
       keySequence: [],
       alerts: [],
@@ -309,7 +303,6 @@ export default {
         });
     },
     handleBeforeUnload(event) {
-      this.savePanelState();
       if (this.notes.some(note => note.isModified)) {
         const message = 'You have unsaved changes.';
         event.returnValue = message;
@@ -402,20 +395,10 @@ export default {
         })
         .catch(e => { console.error(e); });
     },
-    savePanelState() {
-      const panels = ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'];
-      panels.forEach(key => { sessionStorage.setItem(key, this[key]); });
-    },
-    loadPanelState() {
-      const getBoolSessionItem = (k, dv) => { const v = sessionStorage.getItem(k); return v !== null ? v === 'true' : dv; };
-      const panels = ['showNoteSidebar', 'showLabelsPanel', 'showNotesPanel'];
-      panels.forEach(key => { this[key] = getBoolSessionItem(key, this[key]); });
-    },
   },
   mounted() {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
-    this.loadPanelState();
     this.handleRuntimeWebOpts();
   },
   beforeUnmount() {
