@@ -56,11 +56,11 @@ export default {
     },
     savePreferredWidth() {
       const key = `${this.name}Width`;
-      sessionStorage.setItem(key, this.paneWidth);
+      this.$notesiumState[key] = this.paneWidth;
     },
     loadPreferredWidth() {
       const key = `${this.name}Width`;
-      this.paneWidth = parseInt(sessionStorage.getItem(key), 10) || this.defaultWidth;
+      this.paneWidth = parseInt(this.$notesiumState[key], 10) || this.defaultWidth;
     },
   },
   mounted() {

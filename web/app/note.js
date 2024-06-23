@@ -4,13 +4,13 @@ var t = `
     <div :class="{'cm-conceal cm-unconceal': conceal}" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
   </div>
 
-  <div v-if="!showSidebar || note.ghost" class="absolute right-0 mt-2 mr-6 h-7 z-10 inline-flex items-center">
+  <div v-if="!$notesiumState.showNoteSidebar || note.ghost" class="absolute right-0 mt-2 mr-6 h-7 z-10 inline-flex items-center">
     <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
       :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
       class="rounded px-10 pt-2 pb-1 text-xs">Save</button>
   </div>
 
-  <NoteSidebar v-if="showSidebar && !note.ghost" :note=note
+  <NoteSidebar v-if="$notesiumState.showNoteSidebar && !note.ghost" :note=note
     @conceal-toggle="conceal=!conceal"
     @note-save="handleSave()"
     @note-open="(...args) => $emit('note-open', ...args)"
@@ -28,7 +28,7 @@ import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
   components: { NoteSidebar, Finder, Icon },
-  props: ['note', 'showSidebar'],
+  props: ['note'],
   emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open'],
   data() {
     return {
