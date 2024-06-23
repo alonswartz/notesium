@@ -52,7 +52,10 @@
     <script type="module">
       const { createApp } = Vue
       import App from './app.js'
-      createApp(App).mount('#app')
+      import { notesiumState } from './state.js'
+      const app = createApp(App)
+      app.config.globalProperties.$notesiumState = notesiumState;
+      app.mount('#app');
     </script>
   </body>
 </html>
