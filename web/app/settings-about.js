@@ -88,6 +88,24 @@ var t = `
             </div>
           </template>
         </template>
+
+        <details class="text-xs flex w-full flex-none bg-gray-50">
+          <summary class="flex w-full pl-6 pr-5 py-2 flex-none items-center justify-between hover:bg-gray-100 hover:cursor-pointer focus:outline-none">
+            <dt class="text-xs font-medium leading-6 text-gray-900">state</dt>
+            <dd><Icon name="chevron-right" size="h-4 w-4" /></dd>
+          </summary>
+          <div class="ml-6 pr-6 border-l-2 border-dotted border-gray-200">
+            <div v-for="(stateVal, stateKey) in $notesiumState" :key="stateKey" class="pl-3 py-2 flex w-full flex-none items-center justify-between">
+              <dt class="text-xs font-medium leading-6 text-gray-900 whitespace-nowrap" v-text="stateKey"></dt>
+              <dd class="flex space-x-3 -mr-1">
+                <span class="text-xs font-mono leading-6 text-gray-900 truncate ml-10" v-text="stateVal"></span>
+                <span class="cursor-pointer text-gray-400 hover:text-gray-700 mt-0.5" @click="delete $notesiumState[stateKey]">
+                  <Icon name="mini-x-mark" size="h-4 w-4" />
+                </span>
+              </dd>
+            </div>
+          </div>
+        </details>
       </dl>
     </div>
 
