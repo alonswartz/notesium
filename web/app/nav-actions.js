@@ -49,7 +49,7 @@ var t = `
     <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
       <div class="rounded-md bg-white shadow-md border border-gray-200">
         <ul class="divide-y divide-gray-100">
-          <li v-for="entry in panelsDropdownEntries" :key="entry.key" @click="toggleState(entry.key)"
+          <li v-for="entry in panelsDropdownEntries" :key="entry.key" @click="$notesiumState[entry.key] = !$notesiumState[entry.key]"
             class="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer" >
             <div class="flex space-x-4 select-none">
               <span class="text-gray-400"><Icon :name="entry.icon" size="h-5 w-5" /></span>
@@ -93,11 +93,6 @@ export default {
       ],
       dailyNoteDate: null,
     }
-  },
-  methods: {
-    toggleState(key) {
-      this.$notesiumState[key] ? this.$notesiumState[key] = false : this.$notesiumState[key] = true;
-    },
   },
   computed: {
     isDailyNoteDateValid() {
