@@ -1,7 +1,7 @@
 var t = `
 <div class="relative flex h-full">
   <div class="grow overflow-y-auto">
-    <div :class="{'cm-conceal cm-unconceal': conceal}" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
+    <div :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting}" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
   </div>
 
   <div v-if="!$notesiumState.showNoteSidebar || note.ghost" class="absolute right-0 mt-2 mr-6 h-7 z-10 inline-flex items-center">
@@ -11,7 +11,6 @@ var t = `
   </div>
 
   <NoteSidebar v-if="$notesiumState.showNoteSidebar && !note.ghost" :note=note
-    @conceal-toggle="conceal=!conceal"
     @note-save="handleSave()"
     @note-open="(...args) => $emit('note-open', ...args)"
     @note-delete="(...args) => $emit('note-delete', ...args)"
@@ -33,7 +32,6 @@ export default {
   data() {
     return {
       showFinder: false,
-      conceal: true,
       selectedLines: [],
     }
   },
@@ -67,7 +65,7 @@ export default {
     handleTab() {
       if (this.cm.somethingSelected()) return CodeMirror.Pass;
       if (Table.isCursorInTable(this.cm)) {
-        Table.formatTableAndAdvance(this.cm, this.conceal);
+        Table.formatTableAndAdvance(this.cm, this.$notesiumState.editorConcealFormatting);
       } else {
         this.cm.execCommand('insertSoftTab');
       }
@@ -135,7 +133,7 @@ export default {
       this.note.isModified = !cm.doc.isClean();
     });
     this.cm.on('cursorActivity', (cm, e) => {
-      if (!this.conceal) return;
+      if (!this.$notesiumState.editorConcealFormatting) return;
       this.selectedLines.forEach(line => {
         cm.removeLineClass(line, 'wrap', 'CodeMirror-selectedline');
       });

@@ -7,7 +7,8 @@ var t = `
       :class="note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
       class="rounded px-10 pt-2 pb-1 text-xs shadow-sm">Save</button>
     <div class="flex w-auto mt-0 ml-auto items-center space-x-5 pr-1">
-      <span title="conceal formatting" @click="$emit('conceal-toggle')" class="cursor-pointer text-gray-400 hover:text-gray-700">
+      <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="outline-code" size="h-4 w-4" />
       </span>
       <span title="line wrapping" @click="$notesiumState.editorLineWrapping = !$notesiumState.editorLineWrapping"
@@ -109,7 +110,7 @@ import LinkTree from './link-tree.js'
 export default {
   components: { Pane, Icon, LinkTree },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open', 'conceal-toggle'],
+  emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open'],
   methods: {
     formatDate(dateStr) {
       if (!dateStr) return '';
