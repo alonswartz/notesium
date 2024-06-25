@@ -82,8 +82,8 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['showNoteSidebar', 'showNotesPanel', 'versionCheck'],
-  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open', 'notesidebar-toggle', 'notespanel-toggle'],
+  props: ['versionCheck'],
+  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open'],
   data() {
     return {
       panelsDropdownEntries: [
