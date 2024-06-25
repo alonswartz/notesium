@@ -4,6 +4,7 @@ const defaultState = {
   showLabelsPanel: false,
   showNotesPanel: false,
   showNoteSidebar: true,
+  editorLineWrapping: false,
 };
 
 const savedState = sessionStorage.getItem('notesiumState');

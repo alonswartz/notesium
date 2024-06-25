@@ -10,6 +10,10 @@ var t = `
       <span title="conceal formatting" @click="$emit('conceal-toggle')" class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="outline-code" size="h-4 w-4" />
       </span>
+      <span title="line wrapping" @click="$notesiumState.editorLineWrapping = !$notesiumState.editorLineWrapping"
+        class="cursor-pointer text-gray-400 hover:text-gray-700 rotate-180">
+        <Icon name="micro-arrow-uturn-right" size="h-3 w-3" />
+      </span>
       <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="mini-arrows-right-left" size="h-3 w-3" />
