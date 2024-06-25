@@ -8,13 +8,13 @@ const defaultState = {
   editorConcealFormatting: true,
 };
 
-const savedState = sessionStorage.getItem('notesiumState');
+const savedState = localStorage.getItem('notesiumState');
 const initialState = savedState ? JSON.parse(savedState) : defaultState;
 const notesiumState = reactive({ ...defaultState, ...initialState });
 
 watch(notesiumState, (newState) => {
   Object.assign(newState, { ...defaultState, ...newState });
-  sessionStorage.setItem('notesiumState', JSON.stringify(newState));
+  localStorage.setItem('notesiumState', JSON.stringify(newState));
 }, { deep: true });
 
 export { notesiumState };
