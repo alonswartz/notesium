@@ -98,6 +98,7 @@ export default {
       value: this.note.Content,
       placeholder: '# title',
       lineNumbers: false,
+      lineWrapping: this.$notesiumState.editorLineWrapping,
       styleActiveLine: false,
       tabSize: 4,
       indentUnit: 4,
@@ -181,6 +182,7 @@ export default {
   watch: {
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
+    '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },
   },
   template: t
 }
