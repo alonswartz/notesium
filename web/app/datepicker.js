@@ -19,7 +19,7 @@ var t = `
   </div>
 
   <div class="mt-5 grid grid-cols-7 text-center text-xs leading-6 text-gray-500" style="font-size: 0.65rem;">
-    <div v-for="day in ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']" :key="day" v-text="day"></div>
+    <div v-for="day in sortedDaysOfWeek" :key="day" v-text="day"></div>
   </div>
 
   <div class="mt-2 grid grid-cols-7 pb-4" style="font-size: 0.65rem;">
@@ -47,17 +47,17 @@ export default {
       today: null,
       selectedDate: null,
       displayedMonth: null,
+      startOfWeek: 0, // 0 Sunday, 1 Monday, ...
     }
   },
   methods: {
     getCalendarDays(year, month) {
-      const startOfWeek = 1 // Monday
       const startDate = new Date(year, month, 1);
       const endDate = new Date(year, month + 1, 0); // Last day of the month
       const days = [];
 
       // Previous month days
-      let startDayOfWeek = startDate.getDay() - startOfWeek;
+      let startDayOfWeek = startDate.getDay() - this.startOfWeek;
       if (startDayOfWeek < 0) startDayOfWeek += 7;
       for (let i = startDayOfWeek; i > 0; i--) {
         const date = new Date(year, month, 1 - i);
@@ -81,7 +81,7 @@ export default {
 
       // Next month days to complete the week
       let endDayOfWeek = endDate.getDay();
-      let daysToAdd = 6 - ((endDayOfWeek - startOfWeek + 7) % 7);
+      let daysToAdd = 6 - ((endDayOfWeek - this.startOfWeek + 7) % 7);
       for (let i = 1; i <= daysToAdd; i++) {
         const date = new Date(year, month + 1, i);
         days.push({
@@ -121,6 +121,10 @@ export default {
       const year = this.displayedMonth.getFullYear();
       const month = this.displayedMonth.getMonth(); // getMonth is 0-indexed
       return this.getCalendarDays(year, month)
+    },
+    sortedDaysOfWeek() {
+      const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      return [...daysOfWeek.slice(this.startOfWeek), ...daysOfWeek.slice(0, this.startOfWeek)];
     },
   },
   created() {
