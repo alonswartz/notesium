@@ -6,6 +6,7 @@ const defaultState = {
   showNoteSidebar: true,
   editorLineWrapping: false,
   editorConcealFormatting: true,
+  startOfWeek: 1, // 0 for Sunday, 1 for Monday, ...
 };
 
 const savedState = localStorage.getItem('notesiumState');
