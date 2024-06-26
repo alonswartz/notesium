@@ -19,7 +19,8 @@ var t = `
   </div>
 
   <div class="mt-5 grid grid-cols-7 text-center text-xs leading-6 text-gray-500" style="font-size: 0.65rem;">
-    <div v-for="day in sortedDaysOfWeek" :key="day" v-text="day"></div>
+    <div v-for="(day, index) in sortedDaysOfWeek" :key="day" v-text="day" class="hover:cursor-pointer hover:underline"
+      title="set as start of week" @click="startOfWeek = (startOfWeek + index) % 7"></div>
   </div>
 
   <div class="mt-2 grid grid-cols-7 pb-4" style="font-size: 0.65rem;">
