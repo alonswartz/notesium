@@ -18,24 +18,21 @@ var t = `
     </div>
   </div>
 
-  <div class="mt-5 grid grid-cols-7 text-center text-xs leading-6 text-gray-500" style="font-size: 0.65rem;">
+  <div class="mt-5 grid grid-cols-7 gap-2 text-center text-gray-500" style="font-size: 0.65rem;">
     <div v-for="(day, index) in sortedDaysOfWeek" :key="day" v-text="day" class="hover:cursor-pointer hover:underline"
       title="set as start of week" @click="$notesiumState.startOfWeek = ($notesiumState.startOfWeek + index) % 7"></div>
   </div>
 
-  <div class="mt-2 grid grid-cols-7 pb-4 select-none" style="font-size: 0.65rem;">
-    <div v-for="day in displayedMonthDates" :key="day.date" class="flex flex-col py-0.5">
-      <button type="button" @click="setSelectedDate(day.date)" @dblclick="$emit('date-dblclick', day.date)"
-        class="mx-auto flex h-6 w-6 items-center justify-center rounded-full"
-        :class="[
-          selectedDate === day.date ? 'text-white' : day.isToday ? 'text-indigo-500' : day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400',
-          selectedDate === day.date ? (day.isToday ? 'bg-indigo-500' : 'bg-gray-500') : 'hover:bg-gray-200',
-          (selectedDate === day.date || day.isToday) ? 'font-semibold' : '']">
-        <span v-text="day.day"></span>
-      </button>
-      <span v-show="dottedDates.has(day.date)"
-        :class="selectedDate == day.date ? 'text-white' : 'text-gray-300'"
-        class="text-center -mt-2.5 h-3 hover:cursor-pointer">•</span>
+  <div class="mt-3 grid grid-cols-7 gap-2 text-center pb-4 select-none items-center justify-items-center justify-center" style="font-size: 0.65rem;">
+    <div v-for="day in displayedMonthDates" :key="day.date"
+      @click="setSelectedDate(day.date)"
+      @dblclick="$emit('date-dblclick', day.date)"
+      :class="selectedDate === day.date ? (day.isToday ? 'bg-indigo-500' : 'bg-gray-500') : 'hover:bg-gray-200'"
+      class="flex flex-col h-6 w-6 hover:cursor-pointer rounded-full">
+      <span v-text="day.day" class="mt-1" :class="[
+        selectedDate === day.date ? 'text-white' : day.isToday ? 'text-indigo-500' : day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400',
+        (selectedDate === day.date || day.isToday) ? 'font-semibold' : '']"></span>
+      <span v-text="dottedDates.has(day.date) ? '•' : ''" class="-mt-1.5" :class="selectedDate == day.date ? 'text-white' : 'text-slate-400'"></span>
     </div>
   </div>
 
