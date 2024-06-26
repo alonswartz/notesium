@@ -6,15 +6,16 @@ var t = `
   </span>
 
   <div class="relative group inline-block text-left">
-    <span title="daily" @click="showDatePicker = !showDatePicker"
+    <!-- only getDaily notes on click if enabling -->
+    <span title="daily" @click="toggleDatePicker()"
       class="cursor-pointer text-gray-400 hover:text-gray-700">
       <Icon name="outline-calendar" size="h-4 w-4" />
     </span>
-    <div v-show="showDatePicker" @click="showDatePicker=false" class="fixed inset-0 z-40" aria-hidden="true"></div>
+    <div v-show="showDatePicker" @click="toggleDatePicker()" class="fixed inset-0 z-40" aria-hidden="true"></div>
     <div v-if="showDatePicker" class="block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
       <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
-        <DatePicker @date-selected="(date) => dailyNoteDate = date" />
-        <div @click="$emit('note-daily', dailyNoteDate); this.showDatePicker = false;"
+        <DatePicker :dottedDates="dailyNoteDates" @date-selected="(date) => dailyNoteDate = date" />
+        <div @click="$emit('note-daily', dailyNoteDate); toggleDatePicker();"
           class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 text-sm text-center text-white rounded-md shadow-sm">
           Daily note ({{ formattedDailyNoteDate }})
         </div>
@@ -89,9 +90,32 @@ export default {
         { title: "Notes panel",   key: 'showNotesPanel',  icon: "outline-queue-list" },
         { title: "Note metadata", key: 'showNoteSidebar', icon: "panel-right" },
       ],
-      showDatePicker: false,
+      showDatePicker: null,
       dailyNoteDate: null,
+      dailyNoteDates: new Set(),
     }
+  },
+  methods: {
+    toggleDatePicker() {
+      if (this.showDatePicker) {
+        this.showDatePicker = false;
+        this.dailyNoteDates = new Set();
+        return;
+      }
+      fetch('/api/raw/list?prefix=ctime&date=2006-01-02T15:04:05')
+        .then(response => response.text())
+        .then(text => {
+          const dates = text.split('\n').reduce((acc, line) => {
+            const parts = line.split(' ');
+            if (parts.length > 1 && parts[1].endsWith('00:00:00')) {
+              acc.add(parts[1].split('T')[0]);
+            }
+            return acc;
+          }, new Set());
+          this.dailyNoteDates = dates;
+          this.showDatePicker = true;
+        });
+    },
   },
   computed: {
     formattedDailyNoteDate() {
