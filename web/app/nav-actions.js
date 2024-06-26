@@ -6,22 +6,19 @@ var t = `
   </span>
 
   <div class="relative group inline-block text-left">
-    <span title="daily" class="cursor-pointer text-gray-400 group-hover:text-gray-700"
-      @click="$emit('note-daily')"
-      @mouseover="dailyNoteDate = new Date().toISOString().substring(0, 10);">
+    <span title="daily" @click="showDatePicker = !showDatePicker"
+      class="cursor-pointer text-gray-400 hover:text-gray-700">
       <Icon name="outline-calendar" size="h-4 w-4" />
     </span>
-    <div class="hidden group-hover:block absolute right-0 z-50 w-56 pt-3 -mt-1 origin-top-right">
-      <div class="rounded-md bg-white shadow-md border border-gray-200">
-        <div class="flex divide-x divide-gray-100">
-          <input class="w-full px-3 text-sm text-gray-600 hover:bg-gray-50 hover:cursor-text focus:outline-none"
-            type="date" min="1970-01-01" max="2029-12-31" v-model="dailyNoteDate" ref="dailyNoteDateInput" />
-          <button class="py-2 px-4 text-white rounded-r-md disabled:opacity-25 bg-gray-200 bg-indigo-600 text-sm hover:bg-indigo-500"
-            type="button" :disabled="!isDailyNoteDateValid" @click="$emit('note-daily', dailyNoteDate)">Go</button>
+    <div v-show="showDatePicker" @click="showDatePicker=false" class="fixed inset-0 z-40" aria-hidden="true"></div>
+    <div v-if="showDatePicker" class="block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
+      <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
+        <DatePicker @date-selected="(date) => dailyNoteDate = date" />
+        <div @click="$emit('note-daily', dailyNoteDate); this.showDatePicker = false;"
+          class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 text-sm text-center text-white rounded-md shadow-sm">
+          Daily note ({{ formattedDailyNoteDate }})
         </div>
       </div>
-      <!-- hack to not loose focus on calendar close -->
-      <div class="h-72"></div>
     </div>
   </div>
 
@@ -80,8 +77,9 @@ var t = `
 `
 
 import Icon from './icon.js'
+import DatePicker from './datepicker.js'
 export default {
-  components: { Icon },
+  components: { Icon, DatePicker },
   props: ['versionCheck'],
   emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open'],
   data() {
@@ -91,13 +89,16 @@ export default {
         { title: "Notes panel",   key: 'showNotesPanel',  icon: "outline-queue-list" },
         { title: "Note metadata", key: 'showNoteSidebar', icon: "panel-right" },
       ],
+      showDatePicker: false,
       dailyNoteDate: null,
     }
   },
   computed: {
-    isDailyNoteDateValid() {
-      if (!this.dailyNoteDate) return false;
-      return this.$refs.dailyNoteDateInput.validity.valid;
+    formattedDailyNoteDate() {
+      const date = new Date(this.dailyNoteDate);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = date.toLocaleString('default', { month: 'short' });
+      return `${month} ${day}`;
     },
   },
   template: t
