@@ -20,7 +20,7 @@ var t = `
 
   <div class="mt-5 grid grid-cols-7 text-center text-xs leading-6 text-gray-500" style="font-size: 0.65rem;">
     <div v-for="(day, index) in sortedDaysOfWeek" :key="day" v-text="day" class="hover:cursor-pointer hover:underline"
-      title="set as start of week" @click="startOfWeek = (startOfWeek + index) % 7"></div>
+      title="set as start of week" @click="$notesiumState.startOfWeek = ($notesiumState.startOfWeek + index) % 7"></div>
   </div>
 
   <div class="mt-2 grid grid-cols-7 pb-4" style="font-size: 0.65rem;">
@@ -48,7 +48,6 @@ export default {
       today: null,
       selectedDate: null,
       displayedMonth: null,
-      startOfWeek: 0, // 0 Sunday, 1 Monday, ...
     }
   },
   methods: {
@@ -58,7 +57,7 @@ export default {
       const days = [];
 
       // Previous month days
-      let startDayOfWeek = startDate.getDay() - this.startOfWeek;
+      let startDayOfWeek = startDate.getDay() - this.$notesiumState.startOfWeek;
       if (startDayOfWeek < 0) startDayOfWeek += 7;
       for (let i = startDayOfWeek; i > 0; i--) {
         const date = new Date(year, month, 1 - i);
@@ -82,7 +81,7 @@ export default {
 
       // Next month days to complete the week
       let endDayOfWeek = endDate.getDay();
-      let daysToAdd = 6 - ((endDayOfWeek - this.startOfWeek + 7) % 7);
+      let daysToAdd = 6 - ((endDayOfWeek - this.$notesiumState.startOfWeek + 7) % 7);
       for (let i = 1; i <= daysToAdd; i++) {
         const date = new Date(year, month + 1, i);
         days.push({
@@ -125,7 +124,7 @@ export default {
     },
     sortedDaysOfWeek() {
       const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-      return [...daysOfWeek.slice(this.startOfWeek), ...daysOfWeek.slice(0, this.startOfWeek)];
+      return [...daysOfWeek.slice(this.$notesiumState.startOfWeek), ...daysOfWeek.slice(0, this.$notesiumState.startOfWeek)];
     },
   },
   created() {
