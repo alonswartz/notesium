@@ -14,7 +14,9 @@ var t = `
     <div v-show="showDatePicker" @click="toggleDatePicker()" class="fixed inset-0 z-40" aria-hidden="true"></div>
     <div v-if="showDatePicker" class="block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
       <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
-        <DatePicker :dottedDates="dailyNoteDates" @date-selected="(date) => dailyNoteDate = date" />
+        <DatePicker :dottedDates="dailyNoteDates"
+          @date-selected="(date) => dailyNoteDate = date"
+          @date-dblclick="$emit('note-daily', dailyNoteDate); toggleDatePicker();" />
         <div @click="$emit('note-daily', dailyNoteDate); toggleDatePicker();"
           class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 text-sm text-center text-white rounded-md shadow-sm">
           Daily note ({{ formattedDailyNoteDate }})

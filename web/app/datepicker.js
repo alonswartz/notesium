@@ -25,7 +25,7 @@ var t = `
 
   <div class="mt-2 grid grid-cols-7 pb-4 select-none" style="font-size: 0.65rem;">
     <div v-for="day in displayedMonthDates" :key="day.date" class="flex flex-col py-0.5">
-      <button type="button" @click="setSelectedDate(day.date)"
+      <button type="button" @click="setSelectedDate(day.date)" @dblclick="$emit('date-dblclick', day.date)"
         class="mx-auto flex h-6 w-6 items-center justify-center rounded-full"
         :class="[
           selectedDate === day.date ? 'text-white' : day.isToday ? 'text-indigo-500' : day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400',
@@ -33,7 +33,7 @@ var t = `
           (selectedDate === day.date || day.isToday) ? 'font-semibold' : '']">
         <span v-text="day.day"></span>
       </button>
-      <span v-show="dottedDates.has(day.date)" @click="setSelectedDate(day.date)"
+      <span v-show="dottedDates.has(day.date)"
         :class="selectedDate == day.date ? 'text-white' : 'text-gray-300'"
         class="text-center -mt-2.5 h-3 hover:cursor-pointer">•</span>
     </div>
@@ -47,7 +47,7 @@ export default {
   props: {
     dottedDates: { type: Set, default: new Set() },
   },
-  emits: ['date-selected'],
+  emits: ['date-selected', 'date-dblclick'],
   components: { Icon },
   data() {
     return {
