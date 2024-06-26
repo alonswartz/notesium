@@ -85,6 +85,7 @@ export default {
       // Next month days to complete the week
       let endDayOfWeek = endDate.getDay();
       let daysToAdd = 6 - ((endDayOfWeek - this.$notesiumState.startOfWeek + 7) % 7);
+      if ((days.length + daysToAdd) == 35) daysToAdd += 7;
       for (let i = 1; i <= daysToAdd; i++) {
         const date = new Date(year, month + 1, i);
         days.push({
