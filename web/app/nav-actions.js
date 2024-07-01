@@ -6,20 +6,24 @@ var t = `
   </span>
 
   <div class="relative group inline-block text-left">
-    <!-- only getDaily notes on click if enabling -->
-    <span title="daily" @click="toggleDatePicker()"
+    <span title="periodic" @click="toggleDatePicker()"
       class="cursor-pointer text-gray-400 hover:text-gray-700">
       <Icon name="outline-calendar" size="h-4 w-4" />
     </span>
     <div v-show="showDatePicker" @click="toggleDatePicker()" class="fixed inset-0 z-40" aria-hidden="true"></div>
     <div v-if="showDatePicker" class="block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
       <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
-        <DatePicker :dottedDates="dailyNoteDates"
-          @date-selected="(date) => dailyNoteDate = date"
-          @date-dblclick="$emit('note-daily', dailyNoteDate); toggleDatePicker();" />
-        <div @click="$emit('note-daily', dailyNoteDate); toggleDatePicker();"
-          class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 text-sm text-center text-white rounded-md shadow-sm">
-          Daily note ({{ formattedDailyNoteDate }})
+        <DatePicker :dottedDates="periodicNoteDates"
+          @date-selected="(date) => periodicNoteDate = date" />
+        <div class="flex space-x-2">
+          <div @click="$emit('note-weekly', periodicNoteDate); toggleDatePicker();"
+            class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md shadow-sm">
+            Weekly note
+          </div>
+          <div @click="$emit('note-daily', periodicNoteDate); toggleDatePicker();"
+            class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md shadow-sm">
+            Daily note
+          </div>
         </div>
       </div>
     </div>
@@ -84,7 +88,7 @@ import DatePicker from './datepicker.js'
 export default {
   components: { Icon, DatePicker },
   props: ['versionCheck'],
-  emits: ['note-new', 'note-daily', 'finder-open', 'settings-open', 'graph-open'],
+  emits: ['note-new', 'note-daily', 'note-weekly', 'finder-open', 'settings-open', 'graph-open'],
   data() {
     return {
       panelsDropdownEntries: [
@@ -93,15 +97,15 @@ export default {
         { title: "Note metadata", key: 'showNoteSidebar', icon: "panel-right" },
       ],
       showDatePicker: null,
-      dailyNoteDate: null,
-      dailyNoteDates: new Set(),
+      periodicNoteDate: null,
+      periodicNoteDates: new Set(),
     }
   },
   methods: {
     toggleDatePicker() {
       if (this.showDatePicker) {
         this.showDatePicker = false;
-        this.dailyNoteDates = new Set();
+        this.periodicNoteDates = new Set();
         return;
       }
       fetch('/api/raw/list?prefix=ctime&date=2006-01-02T15:04:05')
@@ -109,22 +113,14 @@ export default {
         .then(text => {
           const dates = text.split('\n').reduce((acc, line) => {
             const parts = line.split(' ');
-            if (parts.length > 1 && parts[1].endsWith('00:00:00')) {
+            if (parts.length > 1 && (parts[1].endsWith('00:00:00') || parts[1].endsWith('00:00:01'))) {
               acc.add(parts[1].split('T')[0]);
             }
             return acc;
           }, new Set());
-          this.dailyNoteDates = dates;
+          this.periodicNoteDates = dates;
           this.showDatePicker = true;
         });
-    },
-  },
-  computed: {
-    formattedDailyNoteDate() {
-      const date = new Date(this.dailyNoteDate);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = date.toLocaleString('default', { month: 'short' });
-      return `${month} ${day}`;
     },
   },
   template: t

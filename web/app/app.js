@@ -9,7 +9,8 @@ var t = `
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :versionCheck=versionCheck
-        @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" />
+        @note-new="newNote" @note-daily="dailyNote" @note-weekly="weeklyNote"
+        @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
