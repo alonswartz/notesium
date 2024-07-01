@@ -403,13 +403,14 @@ command! -bang -nargs=* NotesiumWeekly
 
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nd :NotesiumDaily<CR>
+nnoremap <Leader>nw :NotesiumWeekly<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
-nnoremap <silent> <Leader>nw :NotesiumWeb<CR>
+nnoremap <silent> <Leader>nW :NotesiumWeb<CR>
 
 " overrides for journal
 if $NOTESIUM_DIR =~ '**/journal/*'
@@ -424,13 +425,14 @@ endif
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
 | normal | `<Leader>nd`      | Opens new or existing daily note
-| normal | `<Leader>nw`      | Opens browser with web view (auto stop webserver on idle)
+| normal | `<Leader>nw`      | Opens new or existing weekly note
 | normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically (mtime if journal)
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
 | normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
 | normal | `<Leader>nk`      | List all links related to this note
 | normal | `<Leader>ns`      | Full text search
+| normal | `<Leader>nW`      | Opens browser with web view (auto stop webserver on idle)
 | fzf    | `C-k` `C-j`       | Move up and down in fzf window
 | fzf    | `enter`           | Open selection
 | fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
