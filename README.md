@@ -348,35 +348,35 @@ command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
 command! -bang NotesiumWeb
-  \ let options = "--stop-on-idle --open-browser" |
-  \ execute ":silent !nohup notesium web ".options." > /dev/null 2>&1 &"
+  \ let s:options = "--stop-on-idle --open-browser" |
+  \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
 
 command! -bang -nargs=* NotesiumList
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
+  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium list '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
+  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
 
 command! -bang -nargs=* NotesiumLinks
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
+  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
+  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
 
 command! -bang -nargs=* NotesiumSearch
-  \ let spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
+  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
   \ call fzf#vim#grep(
   \   'notesium lines '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(spec, 'right', 'ctrl-/') : spec, <bang>0)
+  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
 
 command! -bang -nargs=* NotesiumDaily
-  \ let cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
-  \ let output = system('notesium new --verbose --ctime='.cdate.'T00:00:00') |
-  \ let filepath = matchstr(output, 'path:\zs[^\n]*') |
-  \ execute 'edit ' . filepath |
+  \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
+  \ let s:output = system('notesium new --verbose --ctime='.s:cdate.'T00:00:00') |
+  \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
+  \ execute 'edit ' . s:filepath |
   \ if getline(1) =~ '^\s*$' |
-  \   let epoch = matchstr(output, 'epoch:\zs[^\n]*') |
-  \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', epoch)) |
+  \   let s:epoch = matchstr(s:output, 'epoch:\zs[^\n]*') |
+  \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', s:epoch)) |
   \ endif
 
 nnoremap <Leader>nn :NotesiumNew<CR>
