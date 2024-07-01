@@ -265,6 +265,7 @@ notesium web --writable --open-browser
 | edit   | `A-arrow`   | Navigate table rows and columns
 | global | `space n n` | Opens new note for editing
 | global | `space n d` | Opens new or existing daily note
+| global | `space n w` | Opens new or existing weekly note
 | global | `space n l` | List with prefixed label, sorted by alphabetically
 | global | `space n m` | List with prefixed date modified, sorted by mtime
 | global | `space n c` | List with prefixed date created in custom format, sorted by ctime
