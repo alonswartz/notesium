@@ -337,6 +337,7 @@ keybindings.
 
 ```vim
 let $NOTESIUM_DIR = trim(system("notesium home"))
+let $NOTESIUM_WEEKSTART = 1 "0 Sunday, 1 Monday, ...
 
 autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
   \ 'source': 'notesium list --sort=mtime',
@@ -377,6 +378,27 @@ command! -bang -nargs=* NotesiumDaily
   \ if getline(1) =~ '^\s*$' |
   \   let s:epoch = matchstr(s:output, 'epoch:\zs[^\n]*') |
   \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', s:epoch)) |
+  \ endif
+
+command! -bang -nargs=* NotesiumWeekly
+  \ let s:date = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
+  \ let s:output = system('notesium new --verbose --ctime='.s:date.'T00:00:01') |
+  \ let s:epoch = str2nr(matchstr(s:output, 'epoch:\zs[^\n]*')) |
+  \ let s:day = strftime('%u', s:epoch) |
+  \ let s:startOfWeek = empty($NOTESIUM_WEEKSTART) ? 1 : $NOTESIUM_WEEKSTART |
+  \ let s:diff = (s:day - s:startOfWeek + 7) % 7 |
+  \ let s:weekBegEpoch = s:epoch - (s:diff * 86400) |
+  \ let s:weekBegDate = strftime('%Y-%m-%d', s:weekBegEpoch) |
+  \ let s:output = system('notesium new --verbose --ctime='.s:weekBegDate.'T00:00:01') |
+  \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
+  \ execute 'edit ' . s:filepath |
+  \ if getline(1) =~ '^\s*$' |
+  \   let s:weekFmt = s:startOfWeek == 0 ? '%U' : '%V' |
+  \   let s:yearWeekStr = strftime('%G: Week' . s:weekFmt, s:weekBegEpoch) |
+  \   let s:weekBegStr = strftime('%a %b %d', s:weekBegEpoch) |
+  \   let s:weekEndStr = strftime('%a %b %d', s:weekBegEpoch + (6 * 86400)) |
+  \   let s:title = printf('# %s (%s - %s)', s:yearWeekStr, s:weekBegStr, s:weekEndStr) |
+  \   call setline(1, s:title) |
   \ endif
 
 nnoremap <Leader>nn :NotesiumNew<CR>
