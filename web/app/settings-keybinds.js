@@ -26,6 +26,7 @@ export default {
       keybinds: [
         ['global', 'note-new', 'space n n', 'Open new note for editing'],
         ['global', 'note-daily', 'space n d', 'Open new or existing daily note'],
+        ['global', 'note-weekly', 'space n w', 'Open new or existing weekly note'],
         ['global', 'finder-open-list-default', 'space n l', 'Open list with prefixed label, sorted alphabetically'],
         ['global', 'finder-open-list-ctime', 'space n c', 'Open list with prefixed date created, sorted by ctime'],
         ['global', 'finder-open-list-mtime', 'space n m', 'Open list with prefixed date modified, sorted by mtime'],

@@ -41,6 +41,7 @@ import Graph from './graph.js'
 import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
+import { formatDate } from './dateutils.js';
 export default {
   components: { Finder, NavTabs, NavActions, SidePanel, Note, Graph, Empty, Alert, Settings },
   data() {
@@ -217,6 +218,25 @@ export default {
       const content = `# ${month_s} ${day}, ${year} (${day_s})`;
       this.newNote(ctime, content);
     },
+    weeklyNote(customDate = null) {
+      const date = customDate ? new Date(customDate) : new Date();
+      const epoch = date.getTime() / 1000;
+      const day = date.getDay() === 0 ? 7 : date.getDay();
+      const diff = (day - this.$notesiumState.startOfWeek + 7) % 7;
+      const weekBegEpoch = epoch - (diff * 86400);
+      const weekBegDate = new Date(weekBegEpoch * 1000);
+      const weekBegStr = formatDate(weekBegDate, '%a %b %d');
+      const weekEndEpoch = weekBegEpoch + (6 * 86400);
+      const weekEndDate = new Date(weekEndEpoch * 1000);
+      const weekEndStr = formatDate(weekEndDate, '%a %b %d');
+      const year = formatDate(weekBegDate, '%Y');
+      const weekFmt = this.$notesiumState.startOfWeek === 0 ? '%U' : '%V';
+      const weekNum = formatDate(weekBegDate, weekFmt);
+
+      const ctime = formatDate(weekBegDate, '%Y-%m-%dT00:00:01');
+      const content = `# ${year}: Week${weekNum} (${weekBegStr} - ${weekEndStr})`;
+      this.newNote(ctime, content);
+    },
     openNote(filename, linenum) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index !== -1) {
@@ -353,6 +373,9 @@ export default {
             break;
           case `${leaderKey} KeyN KeyD`:
             this.dailyNote();
+            break;
+          case `${leaderKey} KeyN KeyW`:
+            this.weeklyNote();
             break;
           case `${leaderKey} KeyN KeyG`:
             this.openGraph();
