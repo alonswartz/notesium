@@ -32,7 +32,10 @@ var t = `
       <span v-text="day.day" class="mt-1" :class="[
         selectedDate === day.date ? 'text-white' : day.isToday ? 'text-indigo-500' : day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400',
         (selectedDate === day.date || day.isToday) ? 'font-semibold' : '']"></span>
-      <span v-text="dottedDates.has(day.date) ? '•' : ''" class="-mt-1.5" :class="selectedDate == day.date ? 'text-white' : 'text-slate-400'"></span>
+      <span class="-mt-1.5">
+        <span v-text="getDotForType(day.date, 'weekly')" :class="selectedDate == day.date ? 'text-white' : 'text-emerald-500'"></span>
+        <span v-text="getDotForType(day.date, 'daily')" :class="selectedDate == day.date ? 'text-white' : 'text-indigo-300'"></span>
+      </span>
     </div>
   </div>
 
@@ -42,7 +45,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   props: {
-    dottedDates: { type: Set, default: new Set() },
+    dottedDates: { type: Object, default: {} },
   },
   emits: ['date-selected', 'date-dblclick'],
   components: { Icon },
@@ -54,6 +57,11 @@ export default {
     }
   },
   methods: {
+    getDotForType(dateStr, type) {
+      const noteTypes = this.dottedDates[dateStr];
+      if (noteTypes && noteTypes.includes(type)) return '•';
+      return '';
+    },
     getCalendarDays(year, month) {
       const startDate = new Date(year, month, 1);
       const endDate = new Date(year, month + 1, 0); // Last day of the month

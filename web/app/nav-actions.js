@@ -15,13 +15,13 @@ var t = `
       <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
         <DatePicker :dottedDates="periodicNoteDates"
           @date-selected="(date) => periodicNoteDate = date" />
-        <div class="flex space-x-2">
+        <div class="flex space-x-2 justify-items-center">
           <div @click="$emit('note-weekly', periodicNoteDate); toggleDatePicker();"
-            class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md shadow-sm">
+            class="bg-emerald-500 hover:bg-emerald-600 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md">
             Weekly note
           </div>
           <div @click="$emit('note-daily', periodicNoteDate); toggleDatePicker();"
-            class="bg-indigo-500 hover:bg-indigo-400 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md shadow-sm">
+            class="bg-indigo-500 hover:bg-indigo-600 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md">
             Daily note
           </div>
         </div>
@@ -98,14 +98,14 @@ export default {
       ],
       showDatePicker: null,
       periodicNoteDate: null,
-      periodicNoteDates: new Set(),
+      periodicNoteDates: {},
     }
   },
   methods: {
     toggleDatePicker() {
       if (this.showDatePicker) {
         this.showDatePicker = false;
-        this.periodicNoteDates = new Set();
+        this.periodicNoteDates = {};
         return;
       }
       fetch('/api/raw/list?prefix=ctime&date=2006-01-02T15:04:05')
@@ -113,11 +113,19 @@ export default {
         .then(text => {
           const dates = text.split('\n').reduce((acc, line) => {
             const parts = line.split(' ');
-            if (parts.length > 1 && (parts[1].endsWith('00:00:00') || parts[1].endsWith('00:00:01'))) {
-              acc.add(parts[1].split('T')[0]);
+            if (parts.length > 1) {
+              const date = parts[1].split('T')[0];
+              const time = parts[1].split('T')[1];
+              if (time === '00:00:00') {
+                if (!acc[date]) acc[date] = [];
+                if (!acc[date].includes('daily')) acc[date].push('daily');
+              } else if (time === '00:00:01') {
+                if (!acc[date]) acc[date] = [];
+                if (!acc[date].includes('weekly')) acc[date].push('weekly');
+              }
             }
             return acc;
-          }, new Set());
+          }, {});
           this.periodicNoteDates = dates;
           this.showDatePicker = true;
         });
