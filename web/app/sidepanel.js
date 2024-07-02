@@ -28,14 +28,29 @@ var t = `
     <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
       @keyup.esc="query = ''; $refs.queryInput.blur();"
       class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
-    <div class="relative group cursor-pointer inline-flex items-center justify-items-center mt-3 m-2 h-full">
-      <span class="group-hover:hidden text-gray-400">
-        <Icon name="outline-bars-arrow-down" size="h-5 w-5" />
-      </span>
-      <div class="hidden group-hover:flex text-gray-700 space-x-1 font-medium text-xs whitespace-nowrap">
-        <span class="hover:underline" @click="sortBy='title'">Title</span>
-        <span class="hover:underline" @click="sortBy='mtime'">Modified</span>
+
+    <div class="inline-flex items-center justify-items-center mt-3 m-2 h-full">
+
+      <div class="relative group inline-block text-left">
+        <span title="sort" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
+          <Icon name="outline-bars-arrow-down" size="h-5 w-5" />
+        </span>
+        <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
+          <div class="rounded-md bg-white shadow-md border border-gray-200">
+            <ul class="divide-y divide-gray-100 text-sm">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='title'">
+                <span class="text-gray-600">Title</span>
+                <span v-show="sortBy == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='mtime'">
+                <span class="text-gray-600">Modified</span>
+                <span v-show="sortBy == 'mtime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
