@@ -46,6 +46,10 @@ var t = `
                 <span class="text-gray-600">Modified</span>
                 <span v-show="sortBy == 'mtime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='ctime'">
+                <span class="text-gray-600">Created</span>
+                <span v-show="sortBy == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
             </ul>
           </div>
         </div>
@@ -60,7 +64,8 @@ var t = `
       class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
       <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
       <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-        <span v-text="note.MtimeFormatted" />
+        <span v-if="sortBy == 'ctime'" v-text="note.CtimeFormatted" title="created" />
+        <span v-else v-text="note.MtimeFormatted" title="modified" />
         <div class="space-x-1 overflow-hidden truncate">
           <template v-for="label in note.Labels">
             <span>·</span>
@@ -102,6 +107,8 @@ export default {
               Title: note.Title,
               Mtime: note.Mtime,
               MtimeFormatted: this.formatDate(note.Mtime),
+              Ctime: note.Mtime,
+              CtimeFormatted: this.formatDate(note.Ctime),
               Labels: labels,
               SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
             };
@@ -140,6 +147,7 @@ export default {
       switch(this.sortBy) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
         case 'mtime': return this.notes.sort((a, b) => new Date(b.Mtime) - new Date(a.Mtime));
+        case 'ctime': return this.notes.sort((a, b) => new Date(b.Ctime) - new Date(a.Ctime));
       }
     },
     filteredNotes() {
