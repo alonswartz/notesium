@@ -50,6 +50,15 @@ var t = `
                 <span class="text-gray-600">Created</span>
                 <span v-show="sortBy == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
+              <li class="bg-gray-200 pt-1"></li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dense=true">
+                <span class="text-gray-600">Compact view</span>
+                <span v-show="dense" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dense=false">
+                <span class="text-gray-600">Detailed view</span>
+                <span v-show="!dense" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
             </ul>
           </div>
         </div>
@@ -58,7 +67,14 @@ var t = `
     </div>
   </div>
 
-  <ul role="list" class="divide-y divide-gray-100 h-full overflow-y-scroll">
+  <ul v-if="dense" class="h-full overflow-y-scroll">
+    <li v-for="note in filteredNotes" :key="note.Filename"
+      @click="$emit('note-open', note.Filename)"
+      class="py-1 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+      <div class="text-sm leading-6 text-gray-600 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+    </li>
+  </ul>
+  <ul v-else role="list" class="divide-y divide-gray-100 h-full overflow-y-scroll">
     <li v-for="note in filteredNotes" :key="note.Filename"
       @click="$emit('note-open', note.Filename)"
       class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
@@ -88,6 +104,7 @@ export default {
     return {
       query: '',
       sortBy: 'mtime',
+      dense: false,
       notes: [],
       labels: [],
     }
