@@ -40,6 +40,7 @@ It aspires and is designed to:
     - [Titles are inferred from the first line](#titles-are-inferred-from-the-first-line)
     - [Notes with one-word titles are considered labels](#notes-with-one-word-titles-are-considered-labels)
     - [Links are inline](#links-are-inline)
+    - [Deterministic periodic notes convention](#deterministic-periodic-notes-convention)
 - [Versioning](#versioning)
 - [Regression tests](#regression-tests)
 - [Inspiration and thanks](#inspiration-and-thanks)
@@ -619,6 +620,32 @@ insert links with a keybinding.
 Even though links are short, for an improved reading experience in Vim
 consider enabling `conceallevel` (see [Related Vim settings](#related-vim-settings)). This is
 implemented in the web app and enabled by default.
+
+### Deterministic periodic notes convention
+
+Notesium itself does not directly support periodic notes, instead the
+embedded Web app and Vim integration support daily and weekly notes
+using a creation-time convention (00:00:00 for daily and 00:00:01 on the
+first day of the week for weekly).
+
+This convention results in deterministic, unique filenames, enabling
+instant identification of a specific periodic note, without the need for
+manual organization or special formatting - eliminating overhead and the
+need to search the entire notes directory for keywords or regular
+expressions.
+
+Additionally, past and future periodic notes can also be created using
+this convention while retaining chronological order.
+
+```
+$ notesium new --ctime=2024-07-04T00:00:00
+/home/user/notesium/notes/6685bbd0.md
+
+$ notesium list --sort=ctime --prefix=ctime --date=15:04:05 | grep 00:00:00
+6685bbd0.md:1: 00:00:00 Jul 04, 2024 (Thursday)
+6681c750.md:1: 00:00:00 Jul 01, 2024 (Monday)
+668075d0.md:1: 00:00:00 Jun 30, 2024 (Sunday)
+```
 
 ## Versioning
 
