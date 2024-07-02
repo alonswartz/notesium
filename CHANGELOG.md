@@ -1,3 +1,47 @@
+## 0.5.9
+
+Building upon daily note support introduced in version 0.5.7, weekly
+note support has now been added in the embedded Web App and Vim, along
+with a configurable "start of week" setting. The Web App also features a
+custom datepicker displaying existing daily and weekly notes, and allows
+for the creation of past and future periodic notes.
+
+Additionally, the Web App now includes a global reactive state
+management system that retains user preferences across sessions.
+
+Fixed:
+
+- Vim: Use script-local variables to avoid namespace conflicts.
+
+Added:
+
+- Web/App: Editor line wrapping support.
+
+- Web/App: State - Global reactive state management.
+- Web/App: State - Exposed in settings.about.runtime.state.
+- Web/App: State - Used by Panels - show state and width.
+- Web/App: State - Used by Editor - line wrapping and conceal.
+- Web/App: State - Used by Datepicker - start of week.
+
+- Web/App: Datepicker - Custom implementation replacing native HTML5.
+- Web/App: Datepicker - Configurable start of week.
+- Web/App: Datepicker - Existing periodic notes visualized by colored dots.
+- Web/App: Datepicker - Buttons for daily and weekly periodic notes.
+
+- Web/App: Keybinding to open new or existing weekly note.
+- Vim: `NotesiumWeekly` command/keybinding to open new or existing weekly note.
+- Vim: `$NOTESIUM_WEEKSTART` variable for determining weekly note dates.
+
+- Readme: Documented deterministic periodic notes convention.
+- Tests: Weekly note test implementations for bash, vim, and javascript.
+
+Changed:
+
+- Vim: `NotesiumWeb` keybinding changed from `<Leader>nw` to `<Leader>nW`.
+
+- Web/App: Native HTML5 datepicker replaced with custom implementation.
+- Web/App: Panel state changed from sessionStorage to new state management.
+
 ## 0.5.8
 
 The Web/App now supports note deletion, first verifying there are no
@@ -6,7 +50,7 @@ dialog prior to deletion.
 
 Checking for software updates is now supported via the CLI and the
 Web/App, along with detailed version and runtime information. A handy
-`Report an issue link` is included with the body preset to include
+`Report an issue` link is included with the body preset to include
 version information. The Web/App also features a high-level statistics
 count section integrated with the Finder.
 
