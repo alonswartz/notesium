@@ -33,6 +33,7 @@ export default {
       value: '',
       readOnly: true,
       styleActiveLine: false,
+      lineWrapping: this.$notesiumState.editorLineWrapping,
       theme: 'notesium-light',
       mode: {
         name: "gfm",
