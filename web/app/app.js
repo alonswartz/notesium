@@ -2,7 +2,7 @@ var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
-    :lastSave="lastSave" @note-open="openNote" @finder-open="openFinder" />
+    :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
