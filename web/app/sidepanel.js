@@ -159,9 +159,9 @@ export default {
             return {
               Filename: note.Filename,
               Title: note.Title,
-              Mtime: note.Mtime,
+              Mtime: new Date(note.Mtime),
               MtimeFormatted: this.formatDate(note.Mtime),
-              Ctime: note.Mtime,
+              Ctime: new Date(note.Ctime),
               CtimeFormatted: this.formatDate(note.Ctime),
               Labels: labels,
               IsLabel: note.IsLabel,
@@ -215,8 +215,8 @@ export default {
     sortedNotes() {
       switch(this.sortBy) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
-        case 'mtime': return this.notes.sort((a, b) => new Date(b.Mtime) - new Date(a.Mtime));
-        case 'ctime': return this.notes.sort((a, b) => new Date(b.Ctime) - new Date(a.Ctime));
+        case 'mtime': return this.notes.sort((a, b) => b.Mtime - a.Mtime);
+        case 'ctime': return this.notes.sort((a, b) => b.Ctime - a.Ctime);
       }
     },
     filteredNotes() {
