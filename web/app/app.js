@@ -209,14 +209,8 @@ export default {
     },
     dailyNote(customDate = null) {
       const date = customDate ? new Date(customDate) : new Date();
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const month_s = date.toLocaleString('en-US', { month: 'short' });
-      const day = date.getDate().toString().padStart(2, '0');
-      const day_s = date.toLocaleString('en-US', { weekday: 'long' });
-
-      const ctime = `${year}-${month}-${day}T00:00:00`;
-      const content = `# ${month_s} ${day}, ${year} (${day_s})`;
+      const ctime = formatDate(date, '%Y-%m-%dT00:00:00');
+      const content = `# ${formatDate(date, '%b %d, %Y (%A)')}`;
       this.newNote(ctime, content);
     },
     weeklyNote(customDate = null) {

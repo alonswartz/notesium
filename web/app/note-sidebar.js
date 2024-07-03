@@ -51,7 +51,7 @@ var t = `
   <dl class="m-2 grid grid-cols-1 gap-2">
     <div class="overflow-hidden rounded-lg bg-gray-50 px-4 py-3 space-y-6">
       <div class="space-y-2">
-        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formatDate(note.Mtime)"></dd>
+        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formattedDate(note.Mtime)"></dd>
         <dt class="text-sm text-gray-400 hover:underline cursor-pointer flex items-center space-x-2"
           title="list notes modified same day"
           @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=mtime&sort=mtime', note.Mtime.split('T')[0] + ' ')">
@@ -60,7 +60,7 @@ var t = `
         </dt>
       </div>
       <div class="space-y-2">
-        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formatDate(note.Ctime)"></dd>
+        <dd class="text-sm font-semibold tracking-tight text-gray-700" v-text="formattedDate(note.Ctime)"></dd>
         <dt class="text-sm text-gray-400 hover:underline cursor-pointer flex items-center space-x-2"
           title="list notes created same day"
           @click="$emit('finder-open', '/api/raw/list?color=true&date=2006-01-02&prefix=ctime&sort=ctime', note.Ctime.split('T')[0] + ' ')">
@@ -107,20 +107,16 @@ var t = `
 import Pane from './pane.js'
 import Icon from './icon.js'
 import LinkTree from './link-tree.js'
+import { formatDate } from './dateutils.js';
 export default {
   components: { Pane, Icon, LinkTree },
   props: ['note'],
   emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open'],
   methods: {
-    formatDate(dateStr) {
+    formattedDate(dateStr) {
       if (!dateStr) return '';
       const date = new Date(dateStr);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = date.toLocaleString('default', { month: 'short' });
-      const year = date.getFullYear();
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${month} ${day} ${year} at ${hours}:${minutes}`;
+      return formatDate(date, '%b %d %Y at %H:%M');
     },
   },
   computed: {

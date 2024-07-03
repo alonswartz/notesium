@@ -19,7 +19,7 @@ var t = `
         </dl>
         <dl class="px-6 py-2 flex w-full flex-none justify-between bg-gray-50">
           <dt class="text-xs font-medium leading-6 text-gray-900">Last check</dt>
-          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="formatDate(versionCheck.date) || 'unknown'"></dd>
+          <dd class="text-xs font-mono leading-6 text-gray-900" v-text="formattedDate(versionCheck.date) || 'unknown'"></dd>
         </dl>
       </div>
       <div v-if="versionCheck.error" class="font-mono text-xs text-red-600 px-6 py-2" v-text="versionCheck.error"></div>
@@ -114,6 +114,7 @@ var t = `
 `
 
 import Icon from './icon.js'
+import { formatDate } from './dateutils.js';
 export default {
   components: { Icon },
   emits: ['version-check'],
@@ -130,16 +131,8 @@ export default {
         .then(response => { this.runtime = response; })
         .catch(e => { console.error(e); });
     },
-    formatDate(date) {
-      if (date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      }
+    formattedDate(date) {
+      if (date) return formatDate(date, '%Y-%m-%d %H:%M:%S');
     },
   },
   computed: {

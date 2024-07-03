@@ -131,6 +131,7 @@ var t = `
 import Icon from './icon.js'
 import Pane from './pane.js'
 import Preview from './preview.js'
+import { formatDate } from './dateutils.js';
 export default {
   props: ['lastSave'],
   emits: ['note-open', 'note-new', 'finder-open'],
@@ -195,8 +196,9 @@ export default {
       } else if (hours < 48) {
         return `Yesterday`;
       }
-      const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate().toString().padStart(2, '0')}`;
-      return now.getFullYear() === date.getFullYear() ? formattedDate : `${formattedDate}, ${date.getFullYear()}`;
+
+      const format = now.getFullYear() === date.getFullYear() ? '%b %d' : '%b %d, %Y';
+      return formatDate(date, format);
     },
     createNewLabelNote() {
       if (this.newLabelStatus.isValid) {

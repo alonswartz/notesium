@@ -7,6 +7,7 @@ export function formatDate(date, format) {
     '%H': padZero(date.getHours()),
     '%M': padZero(date.getMinutes()),
     '%S': padZero(date.getSeconds()),
+    '%A': date.toLocaleString('en-US', { weekday: 'long' }),
     '%a': date.toLocaleString('en-US', { weekday: 'short' }),
     '%b': date.toLocaleString('en-US', { month: 'short' }),
     '%u': date.getDay() === 0 ? 7 : date.getDay(),
