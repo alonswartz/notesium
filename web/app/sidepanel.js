@@ -24,6 +24,23 @@ var t = `
 </Pane>
 
 <Pane v-if="$notesiumState.showNotesPanel" name="notesPanel" :defaultWidth="380" :minWidth="100" class="border-r border-gray-200">
+
+  <Transition
+    enter-from-class="opacity-0"
+    leave-to-class="opacity-0"
+    enter-active-class="transition duration-300 delay-200"
+    leave-active-class="transition duration-200">
+    <div v-if="previewFilename" class="absolute right-0 top-0 z-50">
+      <div class="relative">
+        <div class="absolute origin-top-right top-14 left-6 w-[40rem] h-[40rem] pl-4 py-4 rounded-lg shadow-2xl bg-white border border-gray-300
+                    before:absolute before:bottom-0 before:top-0 before:-left-2 before:bg-white before:border-l before:border-b before:border-gray-300
+                    before:w-4 before:h-4 before:rotate-45 before:-z-1 before:my-auto">
+          <Preview :filename="previewFilename" />
+        </div>
+      </div>
+    </div>
+  </Transition>
+
   <div class="flex items-center justify-items-center h-9 border-b border-gray-200 bg-gray-100 ">
     <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
       @keyup.esc="query = ''; $refs.queryInput.blur();"
@@ -70,24 +87,32 @@ var t = `
   <ul v-if="dense" class="h-full overflow-y-scroll">
     <li v-for="note in filteredNotes" :key="note.Filename"
       @click="$emit('note-open', note.Filename)"
-      class="py-1 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+      class="group flex justify-between py-1 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
       <div class="text-sm leading-6 text-gray-600 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+      <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -mr-1 pr-1"
+       @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
+      </div>
     </li>
   </ul>
-  <ul v-else role="list" class="divide-y divide-gray-100 h-full overflow-y-scroll">
+  <ul v-else class="divide-y divide-gray-100 h-full overflow-y-scroll">
     <li v-for="note in filteredNotes" :key="note.Filename"
       @click="$emit('note-open', note.Filename)"
-      class="py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
-      <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
-      <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-        <span v-if="sortBy == 'ctime'" v-text="note.CtimeFormatted" title="created" />
-        <span v-else v-text="note.MtimeFormatted" title="modified" />
-        <div class="space-x-1 overflow-hidden truncate">
-          <template v-for="label in note.Labels">
-            <span>·</span>
-            <span class="hover:text-gray-600" v-text="label" @click.stop="query='label:'+label+' '"></span>
-          </template>
+      class="group flex justify-between py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+      <div class="truncate">
+        <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+        <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
+          <span v-if="sortBy == 'ctime'" v-text="note.CtimeFormatted" title="created" />
+          <span v-else v-text="note.MtimeFormatted" title="modified" />
+          <div class="space-x-1 overflow-hidden truncate">
+            <template v-for="label in note.Labels">
+              <span>·</span>
+              <span class="hover:text-gray-600" v-text="label" @click.stop="query='label:'+label+' '"></span>
+            </template>
+          </div>
         </div>
+      </div>
+      <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -my-3 py-3 -mr-2 pr-2"
+       @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
       </div>
     </li>
   </ul>
@@ -96,10 +121,11 @@ var t = `
 
 import Icon from './icon.js'
 import Pane from './pane.js'
+import Preview from './preview.js'
 export default {
   props: ['lastSave'],
   emits: ['note-open', 'finder-open'],
-  components: { Pane, Icon },
+  components: { Pane, Icon, Preview },
   data() {
     return {
       query: '',
@@ -107,6 +133,7 @@ export default {
       dense: false,
       notes: [],
       labels: [],
+      previewFilename: '',
     }
   },
   methods: {
