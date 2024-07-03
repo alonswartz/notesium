@@ -43,6 +43,7 @@ var t = `
 `
 
 import Icon from './icon.js'
+import { formatDate } from './dateutils.js';
 export default {
   props: {
     dottedDates: { type: Object, default: {} },
@@ -73,7 +74,7 @@ export default {
       for (let i = startDayOfWeek; i > 0; i--) {
         const date = new Date(year, month, 1 - i);
         days.push({
-          date: this.formatDateToISOString(date),
+          date: formatDate(date, '%Y-%m-%d'),
           day: date.getDate(),
         });
       }
@@ -81,7 +82,7 @@ export default {
       // Current month days
       for (let day = 1; day <= endDate.getDate(); day++) {
         const date = new Date(year, month, day);
-        const dateStr = this.formatDateToISOString(date);
+        const dateStr = formatDate(date, '%Y-%m-%d');
         days.push({
           date: dateStr,
           day: day,
@@ -97,7 +98,7 @@ export default {
       for (let i = 1; i <= daysToAdd; i++) {
         const date = new Date(year, month + 1, i);
         days.push({
-          date: this.formatDateToISOString(date),
+          date: formatDate(date, '%Y-%m-%d'),
           day: date.getDate(),
         });
       }
@@ -118,12 +119,6 @@ export default {
     changeMonth(increment) {
       this.displayedMonth = new Date(this.displayedMonth.getFullYear(), this.displayedMonth.getMonth() + increment, 1);
     },
-    formatDateToISOString(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    },
   },
   computed: {
     formattedMonthYear() {
@@ -141,7 +136,7 @@ export default {
   },
   created() {
     this.displayedMonth = new Date();
-    this.today = this.formatDateToISOString(this.displayedMonth);
+    this.today = formatDate(this.displayedMonth, '%Y-%m-%d');
   },
   mounted() {
     this.setSelectedDate(this.today);
