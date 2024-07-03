@@ -110,8 +110,8 @@ var t = `
       <div class="truncate">
         <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
         <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-          <span v-if="sortBy == 'ctime'" v-text="note.CtimeFormatted" title="created" />
-          <span v-else v-text="note.MtimeFormatted" title="modified" />
+          <span v-if="sortBy == 'ctime'" v-text="note.CtimeRelative" title="created" />
+          <span v-else v-text="note.MtimeRelative" title="modified" />
           <div class="space-x-1 overflow-hidden truncate">
             <template v-for="label in note.Labels">
               <span>·</span>
@@ -156,13 +156,15 @@ export default {
           this.notes = notes.map(note => {
             const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])];
             const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
+            const mtime = new Date(note.Mtime);
+            const ctime = new Date(note.Ctime);
             return {
               Filename: note.Filename,
               Title: note.Title,
-              Mtime: new Date(note.Mtime),
-              MtimeFormatted: this.formatDate(note.Mtime),
-              Ctime: new Date(note.Ctime),
-              CtimeFormatted: this.formatDate(note.Ctime),
+              Mtime: mtime,
+              Ctime: ctime,
+              MtimeRelative: this.formatRelativeDate(mtime),
+              CtimeRelative: this.formatRelativeDate(ctime),
               Labels: labels,
               IsLabel: note.IsLabel,
               SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
@@ -173,10 +175,9 @@ export default {
           console.error(e);
         });
     },
-    formatDate(dateStr) {
+    formatRelativeDate(date) {
       const now = new Date();
       const nowTime = now.getTime();
-      const date = new Date(dateStr);
       const dateTime = date.getTime();
       const diff = nowTime - dateTime;
 
