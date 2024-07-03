@@ -12,7 +12,7 @@ var t = `
     <ul class="space-y-1 cursor-pointer py-2">
       <li v-show="labels.length == 0" class="cursor-help p-2" title="notes with 1-word titles are considered labels">No labels found</li>
       <li v-for="label in labels" :key="label.Filename"
-        @click="$notesiumState.showNotesPanel ? (sortBy='title', query=label.Title + ' ') : $emit('note-open', label.Filename)"
+        @click="$notesiumState.showNotesPanel ? (sortBy='title', query='label:'+label.Title+' ') : $emit('note-open', label.Filename)"
         class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
         <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
@@ -85,7 +85,7 @@ var t = `
         <div class="space-x-1 overflow-hidden truncate">
           <template v-for="label in note.Labels">
             <span>·</span>
-            <span class="hover:text-gray-600" v-text="label" @click.stop="query=label + ' '"></span>
+            <span class="hover:text-gray-600" v-text="label" @click.stop="query='label:'+label+' '"></span>
           </template>
         </div>
       </div>
@@ -127,6 +127,7 @@ export default {
               Ctime: note.Mtime,
               CtimeFormatted: this.formatDate(note.Ctime),
               Labels: labels,
+              IsLabel: note.IsLabel,
               SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
             };
           })
@@ -169,10 +170,18 @@ export default {
     },
     filteredNotes() {
       const maxNotes = 300;
-      const queryWords = this.query.toLowerCase().split(' ');
-      return !this.query
-        ? this.sortedNotes.slice(0, maxNotes)
-        : this.sortedNotes.filter(note => (queryWords.every(queryWord => note.SearchStr.includes(queryWord)))).slice(0, maxNotes);
+      const { query, sortedNotes } = this;
+      if (!query) return sortedNotes.slice(0, maxNotes);
+      const queryWords = query.toLowerCase().split(' ');
+      const labelQuery = queryWords.find(word => word.startsWith('label:'));
+      if (labelQuery) {
+        const label = labelQuery.slice(6);
+        if (!label) return sortedNotes.filter(note => note.IsLabel).slice(0, maxNotes);
+        const notesSubset = sortedNotes.filter(note => note.Labels.includes(label) || note.Title === label);
+        const remainingQueryWords = queryWords.filter(word => word !== labelQuery);
+        return notesSubset.filter(note => remainingQueryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
+      }
+      return sortedNotes.filter(note => queryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
     },
   },
   created() {
