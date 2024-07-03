@@ -184,7 +184,9 @@ export default {
       const minutes = Math.floor(diff / 60000); // 60 * 1000
       const hours = Math.floor(diff / 3600000); // 60 * 60 * 1000
 
-      if (minutes < 1) {
+      if (minutes < 0) {
+        // future date
+      } else if (minutes < 1) {
         return 'Just now';
       } else if (minutes < 60) {
         return `${minutes}m ago`;
@@ -192,10 +194,9 @@ export default {
         return `${hours}h ago`;
       } else if (hours < 48) {
         return `Yesterday`;
-      } else {
-        const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate().toString().padStart(2, '0')}`;
-        return now.getFullYear() === date.getFullYear() ? formattedDate : `${formattedDate}, ${date.getFullYear()}`;
       }
+      const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate().toString().padStart(2, '0')}`;
+      return now.getFullYear() === date.getFullYear() ? formattedDate : `${formattedDate}, ${date.getFullYear()}`;
     },
     createNewLabelNote() {
       if (this.newLabelStatus.isValid) {
