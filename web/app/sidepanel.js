@@ -1,18 +1,24 @@
 var t = `
 <Pane v-if="$notesiumState.showLabelsPanel" name="labelsPanel" :defaultWidth="195" :minWidth="100">
-  <div class="h-full overflow-y-auto bg-gray-800 text-gray-400 px-2 text-sm font-medium divide-y divide-gray-700">
-    <ul class="space-y-1 cursor-pointer py-2">
-      <li title="notes sorted alphabetically"
-        @click="$notesiumState.showNotesPanel ? (sortBy='title', query='') : $emit('finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
-        class="p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">All</li>
-      <li title="notes sorted by modification date"
-        @click="$notesiumState.showNotesPanel ? (sortBy='mtime', query='') : $emit('finder-open', '/api/raw/list?color=true&prefix=mtime&sort=mtime')"
-        class="p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">Recent</li>
-    </ul>
-    <ul class="space-y-1 cursor-pointer py-2">
-      <li v-show="labels.length == 0" class="cursor-help p-2" title="notes with 1-word titles are considered labels">No labels found</li>
+  <div class="h-full overflow-y-auto bg-gray-800 text-gray-400 text-sm font-medium">
+    <div title="notes with 1-word titles are considered labels"
+      class="flex items-center justify-items-center h-9 border-b border-gray-700 bg-gray-700">
+      <input class="h-full w-full pl-4 text-white placeholder:text-gray-400 bg-transparent focus:outline-none text-sm"
+        @keydown.space.prevent
+        @keyup.esc="newLabel=''; $refs.newLabelInput.blur()"
+        @keyup.enter="createNewLabelNote()"
+        v-model="newLabel" ref="newLabelInput" placeholder="new label..." type="text" autocomplete="off" spellcheck="false" />
+      <div class="flex items-center pr-3">
+        <Icon v-if="!newLabel" name="outline-plus" size="h-4 w-4" @click="$refs.newLabelInput.focus()" class="cursor-pointer hover:text-gray-200" />
+        <Icon v-if="newLabelStatus.isValid" name="mini-check" size="h-4 w-4"  @click="createNewLabelNote()" class="text-green-400" />
+        <span v-if="newLabelStatus.error" v-text="newLabelStatus.error" class="text-red-400 text-xs whitespace-nowrap mt-1"></span>
+      </div>
+    </div>
+
+    <ul class="space-y-1 cursor-pointer mt-2 px-2">
+      <li v-show="labels.length == 0" class="p-2">No labels found</li>
       <li v-for="label in labels" :key="label.Filename"
-        @click="$notesiumState.showNotesPanel ? (sortBy='title', query='label:'+label.Title+' ') : $emit('note-open', label.Filename)"
+        @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('note-open', label.Filename)"
         class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
         <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
@@ -41,7 +47,7 @@ var t = `
     </div>
   </Transition>
 
-  <div class="flex items-center justify-items-center h-9 border-b border-gray-200 bg-gray-100 ">
+  <div class="flex items-center justify-items-center h-9 border-b border-gray-200 bg-gray-100">
     <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
       @keyup.esc="query = ''; $refs.queryInput.blur();"
       class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
@@ -124,7 +130,7 @@ import Pane from './pane.js'
 import Preview from './preview.js'
 export default {
   props: ['lastSave'],
-  emits: ['note-open', 'finder-open'],
+  emits: ['note-open', 'note-new', 'finder-open'],
   components: { Pane, Icon, Preview },
   data() {
     return {
@@ -133,6 +139,7 @@ export default {
       dense: false,
       notes: [],
       labels: [],
+      newLabel: '',
       previewFilename: '',
     }
   },
@@ -186,8 +193,22 @@ export default {
         return now.getFullYear() === date.getFullYear() ? formattedDate : `${formattedDate}, ${date.getFullYear()}`;
       }
     },
+    createNewLabelNote() {
+      if (this.newLabelStatus.isValid) {
+        const content = `# ${this.newLabel}\n`;
+        this.$emit('note-new', null, content);
+        this.$refs.newLabelInput.blur();
+        this.newLabel='';
+      }
+    },
   },
   computed: {
+    newLabelStatus() {
+      if (!this.newLabel) return { isValid: false, error: '' };
+      if (this.newLabel.includes(' ')) return { isValid: false, error: 'not 1-word' };
+      if (this.labels.some(label => label.Title.toLowerCase() === this.newLabel.toLowerCase())) return { isValid: false, error: 'exists' };
+      return { isValid: true, error: '' };
+    },
     sortedNotes() {
       switch(this.sortBy) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
