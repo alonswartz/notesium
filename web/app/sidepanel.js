@@ -53,6 +53,9 @@ var t = `
       class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
 
     <div class="inline-flex items-center justify-items-center mt-3 m-2 h-full">
+      <div v-show="query" @click="query = ''" title="clear" class="-mt-1 mr-2 pr-2 text-gray-400 hover:text-gray-700 cursor-pointer border-r border-gray-300">
+        <Icon name="mini-x-mark" size="h-5 w-5" />
+      </div>
 
       <div class="relative group inline-block text-left">
         <span title="sort" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
