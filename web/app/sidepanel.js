@@ -108,7 +108,7 @@ var t = `
       </div>
 
       <div class="relative group inline-block text-left">
-        <span title="sort" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
+        <span title="sort &amp; density" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
           <Icon name="outline-bars-arrow-down" size="h-5 w-5" />
         </span>
         <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
@@ -125,6 +125,10 @@ var t = `
               <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='ctime'">
                 <span class="text-gray-600">Created</span>
                 <span v-show="sortBy == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='links'">
+                <span class="text-gray-600">Link count</span>
+                <span v-show="sortBy == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="bg-gray-200 pt-1"></li>
               <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dense=true">
@@ -302,6 +306,7 @@ export default {
     sortedNotes() {
       switch(this.sortBy) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
+        case 'links': return this.notes.sort((a, b) => b.LinkCount - a.LinkCount);
         case 'mtime': return this.notes.sort((a, b) => b.Mtime - a.Mtime);
         case 'ctime': return this.notes.sort((a, b) => b.Ctime - a.Ctime);
       }
