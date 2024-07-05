@@ -58,12 +58,21 @@ var t = `
       </div>
 
       <div class="relative group inline-block text-left">
-        <span title="sort" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
+        <span title="labels" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
           <Icon name="outline-tag" size="h-5 w-5" class="pb-1" />
         </span>
         <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
           <div class="rounded-md bg-white shadow-md border border-gray-200">
             <ul class="divide-y divide-gray-100 text-sm">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="labelsSortBy='title'">
+                <span class="text-gray-600">Title</span>
+                <span v-show="labelsSortBy == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="labelsSortBy='links'">
+                <span class="text-gray-600">Link count</span>
+                <span v-show="labelsSortBy == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="bg-gray-200 pt-1"></li>
               <li v-if="dense" class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
                 @click="showLabelsTree=!showLabelsTree">
                 <span class="text-gray-600">Labels tree</span>
@@ -212,6 +221,7 @@ export default {
     return {
       query: '',
       sortBy: 'title',
+      labelsSortBy: 'title',
       dense: true,
       showLabelsTree: true,
       notes: [],
@@ -297,7 +307,10 @@ export default {
       }
     },
     sortedLabelNotes() {
-      return this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+      switch(this.labelsSortBy) {
+        case 'title': return this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+        case 'links': return this.notes.filter(note => note.IsLabel).sort((a, b) => b.LinkCount - a.LinkCount);
+      }
     },
     filteredNotes() {
       const maxNotes = 300;
