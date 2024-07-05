@@ -16,13 +16,13 @@ var t = `
     </div>
 
     <ul class="space-y-1 cursor-pointer mt-2 px-2">
-      <li v-show="labels.length == 0" class="p-2">No labels found</li>
-      <li v-for="label in labels" :key="label.Filename"
+      <li v-show="sortedLabelNotes.length == 0" class="p-2">No labels found</li>
+      <li v-for="label in sortedLabelNotes" :key="label.Filename"
         @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('note-open', label.Filename)"
         class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-700">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
         <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
-          class="text-gray-500 hover:text-gray-100" v-text="label.IncomingLinks?.length || 0">
+          class="text-gray-500 hover:text-gray-100" v-text="label.LinkCount">
         </span>
       </li>
     </ul>
@@ -173,7 +173,6 @@ export default {
       sortBy: 'title',
       dense: true,
       notes: [],
-      labels: [],
       newLabel: '',
       previewFilename: '',
     }
@@ -184,7 +183,6 @@ export default {
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(response => {
           const notes = Object.values(response);
-          this.labels = notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
           this.notes = notes.map(note => {
             const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].sort((a, b) => a.Title.localeCompare(b.Title));
             const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
@@ -246,7 +244,7 @@ export default {
     newLabelStatus() {
       if (!this.newLabel) return { isValid: false, error: '' };
       if (this.newLabel.includes(' ')) return { isValid: false, error: 'not 1-word' };
-      if (this.labels.some(label => label.Title.toLowerCase() === this.newLabel.toLowerCase())) return { isValid: false, error: 'exists' };
+      if (this.sortedLabelNotes.some(label => label.Title.toLowerCase() === this.newLabel.toLowerCase())) return { isValid: false, error: 'exists' };
       return { isValid: true, error: '' };
     },
     sortedNotes() {
