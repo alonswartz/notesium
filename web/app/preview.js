@@ -13,7 +13,7 @@ export default {
           if (this.appendIncomingLinks && note.IncomingLinks?.length) {
             const sortedIncomingLinks = note.IncomingLinks.sort((a, b) => a.Title.localeCompare(b.Title));
             const linksMd = sortedIncomingLinks.map(link => `- [${link.Title}](${link.Filename})`).join('\n');
-            this.cm.setValue(`${note.Content.replace(/\n+$/, '')}\n\n---\n**Incoming links**\n\n${linksMd}`);
+            this.cm.setValue(`${note.Content.replace(/\n+$/, '')}\n\n---\n\n**Incoming links**\n\n${linksMd}`);
           } else {
             this.cm.setValue(note.Content);
             this.lineNumberHL();
