@@ -41,7 +41,7 @@ var t = `
         <div class="absolute origin-top-right top-14 left-6 w-[40rem] h-[40rem] pl-4 py-4 rounded-lg shadow-2xl bg-white border border-gray-300
                     before:absolute before:bottom-0 before:top-0 before:-left-2 before:bg-white before:border-l before:border-b before:border-gray-300
                     before:w-4 before:h-4 before:rotate-45 before:-z-1 before:my-auto">
-          <Preview :filename="previewFilename" />
+          <Preview :filename="previewFilename" appendIncomingLinks=true />
         </div>
       </div>
     </div>
