@@ -93,38 +93,69 @@ var t = `
     </div>
   </div>
 
-  <ul v-if="dense" class="h-full overflow-y-scroll">
-    <li v-for="note in filteredNotes" :key="note.Filename"
-      @click="$emit('note-open', note.Filename)"
-      class="group flex justify-between py-1 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
-      <div class="text-sm leading-6 text-gray-600 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
-      <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -mr-1 pr-1"
-       @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
-      </div>
-    </li>
-  </ul>
-  <ul v-else class="divide-y divide-gray-100 h-full overflow-y-scroll">
-    <li v-for="note in filteredNotes" :key="note.Filename"
-      @click="$emit('note-open', note.Filename)"
-      class="group flex justify-between py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
-      <div class="truncate">
-        <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
-        <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-          <span v-if="sortBy == 'ctime'" v-text="note.CtimeRelative" title="created" />
-          <span v-else v-text="note.MtimeRelative" title="modified" />
-          <div class="space-x-1 overflow-hidden truncate">
-            <template v-for="label in note.Labels">
-              <span>·</span>
-              <span class="hover:text-gray-600" v-text="label" @click.stop="query='label:'+label+' '"></span>
-            </template>
+  <div class="h-full overflow-y-scroll">
+
+    <ul v-if="dense" class="mt-2 text-sm">
+      <li v-for="note in filteredLabelNotes" :key="'label-' + note.Filename" class="">
+        <details class="cursor-pointer [&_svg]:open:rotate-90">
+          <summary class="group flex items-center justify-between justify-items-center list-none py-1.5 pl-2
+                          rounded-r-2xl text-gray-900 hover:bg-indigo-50 focus:outline-none">
+            <div class="flex items-center justify-center gap-x-2 truncate">
+              <div class="text-gray-400">
+                <Icon name="chevron-right" size="h-5 w-5" />
+              </div>
+              <span class="overflow-hidden truncate pr-2" v-text="note.Title" />
+            </div>
+            <span class="hidden group-hover:block pr-2 text-gray-400 hover:text-gray-600" v-text="note.LinkCount + ' ↗'"
+              @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''"
+              @click.stop="$emit('note-open', note.Filename, 1)" />
+          </summary>
+          <div v-if="note.LinkCount > 0" class="ml-[18px] border-dotted border-l border-gray-300">
+            <div v-for="link in note.Links" :key="'link-' + link.Filename" @click="$emit('note-open', link.Filename, link.LineNumber)"
+              class="group flex items-center justify-items-center justify-between pl-[18px] py-1 pr-2 truncate text-gray-900
+                     rounded-r-2xl hover:bg-indigo-50">
+              <div class="leading-6 overflow-hidden truncate" v-text="link.Title" :title="link.Title"></div>
+              <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -mr-1 pr-1"
+                @mouseenter="previewFilename=link.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
+              </div>
+            </div>
+          </div>
+        </details>
+      </li>
+      <li v-for="note in filteredNotes" :key="note.Filename"
+        @click="$emit('note-open', note.Filename)"
+        class="group flex justify-between py-1 pl-4 pr-2 cursor-pointer text-gray-900 rounded-r-2xl hover:bg-indigo-50">
+        <div class="text-sm leading-6 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+        <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -mr-1 pr-1"
+          @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
+        </div>
+      </li>
+    </ul>
+
+    <ul v-else class="divide-y divide-gray-100">
+      <li v-for="note in filteredNotes" :key="note.Filename"
+        @click="$emit('note-open', note.Filename)"
+        class="group flex justify-between py-3 pl-4 pr-2 cursor-pointer hover:bg-gray-50">
+        <div class="truncate">
+          <div class="text-sm leading-6 text-gray-900 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
+          <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
+            <span v-if="sortBy == 'ctime'" v-text="note.CtimeRelative" title="created" />
+            <span v-else v-text="note.MtimeRelative" title="modified" />
+            <div class="space-x-1 overflow-hidden truncate">
+              <template v-for="label in note.Labels">
+                <span>·</span>
+                <span class="hover:text-gray-600" v-text="label" @click.stop="query='label:'+label+' '"></span>
+              </template>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -my-3 py-3 -mr-2 pr-2"
-       @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
-      </div>
-    </li>
-  </ul>
+        <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 -my-3 py-3 -mr-2 pr-2"
+          @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''" v-text="'↗'">
+        </div>
+      </li>
+    </ul>
+
+  </div>
 </Pane>
 `
 
@@ -139,8 +170,8 @@ export default {
   data() {
     return {
       query: '',
-      sortBy: 'mtime',
-      dense: false,
+      sortBy: 'title',
+      dense: true,
       notes: [],
       labels: [],
       newLabel: '',
@@ -155,7 +186,7 @@ export default {
           const notes = Object.values(response);
           this.labels = notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
           this.notes = notes.map(note => {
-            const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])];
+            const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].sort((a, b) => a.Title.localeCompare(b.Title));
             const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
             const mtime = new Date(note.Mtime);
             const ctime = new Date(note.Ctime);
@@ -168,6 +199,8 @@ export default {
               CtimeRelative: this.formatRelativeDate(ctime),
               Labels: labels,
               IsLabel: note.IsLabel,
+              Links: links,
+              LinkCount: links?.length || 0,
               SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
             };
           })
@@ -223,6 +256,9 @@ export default {
         case 'ctime': return this.notes.sort((a, b) => b.Ctime - a.Ctime);
       }
     },
+    sortedLabelNotes() {
+      return this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
+    },
     filteredNotes() {
       const maxNotes = 300;
       const { query, sortedNotes } = this;
@@ -237,6 +273,12 @@ export default {
         return notesSubset.filter(note => remainingQueryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
       }
       return sortedNotes.filter(note => queryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
+    },
+    filteredLabelNotes() {
+      const { query, sortedLabelNotes } = this;
+      if (!query) return sortedLabelNotes;
+      const queryWords = query.toLowerCase().split(' ');
+      return sortedLabelNotes.filter(note => queryWords.every(queryWord => note.SearchStr.includes(queryWord)));
     },
   },
   created() {
