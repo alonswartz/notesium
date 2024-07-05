@@ -52,9 +52,35 @@ var t = `
       @keyup.esc="query = ''; $refs.queryInput.blur();"
       class="h-full w-full px-4 text-gray-900 placeholder:text-gray-400 bg-gray-100 ring-0 border-none focus:outline-none text-sm" />
 
-    <div class="inline-flex items-center justify-items-center mt-3 m-2 h-full">
-      <div v-show="query" @click="query = ''" title="clear" class="-mt-1 mr-2 pr-2 text-gray-400 hover:text-gray-700 cursor-pointer border-r border-gray-300">
+    <div class="inline-flex items-center justify-items-center mt-3 m-2 h-full space-x-4">
+      <div v-show="query" @click="query = ''" title="clear" class="-mt-1 pr-2 text-gray-400 hover:text-gray-700 cursor-pointer border-r border-gray-300">
         <Icon name="mini-x-mark" size="h-5 w-5" />
+      </div>
+
+      <div class="relative group inline-block text-left">
+        <span title="sort" class="cursor-pointer text-gray-400 group-hover:text-gray-700">
+          <Icon name="outline-tag" size="h-5 w-5" class="pb-1" />
+        </span>
+        <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
+          <div class="rounded-md bg-white shadow-md border border-gray-200">
+            <ul class="divide-y divide-gray-100 text-sm">
+              <li v-if="dense" class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
+                @click="showLabelsTree=!showLabelsTree">
+                <span class="text-gray-600">Labels tree</span>
+                <span v-show="showLabelsTree" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li v-else class="flex items-center justify-between p-2">
+                <span class="text-gray-300">Labels tree</span>
+                <span v-show="showLabelsTree" class="text-gray-300"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
+                @click="$notesiumState.showLabelsPanel=!$notesiumState.showLabelsPanel">
+                <span class="text-gray-600">Labels panel</span>
+                <span v-show="$notesiumState.showLabelsPanel" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="relative group inline-block text-left">
@@ -96,7 +122,7 @@ var t = `
   <div class="h-full overflow-y-scroll">
 
     <ul v-if="dense" class="mt-2 text-sm">
-      <li v-for="note in filteredLabelNotes" :key="'label-' + note.Filename" class="">
+      <li v-if="showLabelsTree" v-for="note in filteredLabelNotes" :key="'label-' + note.Filename">
         <details class="cursor-pointer [&_svg]:open:rotate-90">
           <summary class="group flex items-center justify-between justify-items-center list-none py-1.5 pl-2
                           rounded-r-2xl text-gray-900 hover:bg-indigo-50 focus:outline-none">
@@ -172,6 +198,7 @@ export default {
       query: '',
       sortBy: 'title',
       dense: true,
+      showLabelsTree: true,
       notes: [],
       newLabel: '',
       previewFilename: '',
