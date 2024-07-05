@@ -78,6 +78,21 @@ var t = `
                 <span class="text-gray-600">Labels panel</span>
                 <span v-show="$notesiumState.showLabelsPanel" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
+              <template v-if="!$notesiumState.showLabelsPanel">
+                <li class="bg-gray-200 pt-1"></li>
+                <li class="flex items-center justify-items-center p-2" title="notes with 1-word titles are considered labels">
+                  <input class="h-full w-full text-gray-800 placeholder:text-gray-400 bg-transparent focus:outline-none text-sm"
+                    @keydown.space.prevent
+                    @keyup.esc="newLabel=''; $refs.newLabelInput.blur()"
+                    @keyup.enter="createNewLabelNote()"
+                    v-model="newLabel" ref="newLabelInput" placeholder="New label..." type="text" autocomplete="off" spellcheck="false" />
+                  <div class="flex items-center cursor-pointer">
+                    <Icon v-if="!newLabel" name="outline-plus" size="h-5 w-5" @click="$refs.newLabelInput.focus()" class="text-gray-400 hover:text-gray-600" />
+                    <Icon v-if="newLabelStatus.isValid" name="mini-check" size="h-5 w-5" @click="createNewLabelNote()" class="text-green-500" />
+                    <span v-if="newLabelStatus.error" v-text="newLabelStatus.error" class="cursor-default text-red-700 text-xs whitespace-nowrap mt-1"></span>
+                  </div>
+                </li>
+              </template>
             </ul>
           </div>
         </div>
