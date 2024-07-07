@@ -166,7 +166,7 @@ var t = `
     </div>
   </div>
 
-  <div class="h-full overflow-y-scroll dark:bg-gray-700" :class="{'dark-scroll': dark}">
+  <div class="h-full flex flex-col justify-between overflow-y-scroll dark:bg-gray-700" :class="{'dark-scroll': dark}">
 
     <ul v-if="dense" class="mt-2 text-sm">
       <li v-if="showLabelsTree" v-for="note in filteredLabelNotes" :key="'label-' + note.Filename">
@@ -229,6 +229,14 @@ var t = `
       </li>
     </ul>
 
+    <div v-if="query" class="group m-4 cursor-pointer text-xs text-gray-500 dark:text-gray-400"
+      @click="$emit('finder-open', '/api/raw/lines', query.replace(/label:/g, ''))">
+      <div class="truncate">
+        {{ filteredNotes.length }}/{{ notesLength }} matches for "<span class="italic text-gray-600 dark:text-gray-300" v-text="query"></span>"
+      </div>
+      <div class="group-hover:underline mt-1" >Full text search &rarr;</div>
+    </div>
+
   </div>
 </Pane>
 `
@@ -250,6 +258,7 @@ export default {
       dense: false,
       showLabelsTree: true,
       notes: [],
+      notesLength: 0,
       newLabel: '',
       previewFilename: '',
     }
@@ -260,6 +269,7 @@ export default {
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(response => {
           const notes = Object.values(response);
+          this.notesLength = notes.length;
           this.notes = notes.map(note => {
             const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].sort((a, b) => a.Title.localeCompare(b.Title));
             const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
