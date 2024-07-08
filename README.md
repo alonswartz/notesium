@@ -96,6 +96,14 @@ It aspires and is designed to:
 
 ## Screenshots
 
+*[Web] Panels: compact darkmode notes list and note metadata sidepanels*
+![image: web panels](https://www.notesium.com/images/screenshot-1720433033.png)
+<br/>
+
+*[Web] Panels: labels, detailed notes list and note metadata sidepanels*
+![image: web panels](https://www.notesium.com/images/screenshot-1704976637.png)
+<br/>
+
 *[Web] Graph: visualize the relationships between notes with an interactive force graph*
 ![image: force graph fullscreen](https://www.notesium.com/images/screenshot-1706274658.png)
 <br/>
@@ -106,10 +114,6 @@ It aspires and is designed to:
 
 *[Web] Graph: display current note relationships in an overlay while editing*
 ![image: force graph overlay](https://www.notesium.com/images/screenshot-1706274220.png)
-<br/>
-
-*[Web] Panels: toggleable labels, notes list and note metadata sidepanels*
-![image: web panels](https://www.notesium.com/images/screenshot-1704976637.png)
 <br/>
 
 *[Web] List: prefixed with associated labels and sorted alphabetically*
