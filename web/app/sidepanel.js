@@ -29,7 +29,8 @@ var t = `
   </div>
 </Pane>
 
-<Pane :class="{'dark': dark}" v-if="$notesiumState.showNotesPanel" name="notesPanel" :defaultWidth="380" :minWidth="100" class="border-r border-gray-200">
+<Pane v-if="$notesiumState.showNotesPanel" name="notesPanel" :defaultWidth="380" :minWidth="100"
+  :class="{'dark': $notesiumState.notesPanelDarkMode}" class="border-r border-gray-200">
 
   <Transition
     enter-from-class="opacity-0"
@@ -66,35 +67,35 @@ var t = `
         <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
           <div class="rounded-md bg-white shadow-md border border-gray-200">
             <ul class="text-sm divide-y divide-gray-100">
-              <template v-if="$notesiumState.showLabelsPanel || (dense && showLabelsTree)">
-                <li class="flex items-center justify-between p-2 cursor-pointer" @click="labelsSortBy='title'">
+              <template v-if="$notesiumState.showLabelsPanel || ($notesiumState.notesPanelCompact && $notesiumState.notesPanelCompactLabels)">
+                <li class="flex items-center justify-between p-2 cursor-pointer" @click="$notesiumState.sidePanelSortLabels='title'">
                   <span class="text-gray-600">Title</span>
-                  <span v-show="labelsSortBy == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                  <span v-show="$notesiumState.sidePanelSortLabels == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
-                <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="labelsSortBy='links'">
+                <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortLabels='links'">
                   <span class="text-gray-600">Link count</span>
-                  <span v-show="labelsSortBy == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                  <span v-show="$notesiumState.sidePanelSortLabels == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
               </template>
               <template v-else>
                 <li class="flex items-center justify-between p-2 text-gray-300">
                   <span>Title</span>
-                  <span v-show="labelsSortBy == 'title'"><Icon name="mini-check" size="h-5 w-5" /></span>
+                  <span v-show="$notesiumState.sidePanelSortLabels == 'title'"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
                 <li class="flex items-center justify-between p-2 text-gray-300">
                   <span>Link count</span>
-                  <span v-show="labelsSortBy == 'links'"><Icon name="mini-check" size="h-5 w-5" /></span>
+                  <span v-show="$notesiumState.sidePanelSortLabels == 'links'"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
               </template>
               <li class="pt-px bg-gray-200"></li>
-              <li v-if="dense" class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
-                @click="showLabelsTree=!showLabelsTree">
+              <li v-if="$notesiumState.notesPanelCompact" class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
+                @click="$notesiumState.notesPanelCompactLabels=!$notesiumState.notesPanelCompactLabels">
                 <span class="text-gray-600">Labels tree</span>
-                <span v-show="showLabelsTree" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.notesPanelCompactLabels" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li v-else class="flex items-center justify-between p-2 text-gray-300">
                 <span>Labels tree</span>
-                <span v-show="showLabelsTree"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.notesPanelCompactLabels"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
                 @click="$notesiumState.showLabelsPanel=!$notesiumState.showLabelsPanel">
@@ -128,35 +129,36 @@ var t = `
         <div class="hidden group-hover:block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
           <div class="rounded-md bg-white shadow-md border border-gray-200">
             <ul class="divide-y divide-gray-100 text-sm">
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='title'">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortNotes='title'">
                 <span class="text-gray-600">Title</span>
-                <span v-show="sortBy == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.sidePanelSortNotes == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='mtime'">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortNotes='mtime'">
                 <span class="text-gray-600">Modified</span>
-                <span v-show="sortBy == 'mtime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.sidePanelSortNotes == 'mtime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='ctime'">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortNotes='ctime'">
                 <span class="text-gray-600">Created</span>
-                <span v-show="sortBy == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.sidePanelSortNotes == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="sortBy='links'">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortNotes='links'">
                 <span class="text-gray-600">Link count</span>
-                <span v-show="sortBy == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.sidePanelSortNotes == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="bg-gray-200 pt-px"></li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dense=true">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.notesPanelCompact=true">
                 <span class="text-gray-600">Compact view</span>
-                <span v-show="dense" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.notesPanelCompact" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dense=false">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.notesPanelCompact=false">
                 <span class="text-gray-600">Detailed view</span>
-                <span v-show="!dense" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="!$notesiumState.notesPanelCompact" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="bg-gray-200 pt-px"></li>
-              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="dark=!dark">
+              <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50"
+                @click="$notesiumState.notesPanelDarkMode=!$notesiumState.notesPanelDarkMode">
                 <span class="text-gray-600">Dark mode</span>
-                <span v-show="dark" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
+                <span v-show="$notesiumState.notesPanelDarkMode" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
             </ul>
           </div>
@@ -166,10 +168,10 @@ var t = `
     </div>
   </div>
 
-  <div class="h-full flex flex-col justify-between overflow-y-scroll dark:bg-gray-700" :class="{'dark-scroll': dark}">
+  <div class="h-full flex flex-col justify-between overflow-y-scroll dark:bg-gray-700" :class="{'dark-scroll': $notesiumState.notesPanelDarkMode}">
 
-    <ul v-if="dense" class="mt-2 text-sm">
-      <li v-if="showLabelsTree" v-for="note in filteredLabelNotes" :key="'label-' + note.Filename">
+    <ul v-if="$notesiumState.notesPanelCompact" class="mt-2 text-sm">
+      <li v-if="$notesiumState.notesPanelCompactLabels" v-for="note in filteredLabelNotes" :key="'label-' + note.Filename">
         <details class="cursor-pointer [&_svg]:open:rotate-90">
           <summary class="group flex items-center justify-between justify-items-center list-none py-1.5 pl-2
                           rounded-r-2xl focus:outline-none text-gray-900 hover:bg-indigo-50 dark:text-gray-400 dark:hover:bg-gray-600">
@@ -213,7 +215,7 @@ var t = `
         <div class="truncate">
           <div class="text-sm leading-6 overflow-hidden truncate text-gray-900 dark:text-gray-300" v-text="note.Title" :title="note.Title"></div>
           <div class="flex space-x-1 overflow-hidden truncate text-xs text-gray-400 leading-6">
-            <span v-if="sortBy == 'ctime'" v-text="note.CtimeRelative" title="created" />
+            <span v-if="$notesiumState.sidePanelSortNotes == 'ctime'" v-text="note.CtimeRelative" title="created" />
             <span v-else v-text="note.MtimeRelative" title="modified" />
             <div class="space-x-1 overflow-hidden truncate">
               <template v-for="label in note.Labels">
@@ -251,12 +253,7 @@ export default {
   components: { Pane, Icon, Preview },
   data() {
     return {
-      dark: true,
       query: '',
-      sortBy: 'title',
-      labelsSortBy: 'title',
-      dense: false,
-      showLabelsTree: true,
       notes: [],
       notesLength: 0,
       newLabel: '',
@@ -335,7 +332,7 @@ export default {
       return { isValid: true, error: '' };
     },
     sortedNotes() {
-      switch(this.sortBy) {
+      switch(this.$notesiumState.sidePanelSortNotes) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
         case 'links': return this.notes.sort((a, b) => b.LinkCount - a.LinkCount);
         case 'mtime': return this.notes.sort((a, b) => b.Mtime - a.Mtime);
@@ -343,7 +340,7 @@ export default {
       }
     },
     sortedLabelNotes() {
-      switch(this.labelsSortBy) {
+      switch(this.$notesiumState.sidePanelSortLabels) {
         case 'title': return this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
         case 'links': return this.notes.filter(note => note.IsLabel).sort((a, b) => b.LinkCount - a.LinkCount);
       }
