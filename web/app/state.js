@@ -4,6 +4,11 @@ const defaultState = {
   showLabelsPanel: false,
   showNotesPanel: false,
   showNoteSidebar: true,
+  notesPanelDarkMode: false,
+  notesPanelCompact: false,
+  notesPanelCompactLabels: true,
+  sidePanelSortNotes: 'title', // title, links, mtime, ctime
+  sidePanelSortLabels: 'title', // title, links
   editorLineWrapping: false,
   editorConcealFormatting: true,
   startOfWeek: 1, // 0 for Sunday, 1 for Monday, ...
