@@ -9,8 +9,7 @@ var t = `
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
       <NavActions :versionCheck=versionCheck
-        @note-new="newNote" @note-daily="dailyNote" @note-weekly="weeklyNote"
-        @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" />
+        @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" @periodic-open="showPeriodic=true" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
@@ -19,6 +18,7 @@ var t = `
     </main>
   </div>
 
+  <Periodic v-if="showPeriodic" @note-daily="dailyNote" @note-weekly="weeklyNote" @periodic-close="showPeriodic=false" />
   <Graph v-if="showGraph" :config=graphConfig @graph-close="closeGraph" @note-open="openNote" />
   <Settings v-if="showSettings" :versionCheck=versionCheck @settings-close="showSettings=false" @version-check="checkVersion" @finder-open="openFinder" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
@@ -38,13 +38,14 @@ import NavTabs from './nav-tabs.js'
 import NavActions from './nav-actions.js'
 import SidePanel from './sidepanel.js'
 import Note from './note.js'
+import Periodic from './periodic.js'
 import Graph from './graph.js'
 import Empty from './empty.js'
 import Alert from './alert.js'
 import Settings from './settings.js'
 import { formatDate } from './dateutils.js';
 export default {
-  components: { Finder, NavTabs, NavActions, SidePanel, Note, Graph, Empty, Alert, Settings },
+  components: { Finder, NavTabs, NavActions, SidePanel, Note, Periodic, Graph, Empty, Alert, Settings },
   data() {
     return {
       notes: [],
@@ -55,6 +56,7 @@ export default {
       graphConfig: {},
       showGraph: false,
       showFinder: false,
+      showPeriodic: false,
       showSettings: false,
       versionCheck: {},
       keySequence: [],
