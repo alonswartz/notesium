@@ -27,9 +27,14 @@ var t = `
         class="cursor-pointer text-gray-400 hover:text-red-700">
         <Icon name="outline-trash" size="h-4 w-4" />
       </span>
-      <a title="open via xdg" :href="'notesium://' + note.Path" class="text-gray-400 hover:text-gray-700">
+      <a title="open via xdg" :href="'notesium://' + note.Path"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="outline-external-link" size="h-4 w-4" />
       </a>
+      <span title="close" @click="$notesiumState.showNoteSidebar=false"
+        class="cursor-pointer text-gray-400 hover:text-gray-700">
+        <Icon name="mini-x-mark" size="h-4 w-4" />
+      </span>
     </div>
   </div>
 
