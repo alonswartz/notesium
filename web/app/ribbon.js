@@ -19,11 +19,6 @@ var t = `
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
       <Icon name="outline-queue-list" size="h-4 w-4" />
     </span>
-    <span title="Note metadata panel" @click="$notesiumState.showNoteSidebar=!$notesiumState.showNoteSidebar"
-      :class="{'text-gray-100': $notesiumState.showNoteSidebar}"
-      class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
-      <Icon name="panel-right" size="h-4 w-4" />
-    </span>
     <span title="Periodic notes" @click="$emit('periodic-open')"
       :class="{'text-gray-100': showPeriodic}"
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
