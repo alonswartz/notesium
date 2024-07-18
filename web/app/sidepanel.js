@@ -181,7 +181,8 @@ var t = `
               </div>
               <span class="overflow-hidden truncate pr-2" v-text="note.Title" />
             </div>
-            <span class="hidden group-hover:block pr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" v-text="note.LinkCount + ' ↗'"
+            <span class="hidden group-hover:block pr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
+              v-text="note.LinkCount + ' ↗'"
               @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''"
               @click.stop="$emit('note-open', note.Filename, 1)" />
           </summary>
