@@ -4,31 +4,10 @@ var t = `
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="outline-plus" size="h-4 w-4" />
   </span>
-
-  <div class="relative group inline-block text-left">
-    <span title="periodic" @click="toggleDatePicker()"
-      class="cursor-pointer text-gray-400 hover:text-gray-700">
-      <Icon name="outline-calendar" size="h-4 w-4" />
-    </span>
-    <div v-show="showDatePicker" @click="toggleDatePicker()" class="fixed inset-0 z-40" aria-hidden="true"></div>
-    <div v-if="showDatePicker" class="block absolute right-0 z-50 w-64 pt-3 -mt-1 origin-top-right">
-      <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
-        <DatePicker :dottedDates="periodicNoteDates"
-          @date-selected="(date) => periodicNoteDate = date" />
-        <div class="flex space-x-2 justify-items-center">
-          <div @click="$emit('note-weekly', periodicNoteDate); toggleDatePicker();"
-            class="bg-emerald-500 hover:bg-emerald-600 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md">
-            Weekly note
-          </div>
-          <div @click="$emit('note-daily', periodicNoteDate); toggleDatePicker();"
-            class="bg-indigo-500 hover:bg-indigo-600 hover:cursor-pointer py-1 w-full text-xs text-center text-white rounded-md">
-            Daily note
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <span title="periodic" @click="$emit('periodic-open')"
+    class="cursor-pointer text-gray-400 hover:text-gray-700">
+    <Icon name="outline-calendar" size="h-4 w-4" />
+  </span>
   <span title="list" @click="$emit('finder-open', '/api/raw/list?color=true&prefix=label&sort=alpha')"
     class="cursor-pointer text-gray-400 hover:text-gray-700">
     <Icon name="mini-bars-three-bottom-left" size="h-4 w-4" />
@@ -84,11 +63,10 @@ var t = `
 `
 
 import Icon from './icon.js'
-import DatePicker from './datepicker.js'
 export default {
-  components: { Icon, DatePicker },
+  components: { Icon },
   props: ['versionCheck'],
-  emits: ['note-new', 'note-daily', 'note-weekly', 'finder-open', 'settings-open', 'graph-open'],
+  emits: ['note-new', 'finder-open', 'settings-open', 'graph-open', 'periodic-open'],
   data() {
     return {
       panelsDropdownEntries: [
@@ -96,40 +74,7 @@ export default {
         { title: "Notes panel",   key: 'showNotesPanel',  icon: "outline-queue-list" },
         { title: "Note metadata", key: 'showNoteSidebar', icon: "panel-right" },
       ],
-      showDatePicker: null,
-      periodicNoteDate: null,
-      periodicNoteDates: {},
     }
-  },
-  methods: {
-    toggleDatePicker() {
-      if (this.showDatePicker) {
-        this.showDatePicker = false;
-        this.periodicNoteDates = {};
-        return;
-      }
-      fetch('/api/raw/list?prefix=ctime&date=2006-01-02T15:04:05')
-        .then(response => response.text())
-        .then(text => {
-          const dates = text.split('\n').reduce((acc, line) => {
-            const parts = line.split(' ');
-            if (parts.length > 1) {
-              const date = parts[1].split('T')[0];
-              const time = parts[1].split('T')[1];
-              if (time === '00:00:00') {
-                if (!acc[date]) acc[date] = [];
-                if (!acc[date].includes('daily')) acc[date].push('daily');
-              } else if (time === '00:00:01') {
-                if (!acc[date]) acc[date] = [];
-                if (!acc[date].includes('weekly')) acc[date].push('weekly');
-              }
-            }
-            return acc;
-          }, {});
-          this.periodicNoteDates = dates;
-          this.showDatePicker = true;
-        });
-    },
   },
   template: t
 }
