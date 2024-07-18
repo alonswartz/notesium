@@ -1,7 +1,9 @@
 var t = `
 <div v-show="showDatePicker" @keyup.esc="$emit('periodic-close')" @click="$emit('periodic-close')" class="fixed inset-0 z-40" aria-hidden="true"></div>
-<div v-if="showDatePicker" class="block absolute top-8 right-2 z-50 w-64 pt-3">
-  <div class="rounded-md bg-white shadow-md border border-gray-200 p-3">
+<div v-if="showDatePicker" class="block absolute left-16 z-50 w-64 pt-3">
+  <div class="rounded-md bg-white shadow-md border border-gray-200 p-3
+              before:absolute before:bottom-0 before:top-0 before:-left-2 before:bg-white before:border-l before:border-b before:border-gray-300
+              before:w-4 before:h-4 before:rotate-45 before:-z-1 before:my-auto">
     <DatePicker :dottedDates="periodicNoteDates" @date-selected="(date) => periodicNoteDate = date" />
     <div class="flex space-x-2 items-center justify-items-center">
       <div @click="$emit('note-weekly', periodicNoteDate); $emit('periodic-close')"
