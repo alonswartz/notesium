@@ -18,12 +18,11 @@ var t = `
     <ul class="space-y-1 cursor-pointer mt-2 px-2">
       <li v-show="sortedLabelNotes.length == 0" class="p-2">No labels found</li>
       <li v-for="label in sortedLabelNotes" :key="label.Filename"
-        @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('note-open', label.Filename)"
-        class="flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-600">
+        @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
+        class="group flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-600">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
-        <span title="links" @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
-          class="text-gray-500 hover:text-gray-100" v-text="label.LinkCount">
-        </span>
+        <span class="group-hover:hidden text-gray-500" v-text="label.LinkCount" />
+        <span class="hidden group-hover:block text-gray-500 hover:text-gray-100" @click.stop="$emit('note-open', label.Filename)">↗</span>
       </li>
     </ul>
   </div>
