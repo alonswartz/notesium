@@ -35,6 +35,10 @@ var t = `
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
       <Icon name="mini-bars-three-bottom-left" size="h-4 w-4" />
     </span>
+    <span title="List notes (modified)" @click="$emit('finder-open', '/api/raw/list?color=true&prefix=mtime&sort=mtime')"
+      class="p-2 pb-1 pr-1 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
+      <Icon name="outline-bars-arrow-down" size="h-5 w-5" />
+    </span>
     <span title="List links" @click="$emit('finder-open', '/api/raw/links?color=true')"
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
       <Icon name="mini-arrows-right-left" size="h-4 w-4" />
