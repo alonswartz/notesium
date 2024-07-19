@@ -43,6 +43,10 @@ var t = `
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
       <Icon name="mini-arrows-right-left" size="h-4 w-4" />
     </span>
+    <span title="List broken links" @click="$emit('finder-open', '/api/raw/links?color=true&dangling=true')"
+      class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
+      <Icon name="outline-link-slash" size="h-4 w-4" />
+    </span>
     <span title="Graph view" @click="$emit('graph-open')"
       class="p-2 cursor-pointer rounded-md hover:text-gray-100 hover:bg-gray-600">
       <Icon name="graph" size="h-4 w-4" />
