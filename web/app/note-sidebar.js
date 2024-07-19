@@ -2,11 +2,11 @@ var t = `
 <Pane name="noteSidebar" :defaultWidth="384" :minWidth="200" direction="left">
 <aside class="h-full overflow-y-auto my-2 mr-2 rounded-lg border border-gray-200 bg-white">
 
-  <div class="flex p-2 border-b sticky top-0 z-10 bg-white">
+  <div class="flex flex-wrap gap-x-5 gap-y-2 p-2 border-b sticky top-0 z-10 bg-white">
     <button type="button" :disabled="!note.isModified" @click="$emit('note-save')"
       :class="note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
-      class="rounded px-10 pt-2 pb-1 text-xs shadow-sm">Save</button>
-    <div class="flex w-auto mt-0 ml-auto items-center space-x-5 pr-1">
+      class="flex-grow max-w-xs rounded px-2 pt-2 pb-1 text-xs shadow-sm">Save</button>
+    <div class="flex flex-wrap w-auto gap-x-5 gap-y-2 mt-0 ml-auto items-center justify-center">
       <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="outline-code" size="h-4 w-4" />
