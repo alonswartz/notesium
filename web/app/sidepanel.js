@@ -1,28 +1,27 @@
 var t = `
 <Pane v-if="$notesiumState.showLabelsPanel" name="labelsPanel" :defaultWidth="195" :minWidth="100">
   <div class="h-full overflow-y-auto bg-gray-700 text-gray-400 text-sm font-medium dark-scroll border-r border-gray-600">
-    <div title="notes with 1-word titles are considered labels"
-      class="flex items-center justify-items-center h-9 border-b border-gray-600">
-      <input class="h-full w-full pl-4 text-white placeholder:text-gray-400 bg-transparent focus:outline-none text-sm"
-        @keydown.space.prevent
-        @keyup.esc="newLabel=''; $refs.newLabelInput.blur()"
-        @keyup.enter="createNewLabelNote()"
-        v-model="newLabel" ref="newLabelInput" placeholder="new label..." type="text" autocomplete="off" spellcheck="false" />
-      <div class="flex items-center pr-3 text-gray-500">
-        <Icon v-if="!newLabel" name="outline-plus" size="h-4 w-4" @click="$refs.newLabelInput.focus()" class="cursor-pointer hover:text-gray-200" />
-        <Icon v-if="newLabelStatus.isValid" name="mini-check" size="h-4 w-4"  @click="createNewLabelNote()" class="text-green-400" />
-        <span v-if="newLabelStatus.error" v-text="newLabelStatus.error" class="text-red-400 text-xs whitespace-nowrap mt-1"></span>
-      </div>
-    </div>
-
-    <ul class="space-y-1 cursor-pointer mt-2 px-2">
-      <li v-show="sortedLabelNotes.length == 0" class="p-2">No labels found</li>
+    <ul class="space-y-1 cursor-pointer px-2">
       <li v-for="label in sortedLabelNotes" :key="label.Filename"
         @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
         class="group flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-600">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
         <span class="group-hover:hidden text-gray-500" v-text="label.LinkCount" />
         <span class="hidden group-hover:block text-gray-500 hover:text-gray-100" @click.stop="$emit('note-open', label.Filename)">↗</span>
+      </li>
+
+      <li title="notes with 1-word titles are considered labels"
+        class="flex items-center justify-items-center h-9 pl-2 pr-1 rounded-md hover:text-gray-100 hover:bg-gray-600">
+        <input class="h-full w-full text-white hover:placeholder:text-gray-300 placeholder:text-gray-500 bg-transparent focus:outline-none text-sm"
+          @keydown.space.prevent
+          @keyup.esc="newLabel=''; $refs.newLabelInput.blur()"
+          @keyup.enter="createNewLabelNote()"
+          v-model="newLabel" ref="newLabelInput" placeholder="new label..." type="text" autocomplete="off" spellcheck="false" />
+        <div class="flex items-center text-gray-500">
+          <Icon v-if="!newLabel" name="outline-plus" size="h-4 w-4" @click="$refs.newLabelInput.focus()" class="cursor-pointer hover:text-gray-200" />
+          <Icon v-if="newLabelStatus.isValid" name="mini-check" size="h-4 w-4"  @click="createNewLabelNote()" class="text-green-400" />
+          <span v-if="newLabelStatus.error" v-text="newLabelStatus.error" class="text-red-400 text-xs whitespace-nowrap mt-1"></span>
+        </div>
       </li>
     </ul>
   </div>
