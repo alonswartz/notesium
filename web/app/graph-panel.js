@@ -17,7 +17,7 @@ var t = `
       </div>
     </div>
 
-    <GraphD3 v-if="graphData" :graphData=graphData
+    <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodeIds=emphasizeNodeIds
       @title-click="$emit('note-open', $event)"
     />
 
@@ -30,6 +30,7 @@ import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
   components: { Pane, Icon, GraphD3 },
+  props: ['activeFilename'],
   emits: ['note-open'],
   data() {
     return {
@@ -57,6 +58,11 @@ export default {
         .catch(e => {
           console.error(e);
         });
+    },
+  },
+  computed: {
+    emphasizeNodeIds() {
+      return this.activeFilename ? [this.activeFilename] : null;
     },
   },
   created() {
