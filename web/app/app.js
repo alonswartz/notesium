@@ -7,6 +7,8 @@ var t = `
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
     :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
 
+  <GraphPanel v-if="$notesiumState.showGraphPanel" />
+
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
@@ -38,6 +40,7 @@ import Finder from './finder.js'
 import NavTabs from './nav-tabs.js'
 import Ribbon from './ribbon.js'
 import SidePanel from './sidepanel.js'
+import GraphPanel from './graph-panel.js'
 import Note from './note.js'
 import Periodic from './periodic.js'
 import Graph from './graph.js'
@@ -46,7 +49,7 @@ import Alert from './alert.js'
 import Settings from './settings.js'
 import { formatDate } from './dateutils.js';
 export default {
-  components: { Finder, NavTabs, Ribbon, SidePanel, Note, Periodic, Graph, Empty, Alert, Settings },
+  components: { Finder, NavTabs, Ribbon, SidePanel, GraphPanel, Note, Periodic, Graph, Empty, Alert, Settings },
   data() {
     return {
       notes: [],

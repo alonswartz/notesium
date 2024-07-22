@@ -1,6 +1,7 @@
 const { reactive, watch } = Vue;
 
 const defaultState = {
+  showGraphPanel: false,
   showLabelsPanel: false,
   showNotesPanel: false,
   showNoteSidebar: true,
