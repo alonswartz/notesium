@@ -17,7 +17,9 @@ var t = `
       </div>
     </div>
 
-    <GraphD3 v-if="graphData" :graphData=graphData />
+    <GraphD3 v-if="graphData" :graphData=graphData
+      @title-click="$emit('note-open', $event)"
+    />
 
   </div>
 </Pane>
@@ -28,6 +30,7 @@ import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
   components: { Pane, Icon, GraphD3 },
+  emits: ['note-open'],
   data() {
     return {
       graphData: null,
