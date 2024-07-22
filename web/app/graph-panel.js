@@ -17,17 +17,47 @@ var t = `
       </div>
     </div>
 
+    <GraphD3 v-if="graphData" :graphData=graphData />
+
   </div>
 </Pane>
 `
 
 import Pane from './pane.js'
 import Icon from './icon.js'
+import GraphD3 from './graph-d3.js'
 export default {
-  components: { Pane, Icon },
+  components: { Pane, Icon, GraphD3 },
   data() {
     return {
+      graphData: null,
     }
+  },
+  methods: {
+    fetchGraph() {
+      fetch("/api/notes")
+        .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
+        .then(response => {
+          let nodes = [];
+          let links = [];
+          const notes = Object.values(response);
+          notes.forEach(note => {
+            nodes.push({ id: note.Filename, title: note.Title, isLabel: note.IsLabel });
+            if (note.OutgoingLinks) {
+              note.OutgoingLinks.forEach(link => {
+                if (link.Title !== '') links.push({ source: note.Filename, target: link.Filename });
+              });
+            }
+          });
+          this.graphData = { nodes, links };
+        })
+        .catch(e => {
+          console.error(e);
+        });
+    },
+  },
+  created() {
+    this.fetchGraph();
   },
   template: t
 }
