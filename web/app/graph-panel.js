@@ -30,7 +30,7 @@ import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
   components: { Pane, Icon, GraphD3 },
-  props: ['activeFilename'],
+  props: ['activeFilename', 'lastSave'],
   emits: ['note-open'],
   data() {
     return {
@@ -67,6 +67,9 @@ export default {
   },
   created() {
     this.fetchGraph();
+  },
+  watch: {
+    'lastSave': function() { this.graphData = null; this.fetchGraph(); },
   },
   template: t
 }
