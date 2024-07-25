@@ -7,7 +7,7 @@ var t = `
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
     :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
 
-  <GraphPanel v-if="$notesiumState.showGraphPanel" :activeFilename=activeFilename @note-open="openNote" />
+  <GraphPanel v-if="$notesiumState.showGraphPanel" :lastSave=lastSave :activeFilename=activeFilename @note-open="openNote" />
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
