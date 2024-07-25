@@ -7,7 +7,7 @@ var t = `
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
     :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
 
-  <GraphPanel v-if="$notesiumState.showGraphPanel" :lastSave=lastSave :activeFilename=activeFilename @note-open="openNote" />
+  <GraphPanel v-if="$notesiumState.showGraphPanel" :lastSave=graphPanelWatcher :activeFilename=activeFilename @note-open="openNote" />
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
@@ -66,6 +66,7 @@ export default {
       keySequence: [],
       alerts: [],
       lastSave: null,
+      graphPanelWatcher: null,
     }
   },
   methods: {
@@ -124,6 +125,21 @@ export default {
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           const index = this.notes.findIndex(n => n.Filename === filename);
+
+          // trigger graph panel refresh if needed
+          if (this.$notesiumState.showGraphPanel) {
+            if (params.method == "POST") {
+              this.graphPanelWatcher = note.Mtime;
+            } else if (this.notes[index].Title !== note.Title) {
+              this.graphPanelWatcher = note.Mtime;
+            } else {
+              const stringifyLinks = (links) => { return JSON.stringify(links?.map(link => link.Filename).sort() || []); }
+              if (stringifyLinks(this.notes[index].OutgoingLinks) !== stringifyLinks(note.OutgoingLinks)) {
+                this.graphPanelWatcher = note.Mtime;
+              }
+            }
+          }
+
           this.notes[index] = note;
           this.activateNote(note.Filename);
 
@@ -165,6 +181,9 @@ export default {
 
           // update lastSave to force sidepanel refresh
           this.lastSave = new Date().toISOString();
+
+          // trigger graph panel refresh if needed
+          this.graphPanelWatcher = this.lastSave;
 
           // update other notes IncomingLinks due to potential changes
           this.notes.forEach(openNote => {
