@@ -101,6 +101,7 @@ export default {
         showTitles:        { value: true,  title: 'show titles' },
         scaleTitles:       { value: true,  title: 'auto-scale titles' },
         dynamicNodeRadius: { value: false, title: 'size nodes per links' },
+        emphasizeActive:   { value: true,  title: 'emphasize active note' },
       },
       forces: {
         chargeStrength:  { value: -30, min: -100, max: 0,  step: 1,    title: 'repel force' },
@@ -138,7 +139,7 @@ export default {
         const queryWords = this.query.toLowerCase().split(' ');
         return this.graphData.nodes.filter(node => queryWords.every(queryWord => node.title.toLowerCase().includes(queryWord))).map(node => node.id);
       }
-      return this.activeFilename ? [this.activeFilename] : null;
+      return (this.display.emphasizeActive.value && this.activeFilename) ? [this.activeFilename] : null;
     },
   },
   created() {
