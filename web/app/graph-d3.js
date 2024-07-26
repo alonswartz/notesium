@@ -6,10 +6,16 @@ export default {
   props: [
     'graphData',
     'emphasizeNodeIds',
+    'initialTransform',
     'display',
     'forces',
   ],
   emits: ['title-click'],
+  data() {
+    return {
+      zoomTransform: null,
+    }
+  },
   methods: {
     initGraph() {
       const vm = this;
@@ -59,8 +65,21 @@ export default {
       const zoom = d3.zoom().scaleExtent([0.3, 3]).on('zoom', function(event) {
         svg.selectAll('g').attr('transform', event.transform);
         if (vm.display.scaleTitles.value) scaleTitlesByZoomLevel(event.transform.k);
+        vm.zoomTransform = {
+          k: event.transform.k,
+          x: event.transform.x,
+          y: event.transform.y
+        }
       });
       svg.call(zoom);
+
+      if (vm.initialTransform) {
+        const {k, x, y} = vm.initialTransform;
+        const transform = d3.zoomIdentity.translate(x, y).scale(k);
+        svg.selectAll('g').attr('transform', transform);
+        svg.call(zoom.transform, transform);
+        if (vm.display.scaleTitles.value) scaleTitlesByZoomLevel(k);
+      }
 
       simulation.on("tick", () => {
         link
