@@ -3,14 +3,10 @@ var t = `
   <div @click="$emit('graph-close');" class="fixed inset-0" aria-hidden="true"></div>
   <div class="absolute inset-0 overflow-hidden">
     <div class="pointer-events-none fixed inset-y-0 right-0 flex">
-      <div :class="fullscreen ? 'w-screen' : 'max-w-2xl'" class="pointer-events-auto">
+      <div class="w-screen pointer-events-auto">
         <div class="flex flex-col h-full bg-white pb-6 shadow-xl">
 
           <div class="absolute top-0 right-0 flex items-center justify-items-center space-x-3 p-2">
-            <div title="toggle fullscreen" @click="fullscreen=!fullscreen"
-              :class="fullscreen ? 'border-r-4' : 'border-t-4'"
-              class="cursor-pointer h-3.5 w-3.5 border border-gray-400 hover:border-gray-700 rounded-sm">
-            </div>
             <div title="close" @click="$emit('graph-close')"
               class="cursor-pointer text-gray-400 hover:text-gray-700">
               <Icon name="mini-x-mark" size="h-6 w-6" />
@@ -67,7 +63,7 @@ var t = `
             </div>
           </div>
 
-          <div v-if="fullscreen && selectedNodeId" class="absolute top-0 right-0 w-[38rem] flex flex-col h-full bg-white shadow-xl">
+          <div v-if="selectedNodeId" class="absolute top-0 right-0 w-[38rem] flex flex-col h-full bg-white shadow-xl">
             <div class="flex items-center justify-end mx-2 pt-2 space-x-2">
               <span title="open for editing" @click="$emit('note-open', selectedNodeId); $emit('graph-close')"
                 class="cursor-pointer text-gray-400 hover:text-gray-700">
@@ -89,7 +85,7 @@ var t = `
             :display=display
             :forces=forces
             @click="(query = '', selectedNodeId = '')"
-            @title-click="(query = '', selectedNodeId = $event, (!fullscreen) ? $emit('note-open', $event) : undefined)"
+            @title-click="(query = '', selectedNodeId = $event)"
           />
         </div>
       </div>
@@ -111,7 +107,6 @@ export default {
       nodes: [],
       graphData: null,
       selectedNodeId: '',
-      fullscreen: true,
       showSettings: false,
       showSettingsDisplay: true,
       showSettingsForces: false,
@@ -162,7 +157,6 @@ export default {
   },
   mounted() {
     this.selectedNodeId = this.config.selectedNodeId;
-    this.fullscreen = this.config.fullscreen;
     this.fetchGraph();
   },
   created() {
