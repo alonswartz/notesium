@@ -99,7 +99,6 @@ import GraphD3 from './graph-d3.js'
 import Preview from './preview.js'
 export default {
   components: { Icon, GraphD3, Preview },
-  props: ['config'],
   emits: ['graph-close', 'note-open'],
   data() {
     return {
@@ -156,7 +155,6 @@ export default {
     }
   },
   mounted() {
-    this.selectedNodeId = this.config.selectedNodeId;
     this.fetchGraph();
   },
   created() {
