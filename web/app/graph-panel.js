@@ -17,7 +17,67 @@ var t = `
       </div>
     </div>
 
-    <GraphD3 v-if="graphData" :graphData=graphData :emphasizeNodeIds=emphasizeNodeIds
+    <div v-show="!showSettings" class="absolute top-9 right-0 p-3">
+      <div class="border border-gray-200 rounded-md backdrop-blur-md">
+        <span title="settings" @click="showSettings=true"
+          class="h-8 px-2 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
+          <Icon name="outline-adjustments-horizontal" size="h-5 w-5" />
+        </span>
+      </div>
+    </div>
+
+    <div v-show="showSettings" class="absolute top-9 right-0 p-3 w-60">
+      <div class="flex flex-1 flex-col border border-gray-200 rounded-md backdrop-blur-md space-y-1">
+        <div class="flex border-b border-gray-200">
+          <input ref="queryInput" v-model="query" placeholder="filter..." autocomplete="off" spellcheck="false"
+            @keyup.esc="query=''"
+            @keyup.enter.prevent
+            @keydown.tab.prevent
+            class="h-8 w-full p-2 focus:outline-none backdrop-blur-md bg-inherit text-sm text-gray-700 placeholder:text-gray-400" />
+          <span title="settings" @click="showSettings=false"
+            class="h-8 pr-2 cursor-pointer inline-flex items-center justify-items-center text-gray-400 hover:text-gray-700">
+            <Icon name="outline-adjustments-horizontal" size="h-5 w-5" />
+          </span>
+        </div>
+        <div>
+          <details class="flex w-full flex-none cursor-pointer [&_svg]:open:rotate-90">
+            <summary class="flex py-1 px-2 items-center justify-items-center justify-between hover:cursor-pointer focus:outline-none">
+              <span class="text-sm font-medium leading-6 text-gray-700">display</span>
+              <span class="text-gray-400 -mr-px"><Icon name="chevron-right" size="h-5 w-5" /></span>
+            </summary>
+            <ul class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
+              <li v-for="(option, key) in display" :key="key" @click="option.value=!option.value"
+                class="flex items-center justify-items-center justify-between block p-2 pr-0">
+                <label v-text="option.title"></label>
+                <input v-model="option.value" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500" />
+              </li>
+            </ul>
+          </details>
+          <details class="flex w-full flex-none [&_svg]:open:rotate-90">
+            <summary class="flex py-1 px-2 items-center justify-items-center justify-between hover:cursor-pointer focus:outline-none">
+              <span class="text-sm font-medium leading-6 text-gray-700">forces</span>
+              <span class="text-gray-400 -mr-px"><Icon name="chevron-right" size="h-5 w-5" /></span>
+            </summary>
+            <ul class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
+              <li v-for="(option, key) in forces" :key="key"
+                class="items-center justify-items-center justify-between block p-2 pr-0">
+                <div class="flex items-center justify-between">
+                  <span v-text="option.title"></span>
+                  <span v-text="option.value"></span>
+                </div>
+                <input class="w-full cursor-pointer" type="range" v-model="option.value" :min="option.min" :max="option.max" :step="option.step" />
+              </li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <GraphD3 v-if="graphData"
+      :graphData=graphData
+      :display=display
+      :forces=forces
+      :emphasizeNodeIds=emphasizeNodeIds
       @title-click="$emit('note-open', $event)"
     />
 
@@ -35,6 +95,18 @@ export default {
   data() {
     return {
       graphData: null,
+      query: '',
+      showSettings: false,
+      display: {
+        showTitles:        { value: true,  title: 'show titles' },
+        scaleTitles:       { value: true,  title: 'auto-scale titles' },
+        dynamicNodeRadius: { value: false, title: 'size nodes per links' },
+      },
+      forces: {
+        chargeStrength:  { value: -30, min: -100, max: 0,  step: 1,    title: 'repel force' },
+        collideRadius:   { value: 1,   min: 1,    max: 50, step: 1,    title: 'collide radius' },
+        collideStrength: { value: 0.5, min: 0,    max: 1,  step: 0.05, title: 'collide strength' },
+      },
     }
   },
   methods: {
@@ -62,6 +134,10 @@ export default {
   },
   computed: {
     emphasizeNodeIds() {
+      if (this.showSettings && this.query) {
+        const queryWords = this.query.toLowerCase().split(' ');
+        return this.graphData.nodes.filter(node => queryWords.every(queryWord => node.title.toLowerCase().includes(queryWord))).map(node => node.id);
+      }
       return this.activeFilename ? [this.activeFilename] : null;
     },
   },
