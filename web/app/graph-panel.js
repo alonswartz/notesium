@@ -73,11 +73,12 @@ var t = `
       </div>
     </div>
 
-    <GraphD3 v-if="graphData"
+    <GraphD3 ref="forcegraph" v-if="graphData"
       :graphData=graphData
       :display=display
       :forces=forces
       :emphasizeNodeIds=emphasizeNodeIds
+      :initialTransform=initialTransform
       @title-click="$emit('note-open', $event)"
     />
 
@@ -95,6 +96,7 @@ export default {
   data() {
     return {
       graphData: null,
+      initialTransform: null,
       query: '',
       showSettings: false,
       display: {
@@ -146,7 +148,11 @@ export default {
     this.fetchGraph();
   },
   watch: {
-    'lastSave': function() { this.graphData = null; this.fetchGraph(); },
+    'lastSave': function() {
+      this.initialTransform = this.$refs.forcegraph.zoomTransform;
+      this.graphData = null;
+      this.fetchGraph();
+    },
   },
   template: t
 }
