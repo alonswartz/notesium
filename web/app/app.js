@@ -2,7 +2,7 @@ var t = `
 <div class="relative flex max-h-screen h-screen overflow-hidden">
 
   <Ribbon :versionCheck=versionCheck :showPeriodic=showPeriodic
-    @note-new="newNote" @finder-open="openFinder" @graph-open="openGraph" @settings-open="showSettings=true" @periodic-open="showPeriodic=true" />
+    @note-new="newNote" @finder-open="openFinder" @graph-open="showGraph=true" @settings-open="showSettings=true" @periodic-open="showPeriodic=true" />
 
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
     :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
@@ -15,14 +15,14 @@ var t = `
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
-      <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="openGraph" />
+      <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
       <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
         @note-open="openNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
     </main>
   </div>
 
   <Periodic v-if="showPeriodic" @note-daily="dailyNote" @note-weekly="weeklyNote" @periodic-close="showPeriodic=false" />
-  <Graph v-if="showGraph" :config=graphConfig @graph-close="closeGraph" @note-open="openNote" />
+  <Graph v-if="showGraph" @graph-close="showGraph=false" @note-open="openNote" />
   <Settings v-if="showSettings" :versionCheck=versionCheck @settings-close="showSettings=false" @version-check="checkVersion" @finder-open="openFinder" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
@@ -57,7 +57,6 @@ export default {
       activeFilenamePrevious: '',
       finderUri: '',
       finderQuery: '',
-      graphConfig: {},
       showGraph: false,
       showFinder: false,
       showPeriodic: false,
@@ -87,14 +86,6 @@ export default {
           this.fetchNote(value.Filename, value.Linenum);
         }
       }
-    },
-    openGraph(filename = '') {
-      this.graphConfig = { selectedNodeId: filename };
-      this.showGraph = true;
-    },
-    closeGraph() {
-      this.showGraph = false;
-      this.graphConfig = {};
     },
     fetchNote(filename, linenum, insertAfterActive = false) {
       fetch("/api/notes/" + filename)
@@ -398,7 +389,7 @@ export default {
             this.weeklyNote();
             break;
           case `${leaderKey} KeyN KeyG`:
-            this.openGraph();
+            this.showGraph = true;
             break;
         }
       }
