@@ -18,8 +18,7 @@ var t = `
     @note-save="handleSave()"
     @note-open="(...args) => $emit('note-open', ...args)"
     @note-delete="(...args) => $emit('note-delete', ...args)"
-    @finder-open="(...args) => $emit('finder-open', ...args)"
-    @graph-open="(...args) => $emit('graph-open', ...args)" />
+    @finder-open="(...args) => $emit('finder-open', ...args)" />
 
   <Finder v-if="showFinder" uri="/api/raw/list?sort=mtime" small=true @finder-selection="handleFinderSelection" />
 </div>
@@ -32,7 +31,7 @@ import Icon from './icon.js'
 export default {
   components: { NoteSidebar, Finder, Icon },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open'],
+  emits: ['note-open', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
       showFinder: false,

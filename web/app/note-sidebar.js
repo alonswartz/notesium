@@ -19,7 +19,7 @@ var t = `
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="mini-arrows-right-left" size="h-3 w-3" />
       </span>
-      <span title="graph" @click="$emit('graph-open', note.Filename)"
+      <span title="graph panel" @click="$notesiumState.showGraphPanel=!$notesiumState.showGraphPanel"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="graph" size="h-3 w-3" />
       </span>
@@ -116,7 +116,7 @@ import { formatDate } from './dateutils.js';
 export default {
   components: { Pane, Icon, LinkTree },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'note-delete', 'finder-open', 'graph-open'],
+  emits: ['note-open', 'note-save', 'note-delete', 'finder-open'],
   methods: {
     formattedDate(dateStr) {
       if (!dateStr) return '';
