@@ -83,12 +83,18 @@ It aspires and is designed to:
     - Markdown table formatting and navigation.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
-    - Resizable sidepanels for labels, notes list and note metadata with linktrees.
     - Note deletion with incoming-links verification and confirmation.
+    - Daily and Weekly notes support with Date picker and keybindings.
+    - Resizable, configurable and optional panels for different use cases:
+        - Labels panel: Integrates with List panel, but useful on its own.
+        - List panel: Detailed and compact views, sort, filter, preview.
+        - Graph panel: Visualize note relationships, emphasizes active note.
+        - Note sidebar: Actions, stats and incoming/outgoing link-trees.
     - Force graph to visualize and explore the relationship between notes.
-        - Context aware fullscreen and overlay views.
+        - Context aware fullscreen and panel views.
         - Emphasize nodes and their links using search filter or node click.
-        - Note preview in side panel with inline incoming-links (fullscreen)
+        - Auto track and emphasize active note and its relationships (panel).
+        - Note preview in side panel with inline incoming-links (fullscreen).
         - Adjust node size dynamically based on bi-directional link count.
         - Toggle title visibility and automatically scale per zoom level.
         - Tweak forces such as repel force, collide radius, and strength.
@@ -96,24 +102,20 @@ It aspires and is designed to:
 
 ## Screenshots
 
-*[Web] Panels: compact darkmode notes list and note metadata sidepanels*
-![image: web panels](https://www.notesium.com/images/screenshot-1720433033.png)
+*[Web] Panels: compact notes list and graph panels*
+![image: web compact-list graph panels](https://www.notesium.com/images/screenshot-1722155143.png)
 <br/>
 
 *[Web] Panels: labels, detailed notes list and note metadata sidepanels*
-![image: web panels](https://www.notesium.com/images/screenshot-1704976637.png)
+![image: web labels detailed-list metadata panels](https://www.notesium.com/images/screenshot-1722161924.png)
 <br/>
 
 *[Web] Graph: visualize the relationships between notes with an interactive force graph*
-![image: force graph fullscreen](https://www.notesium.com/images/screenshot-1706274658.png)
+![image: web graph fullscreen](https://www.notesium.com/images/screenshot-1706274658.png)
 <br/>
 
 *[Web] Graph: filter notes with emphasized matches, and preview note*
-![image: force graph note preview](https://www.notesium.com/images/screenshot-1706274787.png)
-<br/>
-
-*[Web] Graph: display current note relationships in an overlay while editing*
-![image: force graph overlay](https://www.notesium.com/images/screenshot-1706274220.png)
+![image: web graph fullscreen preview](https://www.notesium.com/images/screenshot-1706274787.png)
 <br/>
 
 *[Web] List: prefixed with associated labels and sorted alphabetically*
