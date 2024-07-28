@@ -1,3 +1,56 @@
+## 0.5.10
+
+The Web/App features a brand-new Ribbon, a Force Graph panel that
+optionally updates in real-time emphasizing the active note and its
+relationships, and inline toggling of the note metadata side panel.
+
+The Notes list side panel includes more sorting options, note preview on
+hover, scoped dark mode, detailed and compact views, a compact
+expandable tree-like labels section, and improved integration with the
+Labels panel.
+
+Fixed:
+
+- Web/App: Note sidebar - wrap action icons on pane resize when needed.
+- Web/App: Notes list panel - handling of future dates (periodic notes).
+- Web/App: Preview - adheres to editorLineWrapping state setting.
+
+Added:
+
+- Web/App: Ribbon - replaces and expands on NavBar action icons.
+- Web/App: Ribbon - includes graph-panel, mtime-list, dangling-links.
+- Web/App: Ribbon - visual identification of panel state.
+
+- Web/App: Graph panel - side-by-side view of graph and editor tabs.
+- Web/App: Graph panel - node and relationship emphasis of active note.
+- Web/App: Graph panel - automatic re-render only when required.
+- Web/App: Graph panel - maintain position and zoom on re-render.
+- Web/App: Graph panel - collapsed filter, display and forces settings.
+
+- Web/App: List panel - note preview on hover.
+- Web/App: List panel - sort and density, labels related dropdowns on hover.
+- Web/App: List panel - sort via title, mtime, ctime or link count.
+- Web/App: List panel - detailed and compact view.
+- Web/App: List panel - compact labels-tree, with dedicated sorting.
+- Web/App: List panel - scoped darkmode for detailed and compact views.
+- Web/App: List panel - filter match count and link to full-text search.
+- Web/App: List panel - filter optimizations and `label:` support.
+- Web/App: List panel - filter clear icon when applicable.
+- Web/App: List panel - optimized date handling and formatting.
+- Web/App: List panel - new label with verification when label panel closed.
+
+- Web/App: Labels panel - new label with verification.
+- Web/App: Labels panel - improved integration with Notes panel.
+
+Changed:
+
+- Web/App: NavBar - action icons removed, replaced with Ribbon.
+- Web/App: Labels panel - label click opens finder if Notes list closed.
+- Web/App: Graph overlay - only full screen, overlay replaced by graph panel.
+- Web/App: Periodic notes - refactored into dedicated component and improved.
+- Web/App: Note metadata panel - graph link changed to Graph panel.
+- Web/App: Note metadata panel - inline toggle instead navbar panels dropdown.
+
 ## 0.5.9
 
 Building upon daily note support introduced in version 0.5.7, weekly
