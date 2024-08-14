@@ -296,13 +296,32 @@ For more keybindings see the integrated settings.
 
 ### Syntax highlighting and concealment
 
-The editor is configured to syntax highlight based on `markdown`
+The editor is configured to syntax highlight based on Markdown
 formatting.
 
-By default, special characters such as those used for **bold**, *italic*
-and `code` will be concealed except on the active-line. In addition,
-links will also be concealed and only display the title. This setting
-can be toggled using the icon in the note sidebar.
+By default, formatting characters such as those used for **bold**,
+*italic* and `code` will be concealed except on the active-line. In
+addition, links will also be concealed and only display the title. This
+setting can be toggled using the icon in the note sidebar.
+
+The following table lists the Markdown syntax of elements that will be
+formatted and/or syntax highlighted, and indicates whether concealment
+of the formatting characters is supported.
+
+| Syntax                       | Concealment | Comment
+| ------                       | ----------- | -------
+| `# heading 1`                | No          | If on first line, text after `#` is considered the note title
+| `## heading 2`               | No          | Heading level corresponds to the number of `#` symbols
+| `*italic text*`              | Yes         | Italic, `_italic_` also supported
+| `**bold text**`              | Yes         | Bold, `__bold__` also supported
+| `***italic and bold***`      | Yes         | Italic and bold, `___italic and bold___` also supported
+| `> blockquote`               | No          | Block quote
+| `- list item`                | No          | Unordered list
+| `` `code` ``                 | Yes         | Inline code
+| `` ```fenced codeblock``` `` | No          | Fenced code block
+| `~~strikethrough~~`          | Yes         | Strikethrough
+| `---`                        | Yes         | Horizontal rule. Displayed as full-width line when concealed
+| `[link title](64218088.md)`  | Yes         | Inline link. Displayed as `link title` when concealed
 
 ### Table formatting and navigation
 
