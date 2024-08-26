@@ -25,6 +25,7 @@ var t = `
   <Graph v-if="showGraph" @graph-close="showGraph=false" @note-open="openNote" />
   <Settings v-if="showSettings" :versionCheck=versionCheck @settings-close="showSettings=false" @version-check="checkVersion" @finder-open="openFinder" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
+  <Confirm ref="confirmDialog" />
   <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
 
   <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end sm:items-start p-2 z-50">
@@ -46,10 +47,11 @@ import Periodic from './periodic.js'
 import Graph from './graph.js'
 import Empty from './empty.js'
 import Alert from './alert.js'
+import Confirm from './confirm.js'
 import Settings from './settings.js'
 import { formatDate } from './dateutils.js';
 export default {
-  components: { Finder, NavTabs, Ribbon, SidePanel, GraphPanel, Note, Periodic, Graph, Empty, Alert, Settings },
+  components: { Finder, NavTabs, Ribbon, SidePanel, GraphPanel, Note, Periodic, Graph, Empty, Alert, Confirm, Settings },
   data() {
     return {
       notes: [],
@@ -151,14 +153,19 @@ export default {
           this.addAlert({type: 'error', title: 'Error saving note', body: e.Error, sticky: true})
         });
     },
-    deleteNote(filename, timestamp) {
+    async deleteNote(filename, timestamp) {
       const note = this.notes.find(note => note.Filename === filename);
       if (!note) return;
       if (note.ghost) return;
       if (note.isModified) { this.addAlert({type: 'error', title: 'Note has unsaved changes'}); return; }
       if ((note.IncomingLinks?.length || 0) > 0) { this.addAlert({type: 'error', title: 'Refusing deletion, note has incoming links'}); return; }
-      const confirmMsg = "Are you sure you want to delete this note? This action cannot be undone.";
-      if (!confirm(`${confirmMsg}\n\n${note.Filename}: ${note.Title}`)) return;
+
+      const confirmCfg = {
+        title: 'Delete note',
+        body: `Are you sure you want to delete this note? This action cannot be undone.\n\n${note.Filename}: ${note.Title}`,
+        button: 'Delete note',
+      };
+      if (!await this.$refs.confirmDialog.open(confirmCfg)) return;
 
       let params = {};
       params.method = 'DELETE';
@@ -263,13 +270,18 @@ export default {
         this.activeFilename = filename;
       }
     },
-    closeNote(filename) {
+    async closeNote(filename) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
       if (this.notes[index].isModified && !this.notes[index].ghost) {
-        const confirmMsg = "Note has unsaved changes. Are you sure you want to discard changes and close? This action cannot be undone.";
-        if (!confirm(`${confirmMsg}\n\n${filename}: ${this.notes[index].Title}`)) return;
+        const confirmCfg = {
+          title: 'Note has unsaved changes',
+          body: `Are you sure you want to discard changes and close? This action cannot be undone.\n\n${filename}: ${this.notes[index].Title}`,
+          button: 'Close without saving',
+        };
+        if (!await this.$refs.confirmDialog.open(confirmCfg)) return;
       }
+
       this.notes.splice(index, 1);
       const notesLength = this.notes.length;
       switch(notesLength) {
