@@ -267,8 +267,8 @@ export default {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
       if (this.notes[index].isModified && !this.notes[index].ghost) {
-        this.addAlert({type: 'error', title: 'Note has unsaved changes'});
-        return;
+        const confirmMsg = "Note has unsaved changes. Are you sure you want to discard changes and close? This action cannot be undone.";
+        if (!confirm(`${confirmMsg}\n\n${filename}: ${this.notes[index].Title}`)) return;
       }
       this.notes.splice(index, 1);
       const notesLength = this.notes.length;
