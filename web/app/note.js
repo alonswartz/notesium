@@ -57,7 +57,7 @@ export default {
         const formattedLink = `[${value.Content}](${value.Filename})`;
         this.cm.replaceRange(formattedLink, startPos, cursorPos);
       }
-      this.$nextTick(() => { this.cm.focus(); } );
+      this.$nextTick(() => { this.cm.focus(); this.cm.refresh(); } );
     },
     handleSave() {
       if (this.note.isModified) {
