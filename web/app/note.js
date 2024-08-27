@@ -43,10 +43,16 @@ export default {
       const cursorPos = this.cm.getCursor();
       const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
       const prevChar = this.cm.getRange(startPos, cursorPos);
-      if (prevChar === '[') {
+
+      const now = Date.now();
+      const timeSinceLastPress = now - (this.lastBracketPressTime || 0);
+      const threshold = 2000;
+
+      if (prevChar === '[' && timeSinceLastPress < threshold) {
         this.showFinder = true;
       } else {
         this.cm.replaceRange('[', cursorPos, cursorPos);
+        this.lastBracketPressTime = now;
       }
     },
     handleFinderSelection(value) {
