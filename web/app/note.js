@@ -1,7 +1,8 @@
 var t = `
 <div class="relative flex h-full">
   <div class="grow overflow-y-auto">
-    <div :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting}" class="h-full p-2 pr-1 cm-links-hover" ref="codemirror"></div>
+    <div ref="codemirror" class="h-full p-2 pr-1 cm-links-hover"
+      :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
   </div>
 
   <div v-if="!$notesiumState.showNoteSidebar || note.ghost" class="absolute right-0 mt-2 mr-4 h-7 z-10 inline-flex items-center">
@@ -34,6 +35,7 @@ export default {
   emits: ['note-open', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
+      fatCursor: false,
       showFinder: false,
       selectedLines: [],
     }
@@ -53,6 +55,11 @@ export default {
       } else {
         this.cm.replaceRange('[', cursorPos, cursorPos);
         this.lastBracketPressTime = now;
+
+        this.fatCursor = true;
+        const restoreCursor = () => { this.fatCursor = false; this.cm.off('keydown', restoreCursor); };
+        this.cm.on('keydown', restoreCursor);
+        setTimeout(() => { restoreCursor(); }, threshold);
       }
     },
     handleFinderSelection(value) {
