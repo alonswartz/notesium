@@ -169,7 +169,7 @@ It aspires and is designed to:
 ## CLI
 
 Notesium is primarily tested and supported on Linux, with only
-preliminary tests performed on MacOS and Windows.
+preliminary tests performed on macOS and Windows.
 
 ### Installation
 
@@ -183,6 +183,26 @@ curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checks
 sha256sum --check --ignore-missing checksums.txt && rm checksums.txt
 chmod +x notesium-linux-amd64
 mv notesium-linux-amd64 $HOME/.local/bin/notesium
+```
+
+```bash
+# Example for macOS 64-bit
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-darwin-amd64
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt
+shasum -a 256 -c checksums.txt --ignore-missing && rm checksums.txt
+chmod +x notesium-darwin-amd64
+mv notesium-darwin-amd64 $HOME/bin/notesium
+```
+
+```powershell
+# Example for Windows 64-bit (in PowerShell)
+Invoke-WebRequest -Uri "https://github.com/alonswartz/notesium/releases/latest/download/notesium-windows-amd64.exe" -OutFile "./notesium-windows-amd64.exe"
+Invoke-WebRequest -Uri "https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt" -OutFile "./checksums.txt"
+$hash = Get-FileHash -Path "./notesium-windows-amd64.exe" -Algorithm SHA256
+$checksums = Get-Content "./checksums.txt"
+if ($checksums -match $hash.Hash) { Write-Output "Checksum verified"; Remove-Item "./checksums.txt" } else { Write-Error "Checksum verification failed!" }
+New-Item -ItemType Directory -Path "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps" -Force
+Move-Item -Path "./notesium-windows-amd64.exe" -Destination "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\notesium.exe"
 ```
 
 Or build from source.
