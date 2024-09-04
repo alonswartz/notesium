@@ -1,3 +1,29 @@
+<p align="center">
+  <b><a href="https://www.notesium.com" target="_blank">Notesium</a> - A simple yet powerful system for networked thought</b>
+</p>
+
+<p align="center">
+  <i>Writing does not make intellectual endeavours easier, it makes them
+  possible. Deepen understanding, insight, and allow for structure to
+  emerge organically by linking notes.</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/alonswartz/notesium/actions">
+    <img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/alonswartz/notesium/main.yml">
+  </a>
+  <a href="https://github.com/alonswartz/notesium/releases">
+    <img alt="Latest Release" src="https://img.shields.io/github/v/release/alonswartz/notesium">
+  </a>
+  <a href="https://github.com/alonswartz/notesium/blob/master/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/alonswartz/notesium">
+  </a>
+</p>
+
+![image: web interface screenshot](https://www.notesium.com/images/screenshot-1722155143.png)
+
+---
+
 Notesium (pronounced *no-tes-ee-im*), is an opiniated, simplistic yet
 powerful system for creating, storing and accessing knowledge by means
 of *notes*.
