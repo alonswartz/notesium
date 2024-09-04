@@ -219,12 +219,11 @@ ln -s $(pwd)/notesium $HOME/.local/bin/notesium
 
 ### Shell completion
 
-```bash
-# if you downloaded the latest release binary, extract completion.bash, for example:
-notesium extract completion.bash > /path/to/notesium/completion.bash
+Bash completion is available for all notesium commands and option flags.
+Add the following line to your `$HOME/.bashrc` or similar location.
 
-# update $HOME/.bashrc or similar to source completion.bash, for example:
-[ -f "/path/to/notesium/completion.bash" ] && source "/path/to/notesium/completion.bash"
+```bash
+command -v notesium >/dev/null && source <(notesium extract completion.bash)
 ```
 
 ### Usage
