@@ -282,6 +282,15 @@ and runs locally. To allow writing of notes, be sure to specify the
 notesium web --writable --open-browser
 ```
 
+The web interface stores state and preferences such as editor settings,
+panel state, start-of-week, and sorting preferences. The state is
+**port-specific**, meaning that to retain them across sessions, the same
+port must be used. For example:
+
+```bash
+notesium web --writable --open-browser --port=8080
+```
+
 ### Keybindings
 
 | Mode   | Binding     | Comment
