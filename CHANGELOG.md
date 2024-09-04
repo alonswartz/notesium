@@ -1,3 +1,32 @@
+## 0.5.11
+
+This release brings refinements to the Web/App, including improved
+editor link insertion and concealment enhancements. It also adds support
+for discarding unsaved changes. The README has been updated with new
+documentation.
+
+Fixed:
+
+- Web/App: Editor insertLink - move cursor to end of formatted link.
+- Web/App: Editor conceal - fix unconceal font-size (firefox).
+
+Added:
+
+- Web/App: Editor insertLink - apply timing threshold between bracket presses.
+- Web/App: Editor insertLink - change cursor until next keypress or threshold.
+- Web/App: Editor conceal - transition font-size for less jarring effect.
+
+- Web/App: Support discarding changes on note close.
+- Web/App: Replaced native confirm with custom implementation.
+
+- Readme: Documented Web/App state and preferences are port specific.
+- Readme: Documented Web/App supported Markdown highlighting and concealment.
+- Readme: Documented installation examples for macOS and Windows.
+
+Changed:
+
+- Readme: Updated bash shell completion to source inline from embedded file.
+
 ## 0.5.10
 
 The Web/App features a brand-new Ribbon, a Force Graph panel that
