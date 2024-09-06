@@ -98,6 +98,11 @@ export default {
         return CodeMirror.Pass;
       }
     },
+    handleEsc() {
+      if (this.$notesiumState.editorVimMode) return CodeMirror.Pass;
+      this.cm.display.input.blur();
+      document.body.focus();
+    },
     handleEditorVimMode() {
       if (this.$notesiumState.editorVimMode) {
         this.cm.setOption("keyMap", "vim");
@@ -131,7 +136,7 @@ export default {
       },
       extraKeys: {
         "[": this.handleLeftBracket,
-        "Esc": function(cm){ cm.display.input.blur(); document.body.focus(); },
+        "Esc": this.handleEsc,
         "Ctrl-S": this.handleSave,
         "Tab": this.handleTab,
         "Backspace": this.handleBackspace,
