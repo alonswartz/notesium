@@ -21,6 +21,9 @@ var t = `
     @note-delete="(...args) => $emit('note-delete', ...args)"
     @finder-open="(...args) => $emit('finder-open', ...args)" />
 
+  <div v-if="$notesiumState.editorVimMode" v-text="vimMode || 'not focused'"
+    class="absolute bottom-0 right-0 m-2 text-gray-500 text-xs pointer-events-none backdrop-blur-sm bg-white/30"></div>
+
   <Finder v-if="showFinder" uri="/api/raw/list?sort=mtime" small=true @finder-selection="handleFinderSelection" />
 </div>
 `
@@ -35,6 +38,7 @@ export default {
   emits: ['note-open', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
+      vimMode: null,
       fatCursor: false,
       showFinder: false,
       selectedLines: [],
@@ -106,9 +110,12 @@ export default {
     handleEditorVimMode() {
       if (this.$notesiumState.editorVimMode) {
         this.cm.setOption("keyMap", "vim");
+        this.cm.on('vim-mode-change', (e) => { this.vimMode = e; });
         this.cm.focus();
       } else {
         this.cm.setOption("keyMap", "default");
+        this.cm.off('vim-mode-change');
+        this.vimMode = null;
       }
     },
     lineNumberHL(linenum) {
@@ -153,9 +160,11 @@ export default {
     }
 
     this.cm.on('focus', (cm, e) => {
+      if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
       this.cm.setOption("styleActiveLine", true);
     });
     this.cm.on('blur', (cm, e) => {
+      if (this.$notesiumState.editorVimMode) this.vimMode = null;
       this.cm.setOption("styleActiveLine", false);
     });
     this.cm.on('changes', (cm, changes) => {
