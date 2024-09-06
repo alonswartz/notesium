@@ -12,6 +12,7 @@ const defaultState = {
   sidePanelSortLabels: 'title', // title, links
   editorLineWrapping: false,
   editorConcealFormatting: true,
+  editorVimMode: false,
   startOfWeek: 1, // 0 for Sunday, 1 for Monday, ...
 };
 
