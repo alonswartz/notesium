@@ -98,6 +98,14 @@ export default {
         return CodeMirror.Pass;
       }
     },
+    handleEditorVimMode() {
+      if (this.$notesiumState.editorVimMode) {
+        this.cm.setOption("keyMap", "vim");
+        this.cm.focus();
+      } else {
+        this.cm.setOption("keyMap", "default");
+      }
+    },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
       this.$nextTick(() => {
@@ -192,11 +200,14 @@ export default {
         e.preventDefault();
       }
     });
+
+    this.handleEditorVimMode();
   },
   watch: {
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
     '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },
+    '$notesiumState.editorVimMode': function() { this.handleEditorVimMode(); }
   },
   template: t
 }

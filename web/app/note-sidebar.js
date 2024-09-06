@@ -7,6 +7,10 @@ var t = `
       :class="note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
       class="flex-grow max-w-xs rounded px-2 pt-2 pb-1 text-xs shadow-sm">Save</button>
     <div class="flex flex-wrap w-auto gap-x-5 gap-y-2 mt-0 ml-auto items-center justify-center">
+      <span title="vim mode" @click="$notesiumState.editorVimMode = !$notesiumState.editorVimMode"
+        class="cursor-pointer text-gray-400 hover:text-gray-700 text-xs font-mono mt-1">
+        Vim
+      </span>
       <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="outline-code" size="h-4 w-4" />
