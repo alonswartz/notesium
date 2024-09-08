@@ -162,6 +162,8 @@ export default {
       this.lineNumberHL(this.note.Linenum);
     }
 
+    this.cm.save = () => { this.handleSave(); }
+
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
       this.cm.setOption("styleActiveLine", true);
