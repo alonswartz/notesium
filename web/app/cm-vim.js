@@ -3,4 +3,7 @@ export function initCodeMirrorVimEx() {
     const confirmIfModified = cmd.argString !== '!';
     if (cm.quit) cm.quit(confirmIfModified);
   });
+  CodeMirror.Vim.defineEx('wq', '', function(cm, cmd) {
+    if (cm.writequit) cm.writequit();
+  });
 }
