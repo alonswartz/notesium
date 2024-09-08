@@ -46,6 +46,8 @@ export default {
   },
   methods: {
     handleLeftBracket() {
+      if (this.$notesiumState.editorVimMode && this.vimMode.mode !== 'insert' ) return CodeMirror.Pass;
+
       const cursorPos = this.cm.getCursor();
       const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
       const prevChar = this.cm.getRange(startPos, cursorPos);
