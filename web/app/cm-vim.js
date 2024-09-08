@@ -31,4 +31,5 @@ export function initCodeMirrorVimEx() {
     if (link) cm.openlink(link);
   });
   CodeMirror.Vim.map('ge', ':OpenLinkUnderCursor', 'normal');
+  CodeMirror.Vim.map('gx', ':OpenLinkUnderCursor', 'normal');
 }
