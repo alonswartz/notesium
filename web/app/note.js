@@ -103,7 +103,10 @@ export default {
       }
     },
     handleEsc() {
-      if (this.$notesiumState.editorVimMode) return CodeMirror.Pass;
+      if (this.$notesiumState.editorVimMode) {
+        CodeMirror.Vim.handleEx(this.cm, 'nohlsearch');
+        return CodeMirror.Pass;
+      }
       this.cm.display.input.blur();
       document.body.focus();
     },
