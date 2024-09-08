@@ -47,6 +47,33 @@
       .cm-conceal span.cm-hr { color: transparent; background: #d1d5db; display: inline-block; width: 100%; line-height: 0.05; }
       .cm-unconceal .CodeMirror-activeline span.cm-hr,
       .cm-unconceal .CodeMirror-selectedline span.cm-hr { color: #94a3b8; background: initial; display: initial; width: initial; line-height: initial;}
+
+      .CodeMirror-dialog {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: inherit;
+          z-index: 15;
+          overflow: hidden;
+          color: inherit;
+          padding: 8px;
+          margin-bottom: 4px;
+          border: 1px #d1d5db solid;
+          border-radius: 8px;
+          backdrop-filter: blur(8px);
+          display: flex;
+          justify-content: space-between;
+      }
+      .CodeMirror-dialog input {
+          border: none;
+          outline: 0;
+          background: 0 0;
+          width: 40em;
+          color: inherit;
+          font-family: monospace;
+          caret-color: black;
+      }
     </style>
   </head>
   <body tabindex="-1">
