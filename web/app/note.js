@@ -35,7 +35,7 @@ import Icon from './icon.js'
 export default {
   components: { NoteSidebar, Finder, Icon },
   props: ['note'],
-  emits: ['note-open', 'note-save', 'note-delete', 'finder-open'],
+  emits: ['note-open', 'note-close', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
       vimMode: null,
@@ -163,6 +163,7 @@ export default {
     }
 
     this.cm.save = () => { this.handleSave(); }
+    this.cm.quit = () => { this.$emit('note-close', this.note.Filename); }
 
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
