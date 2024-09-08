@@ -17,7 +17,7 @@ var t = `
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
       <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
-        @note-open="openNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
+        @note-open="openNote" @note-close="closeNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
     </main>
   </div>
 
@@ -50,6 +50,7 @@ import Alert from './alert.js'
 import Confirm from './confirm.js'
 import Settings from './settings.js'
 import { formatDate } from './dateutils.js';
+import { initCodeMirrorVimEx } from './cm-vim.js'
 export default {
   components: { Finder, NavTabs, Ribbon, SidePanel, GraphPanel, Note, Periodic, Graph, Empty, Alert, Confirm, Settings },
   data() {
@@ -446,6 +447,7 @@ export default {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.handleRuntimeWebOpts();
+    initCodeMirrorVimEx();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
