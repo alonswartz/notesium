@@ -181,6 +181,11 @@ export default {
       this.handleSave();
       closeWhenSaved(5, 100);
     }
+    this.cm.openlink = (link) => {
+      const isMdFile = /^[0-9a-f]{8}\.md$/i.test(link);
+      const hasProtocol = /^[a-zA-Z]+:\/\//.test(link);
+      (isMdFile) ? this.$emit('note-open', link) : window.open(hasProtocol ? link : 'https://' + link, '_blank');
+    }
 
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
