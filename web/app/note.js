@@ -164,6 +164,21 @@ export default {
 
     this.cm.save = () => { this.handleSave(); }
     this.cm.quit = (confirmIfModified) => { this.$emit('note-close', this.note.Filename, confirmIfModified); }
+    this.cm.writequit = () => {
+      if (!this.note.isModified) {
+        this.$emit('note-close', this.note.Filename);
+        return;
+      }
+      const currentMtime = this.note.Mtime;
+      const closeWhenSaved = (attempts, interval) => {
+        if (attempts <= 0) return;
+        setTimeout(() => {
+          (currentMtime !== this.note.Mtime) ? this.$emit('note-close', this.note.Filename) : closeWhenSaved(attempts - 1, interval * 2);
+          }, interval);
+      };
+      this.handleSave();
+      closeWhenSaved(5, 100);
+    }
 
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
