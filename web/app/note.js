@@ -163,7 +163,7 @@ export default {
     }
 
     this.cm.save = () => { this.handleSave(); }
-    this.cm.quit = () => { this.$emit('note-close', this.note.Filename); }
+    this.cm.quit = (confirmIfModified) => { this.$emit('note-close', this.note.Filename, confirmIfModified); }
 
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);

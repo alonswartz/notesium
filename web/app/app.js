@@ -271,10 +271,10 @@ export default {
         this.activeFilename = filename;
       }
     },
-    async closeNote(filename) {
+    async closeNote(filename, confirmIfModified = true) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
-      if (this.notes[index].isModified && !this.notes[index].ghost) {
+      if (this.notes[index].isModified && !this.notes[index].ghost && confirmIfModified) {
         const confirmCfg = {
           title: 'Note has unsaved changes',
           body: `Are you sure you want to discard changes and close? This action cannot be undone.\n\n${filename}: ${this.notes[index].Title}`,
