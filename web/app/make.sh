@@ -28,6 +28,7 @@ f34f273fc3cb90d1be6556b9588e388aade167e11ee635f8b9637241b3788241 $CM/mode/gfm/gf
 bbca0b4ba03a94163a1eaa604b45ef038c12d8572b7cc16a41dd287b40cc998c $CM/addon/selection/active-line.min.js
 60e02d1780eb8a3c337f9d65af3229c5e73902c07e21ece8b6823efb83990ef2 $CM/addon/display/placeholder.min.js
 b11516c9c96f4d593f4427d4d70cddcb3520ebe6c19048cd62db641250ea2dc4 $CM/addon/dialog/dialog.min.js
+0b5f19d72d5febca9b2bb3d471489eadd92ff2c18d29fef5335bbb536cba6692 $CM/addon/search/searchcursor.min.js
 5825e6c1565103989ff340733c9a6d7fdf0f5a06302913959f3600d21effd03a $CM/keymap/vim.min.js
 d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c $D3/d3.min.js
 EOF
