@@ -1,4 +1,4 @@
-export function initCodeMirrorVimEx() {
+export function initCodeMirrorVimEx(notesiumState) {
   CodeMirror.Vim.defineEx('quit', 'q', function(cm, cmd) {
     const confirmIfModified = cmd.argString !== '!';
     if (cm.quit) cm.quit(confirmIfModified);
@@ -32,4 +32,11 @@ export function initCodeMirrorVimEx() {
   });
   CodeMirror.Vim.map('ge', ':OpenLinkUnderCursor', 'normal');
   CodeMirror.Vim.map('gx', ':OpenLinkUnderCursor', 'normal');
+
+  CodeMirror.Vim.defineOption('wrap', notesiumState.editorLineWrapping, 'boolean', [], (value, cm) => {
+    if (cm) return; // option is global, do nothing for local
+    if (value === undefined) return notesiumState.editorLineWrapping;
+    notesiumState.editorLineWrapping = value;
+    return value;
+  });
 }

@@ -447,7 +447,7 @@ export default {
     document.addEventListener('keydown', this.handleKeyPress);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
     this.handleRuntimeWebOpts();
-    initCodeMirrorVimEx();
+    initCodeMirrorVimEx(this.$notesiumState);
   },
   beforeUnmount() {
     document.removeEventListener('keydown', this.handleKeyPress);
