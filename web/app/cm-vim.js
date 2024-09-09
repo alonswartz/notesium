@@ -39,4 +39,11 @@ export function initCodeMirrorVimEx(notesiumState) {
     notesiumState.editorLineWrapping = value;
     return value;
   });
+
+  CodeMirror.Vim.defineOption('conceal', notesiumState.editorConcealFormatting, 'boolean', [], (value, cm) => {
+    if (cm) return; // option is global, do nothing for local
+    if (value === undefined) return notesiumState.editorConcealFormatting;
+    notesiumState.editorConcealFormatting = value;
+    return value;
+  });
 }
