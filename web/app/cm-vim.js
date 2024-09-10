@@ -33,6 +33,16 @@ export function initCodeMirrorVimEx(notesiumState) {
   CodeMirror.Vim.map('ge', ':OpenLinkUnderCursor', 'normal');
   CodeMirror.Vim.map('gx', ':OpenLinkUnderCursor', 'normal');
 
+  CodeMirror.Vim.defineEx('BodyKeyEvent', '', (cm, cmd) => {
+    const key = cmd.args[0];
+    const code = cmd.args[1];
+    cm.display.input.blur();
+    document.body.focus();
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: key, code: code, bubbles: true, cancelable: true, composed: true }));
+    setTimeout(() => { cm.focus(); }, 2000)
+  });
+  CodeMirror.Vim.map('<Space>', ':BodyKeyEvent <Space> Space', 'normal');
+
   CodeMirror.Vim.defineOption('wrap', notesiumState.editorLineWrapping, 'boolean', [], (value, cm) => {
     if (cm) return; // option is global, do nothing for local
     if (value === undefined) return notesiumState.editorLineWrapping;
