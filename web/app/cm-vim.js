@@ -1,10 +1,10 @@
 export function initCodeMirrorVimEx(notesiumState) {
-  CodeMirror.Vim.defineEx('quit', 'q', function(cm, cmd) {
+  CodeMirror.Vim.defineEx('quit', 'q', (cm, cmd) => {
     const confirmIfModified = cmd.argString !== '!';
     if (cm.quit) cm.quit(confirmIfModified);
   });
 
-  CodeMirror.Vim.defineEx('wq', '', function(cm, cmd) {
+  CodeMirror.Vim.defineEx('wq', '', (cm) => {
     if (cm.writequit) cm.writequit();
   });
 
