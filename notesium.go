@@ -171,7 +171,8 @@ func notesiumLinks(dir string, opts linksOptions, w io.Writer) {
 	if opts.filename != "" {
 		note, exists := noteCache[opts.filename]
 		if !exists {
-			log.Fatalf("filename does not exist")
+			log.Printf("filename does not exist: %s\n", opts.filename)
+			return
 		}
 		switch opts.limit {
 		case "outgoing":
