@@ -1,8 +1,9 @@
 var t = `
 <div class="relative flex h-full">
-  <div class="grow overflow-y-auto">
-    <div ref="codemirror" class="h-full p-2 pr-1 cm-links-hover"
+  <div class="flex flex-col grow overflow-y-auto">
+    <div ref="codemirror" class="h-full p-2 pr-1 pb-px cm-links-hover"
       :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
+    <NoteStatusbar v-if="$notesiumState.editorVimMode" :vimMode=vimMode />
   </div>
 
   <div v-if="!$notesiumState.showNoteSidebar || note.ghost" class="absolute right-0 mt-2 mr-4 h-7 z-10 inline-flex items-center">
@@ -21,19 +22,17 @@ var t = `
     @note-delete="(...args) => $emit('note-delete', ...args)"
     @finder-open="(...args) => $emit('finder-open', ...args)" />
 
-  <div v-if="$notesiumState.editorVimMode" v-text="vimMode || 'not focused'"
-    class="absolute bottom-0 right-0 m-2 text-gray-500 text-xs pointer-events-none backdrop-blur-sm bg-white/30"></div>
-
   <Finder v-if="showFinder" uri="/api/raw/list?sort=mtime" small=true @finder-selection="handleFinderSelection" />
 </div>
 `
 
 import * as Table from './cm-table.js';
 import NoteSidebar from './note-sidebar.js'
+import NoteStatusbar from './note-statusbar.js'
 import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
-  components: { NoteSidebar, Finder, Icon },
+  components: { NoteSidebar, NoteStatusbar, Finder, Icon },
   props: ['note'],
   emits: ['note-open', 'note-close', 'note-save', 'note-delete', 'finder-open'],
   data() {
