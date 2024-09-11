@@ -4,6 +4,7 @@ var t = `
     <div ref="codemirror" class="h-full p-2 pr-1 pb-px cm-links-hover"
       :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
     <NoteStatusbar v-if="$notesiumState.editorVimMode" :vimMode=vimMode :note=note
+      @note-delete="(...args) => $emit('note-delete', ...args)"
       @finder-open="(...args) => $emit('finder-open', ...args)" />
   </div>
 
