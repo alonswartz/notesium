@@ -10,24 +10,33 @@ var t = `
       class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorConcealFormatting ? 'conceal' : 'noconceal'" />
 
     <template v-if="!note.ghost">
-      <span title="graph panel" @click="$notesiumState.showGraphPanel=!$notesiumState.showGraphPanel"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="graph" size="h-3 w-3" />
-      </span>
-
-      <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="mini-arrows-right-left" size="h-3 w-3" />
-      </span>
-
       <span title="incoming links" class="cursor-pointer hover:text-gray-700 -mb-1"
         @click="$emit('finder-open', '/api/raw/links?color=true&incoming=true&filename=' + note.Filename)">
         {{note.IncomingLinks?.length || 0}}&swarr;
       </span>
-
       <span title="outgoing links" class="cursor-pointer hover:text-gray-700 -mb-1"
         @click="$emit('finder-open', '/api/raw/links?color=true&&outgoing=true&filename=' + note.Filename)">
         {{note.OutgoingLinks?.length || 0}}&nearr;
+      </span>
+      <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
+        class="cursor-pointer hover:text-gray-700">
+        <Icon name="mini-arrows-right-left" size="h-3 w-3" />
+      </span>
+      <span title="graph panel" @click="$notesiumState.showGraphPanel=!$notesiumState.showGraphPanel"
+        class="cursor-pointer hover:text-gray-700">
+        <Icon name="graph" size="h-3 w-3" />
+      </span>
+      <span title="delete note" @click="$emit('note-delete', note.Filename, note.Mtime)"
+        class="cursor-pointer hover:text-red-700">
+        <Icon name="outline-trash" size="h-4 w-4" />
+      </span>
+      <a title="open via xdg" :href="'notesium://' + note.Path"
+        class="cursor-pointer hover:text-gray-700">
+        <Icon name="outline-external-link" size="h-4 w-4" />
+      </a>
+      <span title="sidebar" @click="$notesiumState.showNoteSidebar=!$notesiumState.showNoteSidebar"
+        class="cursor-pointer hover:text-gray-700">
+        <Icon name="outline-information-circle" size="h-4 w-4" />
       </span>
     </template>
   </div>
@@ -38,7 +47,7 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['vimMode', 'note'],
-  emits: ['finder-open'],
+  emits: ['note-delete', 'finder-open'],
   computed: {
     vimModeText() {
       const modeText = { 'visual-linewise': 'v-line', 'visual-blockwise': 'v-block' };
