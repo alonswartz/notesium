@@ -9,7 +9,7 @@ var t = `
     <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
       class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorConcealFormatting ? 'conceal' : 'noconceal'" />
 
-    <template v-if="!note.ghost">
+    <template v-if="!note.ghost && !$notesiumState.showNoteSidebar">
       <span title="incoming links" class="cursor-pointer hover:text-gray-700 -mb-1"
         @click="$emit('finder-open', '/api/raw/links?color=true&incoming=true&filename=' + note.Filename)">
         {{note.IncomingLinks?.length || 0}}&swarr;
