@@ -56,7 +56,7 @@ export default {
       return modeText[`${this.vimMode.mode}-${this.vimMode.subMode}`] || this.vimMode.mode;
     },
     vimModeCls() {
-      const modeCls = { normal: 'bg-slate-500', insert: 'bg-yellow-500', visual: 'bg-pink-500', replace: 'bg-red-500' };
+      const modeCls = { normal: 'bg-slate-500', insert: 'bg-yellow-500', visual: 'bg-pink-500', replace: 'bg-red-500', command: 'bg-sky-500' };
       return modeCls[this.vimMode.mode]
     },
   },
