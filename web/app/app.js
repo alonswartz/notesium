@@ -26,7 +26,7 @@ var t = `
   <Settings v-if="showSettings" :versionCheck=versionCheck @settings-close="showSettings=false" @version-check="checkVersion" @finder-open="openFinder" />
   <Finder v-if="showFinder" :uri=finderUri :initialQuery=finderQuery @finder-selection="handleFinderSelection" />
   <Confirm ref="confirmDialog" />
-  <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-0 right-0 p-4"></div>
+  <div v-show="keySequence.length" v-text="keySequence.join(' ')" class="absolute bottom-6 right-4"></div>
 
   <div aria-live="assertive" class="pointer-events-none fixed inset-0 flex items-end sm:items-start p-2 z-50">
     <div class="flex w-full flex-col items-center space-y-2 sm:items-end">
