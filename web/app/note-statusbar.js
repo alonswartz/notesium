@@ -1,45 +1,47 @@
 var t = `
-<div class="flex justify-between bg-gray-200 text-xs">
-  <span v-if="vimMode" class="pl-3 pr-4 pt-1.5 pb-1 uppercase font-semibold text-white rounded-r-full" :class="vimModeCls" v-text="vimModeText"></span>
-  <span v-else class="pl-3 pr-4 pt-1.5 pb-1 uppercase text-gray-500 truncate">not focused</span>
-
-  <div class="flex space-x-5 px-4 items-center justify-items-center text-gray-500 bg-gray-300 rounded-l-full">
-    <span title="line wrapping" @click="$notesiumState.editorLineWrapping = !$notesiumState.editorLineWrapping"
-      class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorLineWrapping ? 'wrap' : 'nowrap'" />
-    <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
-      class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorConcealFormatting ? 'conceal' : 'noconceal'" />
-
-    <template v-if="!note.ghost && !$notesiumState.showNoteSidebar">
-      <span title="incoming links" class="cursor-pointer hover:text-gray-700 -mb-1"
-        @click="$emit('finder-open', '/api/raw/links?color=true&incoming=true&filename=' + note.Filename)">
-        {{note.IncomingLinks?.length || 0}}&swarr;
-      </span>
-      <span title="outgoing links" class="cursor-pointer hover:text-gray-700 -mb-1"
-        @click="$emit('finder-open', '/api/raw/links?color=true&&outgoing=true&filename=' + note.Filename)">
-        {{note.OutgoingLinks?.length || 0}}&nearr;
-      </span>
-      <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="mini-arrows-right-left" size="h-3 w-3" />
-      </span>
-      <span title="graph panel" @click="$notesiumState.showGraphPanel=!$notesiumState.showGraphPanel"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="graph" size="h-3 w-3" />
-      </span>
-      <span title="delete note" @click="$emit('note-delete', note.Filename, note.Mtime)"
-        class="cursor-pointer hover:text-red-700">
-        <Icon name="outline-trash" size="h-4 w-4" />
-      </span>
-      <a title="open via xdg" :href="'notesium://' + note.Path"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="outline-external-link" size="h-4 w-4" />
-      </a>
-      <span title="sidebar" @click="$notesiumState.showNoteSidebar=!$notesiumState.showNoteSidebar"
-        class="cursor-pointer hover:text-gray-700">
-        <Icon name="outline-information-circle" size="h-4 w-4" />
-      </span>
+<div class="flex h-7 justify-between items-center justify-items-center bg-gray-200 text-xs">
+  <div class="flex h-full">
+    <template v-if="$notesiumState.editorVimMode">
+      <span v-if="vimMode" class="pl-3 pr-4 pt-1.5 pb-1 uppercase font-semibold text-white rounded-r-full" :class="vimModeCls" v-text="vimModeText"></span>
+      <span v-else class="pl-3 pr-4 pt-1.5 pb-1 uppercase text-gray-500 truncate">not focused</span>
     </template>
   </div>
+
+  <div class="flex h-full bg-gray-900/5 rounded-l-full text-gray-500">
+    <div class="flex h-full space-x-5 px-4 items-center justify-items-center">
+      <span title="toggle vim mode" @click="$notesiumState.editorVimMode = !$notesiumState.editorVimMode"
+        class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorVimMode ? 'mode:vim' : 'mode:default'" />
+    </div>
+    <div class="flex h-full space-x-5 px-4 items-center justify-items-center bg-gray-300 rounded-l-full border-l border-gray-400">
+      <span title="line wrapping" @click="$notesiumState.editorLineWrapping = !$notesiumState.editorLineWrapping"
+        class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorLineWrapping ? 'wrap' : 'nowrap'" />
+      <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
+        class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorConcealFormatting ? 'conceal' : 'noconceal'" />
+      <template v-if="!note.ghost && !$notesiumState.showNoteSidebar">
+        <span title="incoming links" class="cursor-pointer hover:text-gray-700 -mb-px"
+          @click="$emit('finder-open', '/api/raw/links?color=true&incoming=true&filename=' + note.Filename)">
+          {{note.IncomingLinks?.length || 0}}&swarr;
+        </span>
+        <span title="outgoing links" class="cursor-pointer hover:text-gray-700 -mb-px"
+          @click="$emit('finder-open', '/api/raw/links?color=true&&outgoing=true&filename=' + note.Filename)">
+          {{note.OutgoingLinks?.length || 0}}&nearr;
+        </span>
+        <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
+          class="cursor-pointer hover:text-gray-700">
+          <Icon name="mini-arrows-right-left" size="h-3 w-3" />
+        </span>
+        <span title="graph panel" @click="$notesiumState.showGraphPanel=!$notesiumState.showGraphPanel"
+          class="cursor-pointer hover:text-gray-700">
+          <Icon name="graph" size="h-3 w-3" />
+        </span>
+        <span title="delete note" @click="$emit('note-delete', note.Filename, note.Mtime)"
+          class="cursor-pointer hover:text-red-700">
+          <Icon name="outline-trash" size="h-4 w-4" />
+        </span>
+      </template>
+    </div>
+  </div>
+
 </div>
 `
 
