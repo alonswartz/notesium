@@ -123,10 +123,12 @@ export default {
       if (this.$notesiumState.editorVimMode) {
         this.cm.setOption("keyMap", "vim");
         this.cm.on('vim-mode-change', (e) => { this.vimMode = e; });
+        this.cm.on('vim-keypress', (key) => { if (':/?'.includes(key)) this.vimMode = { mode: 'command' }; });
         this.cm.focus();
       } else {
         this.cm.setOption("keyMap", "default");
         this.cm.off('vim-mode-change');
+        this.cm.off('vim-keypress');
         this.vimMode = null;
       }
     },
@@ -199,7 +201,8 @@ export default {
       this.cm.setOption("styleActiveLine", true);
     });
     this.cm.on('blur', (cm, e) => {
-      if (this.$notesiumState.editorVimMode) this.vimMode = null;
+      if (this.vimMode?.mode == 'command') return;
+      this.vimMode = null;
       this.cm.setOption("styleActiveLine", false);
     });
     this.cm.on('changes', (cm, changes) => {
