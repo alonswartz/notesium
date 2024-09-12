@@ -28,7 +28,7 @@ var t = `
 </Pane>
 
 <Pane v-if="$notesiumState.showNotesPanel" name="notesPanel" :defaultWidth="380" :minWidth="100"
-  :class="{'dark': $notesiumState.notesPanelDarkMode}" class="border-r border-gray-200">
+  :class="{'dark border-none': $notesiumState.notesPanelDarkMode}" class="border-r border-gray-200">
 
   <Transition
     enter-from-class="opacity-0"
