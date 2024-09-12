@@ -77,7 +77,13 @@ export default {
         const formattedLink = `[${value.Content}](${value.Filename})`;
         this.cm.replaceRange(formattedLink, startPos, cursorPos);
       }
-      this.$nextTick(() => { this.cm.focus(); this.cm.refresh(); } );
+      this.$nextTick(() => {
+        this.cm.focus();
+        this.cm.refresh();
+        if (this.$notesiumState.editorVimMode) {
+          CodeMirror.Vim.handleKey(this.cm, "a");
+        }
+      });
     },
     handleSave() {
       if (this.note.isModified) {
