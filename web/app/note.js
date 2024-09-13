@@ -140,6 +140,13 @@ export default {
         this.note.Linenum = undefined;
       });
     },
+    handleKeyPress(event) {
+      if (event.target.tagName !== 'BODY') return
+      if (event.code === 'Tab' && this.note.Filename === this.activeFilename) {
+        this.$nextTick(() => { this.cm.focus(); });
+        event.preventDefault();
+      }
+    },
   },
   mounted() {
     this.cm = new CodeMirror(this.$refs.codemirror, {
@@ -254,6 +261,10 @@ export default {
     });
 
     this.handleEditorVimMode();
+    document.addEventListener('keydown', this.handleKeyPress);
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.handleKeyPress);
   },
   watch: {
     'activeFilename': function(newVal) { if (this.$notesiumState.editorVimMode && this.note.Filename == newVal) this.$nextTick(() => { this.cm.focus(); }); },
