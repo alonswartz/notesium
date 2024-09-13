@@ -16,7 +16,7 @@ var t = `
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
-      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename"
+      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :activeFilename=activeFilename
         @note-open="openNote" @note-close="closeNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
     </main>
   </div>
