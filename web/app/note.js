@@ -3,7 +3,7 @@ var t = `
   <div class="flex flex-col grow overflow-y-auto">
     <div ref="codemirror" class="h-full p-2 pr-1 pb-px cm-links-hover"
       :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
-    <NoteStatusbar :vimMode=vimMode :note=note
+    <NoteStatusbar :note=note :vimMode=vimMode :hasFocus=hasFocus
       @note-delete="(...args) => $emit('note-delete', ...args)"
       @finder-open="(...args) => $emit('finder-open', ...args)" />
   </div>
@@ -39,6 +39,7 @@ export default {
   emits: ['note-open', 'note-close', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
+      hasFocus: false,
       vimMode: null,
       fatCursor: false,
       showFinder: false,
@@ -206,11 +207,13 @@ export default {
     this.cm.on('focus', (cm, e) => {
       if (this.$notesiumState.editorVimMode) CodeMirror.Vim.exitInsertMode(this.cm);
       this.cm.setOption("styleActiveLine", true);
+      this.hasFocus = true;
     });
     this.cm.on('blur', (cm, e) => {
       if (this.vimMode?.mode == 'command') return;
       this.vimMode = null;
       this.cm.setOption("styleActiveLine", false);
+      this.hasFocus = false;
     });
     this.cm.on('changes', (cm, changes) => {
       this.note.isModified = !cm.doc.isClean();

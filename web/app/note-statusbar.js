@@ -1,10 +1,8 @@
 var t = `
 <div class="flex h-7 justify-between items-center justify-items-center bg-gray-200 text-xs">
   <div class="flex h-full">
-    <template v-if="$notesiumState.editorVimMode">
-      <span v-if="vimMode" class="pl-3 pr-4 pt-1.5 pb-1 uppercase font-semibold text-white rounded-r-full" :class="vimModeCls" v-text="vimModeText"></span>
-      <span v-else class="pl-3 pr-4 pt-1.5 pb-1 uppercase text-gray-500 truncate">not focused</span>
-    </template>
+    <span v-if="vimMode" class="pl-3 pr-4 pt-1.5 pb-1 uppercase font-semibold text-white rounded-r-full" :class="vimModeCls" v-text="vimModeText"></span>
+    <span v-else class="pl-3 pr-4 pt-1.5 pb-1 uppercase text-gray-500 truncate" v-text="hasFocus ? 'focused' : 'not focused'"></span>
   </div>
 
   <div class="flex h-full bg-gray-900/5 rounded-l-full text-gray-500">
@@ -48,7 +46,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['vimMode', 'note'],
+  props: ['note', 'vimMode', 'hasFocus' ],
   emits: ['note-delete', 'finder-open'],
   computed: {
     vimModeText() {
