@@ -35,7 +35,7 @@ import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
   components: { NoteSidebar, NoteStatusbar, Finder, Icon },
-  props: ['note'],
+  props: ['note', 'activeFilename'],
   emits: ['note-open', 'note-close', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
@@ -256,6 +256,7 @@ export default {
     this.handleEditorVimMode();
   },
   watch: {
+    'activeFilename': function(newVal) { if (this.$notesiumState.editorVimMode && this.note.Filename == newVal) this.$nextTick(() => { this.cm.focus(); }); },
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
     '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },
