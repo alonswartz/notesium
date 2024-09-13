@@ -257,7 +257,7 @@ export default {
   },
   watch: {
     'activeFilename': function(newVal) { if (this.$notesiumState.editorVimMode && this.note.Filename == newVal) this.$nextTick(() => { this.cm.focus(); }); },
-    'note.Linenum': function(newVal) { this.lineNumberHL(newVal); },
+    'note.Linenum': function(newVal) { this.lineNumberHL(newVal); if (this.$notesiumState.editorVimMode) this.$nextTick(() => { this.cm.focus(); }); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
     '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },
     '$notesiumState.editorVimMode': function() { this.handleEditorVimMode(); }
