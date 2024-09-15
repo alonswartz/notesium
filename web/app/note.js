@@ -91,6 +91,9 @@ export default {
         const timestamp = this.note.ghost ? this.note.Ctime : this.note.Mtime;
         this.$emit('note-save', this.note.Filename, this.cm.getValue(), timestamp, this.note.ghost);
       }
+      if (this.$notesiumState.editorVimMode) {
+        CodeMirror.Vim.exitInsertMode(this.cm)
+      }
     },
     handleTab() {
       if (this.cm.somethingSelected()) return CodeMirror.Pass;
