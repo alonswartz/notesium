@@ -46,6 +46,7 @@ export function initCodeMirrorVimEx(notesiumState) {
   CodeMirror.Vim.map('<Space>', ':BodyKeyEvent <Space> Space 2000', 'normal');
   CodeMirror.Vim.map('<C-h>', ':BodyKeyEvent <C-h> KeyH 0', 'normal');
   CodeMirror.Vim.map('<C-l>', ':BodyKeyEvent <C-l> KeyL 0', 'normal');
+  CodeMirror.Vim.map('<C-6>', ':BodyKeyEvent <C-o> KeyO 0', 'normal');
 
   CodeMirror.Vim.defineOption('wrap', notesiumState.editorLineWrapping, 'boolean', [], (value, cm) => {
     if (cm) return; // option is global, do nothing for local
