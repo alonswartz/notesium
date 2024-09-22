@@ -64,7 +64,7 @@ export default {
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
 
-      if (event.ctrlKey && event.code == 'KeyO') {
+      if (event.ctrlKey && event.code == 'Digit6') {
         this.activeFilenamePrevious && this.$emit('note-activate', this.activeFilenamePrevious);
         event.preventDefault();
         return;

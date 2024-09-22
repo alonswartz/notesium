@@ -337,7 +337,7 @@ notesium web --writable --open-browser --port=8080
 | finder | `enter`     | Open selection
 | finder | `C-p`       | Toggle preview
 | tab    | `C-h` `C-l` | Switch to previous (left) or next (right) tab
-| tab    | `C-o`       | Switch to previous active tab
+| tab    | `C-6`       | Switch to previous active tab
 
 For more keybindings see the integrated settings.
 
