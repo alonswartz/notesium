@@ -58,42 +58,6 @@ export default {
             ['ctrl 6', 'Switch to previously active tab'],
           ]
         },
-        {
-          name: 'editor-default',
-          title: 'Editor: Default mode',
-          entries: [
-            ['tab', 'Enter editing mode (focus active note)', 'none'],
-            ['ctrl s', 'Save note', 'all'],
-            ['[[', 'Insert note link from note list selection', 'edit'],
-            ['shift tab', 'Auto-indent current line or selection', 'edit'],
-            ['ctrl ]', 'Indent current line or selection', 'edit'],
-            ['ctrl [', 'Dedent current line or selection', 'edit'],
-            ['esc', 'Exit editing mode (unfocus)', 'edit'],
-          ]
-        },
-        {
-          name: 'editor-vim',
-          title: 'Editor: Vim mode',
-          entries: [
-            ['tab', 'Enter normal mode (focus active note)', 'none'],
-            ['ctrl s', 'Save note and set normal mode', 'all'],
-            ['ctrl h|l|6', 'Note tab keybinds passthrough', 'all'],
-            ['space n <char>', 'Global keybinds passthrough', 'normal'],
-            ['ge | gx', 'Open link under cursor', 'normal'],
-            ['[[', 'Insert note link from note list selection', 'insert'],
-            [':set [no]wrap', 'Set line wrapping', 'command'],
-            [':set [no]conceal', 'Set conceal formatting', 'command'],
-          ]
-        },
-        {
-          name: 'editor-table',
-          title: 'Editor: Table formatting and navigation',
-          entries: [
-            ['tab', 'Format table and advance column (right)', 'table'],
-            ['shift tab', 'Navigate to previous column (left)', 'table'],
-            ['alt arrow', 'Navigate rows and columns', 'table'],
-          ]
-        },
       ],
     }
   },
