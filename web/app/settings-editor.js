@@ -4,29 +4,56 @@ var t = `
     <div v-for="section in sections" :key="section.name" class="rounded-md border border-gray-200">
 
       <div class="px-6 py-2 bg-gray-100 border-b border-gray-200 items-center justify-items-center">
-        <details v-if="section.name == 'vim'" class="w-full">
+        <details v-if="section.info" class="w-full">
           <summary class="flex w-full items-center py-px justify-between hover:cursor-pointer focus:outline-none">
             <span class="text-xs font-semibold leading-6 text-gray-900" v-text="section.title"></span>
             <span class="text-gray-600 hover:text-gray-900"><Icon name="outline-information-circle" size="h-4 w-4" /></span>
           </summary>
           <div class="py-3 text-xs text-gray-700 space-y-2 leading-6">
-            <p>Vim mode attempts to emulate the most useful features of Vim as
-            faithfully as possible, but is not a complete implementation. It
-            does however feature the following:</p>
-            <ul class="list-disc pl-4 space-y-2">
-              <li>All common motions and operators, including text objects</li>
-              <li>Operator motion orthogonality</li>
-              <li>Commands for write and quit (:q :q! :w :wq)</li>
-              <li>Visual mode - characterwise, linewise, blockwise</li>
-              <li>Full macro support (q @)</li>
-              <li>Incremental highlighted search (/ ? # * g# g*)</li>
-              <li>Search/replace with confirm (:substitute :%s)</li>
-              <li>Search history</li>
-              <li>Jump lists (ctrl-o ctrl-i)</li>
-              <li>Sort (:sort)</li>
-              <li>Marks (&#96; ')</li>
-              <li>Cross-buffer yank/paste</li>
-            </ul>
+            <template v-if="section.name == 'vim'">
+              <p>Vim mode attempts to emulate the most useful features of Vim
+              as faithfully as possible, but is not a complete implementation.
+              It does however feature the following:</p>
+              <ul class="list-disc pl-4 space-y-2">
+                <li>All common motions and operators, including text objects</li>
+                <li>Operator motion orthogonality</li>
+                <li>Commands for write and quit (:q :q! :w :wq)</li>
+                <li>Visual mode - characterwise, linewise, blockwise</li>
+                <li>Full macro support (q @)</li>
+                <li>Incremental highlighted search (/ ? # * g# g*)</li>
+                <li>Search/replace with confirm (:substitute :%s)</li>
+                <li>Search history</li>
+                <li>Jump lists (ctrl-o ctrl-i)</li>
+                <li>Sort (:sort)</li>
+                <li>Marks (&#96; ')</li>
+                <li>Cross-buffer yank/paste</li>
+              </ul>
+            </template>
+            <template v-else-if="section.name == 'table'">
+              <p>The editor will recognize when the cursor is placed within a
+              table structure (identified by lines starting with the |
+              character), and provide formatting and navigation.</p>
+              <ul class="list-disc pl-4 space-y-2">
+                <li><b>Automatic table formatting:</b> Pressing Tab not only
+                navigates through the table but also automatically formats it.
+                This includes adjusting cell padding to align text according
+                to the column specifications defined in the header row.</li>
+                <li><b>Column alignment:</b> The alignment for each column is
+                determined by the syntax used in the header separator row
+                (--- left, :---: center, ---: right).</li>
+                <li><b>Dynamic column adjustment:</b> If the cursor is at the
+                end of a row and Tab is pressed, a new column will be added.
+                When the cursor is on the header row, pressing Tab ensures the
+                header separator row exists and matches the column count of
+                the header, adjusting as necessary.</li>
+                <li><b>Concealment support:</b> When concealment is enabled,
+                the formatting logic takes this into account, calculating the
+                maximum length of each column without the concealed text,
+                ensuring a visually consistent table layout.</li>
+                <li><b>Navigation:</b> Move across table cells and rows with
+                the provided keybindings.</li>
+              </ul>
+            </template>
           </div>
         </details>
         <span v-else class="text-xs font-semibold leading-6 text-gray-900" v-text="section.title"></span>
@@ -68,6 +95,7 @@ export default {
         {
           name: 'vim',
           title: 'Vim mode',
+          info: true,
           entries: [
             ['tab', 'Enter normal mode (focus active note)', 'none'],
             ['ctrl s', 'Save note and set normal mode', 'all'],
@@ -82,6 +110,7 @@ export default {
         {
           name: 'table',
           title: 'Table formatting and navigation',
+          info: true,
           entries: [
             ['tab', 'Format table and advance column (right)', 'table'],
             ['shift tab', 'Navigate to previous column (left)', 'table'],
