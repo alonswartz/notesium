@@ -8,7 +8,7 @@ var t = `
       <div class="divide-y divide-gray-100 w-full">
         <div v-for="entry in section.entries" class="w-full flex px-6 py-2 text-xs items-center justify-items-center justify-between">
           <div class="flex">
-            <span v-if="entry[2]" class="text-gray-600 font-medium w-16 mt-1" v-text="entry[2]"></span>
+            <span v-if="entry[2]" class="text-gray-600 font-medium w-20 mt-1" v-text="entry[2]"></span>
             <span class="text-gray-900 font-medium mt-1" v-text="entry[1]"></span>
           </div>
           <span class="text-gray-900 font-mono bg-gray-200 rounded-md p-2 pb-1" v-text="entry[0]"></span>
@@ -69,6 +69,20 @@ export default {
             ['ctrl ]', 'Indent current line or selection', 'edit'],
             ['ctrl [', 'Dedent current line or selection', 'edit'],
             ['esc', 'Exit editing mode (unfocus)', 'edit'],
+          ]
+        },
+        {
+          name: 'editor-vim',
+          title: 'Editor: Vim mode',
+          entries: [
+            ['tab', 'Enter normal mode (focus active note)', 'none'],
+            ['ctrl s', 'Save note and set normal mode', 'all'],
+            ['ctrl h|l|6', 'Note tab keybinds passthrough', 'all'],
+            ['space n <char>', 'Global keybinds passthrough', 'normal'],
+            ['ge | gx', 'Open link under cursor', 'normal'],
+            ['[[', 'Insert note link from note list selection', 'insert'],
+            [':set [no]wrap', 'Set line wrapping', 'command'],
+            [':set [no]conceal', 'Set conceal formatting', 'command'],
           ]
         },
         {
