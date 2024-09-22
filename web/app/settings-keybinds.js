@@ -50,7 +50,7 @@ export default {
         ['table', 'note-table-navigate', 'alt arrow', 'Navigate rows and columns'],
         ['tab', 'tab-left', 'ctrl h', 'Switch to previous tab (left)'],
         ['tab', 'tab-right', 'ctrl l', 'Switch to next tab (right)'],
-        ['tab', 'tab-previous', 'ctrl o', 'Switch to previously active tab'],
+        ['tab', 'tab-previous', 'ctrl 6', 'Switch to previously active tab'],
       ]
     }
   },
