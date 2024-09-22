@@ -5,7 +5,7 @@ var t = `
     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
       <div class="pointer-events-auto">
         <div class="flex h-full bg-white shadow-xl">
-          <div class="flex-col h-full w-48 bg-gray-100 border-r border-gray-200">
+          <div class="flex-col h-full w-48 bg-gray-100 border-x border-gray-200">
             <ul class="space-y-1 cursor-pointer mt-2 p-2 text-sm">
               <li v-for="section in sections"
                 @click="active=section[0]" :class="{'bg-gray-200': active == section[0] }"
@@ -17,6 +17,7 @@ var t = `
           </div>
           <div class="h-full w-[40rem] pr-1 mt-2">
             <KeyBinds v-if="active == 'keybinds'" />
+            <Editor v-else-if="active == 'editor'" />
             <Stats v-else-if="active == 'stats'" @finder-open="(...args) => $emit('finder-open', ...args)" />
             <About v-else-if="active == 'about'" @version-check="(...args) => $emit('version-check', ...args)" :versionCheck=versionCheck />
           </div>
@@ -28,10 +29,11 @@ var t = `
 `
 
 import KeyBinds from './settings-keybinds.js'
+import Editor from './settings-editor.js'
 import About from './settings-about.js'
 import Stats from './settings-stats.js'
 export default {
-  components: { KeyBinds, About, Stats },
+  components: { KeyBinds, Editor, About, Stats },
   props: ['versionCheck'],
   emits: ['settings-close', 'version-check', 'finder-open'],
   data() {
@@ -39,6 +41,7 @@ export default {
       active: 'keybinds',
       sections: [
         ['keybinds', 'Key Bindings'],
+        ['editor', 'Editor'],
         ['stats', 'Statistics'],
         ['about', 'About'],
       ],
