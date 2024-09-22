@@ -145,8 +145,12 @@ export default {
       });
     },
     handleKeyPress(event) {
-      if (event.target.tagName !== 'BODY') return
-      if (event.code === 'Tab' && this.note.Filename === this.activeFilename) {
+      if (event.target.tagName !== 'BODY' || this.note.Filename !== this.activeFilename) return;
+      if (event.ctrlKey && event.code === 'KeyS') {
+        this.handleSave();
+        event.preventDefault();
+      }
+      if (event.code === 'Tab') {
         this.$nextTick(() => { this.cm.focus(); });
         event.preventDefault();
       }
