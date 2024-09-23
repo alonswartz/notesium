@@ -1,16 +1,35 @@
 var t = `
 <div class="h-full w-full overflow-y-scroll pb-6">
   <div class="relative flex-1 px-6 mt-2 space-y-6">
-    <div v-for="section in sections" :key="section.name" class="rounded-md border border-gray-200">
 
+    <div class="rounded-md border border-gray-200">
       <div class="px-6 py-2 bg-gray-100 border-b border-gray-200 items-center justify-items-center">
-        <details v-if="section.info" class="w-full">
+        <span class="text-xs font-semibold leading-6 text-gray-900" v-text="settings.title"></span>
+      </div>
+      <div class="divide-y divide-gray-100 w-full">
+        <div v-for="entry in settings.entries" :key="entry.name" class="px-6 py-2 flex w-full flex-none items-center justify-center justify-between">
+          <span class="text-xs text-gray-900 font-medium leading-6 mt-1" v-text="entry.title"></span>
+          <button @click="$notesiumState[entry.name] = !$notesiumState[entry.name]" type="button" role="switch"
+            :class="$notesiumState[entry.name] ? 'bg-indigo-600' : 'bg-gray-200'"
+            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                   transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
+            <span aria-hidden="true"
+              :class="$notesiumState[entry.name] ? 'translate-x-5' : 'translate-x-0'"
+              class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div v-for="keymap in keymaps" :key="keymap.name" class="rounded-md border border-gray-200">
+      <div class="px-6 py-2 bg-gray-100 border-b border-gray-200 items-center justify-items-center">
+        <details v-if="keymap.info" class="w-full">
           <summary class="flex w-full items-center py-px justify-between hover:cursor-pointer focus:outline-none">
-            <span class="text-xs font-semibold leading-6 text-gray-900" v-text="section.title"></span>
+            <span class="text-xs font-semibold leading-6 text-gray-900" v-text="keymap.title"></span>
             <span class="text-gray-600 hover:text-gray-900"><Icon name="outline-information-circle" size="h-4 w-4" /></span>
           </summary>
           <div class="py-3 text-xs text-gray-700 space-y-2 leading-6">
-            <template v-if="section.name == 'vim'">
+            <template v-if="keymap.name == 'vim'">
               <p>Vim mode attempts to emulate the most useful features of Vim
               as faithfully as possible, but is not a complete implementation.
               It does however feature the following:</p>
@@ -29,7 +48,7 @@ var t = `
                 <li>Cross-buffer yank/paste</li>
               </ul>
             </template>
-            <template v-else-if="section.name == 'table'">
+            <template v-else-if="keymap.name == 'table'">
               <p>The editor will recognize when the cursor is placed within a
               table structure (identified by lines starting with the |
               character), and provide formatting and navigation.</p>
@@ -56,11 +75,11 @@ var t = `
             </template>
           </div>
         </details>
-        <span v-else class="text-xs font-semibold leading-6 text-gray-900" v-text="section.title"></span>
+        <span v-else class="text-xs font-semibold leading-6 text-gray-900" v-text="keymap.title"></span>
       </div>
 
       <div class="divide-y divide-gray-100 w-full">
-        <div v-for="entry in section.entries" class="w-full flex px-6 py-2 text-xs items-center justify-items-center justify-between">
+        <div v-for="entry in keymap.entries" class="w-full flex px-6 py-2 text-xs items-center justify-items-center justify-between">
           <div class="flex">
             <span v-if="entry[2]" class="text-gray-600 font-medium w-20 mt-1" v-text="entry[2]"></span>
             <span class="text-gray-900 font-medium mt-1" v-text="entry[1]"></span>
@@ -69,6 +88,7 @@ var t = `
         </div>
       </div>
     </div>
+
   </div>
 </div>
 `
@@ -78,7 +98,16 @@ export default {
   components: { Icon },
   data() {
     return {
-      sections: [
+      settings: {
+        name: 'settings',
+        title: 'Settings',
+        entries: [
+          {name: 'editorVimMode', title: 'Vim mode'},
+          {name: 'editorLineWrapping', title: 'Line wrapping'},
+          {name: 'editorConcealFormatting', title: 'Conceal formatting'},
+        ]
+      },
+      keymaps: [
         {
           name: 'default',
           title: 'Default mode',
