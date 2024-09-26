@@ -49,7 +49,7 @@ It aspires and is designed to:
     - [Usage](#usage)
 - [Web](#web)
     - [Keybindings](#keybindings)
-    - [Finder search syntax](#finder-search-syntax)
+    - [Finder](#finder)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
     - [Table formatting and navigation](#table-formatting-and-navigation)
     - [Editor modes](#editor-modes)
@@ -342,7 +342,22 @@ notesium web --writable --open-browser --port=8080
 
 For more keybindings see the integrated settings.
 
-### Finder search syntax
+### Finder
+
+The finder is typically opened using global keybindings or icons in the
+ribbon but is also seamlessly integrated throughout the web interface.
+
+**Keybindings**
+
+| Binding   | Comment
+| -------   | -------
+| `C-p`     | Toggle preview
+| `C-j` `↓` | Select next entry (down)
+| `C-k` `↑` | Select previous entry (up)
+| `Enter`   | Submit selected entry
+| `Esc`     | Dismiss finder
+
+**Search syntax**
 
 | Token        | Match Type                 | Comment
 | ------------ | ----------                 | -------
