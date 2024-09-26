@@ -1,4 +1,13 @@
 #!/bin/sh
+
+# Prior to v0.2.0, 8 RANDOM hexidecimal digits were used for filenames.
+# Since v0.2.0, the UNIX epoch time is used, and encoded in hexidecimal.
+#
+# To aid in conversion, this script can be used to rename all files
+# to the new format as well as update all links. The ctime used will
+# be that of the first git commit or mtime of the file, whichever
+# is eariler.
+
 set -e
 
 fatal() { echo "Fatal: $*" 1>&2; exit 1; }

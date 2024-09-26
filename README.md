@@ -707,12 +707,6 @@ The `.md` extension is required so external tools can easily identify
 the filetype for syntax highlighting, as well as limit the processing of
 files by the parser.
 
-NOTE: Previous versions of Notesium used 8 **random** hexidecimal digits.
-To aid in conversion, `contrib/ctimehex.sh` can be used to rename all
-files to the new format as well as update all links. The ctime used
-will be that of the first git commit or mtime of the file, whichever is
-eariler.
-
 ### Completely flat directory structure
 
 It is better to [prefer associative ontologies to hierarchical taxonomies](https://notes.andymatuschak.org/z29hLZHiVt7W2uss2uMpSZquAX5T6vaeSF6Cy).
