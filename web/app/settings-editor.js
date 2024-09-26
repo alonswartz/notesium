@@ -112,13 +112,13 @@ export default {
           name: 'default',
           title: 'Default mode',
           entries: [
-            ['tab', 'Enter editing mode (focus active note)', 'none'],
-            ['ctrl s', 'Save note', 'all'],
-            ['[[', 'Insert note link from note list selection', 'edit'],
-            ['shift tab', 'Auto-indent current line or selection', 'edit'],
-            ['ctrl ]', 'Indent current line or selection', 'edit'],
-            ['ctrl [', 'Dedent current line or selection', 'edit'],
-            ['esc', 'Exit editing mode (unfocus)', 'edit'],
+            ['Tab', 'Enter editing mode (focus active note)', 'none'],
+            ['C-s', 'Save note', 'all'],
+            ['[[', 'Insert selected note link via Finder (mtime sorted)', 'edit'],
+            ['Shift-Tab', 'Auto-indent current line or selection', 'edit'],
+            ['C-]', 'Indent current line or selection', 'edit'],
+            ['C-[', 'Dedent current line or selection', 'edit'],
+            ['Esc', 'Exit editing mode (unfocus)', 'edit'],
           ]
         },
         {
@@ -126,12 +126,12 @@ export default {
           title: 'Vim mode',
           info: true,
           entries: [
-            ['tab', 'Enter normal mode (focus active note)', 'none'],
-            ['ctrl s', 'Save note and set normal mode', 'all'],
-            ['ctrl h|l|6', 'Note tab keybinds passthrough', 'all'],
+            ['Tab', 'Enter normal mode (focus active note)', 'none'],
+            ['C-s', 'Save note and set normal mode', 'all'],
+            ['C-h C-l C-6', 'Note tab keybinds passthrough', 'all'],
             ['space n <char>', 'Global keybinds passthrough', 'normal'],
             ['ge | gx', 'Open link under cursor', 'normal'],
-            ['[[', 'Insert note link from note list selection', 'insert'],
+            ['[[', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
             [':set [no]wrap', 'Set line wrapping', 'command'],
             [':set [no]conceal', 'Set conceal formatting', 'command'],
           ]
@@ -141,9 +141,9 @@ export default {
           title: 'Table formatting and navigation',
           info: true,
           entries: [
-            ['tab', 'Format table and advance column (right)', 'table'],
-            ['shift tab', 'Navigate to previous column (left)', 'table'],
-            ['alt arrow', 'Navigate rows and columns', 'table'],
+            ['Tab', 'Format table and advance column (right)', 'table'],
+            ['Shift-Tab', 'Navigate to previous column (left)', 'table'],
+            ['Alt-Arrow', 'Navigate rows and columns', 'table'],
           ]
         },
       ],
