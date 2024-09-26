@@ -346,7 +346,7 @@ For more keybindings see below.
 ### Finder
 
 The finder is typically opened using global keybindings or icons in the
-ribbon but is also seamlessly integrated throughout the web interface.
+ribbon, but is also seamlessly integrated throughout the web interface.
 
 **Keybindings**
 
@@ -360,10 +360,10 @@ ribbon but is also seamlessly integrated throughout the web interface.
 
 **Search syntax**
 
-| Token        | Match Type                 | Comment
-| ------------ | ----------                 | -------
-| `word`       | exact-match                | Items that include `word`
-| `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
+| Token     | Match Type                 | Comment
+| -----     | ----------                 | -------
+| `word`    | exact-match                | Items that include `word`
+| `foo bar` | multiple exact match (AND) | Items that include both `foo` AND `bar`
 
 ### Syntax highlighting and concealment
 
@@ -433,7 +433,7 @@ provide formatting and navigation.
 | ---- | -------     | -------
 | none | `Tab`       | Enter editing mode (focus active note)
 | all  | `C-s`       | Save note
-| edit | `[[`        | Insert note link from note list selection
+| edit | `[[`        | Insert selected note link via Finder (mtime sorted)
 | edit | `Shift-Tab` | Auto-indent current line or selection
 | edit | `C-]`       | Indent current line or selection
 | edit | `C-[`       | Dedent current line or selection
@@ -465,7 +465,7 @@ implementation. It does however feature the following:
 | all     | `C-l` `C-h` `C-6`  | Note tab keybinds passthrough
 | normal  | `space n <char>`   | Global keybinds passthrough
 | normal  | `ge` `gx`          | Open link under cursor
-| insert  | `[[`               | Insert note link from note list selection
+| insert  | `[[`               | Insert selected note link via Finder (mtime sorted)
 | command | `:set [no]wrap`    | Set line wrapping
 | command | `:set [no]conceal` | Set conceal formatting
 
@@ -571,12 +571,12 @@ endif
 ### Keybindings
 
 | Mode   | Binding           | Comment
-| ----   | --------          | -------
+| ----   | -------           | -------
 | insert | `[[`              | Opens note list, insert selection as markdown formatted link
 | normal | `<Leader>nn`      | Opens new note for editing
 | normal | `<Leader>nd`      | Opens new or existing daily note
 | normal | `<Leader>nw`      | Opens new or existing weekly note
-| normal | `<Leader>nl`      | List with prefixed label, sorted by alphabetically (mtime if journal)
+| normal | `<Leader>nl`      | List with prefixed label, sorted alphabetically (mtime if journal)
 | normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
 | normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
 | normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
@@ -584,7 +584,7 @@ endif
 | normal | `<Leader>ns`      | Full text search
 | normal | `<Leader>nW`      | Opens browser with web view (auto stop webserver on idle)
 | fzf    | `C-k` `C-j`       | Move up and down in fzf window
-| fzf    | `enter`           | Open selection
+| fzf    | `Enter`           | Open selection
 | fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
 | fzf    | `C-/`             | Toggle preview
 | fzf    | `Shift-Tab`       | Multiple selection
@@ -594,7 +594,7 @@ endif
 ### Fzf search syntax
 
 | Token        | Match Type                 | Comment
-| ------------ | ----------                 | -------
+| -----        | ----------                 | -------
 | `sbtrkt`     | fuzzy-match                | Items that fuzzy match `sbtrkt`
 | `'word`      | exact-match                | Items that include `word`
 | `^word`      | prefix exact-match         | Items that start with `word`
