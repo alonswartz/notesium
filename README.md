@@ -319,28 +319,29 @@ notesium web --writable --open-browser --port=8080
 
 ### Keybindings
 
-| Mode   | Binding     | Comment
-| ----   | --------    | -------
-| edit   | `[[`        | Opens note list, insert selection as markdown formatted link
-| edit   | `C-s`       | Save note
-| edit   | `tab`       | Format table and advance column
-| edit   | `A-arrow`   | Navigate table rows and columns
-| global | `space n n` | Opens new note for editing
-| global | `space n d` | Opens new or existing daily note
-| global | `space n w` | Opens new or existing weekly note
-| global | `space n l` | List with prefixed label, sorted by alphabetically
-| global | `space n m` | List with prefixed date modified, sorted by mtime
-| global | `space n c` | List with prefixed date created in custom format, sorted by ctime
-| global | `space n k` | List all links related to this note
-| global | `space n s` | Full text search
-| global | `space n g` | Opens force graph view
-| finder | `C-k` `C-j` | Move selection up and down
-| finder | `enter`     | Open selection
-| finder | `C-p`       | Toggle preview
-| tab    | `C-h` `C-l` | Switch to previous (left) or next (right) tab
-| tab    | `C-6`       | Switch to previous active tab
+**Global**
 
-For more keybindings see the integrated settings.
+| Binding     | Comment
+| -------     | -------
+| `space n n` | Open new note for editing
+| `space n d` | Open new or existing daily note
+| `space n w` | Open new or existing weekly note
+| `space n l` | Finder: List with prefixed label, sorted alphabetically
+| `space n m` | Finder: List with prefixed date modified, sorted by mtime
+| `space n c` | Finder: List with prefixed date created, sorted by ctime
+| `space n k` | Finder: Links related to active note (or all if none open)
+| `space n s` | Finder: Full text search across all notes
+| `space n g` | Open fullscreen force graph view
+
+**Note tabs**
+
+| Binding     | Comment
+| -------     | -------
+| `C-h`       | Switch to note tab on the left of the active note tab
+| `C-l`       | Switch to note tab on the right of the active note tab
+| `C-^` `C-6` | Switch to previously active note tab
+
+For more keybindings see below.
 
 ### Finder
 
