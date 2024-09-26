@@ -50,9 +50,9 @@ It aspires and is designed to:
 - [Web](#web)
     - [Keybindings](#keybindings)
     - [Finder](#finder)
-    - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
-    - [Table formatting and navigation](#table-formatting-and-navigation)
     - [Editor modes](#editor-modes)
+    - [Table formatting and navigation](#table-formatting-and-navigation)
+    - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
 - [Vim](#vim)
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings-1)
@@ -365,66 +365,6 @@ ribbon, but is also seamlessly integrated throughout the web interface.
 | `word`    | exact-match                | Items that include `word`
 | `foo bar` | multiple exact match (AND) | Items that include both `foo` AND `bar`
 
-### Syntax highlighting and concealment
-
-The editor is configured to syntax highlight based on Markdown
-formatting.
-
-By default, formatting characters such as those used for **bold**,
-*italic* and `code` will be concealed except on the active-line. In
-addition, links will also be concealed and only display the title. This
-setting can be toggled using the icon in the note sidebar.
-
-The following table lists the Markdown syntax of elements that will be
-formatted and/or syntax highlighted, and indicates whether concealment
-of the formatting characters is supported.
-
-| Syntax                       | Concealment | Comment
-| ------                       | ----------- | -------
-| `# heading 1`                | No          | If on first line, text after `#` is considered the note title
-| `## heading 2`               | No          | Heading level corresponds to the number of `#` symbols
-| `*italic text*`              | Yes         | Italic, `_italic_` also supported
-| `**bold text**`              | Yes         | Bold, `__bold__` also supported
-| `***italic and bold***`      | Yes         | Italic and bold, `___italic and bold___` also supported
-| `> blockquote`               | No          | Block quote
-| `- list item`                | No          | Unordered list
-| `` `code` ``                 | Yes         | Inline code
-| `` ```fenced codeblock``` `` | No          | Fenced code block
-| `~~strikethrough~~`          | Yes         | Strikethrough
-| `---`                        | Yes         | Horizontal rule. Displayed as full-width line when concealed
-| `[link title](64218088.md)`  | Yes         | Inline link. Displayed as `link title` when concealed
-
-### Table formatting and navigation
-
-The editor will recognize when the cursor is placed within a table
-structure (identified by lines starting with the `|` character), and
-provide formatting and navigation.
-
-- **Automatic table formatting**: Pressing `Tab` not only navigates
-  through the table but also automatically formats it. This includes
-  adjusting cell padding to align text according to the column
-  specifications defined in the header row.
-- **Column alignment**: The alignment for each column is determined by
-  the syntax used in the header separator row (`---` left, `:---:`
-  center, `---:` right).
-- **Dynamic column adjustment**: If the cursor is at the end of a row
-  and `Tab` is pressed, a new column will be added. When the cursor is
-  on the header row, pressing `Tab` ensures the header separator row
-  exists and matches the column count of the header, adjusting as
-  necessary.
-- **Concealment support**: When [concealment](#syntax-highlighting-and-concealment) is enabled, the formatting
-  logic takes this into account, calculating the maximum length of each
-  column without the concealed text, ensuring a visually consistent
-  table layout.
-- **Navigation**: Move across table cells and rows with the provided
-  keybindings.
-
-| Mode  | Binding     | Comment
-| ----  | --------    | -------
-| table | `Tab`       | Format table and advance column (right)
-| table | `Shift-Tab` | Navigate to previous column (left)
-| table | `Alt-Arrow` | Navigate rows and columns
-
 ### Editor modes
 
 **Default mode**
@@ -470,6 +410,66 @@ implementation. It does however feature the following:
 | command | `:set [no]conceal` | Set conceal formatting
 
 Prefer the *real thing*? Notesium supports [Vim integration](#vim).
+
+### Table formatting and navigation
+
+The editor will recognize when the cursor is placed within a table
+structure (identified by lines starting with the `|` character), and
+provide formatting and navigation.
+
+- **Automatic table formatting**: Pressing `Tab` not only navigates
+  through the table but also automatically formats it. This includes
+  adjusting cell padding to align text according to the column
+  specifications defined in the header row.
+- **Column alignment**: The alignment for each column is determined by
+  the syntax used in the header separator row (`---` left, `:---:`
+  center, `---:` right).
+- **Dynamic column adjustment**: If the cursor is at the end of a row
+  and `Tab` is pressed, a new column will be added. When the cursor is
+  on the header row, pressing `Tab` ensures the header separator row
+  exists and matches the column count of the header, adjusting as
+  necessary.
+- **Concealment support**: When [concealment](#syntax-highlighting-and-concealment) is enabled, the formatting
+  logic takes this into account, calculating the maximum length of each
+  column without the concealed text, ensuring a visually consistent
+  table layout.
+- **Navigation**: Move across table cells and rows with the provided
+  keybindings.
+
+| Mode  | Binding     | Comment
+| ----  | --------    | -------
+| table | `Tab`       | Format table and advance column (right)
+| table | `Shift-Tab` | Navigate to previous column (left)
+| table | `Alt-Arrow` | Navigate rows and columns
+
+### Syntax highlighting and concealment
+
+The editor is configured to syntax highlight based on Markdown
+formatting.
+
+By default, formatting characters such as those used for **bold**,
+*italic* and `code` will be concealed except on the active-line. In
+addition, links will also be concealed and only display the title. This
+setting can be toggled using the icon in the note sidebar.
+
+The following table lists the Markdown syntax of elements that will be
+formatted and/or syntax highlighted, and indicates whether concealment
+of the formatting characters is supported.
+
+| Syntax                       | Concealment | Comment
+| ------                       | ----------- | -------
+| `# heading 1`                | No          | If on first line, text after `#` is considered the note title
+| `## heading 2`               | No          | Heading level corresponds to the number of `#` symbols
+| `*italic text*`              | Yes         | Italic, `_italic_` also supported
+| `**bold text**`              | Yes         | Bold, `__bold__` also supported
+| `***italic and bold***`      | Yes         | Italic and bold, `___italic and bold___` also supported
+| `> blockquote`               | No          | Block quote
+| `- list item`                | No          | Unordered list
+| `` `code` ``                 | Yes         | Inline code
+| `` ```fenced codeblock``` `` | No          | Fenced code block
+| `~~strikethrough~~`          | Yes         | Strikethrough
+| `---`                        | Yes         | Horizontal rule. Displayed as full-width line when concealed
+| `[link title](64218088.md)`  | Yes         | Inline link. Displayed as `link title` when concealed
 
 ## Vim
 
