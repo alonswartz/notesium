@@ -52,6 +52,7 @@ It aspires and is designed to:
     - [Finder search syntax](#finder-search-syntax)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
     - [Table formatting and navigation](#table-formatting-and-navigation)
+    - [Editor modes](#editor-modes)
 - [Vim](#vim)
     - [Example integration](#example-integration)
     - [Keybindings](#keybindings-1)
@@ -104,7 +105,7 @@ It aspires and is designed to:
     - View counts of notes, labels, orphans, links, lines, words, etc.
 - **Web**
     - Completely self-contained and runs locally.
-    - Create and edit notes with web based editor.
+    - Create and edit notes with web based editor (optional vim-mode).
     - Markdown syntax highlighting, special char and links concealment.
     - Markdown table formatting and navigation.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
@@ -401,6 +402,52 @@ provide formatting and navigation.
   table layout.
 - **Navigation**: Move across table cells and rows with the provided
   [keybindings](#keybindings).
+
+### Editor modes
+
+**Default mode**
+
+| Mode | Binding     | Comment
+| ---- | -------     | -------
+| none | `Tab`       | Enter editing mode (focus active note)
+| all  | `C-s`       | Save note
+| edit | `[[`        | Insert note link from note list selection
+| edit | `Shift-Tab` | Auto-indent current line or selection
+| edit | `C-]`       | Indent current line or selection
+| edit | `C-[`       | Dedent current line or selection
+| edit | `Esc`       | Exit editing mode (unfocus)
+
+**Vim mode**
+
+The editor supports `Vim mode`, which attempts to emulate the most
+useful features of Vim as faithfully as possible, but is not a complete
+implementation. It does however feature the following:
+
+- All common motions and operators, including text objects
+- Operator motion orthogonality
+- Commands for write and quit (:q :q! :w :wq)
+- Visual mode - characterwise, linewise, blockwise
+- Full macro support (q @)
+- Incremental highlighted search (/ ? # * g# g*)
+- Search/replace with confirm (:substitute :%s)
+- Search history
+- Jump lists (ctrl-o ctrl-i)
+- Sort (:sort)
+- Marks (&#96; ')
+- Cross-buffer yank/paste
+
+| Mode    | Binding            | Comment
+| ----    | -------            | -------
+| none    | `Tab`              | Enter normal mode (focus active note)
+| all     | `C-s`              | Save note and set normal mode
+| all     | `C-l` `C-h` `C-6`  | Note tab keybinds passthrough
+| normal  | `space n <char>`   | Global keybinds passthrough
+| normal  | `ge` `gx`          | Open link under cursor
+| insert  | `[[`               | Insert note link from note list selection
+| command | `:set [no]wrap`    | Set line wrapping
+| command | `:set [no]conceal` | Set conceal formatting
+
+Prefer the *real thing*? Notesium supports [Vim integration](#vim).
 
 ## Vim
 
