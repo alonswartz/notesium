@@ -401,7 +401,13 @@ provide formatting and navigation.
   column without the concealed text, ensuring a visually consistent
   table layout.
 - **Navigation**: Move across table cells and rows with the provided
-  [keybindings](#keybindings).
+  keybindings.
+
+| Mode  | Binding     | Comment
+| ----  | --------    | -------
+| table | `Tab`       | Format table and advance column (right)
+| table | `Shift-Tab` | Navigate to previous column (left)
+| table | `Alt-Arrow` | Navigate rows and columns
 
 ### Editor modes
 
