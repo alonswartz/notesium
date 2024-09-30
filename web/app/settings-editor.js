@@ -36,13 +36,13 @@ var t = `
               <ul class="list-disc pl-4 space-y-2">
                 <li>All common motions and operators, including text objects</li>
                 <li>Operator motion orthogonality</li>
-                <li>Commands for write and quit (:q :q! :w :wq)</li>
+                <li>Commands for write and quit (:w :wq :q :q!)</li>
                 <li>Visual mode - characterwise, linewise, blockwise</li>
                 <li>Full macro support (q @)</li>
                 <li>Incremental highlighted search (/ ? # * g# g*)</li>
                 <li>Search/replace with confirm (:substitute :%s)</li>
                 <li>Search history</li>
-                <li>Jump lists (ctrl-o ctrl-i)</li>
+                <li>Jump lists (C-o C-i)</li>
                 <li>Sort (:sort)</li>
                 <li>Marks (&#96; ')</li>
                 <li>Cross-buffer yank/paste</li>
