@@ -387,13 +387,13 @@ implementation. It does however feature the following:
 
 - All common motions and operators, including text objects
 - Operator motion orthogonality
-- Commands for write and quit (:q :q! :w :wq)
+- Commands for write and quit (:w :wq :q :q!)
 - Visual mode - characterwise, linewise, blockwise
 - Full macro support (q @)
 - Incremental highlighted search (/ ? # * g# g*)
 - Search/replace with confirm (:substitute :%s)
 - Search history
-- Jump lists (ctrl-o ctrl-i)
+- Jump lists (C-o C-i)
 - Sort (:sort)
 - Marks (&#96; ')
 - Cross-buffer yank/paste
