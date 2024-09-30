@@ -1,3 +1,82 @@
+## 0.6.0
+
+This release introduces **Vim mode** to the Web/App editor, emulating
+key features of Vim such as motions, operators, visual modes, macro
+support, incremental highlighted search, search and replace, jump
+lists, sort, marks, cross-buffer yank/paste, and expected commands for
+writing, quitting, and adjusting editor settings. It also supports link
+insertion, link following, and passthrough for Notesium's global and
+note-tab keybindings.
+
+A **StatusBar** has been added, displaying the focus state (or Vim
+mode), editor mode, editor settings, note link counts, and note actions.
+Additionally, a new Editor sub-section has been introduced in Settings.
+
+To further enhance keyboard usage, `Tab` can be used to gain editor
+focus, and `C-s` to save the active note even when the editor is not
+focused.
+
+This version includes **backwards incompatible changes**.
+
+Fixed:
+
+- Links: Handle `file-not-found` gracefully instead of hard-fail.
+- Web/App: Note - focus activeFilename editor on `Tab`.
+
+Added:
+
+- Web/App: Note - save activeFilename even if not focused on `C-s`.
+- Web/App: State - editorVimMode bool set and tracked via state management.
+- Web/App: Vendor - codemirror vim, dialog and searchcursor addons.
+
+- Web/App: Editor vim-mode - all common motions, operators, and text objects.
+- Web/App: Editor vim-mode - operator-motion orthogonality.
+- Web/App: Editor vim-mode - visual mode - characterwise, linewise, blockwise.
+- Web/App: Editor vim-mode - full macro support (`q @`).
+- Web/App: Editor vim-mode - incremental highlighted search (`/ ? # * g# g*`).
+- Web/App: Editor vim-mode - search/replace with confirm (`:substitute :%s`).
+- Web/App: Editor vim-mode - search history.
+- Web/App: Editor vim-mode - jump lists (`C-o C-i`).
+- Web/App: Editor vim-mode - sort (`:sort`).
+- Web/App: Editor vim-mode - marks (`` ` ' ``).
+- Web/App: Editor vim-mode - cross-buffer yank/paste.
+
+- Web/App: Editor vim-mode - keybind for write and set normal mode (`C-s`).
+- Web/App: Editor vim-mode - commands for write and quit (`:w :wq :q :q!`).
+- Web/App: Editor vim-mode - commands to set `[no]wrap` and `[no]conceal`.
+- Web/App: Editor vim-mode - insert link via finder on `[[`.
+- Web/App: Editor vim-mode - open link under cursor (`ge` `gx`).
+- Web/App: Editor vim-mode - unset highlighted search on `Esc`.
+- Web/App: Editor vim-mode - passthrough global keybinds (`space n <char>`).
+- Web/App: Editor vim-mode - passthrough note-tab keybinds (`C-l|h|6|^`).
+- Web/App: Editor vim-mode - autofocus on activeFilename change and match.
+- Web/App: Editor vim-mode - autofocus on note.Linenum change.
+
+- Web/App: StatusBar - displayed in default and Vim modes.
+- Web/App: StatusBar - default (focus state), Vim (colored mode).
+- Web/App: StatusBar - editor settings for mode, wrap, and conceal.
+- Web/App: StatusBar - note link counts and action icons (if sideBar closed).
+
+- Web/App: Settings Editor - vimMode lineWrapping concealFormatting toggles.
+- Web/App: Settings Editor - default mode keybinds.
+- Web/App: Settings Editor - vim mode keybinds and info.
+- Web/App: Settings Editor - table support keybinds and info.
+
+Changed:
+
+- Web/App: Note tabs - switch to recent note keybind, `C-6` (`C-o` deprecated).
+- Web/App: Settings Keybindings - split into global finder note-tabs sections.
+- Web/App: Settings Keybindings - moved edit and table to Settings Editor.
+
+- Readme: Web reorganized and updated to include `Editor modes`.
+
+**Backwards incompatible changes**:
+
+- The Web/App keybinding for **switching to the previously active note**
+  has been changed from `C-o` to `C-6` (`C-^` is also supported). This
+  promotes consistency for all editor modes, as Vim uses `C-o` for the
+  jumplist, and `C-6` to switch to the previous buffer.
+
 ## 0.5.11
 
 This release brings refinements to the Web/App, including improved
