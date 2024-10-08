@@ -342,7 +342,12 @@ func notesiumWeb(dir string, opts webOptions) {
 	}
 	defer ln.Close()
 
-	url := "http://localhost:" + strings.Split(ln.Addr().String(), ":")[1]
+	host, port, _ := net.SplitHostPort(ln.Addr().String())
+	if host == "0.0.0.0" || host == "::" {
+		host = "localhost"
+	}
+	url := fmt.Sprintf("http://%s:%s", host, port)
+
 	server := &http.Server{
 		Addr: ln.Addr().String(),
 	}
@@ -395,7 +400,7 @@ func notesiumWeb(dir string, opts webOptions) {
 	fmt.Printf("Serving on %s (bind address %s)\n", url, opts.host)
 	fmt.Printf("Press Ctrl+C to stop%s\n", idleStopMsg)
 	if err := server.Serve(ln); err != http.ErrServerClosed {
-		log.Fatalf("Server closed unexpected:%+v", err)
+		log.Fatalf("Server closed unexpectedly: %+v", err)
 	}
 }
 
