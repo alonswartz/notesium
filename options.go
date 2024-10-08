@@ -240,12 +240,13 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "web":
-		opts := webOptions{}
-		opts.host = "127.0.0.1"
-		opts.port = 0
-		opts.readOnly = true
-		opts.webroot = "embedded"
-		opts.check = true
+		opts := webOptions{
+			host:    "127.0.0.1",
+			port:    0,
+			readOnly: true,
+			webroot: "embedded",
+			check:   true,
+		}
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
@@ -255,12 +256,13 @@ func parseOptions(args []string) (Command, error) {
 			case opt == "--stop-on-idle":
 				opts.heartbeat = true
 			case strings.HasPrefix(opt, "--port="):
-				portStr := strings.TrimPrefix(opt, "--port=")
-				port, err := strconv.Atoi(portStr)
+				port, err := strconv.Atoi(strings.TrimPrefix(opt, "--port="))
 				if err != nil || port < 1024 || port > 65535 {
-					return Command{}, fmt.Errorf("invalid or out of range port number: %s", portStr)
+					return Command{}, fmt.Errorf("invalid or out of range port number: %s", opt)
 				}
 				opts.port = port
+			case strings.HasPrefix(opt, "--host="):
+				opts.host = strings.TrimPrefix(opt, "--host=")
 			case opt == "--no-check":
 				opts.check = false
 			case opt == "--writable":
