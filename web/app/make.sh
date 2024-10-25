@@ -16,21 +16,13 @@ exit 1
 }
 
 _vendor_files() {
-CM="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7"
-D3="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5"
+CM="https://github.com/alonswartz/notesium-cm5/releases/download"
+D3="https://cdnjs.cloudflare.com/ajax/libs/d3"
 cat<<EOF
 628497cb69df7b1d31236479cad68c9bb3f265060afd5506a0c004b394dfa47e https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js
-458689ce1e2e10b9e363c4d6ef5e6edbfaf2fb42ccc38871c259a9092d75c7c6 $CM/codemirror.min.js
-11077112ab6955d29fe41085c62365c7d4a2f00a570c7475e2aec2a8cbc85fc4 $CM/codemirror.min.css
-6d31310a4719d151d198b604864fa7cb7dcaa5013888863585e06d7c7085f3d8 $CM/mode/markdown/markdown.min.js
-f34f273fc3cb90d1be6556b9588e388aade167e11ee635f8b9637241b3788241 $CM/mode/gfm/gfm.min.js
-2d2fc6f219c5ec536fe6bfe38fa241a8aba9045cf79b6e3599c906995644487b $CM/addon/mode/overlay.min.js
-bbca0b4ba03a94163a1eaa604b45ef038c12d8572b7cc16a41dd287b40cc998c $CM/addon/selection/active-line.min.js
-60e02d1780eb8a3c337f9d65af3229c5e73902c07e21ece8b6823efb83990ef2 $CM/addon/display/placeholder.min.js
-b11516c9c96f4d593f4427d4d70cddcb3520ebe6c19048cd62db641250ea2dc4 $CM/addon/dialog/dialog.min.js
-0b5f19d72d5febca9b2bb3d471489eadd92ff2c18d29fef5335bbb536cba6692 $CM/addon/search/searchcursor.min.js
-5825e6c1565103989ff340733c9a6d7fdf0f5a06302913959f3600d21effd03a $CM/keymap/vim.min.js
-d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c $D3/d3.min.js
+70cc19b59cc89262bb286de075ed517a634768cb77386c5ab1b950cd63882dd2 $CM/v5.65.18-1/notesium-cm5.min.js
+4d507d755e1d3188bd1e95d67b8bc9efd0094576135006fce68c5e9d44303061 $CM/v5.65.18-1/notesium-cm5.min.css
+d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c $D3/7.8.5/d3.min.js
 EOF
 }
 
@@ -42,7 +34,7 @@ _vendor_get_verify() {
         echo -n "$HASH  $DST" | sha256sum --strict --check -
         return 0
     fi
-    curl -qs $SRC -o $DST.tmp
+    curl -qsL $SRC -o $DST.tmp
     echo -n "$HASH  $DST.tmp" | sha256sum --strict --check -
     mv $DST.tmp $DST
 }
