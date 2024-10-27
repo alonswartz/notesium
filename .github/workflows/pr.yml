@@ -38,3 +38,9 @@ jobs:
     - name: Print version
       run: build/notesium-linux-amd64 version --verbose
 
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: build/
+
