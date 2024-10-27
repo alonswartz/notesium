@@ -44,7 +44,6 @@ jobs:
       run: build/notesium-linux-amd64 version --verbose
 
     - name: Generate release notes
-      if: startsWith(github.ref, 'refs/tags/')
       run: .github/workflows/helpers/release-notes.sh ${{ github.ref }} > build/release-notes.md
 
     - name: Upload build artifacts
