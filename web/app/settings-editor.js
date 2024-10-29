@@ -115,6 +115,7 @@ export default {
             ['Tab', 'Enter editing mode (focus active note)', 'none'],
             ['C-s', 'Save note', 'all'],
             ['[[', 'Insert selected note link via Finder (mtime sorted)', 'edit'],
+            ['Alt-k', 'Insert selected note link via Finder (mtime sorted)', 'edit'],
             ['Shift-Tab', 'Auto-indent current line or selection', 'edit'],
             ['C-]', 'Indent current line or selection', 'edit'],
             ['C-[', 'Dedent current line or selection', 'edit'],
@@ -132,6 +133,7 @@ export default {
             ['space n <char>', 'Global keybinds passthrough', 'normal'],
             ['ge | gx', 'Open link under cursor', 'normal'],
             ['[[', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
+            ['Alt-k', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
             [':set [no]wrap', 'Set line wrapping', 'command'],
             [':set [no]conceal', 'Set conceal formatting', 'command'],
           ]
