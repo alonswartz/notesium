@@ -1,7 +1,9 @@
 var t = `
 <div class="relative flex h-full">
   <div class="flex flex-col grow overflow-y-auto">
-    <div ref="codemirror" class="h-full p-2 pr-1 pb-px cm-links-hover"
+    <div ref="codemirror"
+      @keydown.[.exact.prevent="handleLeftBracket"
+      class="h-full p-2 pr-1 pb-px cm-links-hover"
       :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
     <NoteStatusbar :note=note :vimMode=vimMode :hasFocus=hasFocus
       @note-delete="(...args) => $emit('note-delete', ...args)"
@@ -48,7 +50,7 @@ export default {
   },
   methods: {
     handleLeftBracket() {
-      if (this.$notesiumState.editorVimMode && this.vimMode.mode !== 'insert' ) return CodeMirror.Pass;
+      if (this.$notesiumState.editorVimMode && this.vimMode.mode !== 'insert' ) return;
 
       const cursorPos = this.cm.getCursor();
       const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
@@ -171,7 +173,6 @@ export default {
         highlightFormatting: true,
       },
       extraKeys: {
-        "[": this.handleLeftBracket,
         "Esc": this.handleEsc,
         "Ctrl-S": this.handleSave,
         "Tab": this.handleTab,
