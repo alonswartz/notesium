@@ -81,12 +81,13 @@ export default {
     },
     handleFinderSelection(value) {
       this.showFinder = false;
-      if (value !== null) {
-        const cursorPos = this.cm.getCursor();
-        const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
-        const formattedLink = `[${value.Content}](${value.Filename})`;
-        this.cm.replaceRange(formattedLink, startPos, cursorPos);
-      }
+
+      const cursorPos = this.cm.getCursor();
+      const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
+      let formattedLink = '';
+      if (value) formattedLink = `[${value.Content}](${value.Filename})`;
+      this.cm.replaceRange(formattedLink, startPos, cursorPos);
+
       this.$nextTick(() => {
         this.cm.focus();
         this.cm.refresh();
