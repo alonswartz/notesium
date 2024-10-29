@@ -190,7 +190,7 @@ export default {
         "Alt-Down": function(cm) { return Table.navigateTable(cm, 'down'); },
         "Alt-Left": function(cm) { return Table.navigateTable(cm, 'left'); },
         "Alt-Right": function(cm) { return Table.navigateTable(cm, 'right'); },
-        "Alt-K": this.simulateDoubleBracketLeft,
+        "Alt-K": this.simulateDoubleLeftBracket,
       },
     });
 
