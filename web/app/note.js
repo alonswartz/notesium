@@ -2,7 +2,7 @@ var t = `
 <div class="relative flex h-full">
   <div class="flex flex-col grow overflow-y-auto">
     <div ref="codemirror"
-      @keydown.[.exact.prevent="handleLeftBracket"
+      @keydown.[.exact="handleLeftBracket"
       class="h-full p-2 pr-1 pb-px cm-links-hover"
       :class="{'cm-conceal cm-unconceal': $notesiumState.editorConcealFormatting, 'cm-fat-cursor': fatCursor}"></div>
     <NoteStatusbar :note=note :vimMode=vimMode :hasFocus=hasFocus
@@ -49,8 +49,9 @@ export default {
     }
   },
   methods: {
-    handleLeftBracket() {
+    handleLeftBracket(e) {
       if (this.$notesiumState.editorVimMode && this.vimMode.mode !== 'insert' ) return;
+      e.preventDefault();
 
       const cursorPos = this.cm.getCursor();
       const startPos = { line: cursorPos.line, ch: cursorPos.ch - 1 };
