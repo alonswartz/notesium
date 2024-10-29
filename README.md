@@ -374,6 +374,7 @@ ribbon, but is also seamlessly integrated throughout the web interface.
 | none | `Tab`       | Enter editing mode (focus active note)
 | all  | `C-s`       | Save note
 | edit | `[[`        | Insert selected note link via Finder (mtime sorted)
+| edit | `Alt-k`     | Insert selected note link via Finder (mtime sorted)
 | edit | `Shift-Tab` | Auto-indent current line or selection
 | edit | `C-]`       | Indent current line or selection
 | edit | `C-[`       | Dedent current line or selection
@@ -406,6 +407,7 @@ implementation. It does however feature the following:
 | normal  | `space n <char>`   | Global keybinds passthrough
 | normal  | `ge` `gx`          | Open link under cursor
 | insert  | `[[`               | Insert selected note link via Finder (mtime sorted)
+| insert  | `Alt-k`            | Insert selected note link via Finder (mtime sorted)
 | command | `:set [no]wrap`    | Set line wrapping
 | command | `:set [no]conceal` | Set conceal formatting
 
