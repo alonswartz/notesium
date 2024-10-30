@@ -106,6 +106,7 @@ export default {
       }
     },
     handleTab() {
+      if (this.$notesiumState.editorVimMode && this.vimMode.mode !== 'insert' ) return;
       if (this.cm.somethingSelected()) return CodeMirror.Pass;
       if (Table.isCursorInTable(this.cm)) {
         Table.formatTableAndAdvance(this.cm, this.$notesiumState.editorConcealFormatting);
