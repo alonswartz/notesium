@@ -80,7 +80,9 @@ export default {
     handleFinderSelection(value) {
       this.showFinder = false;
       this.finderQuery = '';
-      if (value !== null) {
+      if (value === null) {
+        this.resetActiveFilename();
+      } else {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {
           note.Linenum = value.Linenum;
@@ -271,6 +273,13 @@ export default {
         this.activeFilename = filename;
       }
     },
+    resetActiveFilename() {
+      if (this.activeFilename) {
+        const af = this.activeFilename;
+        this.activeFilename = '';
+        this.$nextTick(() => { this.activeFilename = af; });
+      }
+    },
     async closeNote(filename, confirmIfModified = true) {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index === -1) return;
@@ -361,7 +370,7 @@ export default {
       if (event.code == leaderKey) {
         this.keySequence = [leaderKey];
         event.preventDefault();
-        timeoutId = setTimeout(() => { this.keySequence = []; }, 2000);
+        timeoutId = setTimeout(() => { this.keySequence = []; this.resetActiveFilename(); }, 2000);
         return;
       }
 
