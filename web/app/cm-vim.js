@@ -36,20 +36,18 @@ export function initCodeMirrorVimEx(notesiumState) {
   CodeMirror.Vim.defineEx('BodyKeyEvent', '', (cm, cmd) => {
     const key = cmd.args[0];
     const code = cmd.args[1];
-    const timeout = parseInt(cmd.args[2], 10);
     const ctrlKey = key.startsWith('<C')
     cm.display.input.blur();
     document.body.focus();
     document.body.dispatchEvent(new KeyboardEvent('keydown', { key: key, code: code, ctrlKey: ctrlKey, bubbles: true, cancelable: true, composed: true }));
-    (timeout > 0) ? setTimeout(() => { cm.focus(); }, timeout) : cm.focus();
   });
-  CodeMirror.Vim.map('<Space>', ':BodyKeyEvent <Space> Space 2000', 'normal');
-  CodeMirror.Vim.map('<C-h>', ':BodyKeyEvent <C-h> KeyH 0', 'normal');
-  CodeMirror.Vim.map('<C-l>', ':BodyKeyEvent <C-l> KeyL 0', 'normal');
-  CodeMirror.Vim.map('<C-6>', ':BodyKeyEvent <C-o> Digit6 0', 'normal');
-  CodeMirror.Vim.map('<C-h>', ':BodyKeyEvent <C-h> KeyH 0', 'insert');
-  CodeMirror.Vim.map('<C-l>', ':BodyKeyEvent <C-l> KeyL 0', 'insert');
-  CodeMirror.Vim.map('<C-6>', ':BodyKeyEvent <C-6> Digit6 0', 'insert');
+  CodeMirror.Vim.map('<Space>', ':BodyKeyEvent <Space> Space', 'normal');
+  CodeMirror.Vim.map('<C-h>', ':BodyKeyEvent <C-h> KeyH', 'normal');
+  CodeMirror.Vim.map('<C-l>', ':BodyKeyEvent <C-l> KeyL', 'normal');
+  CodeMirror.Vim.map('<C-6>', ':BodyKeyEvent <C-o> Digit6', 'normal');
+  CodeMirror.Vim.map('<C-h>', ':BodyKeyEvent <C-h> KeyH', 'insert');
+  CodeMirror.Vim.map('<C-l>', ':BodyKeyEvent <C-l> KeyL', 'insert');
+  CodeMirror.Vim.map('<C-6>', ':BodyKeyEvent <C-6> Digit6', 'insert');
 
   CodeMirror.Vim.defineOption('wrap', notesiumState.editorLineWrapping, 'boolean', [], (value, cm) => {
     if (cm) return; // option is global, do nothing for local
