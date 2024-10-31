@@ -365,12 +365,16 @@ export default {
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
 
-      let timeoutId;
       const leaderKey = 'Space'
-      if (event.code == leaderKey) {
+      if (this.keySequence.length == 0 && event.code == leaderKey) {
         this.keySequence = [leaderKey];
         event.preventDefault();
-        timeoutId = setTimeout(() => { this.keySequence = []; this.resetActiveFilename(); }, 2000);
+        setTimeout(() => {
+          if (this.keySequence.length > 0) {
+            this.keySequence = [];
+            this.resetActiveFilename();
+          }
+        }, 2000);
         return;
       }
 
@@ -380,37 +384,41 @@ export default {
 
         switch(this.keySequence.join(' ')) {
           case `${leaderKey} KeyN KeyL`:
+            this.keySequence = [];
             this.openFinder('/api/raw/list?color=true&prefix=label&sort=alpha');
-            this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyC`:
+            this.keySequence = [];
             this.openFinder('/api/raw/list?color=true&prefix=ctime&sort=ctime');
-            this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyM`:
+            this.keySequence = [];
             this.openFinder('/api/raw/list?color=true&prefix=mtime&sort=mtime');
-            this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyK`:
+            this.keySequence = [];
             this.activeFilename
               ? this.openFinder('/api/raw/links?color=true&filename=' + this.activeFilename)
               : this.openFinder('/api/raw/links?color=true');
-            this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyS`:
+            this.keySequence = [];
             this.openFinder('/api/raw/lines?color=true&prefix=title');
-            this.keySequence = []; clearTimeout(timeoutId);
             break;
           case `${leaderKey} KeyN KeyN`:
+            this.keySequence = [];
             this.newNote();
             break;
           case `${leaderKey} KeyN KeyD`:
+            this.keySequence = [];
             this.dailyNote();
             break;
           case `${leaderKey} KeyN KeyW`:
+            this.keySequence = [];
             this.weeklyNote();
             break;
           case `${leaderKey} KeyN KeyG`:
+            this.keySequence = [];
             this.showGraph = true;
             break;
         }
