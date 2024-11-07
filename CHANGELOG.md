@@ -1,3 +1,27 @@
+## 0.6.1
+
+This release focuses on enhancements to the web/app editor,
+including improvements to link insertion, global keybindings sequence
+handling, and resolving issues with international keyboard layouts.
+
+Fixed:
+
+- Web/App: Editor - reimplemented bracket handling (non EN keyboard layouts).
+- Web/App: Editor - remove first leftBracket on insertLink cancellation.
+- Web/App: Editor - fixed concealed horizontal rule (firefox).
+- Web/App: Editor vimmode - ignore `Tab` in non-insert mode.
+- Web/App: Editor vimmode - removed global key-sequence refocus timeout.
+- Web/App: Global key-sequence: improved timeout handling and reset behavior.
+
+Added:
+
+- Web/App: Editor - added additional insertLink keybinding, `Alt-k`.
+- CI/CD: Github Actions workflows - upload build artifacts.
+
+Changed:
+
+- Web/App: Vendor - transitioned to `alonswartz/notesium-cm5` (v5.65.18-1).
+
 ## 0.6.0
 
 This release introduces **Vim mode** to the Web/App editor, emulating
