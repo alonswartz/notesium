@@ -353,7 +353,7 @@ export default {
       if (labelQuery) {
         const label = labelQuery.slice(6);
         if (!label) return sortedNotes.filter(note => note.IsLabel).slice(0, maxNotes);
-        const notesSubset = sortedNotes.filter(note => note.Labels.includes(label) || note.Title === label);
+        const notesSubset = sortedNotes.filter(note => note.Labels.some(l => l.toLowerCase() === label) || note.Title.toLowerCase() === label);
         const remainingQueryWords = queryWords.filter(word => word !== labelQuery);
         return notesSubset.filter(note => remainingQueryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
       }
