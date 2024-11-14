@@ -268,7 +268,7 @@ export default {
           this.notesLength = notes.length;
           this.notes = notes.map(note => {
             const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].sort((a, b) => a.Title.localeCompare(b.Title));
-            const labels = links.filter(link => link.Title !== '' && !link.Title.includes(' ')).map(link => link.Title)
+            const labels = Array.from(links.reduce((set, l) => { if (l.Title && !l.Title.includes(' ')) { set.add(l.Title); } return set; }, new Set()));
             const mtime = new Date(note.Mtime);
             const ctime = new Date(note.Ctime);
             return {
