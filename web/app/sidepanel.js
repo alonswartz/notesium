@@ -6,7 +6,7 @@ var t = `
         @click="$notesiumState.showNotesPanel ? query='label:'+label.Title+' ' : $emit('finder-open', '/api/raw/links?color=true&filename=' + label.Filename)"
         class="group flex justify-between p-2 rounded-md hover:text-gray-100 hover:bg-gray-600">
         <span class="overflow-hidden truncate pr-2" v-text="label.Title" />
-        <span class="group-hover:hidden text-gray-500" v-text="label.LinkCount" />
+        <span class="group-hover:hidden text-gray-500" v-text="label.LinkedNotesCount" />
         <span class="hidden group-hover:block text-gray-500 hover:text-gray-100" @click.stop="$emit('note-open', label.Filename)">↗</span>
       </li>
 
@@ -71,7 +71,7 @@ var t = `
                   <span v-show="$notesiumState.sidePanelSortLabels == 'title'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
                 <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortLabels='links'">
-                  <span class="text-gray-600">Link count</span>
+                  <span class="text-gray-600">Linked notes count</span>
                   <span v-show="$notesiumState.sidePanelSortLabels == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
                 </li>
               </template>
@@ -140,7 +140,7 @@ var t = `
                 <span v-show="$notesiumState.sidePanelSortNotes == 'ctime'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="flex items-center justify-between p-2 cursor-pointer hover:bg-gray-50" @click="$notesiumState.sidePanelSortNotes='links'">
-                <span class="text-gray-600">Link count</span>
+                <span class="text-gray-600">Linked notes count</span>
                 <span v-show="$notesiumState.sidePanelSortNotes == 'links'" class="text-indigo-500"><Icon name="mini-check" size="h-5 w-5" /></span>
               </li>
               <li class="bg-gray-200 pt-px"></li>
@@ -180,12 +180,12 @@ var t = `
               <span class="overflow-hidden truncate pr-2" v-text="note.Title" />
             </div>
             <span class="hidden group-hover:block pr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
-              v-text="note.LinkCount + ' ↗'"
+              v-text="note.LinkedNotesCount + ' ↗'"
               @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''"
               @click.stop="$emit('note-open', note.Filename, 1)" />
           </summary>
-          <div v-if="note.LinkCount > 0" class="ml-[18px] border-dotted border-l border-gray-300 dark:border-gray-500">
-            <div v-for="link in note.Links" :key="'link-' + link.Filename" @click="$emit('note-open', link.Filename, link.LineNumber)"
+          <div v-if="note.LinkedNotesCount > 0" class="ml-[18px] border-dotted border-l border-gray-300 dark:border-gray-500">
+            <div v-for="link in note.LinkedNotes" :key="'link-' + link.Filename" @click="$emit('note-open', link.Filename, 1)"
               class="group flex items-center justify-items-center justify-between pl-[18px] py-1 pr-2 truncate rounded-r-2xl
                      text-gray-900 dark:text-gray-400 hover:bg-indigo-50 dark:hover:bg-gray-600">
               <div class="leading-6 overflow-hidden truncate" v-text="link.Title" :title="link.Title"></div>
@@ -217,7 +217,7 @@ var t = `
             <span v-if="$notesiumState.sidePanelSortNotes == 'ctime'" v-text="note.CtimeRelative" title="created" />
             <span v-else v-text="note.MtimeRelative" title="modified" />
             <div class="space-x-1 overflow-hidden truncate">
-              <template v-for="label in note.Labels">
+              <template v-for="label in note.LinkedLabels">
                 <span>·</span>
                 <span class="hover:text-gray-600 dark:hover:text-gray-200" v-text="label" @click.stop="query='label:'+label+' '"></span>
               </template>
@@ -267,8 +267,10 @@ export default {
           const notes = Object.values(response);
           this.notesLength = notes.length;
           this.notes = notes.map(note => {
-            const links = [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].sort((a, b) => a.Title.localeCompare(b.Title));
-            const labels = Array.from(links.reduce((set, l) => { if (l.Title && !l.Title.includes(' ')) { set.add(l.Title); } return set; }, new Set()));
+            const linkedNotes = [...new Map(
+              [...(note.IncomingLinks || []), ...(note.OutgoingLinks || [])].map(link => [link.Filename, { Filename: link.Filename, Title: link.Title }])
+            ).values()].sort((a, b) => a.Title.localeCompare(b.Title));
+            const linkedLabels = linkedNotes.filter(link => link.Title && !link.Title.includes(' ')).map(link => link.Title);
             const mtime = new Date(note.Mtime);
             const ctime = new Date(note.Ctime);
             return {
@@ -278,11 +280,11 @@ export default {
               Ctime: ctime,
               MtimeRelative: this.formatRelativeDate(mtime),
               CtimeRelative: this.formatRelativeDate(ctime),
-              Labels: labels,
               IsLabel: note.IsLabel,
-              Links: links,
-              LinkCount: links?.length || 0,
-              SearchStr: (note.Title + ' ' + labels.join(' ')).toLowerCase(),
+              LinkedLabels: linkedLabels,
+              LinkedNotes: linkedNotes,
+              LinkedNotesCount: linkedNotes.length,
+              SearchStr: (note.Title + ' ' + linkedLabels.join(' ')).toLowerCase(),
             };
           })
         })
@@ -333,7 +335,7 @@ export default {
     sortedNotes() {
       switch(this.$notesiumState.sidePanelSortNotes) {
         case 'title': return this.notes.sort((a, b) => a.Title.localeCompare(b.Title));
-        case 'links': return this.notes.sort((a, b) => b.LinkCount - a.LinkCount);
+        case 'links': return this.notes.sort((a, b) => b.LinkedNotesCount - a.LinkedNotesCount);
         case 'mtime': return this.notes.sort((a, b) => b.Mtime - a.Mtime);
         case 'ctime': return this.notes.sort((a, b) => b.Ctime - a.Ctime);
       }
@@ -341,7 +343,7 @@ export default {
     sortedLabelNotes() {
       switch(this.$notesiumState.sidePanelSortLabels) {
         case 'title': return this.notes.filter(note => note.IsLabel).sort((a, b) => a.Title.localeCompare(b.Title));
-        case 'links': return this.notes.filter(note => note.IsLabel).sort((a, b) => b.LinkCount - a.LinkCount);
+        case 'links': return this.notes.filter(note => note.IsLabel).sort((a, b) => b.LinkedNotesCount - a.LinkedNotesCount);
       }
     },
     filteredNotes() {
@@ -353,7 +355,7 @@ export default {
       if (labelQuery) {
         const label = labelQuery.slice(6);
         if (!label) return sortedNotes.filter(note => note.IsLabel).slice(0, maxNotes);
-        const notesSubset = sortedNotes.filter(note => note.Labels.some(l => l.toLowerCase() === label) || note.Title.toLowerCase() === label);
+        const notesSubset = sortedNotes.filter(note => note.LinkedLabels.some(l => l.toLowerCase() === label) || note.Title.toLowerCase() === label);
         const remainingQueryWords = queryWords.filter(word => word !== labelQuery);
         return notesSubset.filter(note => remainingQueryWords.every(queryWord => note.SearchStr.includes(queryWord))).slice(0, maxNotes);
       }
