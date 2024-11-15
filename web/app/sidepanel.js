@@ -170,19 +170,27 @@ var t = `
 
     <ul v-if="$notesiumState.notesPanelCompact" class="mt-2 text-sm">
       <li v-if="$notesiumState.notesPanelCompactLabels" v-for="note in filteredLabelNotes" :key="'label-' + note.Filename">
-        <details class="cursor-pointer [&_svg]:open:rotate-90">
+        <details class="cursor-pointer [&_.rotate-on-open]:open:rotate-90">
           <summary class="group flex items-center justify-between justify-items-center list-none py-1.5 pl-2
                           rounded-r-2xl focus:outline-none text-gray-900 hover:bg-indigo-50 dark:text-gray-400 dark:hover:bg-gray-600">
             <div class="flex items-center justify-center gap-x-2 truncate">
-              <div class="text-gray-400 dark:text-gray-500">
+              <div class="text-gray-400 dark:text-gray-500 rotate-on-open">
                 <Icon name="chevron-right" size="h-5 w-5" />
               </div>
-              <span class="overflow-hidden truncate pr-2" v-text="note.Title" />
+              <span class="flex space-x-2 overflow-hidden truncate pr-2">
+                <span v-text="note.Title" />
+                <span class="hidden group-hover:block text-gray-400 dark:text-gray-500" v-text="'('+note.LinkedNotesCount+')'" />
+              <span>
             </div>
-            <span class="hidden group-hover:block pr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
-              v-text="note.LinkedNotesCount + ' ↗'"
-              @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''"
-              @click.stop="$emit('note-open', note.Filename, 1)" />
+            <span class="hidden group-hover:flex space-x-2 pr-2 whitespace-nowrap">
+              <span title="list links" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 mt-1"
+                @click.stop="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)">
+                <Icon name="mini-arrows-right-left" size="h-3 w-3" />
+              </span>
+              <span class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                @mouseenter="previewFilename=note.Filename" @mouseleave="previewFilename=''"
+                @click.stop="$emit('note-open', note.Filename, 1)">↗</span>
+            </span>
           </summary>
           <div v-if="note.LinkedNotesCount > 0" class="ml-[18px] border-dotted border-l border-gray-300 dark:border-gray-500">
             <div v-for="link in note.LinkedNotes" :key="'link-' + link.Filename" @click="$emit('note-open', link.Filename, 1)"
