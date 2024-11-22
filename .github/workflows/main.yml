@@ -65,6 +65,9 @@ jobs:
         files: |
           build/checksums.txt
           build/notesium-linux-amd64
+          build/notesium-linux-arm64
           build/notesium-darwin-amd64
+          build/notesium-darwin-arm64
           build/notesium-windows-amd64.exe
+          build/notesium-windows-arm64.exe
 

@@ -29,8 +29,8 @@ jobs:
     - name: Build web
       run: ./web/app/make.sh all
 
-    - name: Build linux binary
-      run: .github/workflows/helpers/build-bin.sh build/ linux-amd64
+    - name: Build binaries
+      run: .github/workflows/helpers/build-bin.sh build/ all
 
     - name: Run integration tests
       run: .github/workflows/helpers/run-tests.sh build/notesium-linux-amd64
