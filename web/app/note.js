@@ -147,6 +147,16 @@ export default {
         this.vimMode = null;
       }
     },
+    foldWidget(from, to) {
+      var lines = document.createElement("span");
+      lines.appendChild(document.createTextNode(`[${to.line - from.line} lines]`));
+      lines.className = "cm-foldmarker-lines";
+
+      var widget = document.createElement("span");
+      widget.appendChild(lines);
+      widget.className = "cm-foldmarker";
+      return widget;
+    },
     lineNumberHL(linenum) {
       if (!Number.isInteger(linenum) || linenum === undefined) return;
       this.$nextTick(() => {
@@ -175,6 +185,9 @@ export default {
       lineWrapping: this.$notesiumState.editorLineWrapping,
       styleActiveLine: false,
       foldGutter: true,
+      foldOptions: {
+        widget: this.foldWidget,
+      },
       gutters: ["CodeMirror-foldgutter"],
       tabSize: 4,
       indentUnit: 4,
