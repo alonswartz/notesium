@@ -174,6 +174,8 @@ export default {
       lineNumbers: false,
       lineWrapping: this.$notesiumState.editorLineWrapping,
       styleActiveLine: false,
+      foldGutter: true,
+      gutters: ["CodeMirror-foldgutter"],
       tabSize: 4,
       indentUnit: 4,
       theme: 'notesium-light',
