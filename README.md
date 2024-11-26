@@ -392,6 +392,7 @@ implementation. It does however feature the following:
 - Commands for write and quit (:w :wq :q :q!)
 - Visual mode - characterwise, linewise, blockwise
 - Full macro support (q @)
+- Folding support (za zo zc zO zC)
 - Incremental highlighted search (/ ? # * g# g*)
 - Search/replace with confirm (:substitute :%s)
 - Search history
@@ -407,6 +408,7 @@ implementation. It does however feature the following:
 | all     | `C-l` `C-h` `C-6`  | Note tab keybinds passthrough
 | normal  | `space n <char>`   | Global keybinds passthrough
 | normal  | `ge` `gx`          | Open link under cursor
+| normal  | `z<char>`          | Fold, unfold, toggle sections
 | insert  | `[[`               | Insert selected note link via Finder (mtime sorted)
 | insert  | `Alt-k`            | Insert selected note link via Finder (mtime sorted)
 | command | `:set [no]wrap`    | Set line wrapping

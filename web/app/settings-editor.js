@@ -39,6 +39,7 @@ var t = `
                 <li>Commands for write and quit (:w :wq :q :q!)</li>
                 <li>Visual mode - characterwise, linewise, blockwise</li>
                 <li>Full macro support (q @)</li>
+                <li>Folding support (za zo zc zO zC)</li>
                 <li>Incremental highlighted search (/ ? # * g# g*)</li>
                 <li>Search/replace with confirm (:substitute :%s)</li>
                 <li>Search history</li>
@@ -133,6 +134,7 @@ export default {
             ['C-h C-l C-6', 'Note tab keybinds passthrough', 'all'],
             ['space n <char>', 'Global keybinds passthrough', 'normal'],
             ['ge | gx', 'Open link under cursor', 'normal'],
+            ['z<char> | C-Enter', 'Fold, unfold, toggle sections', 'normal'],
             ['[[', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
             ['Alt-k', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
             [':set [no]wrap', 'Set line wrapping', 'command'],
