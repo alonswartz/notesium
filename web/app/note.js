@@ -147,6 +147,15 @@ export default {
         this.vimMode = null;
       }
     },
+    handleEditorFoldGutter() {
+      if (this.$notesiumState.editorFoldGutter) {
+        this.cm.setOption("gutters", ["CodeMirror-foldgutter"]);
+        this.cm.setOption("foldGutter", true);
+      } else {
+        this.cm.setOption("gutters", []);
+        this.cm.setOption("foldGutter", false);
+      }
+    },
     foldWidget(from, to) {
       var header = document.createElement("span");
       header.appendChild(document.createTextNode(this.cm.getLine(from.line).trim()));
@@ -189,7 +198,6 @@ export default {
       lineNumbers: false,
       lineWrapping: this.$notesiumState.editorLineWrapping,
       styleActiveLine: false,
-      foldGutter: true,
       foldOptions: {
         rangeFinder: CodeMirror.fold.markdown,
         markdownIncludeHeader: true,
@@ -198,7 +206,6 @@ export default {
         clearOnEnter: false,
         scanUp: true,
       },
-      gutters: ["CodeMirror-foldgutter"],
       tabSize: 4,
       indentUnit: 4,
       theme: 'notesium-light',
@@ -308,6 +315,7 @@ export default {
     });
 
     this.handleEditorVimMode();
+    this.handleEditorFoldGutter();
     document.addEventListener('keydown', this.handleKeyPress);
   },
   beforeDestroy() {
@@ -318,7 +326,8 @@ export default {
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); if (this.$notesiumState.editorVimMode) this.$nextTick(() => { this.cm.focus(); }); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
     '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },
-    '$notesiumState.editorVimMode': function() { this.handleEditorVimMode(); }
+    '$notesiumState.editorVimMode': function() { this.handleEditorVimMode(); },
+    '$notesiumState.editorFoldGutter': function() { this.handleEditorFoldGutter(); },
   },
   template: t
 }

@@ -10,6 +10,7 @@ const defaultState = {
   notesPanelCompactLabels: true,
   sidePanelSortNotes: 'title', // title, links, mtime, ctime
   sidePanelSortLabels: 'title', // title, links
+  editorFoldGutter: false,
   editorLineWrapping: false,
   editorConcealFormatting: true,
   editorVimMode: false,
