@@ -196,6 +196,7 @@ export default {
         widget: this.foldWidget,
         inclusiveRight: true,
         clearOnEnter: false,
+        scanUp: true,
       },
       gutters: ["CodeMirror-foldgutter"],
       tabSize: 4,
