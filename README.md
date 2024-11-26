@@ -378,6 +378,7 @@ ribbon, but is also seamlessly integrated throughout the web interface.
 | edit | `Shift-Tab` | Auto-indent current line or selection
 | edit | `C-]`       | Indent current line or selection
 | edit | `C-[`       | Dedent current line or selection
+| edit | `C-Enter`   | Toggle section fold
 | edit | `Esc`       | Exit editing mode (unfocus)
 
 **Vim mode**

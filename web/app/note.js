@@ -210,6 +210,7 @@ export default {
         "Ctrl-S": this.handleSave,
         "Tab": this.handleTab,
         "Backspace": this.handleBackspace,
+        "Ctrl-Enter": function(cm) { return cm.execCommand('toggleFold'); },
         "Shift-Tab": function(cm) { return Table.navigateTable(cm, 'left'); },
         "Alt-Up": function(cm) { return Table.navigateTable(cm, 'up'); },
         "Alt-Down": function(cm) { return Table.navigateTable(cm, 'down'); },
