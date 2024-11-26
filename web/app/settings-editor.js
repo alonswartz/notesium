@@ -106,6 +106,7 @@ export default {
           {name: 'editorVimMode', title: 'Vim mode'},
           {name: 'editorLineWrapping', title: 'Line wrapping'},
           {name: 'editorConcealFormatting', title: 'Conceal formatting'},
+          {name: 'editorFoldGutter', title: 'Fold gutter'},
         ]
       },
       keymaps: [
