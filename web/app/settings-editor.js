@@ -39,7 +39,7 @@ var t = `
                 <li>Commands for write and quit (:w :wq :q :q!)</li>
                 <li>Visual mode - characterwise, linewise, blockwise</li>
                 <li>Full macro support (q @)</li>
-                <li>Folding support (za zo zc zO zC)</li>
+                <li>Folding support (za zo zc zR zM)</li>
                 <li>Incremental highlighted search (/ ? # * g# g*)</li>
                 <li>Search/replace with confirm (:substitute :%s)</li>
                 <li>Search history</li>
