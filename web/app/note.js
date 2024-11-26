@@ -148,11 +148,16 @@ export default {
       }
     },
     foldWidget(from, to) {
+      var header = document.createElement("span");
+      header.appendChild(document.createTextNode(this.cm.getLine(from.line).trim()));
+      header.className = "cm-foldmarker-header";
+
       var lines = document.createElement("span");
       lines.appendChild(document.createTextNode(`[${to.line - from.line} lines]`));
       lines.className = "cm-foldmarker-lines";
 
       var widget = document.createElement("span");
+      widget.appendChild(header);
       widget.appendChild(lines);
       widget.className = "cm-foldmarker";
       return widget;
@@ -186,7 +191,11 @@ export default {
       styleActiveLine: false,
       foldGutter: true,
       foldOptions: {
+        rangeFinder: CodeMirror.fold.markdown,
+        markdownIncludeHeader: true,
         widget: this.foldWidget,
+        inclusiveRight: true,
+        clearOnEnter: false,
       },
       gutters: ["CodeMirror-foldgutter"],
       tabSize: 4,

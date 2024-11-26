@@ -32,7 +32,7 @@
 
       .cm-links-hover span.cm-url:hover,
       .cm-links-hover span.cm-link:hover { cursor: pointer; text-decoration: underline; }
-      .cm-fat-cursor .CodeMirror-cursor { background: #cbd5e1; }
+      .cm-fat-cursor .CodeMirror-cursor { background: #cbd5e1; max-width: 8px; }
 
       .cm-conceal .CodeMirror span.cm-url,
       .cm-conceal .CodeMirror span.cm-formatting-em,
@@ -91,8 +91,20 @@
         margin-left: 1px;
         transform: rotate(90deg);
       }
-      .cm-foldmarker-lines {
+      .cm-foldmarker {
         cursor: pointer;
+        display: inline-block;
+        width: 98%;
+        background-color: #e4e4e790;
+        margin-bottom: 1px;
+      }
+      .cm-foldmarker:hover {
+        background-color: #e4e4e7;
+      }
+      .cm-foldmarker-header {
+        font-weight: bold;
+      }
+      .cm-foldmarker-lines {
         padding-left: 10px;
         opacity: 50%;
       }
