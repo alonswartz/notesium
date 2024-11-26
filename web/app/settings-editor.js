@@ -119,6 +119,7 @@ export default {
             ['Shift-Tab', 'Auto-indent current line or selection', 'edit'],
             ['C-]', 'Indent current line or selection', 'edit'],
             ['C-[', 'Dedent current line or selection', 'edit'],
+            ['C-Enter', 'Toggle section fold', 'edit'],
             ['Esc', 'Exit editing mode (unfocus)', 'edit'],
           ]
         },
