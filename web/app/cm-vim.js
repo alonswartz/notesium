@@ -13,8 +13,8 @@ export function initCodeMirrorVimEx(notesiumState) {
   });
   CodeMirror.Vim.map('zo', ':cmExecCommand unfold', 'normal');
   CodeMirror.Vim.map('zc', ':cmExecCommand fold', 'normal');
-  CodeMirror.Vim.map('zO', ':cmExecCommand unfoldAll', 'normal');
-  CodeMirror.Vim.map('zC', ':cmExecCommand foldAll', 'normal');
+  CodeMirror.Vim.map('zR', ':cmExecCommand unfoldAll', 'normal');
+  CodeMirror.Vim.map('zM', ':cmExecCommand foldAll', 'normal');
   CodeMirror.Vim.map('za', ':cmExecCommand toggleFold', 'normal');
 
   CodeMirror.Vim.defineEx('OpenLinkUnderCursor', '', (cm) => {

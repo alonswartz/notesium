@@ -392,7 +392,7 @@ implementation. It does however feature the following:
 - Commands for write and quit (:w :wq :q :q!)
 - Visual mode - characterwise, linewise, blockwise
 - Full macro support (q @)
-- Folding support (za zo zc zO zC)
+- Folding support (za zo zc zR zM)
 - Incremental highlighted search (/ ? # * g# g*)
 - Search/replace with confirm (:substitute :%s)
 - Search history
