@@ -1,20 +1,12 @@
 var t = `
-<Pane name="noteSidebar" :defaultWidth="384" :minWidth="200" direction="left">
-<aside class="h-full overflow-y-auto my-2 mr-2 rounded-lg border border-gray-200 bg-white">
+<Pane name="noteSidebar" :defaultWidth="384" :minWidth="245" direction="left">
+<aside class="h-full overflow-y-auto mt-2 mr-2 rounded-t-lg border border-gray-200 bg-white">
 
-  <div class="flex flex-wrap gap-x-5 gap-y-2 p-2 border-b sticky top-0 z-10 bg-white">
+  <div class="flex gap-x-5 gap-y-2 p-2 border-b sticky top-0 z-10 bg-white">
     <button type="button" :disabled="!note.isModified" @click="$emit('note-save')"
       :class="note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
-      class="flex-grow max-w-xs rounded px-2 pt-2 pb-1 text-xs shadow-sm">Save</button>
-    <div class="flex flex-wrap w-auto gap-x-5 gap-y-2 mt-0 ml-auto items-center justify-center">
-      <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
-        class="cursor-pointer text-gray-400 hover:text-gray-700">
-        <Icon name="outline-code" size="h-4 w-4" />
-      </span>
-      <span title="line wrapping" @click="$notesiumState.editorLineWrapping = !$notesiumState.editorLineWrapping"
-        class="cursor-pointer text-gray-400 hover:text-gray-700 rotate-180">
-        <Icon name="micro-arrow-uturn-right" size="h-3 w-3" />
-      </span>
+      class="w-28 rounded px-2 pt-2 pb-1 text-xs shadow-sm">Save</button>
+    <div class="flex gap-x-5 gap-y-2 mt-0 ml-auto items-center justify-center">
       <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
         <Icon name="mini-arrows-right-left" size="h-3 w-3" />
