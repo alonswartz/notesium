@@ -20,8 +20,8 @@ CM="https://github.com/alonswartz/notesium-cm5/releases/download"
 D3="https://cdnjs.cloudflare.com/ajax/libs/d3"
 cat<<EOF
 628497cb69df7b1d31236479cad68c9bb3f265060afd5506a0c004b394dfa47e https://unpkg.com/vue@3.3.4/dist/vue.global.prod.js
-9571811ec12dbfe62834171349cf64bfa206ebd3d2519c16d2b3be4b5862b966 $CM/v5.65.18-1-3-ga7cb5ef/notesium-cm5.min.js
-4d507d755e1d3188bd1e95d67b8bc9efd0094576135006fce68c5e9d44303061 $CM/v5.65.18-1-3-ga7cb5ef/notesium-cm5.min.css
+9571811ec12dbfe62834171349cf64bfa206ebd3d2519c16d2b3be4b5862b966 $CM/v5.65.18-2/notesium-cm5.min.js
+4d507d755e1d3188bd1e95d67b8bc9efd0094576135006fce68c5e9d44303061 $CM/v5.65.18-2/notesium-cm5.min.css
 d6b03aefc9f6c44c7bc78713679c78c295028fa914319119e5cc4b4954855b1c $D3/7.8.5/d3.min.js
 EOF
 }
