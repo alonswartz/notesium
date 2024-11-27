@@ -15,13 +15,15 @@ var t = `
         class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorLineWrapping ? 'wrap' : 'nowrap'" />
       <span title="conceal formatting" @click="$notesiumState.editorConcealFormatting = !$notesiumState.editorConcealFormatting"
         class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorConcealFormatting ? 'conceal' : 'noconceal'" />
+      <span title="fold gutter" @click="$notesiumState.editorFoldGutter = !$notesiumState.editorFoldGutter"
+        class="cursor-pointer hover:text-gray-700" v-text="$notesiumState.editorFoldGutter ? 'fold' : 'nofold'" />
       <template v-if="!note.ghost && !$notesiumState.showNoteSidebar">
         <span title="incoming links" class="cursor-pointer hover:text-gray-700 -mb-px"
           @click="$emit('finder-open', '/api/raw/links?color=true&incoming=true&filename=' + note.Filename)">
           {{note.IncomingLinks?.length || 0}}&swarr;
         </span>
         <span title="outgoing links" class="cursor-pointer hover:text-gray-700 -mb-px"
-          @click="$emit('finder-open', '/api/raw/links?color=true&&outgoing=true&filename=' + note.Filename)">
+          @click="$emit('finder-open', '/api/raw/links?color=true&outgoing=true&filename=' + note.Filename)">
           {{note.OutgoingLinks?.length || 0}}&nearr;
         </span>
         <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
