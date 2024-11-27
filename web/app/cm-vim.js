@@ -71,4 +71,11 @@ export function initCodeMirrorVimEx(notesiumState) {
     notesiumState.editorConcealFormatting = value;
     return value;
   });
+
+  CodeMirror.Vim.defineOption('fold', notesiumState.editorFoldGutter, 'boolean', [], (value, cm) => {
+    if (cm) return; // option is global, do nothing for local
+    if (value === undefined) return notesiumState.editorFoldGutter;
+    notesiumState.editorFoldGutter = value;
+    return value;
+  });
 }
