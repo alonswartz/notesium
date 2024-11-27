@@ -413,6 +413,7 @@ implementation. It does however feature the following:
 | insert  | `Alt-k`            | Insert selected note link via Finder (mtime sorted)
 | command | `:set [no]wrap`    | Set line wrapping
 | command | `:set [no]conceal` | Set conceal formatting
+| command | `:set [no]fold`    | Set fold gutter
 
 Prefer the *real thing*? Notesium supports [Vim integration](#vim).
 

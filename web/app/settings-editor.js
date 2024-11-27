@@ -140,6 +140,7 @@ export default {
             ['Alt-k', 'Insert selected note link via Finder (mtime sorted)', 'insert'],
             [':set [no]wrap', 'Set line wrapping', 'command'],
             [':set [no]conceal', 'Set conceal formatting', 'command'],
+            [':set [no]fold', 'Set fold gutter', 'command'],
           ]
         },
         {
