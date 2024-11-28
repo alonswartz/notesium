@@ -52,6 +52,7 @@ It aspires and is designed to:
     - [Finder](#finder)
     - [Editor modes](#editor-modes)
     - [Table formatting and navigation](#table-formatting-and-navigation)
+    - [Section folding](#section-folding)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
 - [Vim](#vim)
     - [Example integration](#example-integration)
@@ -108,6 +109,7 @@ It aspires and is designed to:
     - Create and edit notes with web based editor (optional vim-mode).
     - Markdown syntax highlighting, special char and links concealment.
     - Markdown table formatting and navigation.
+    - Markdown section folding with optional fold gutter.
     - Open multiple notes in tabs, drag to re-order, keybindings to switch.
     - Finder integration for List, Links and Lines with preview.
     - Note deletion with incoming-links verification and confirmation.
@@ -447,6 +449,30 @@ provide formatting and navigation.
 | table | `Tab`       | Format table and advance column (right)
 | table | `Shift-Tab` | Navigate to previous column (left)
 | table | `Alt-Arrow` | Navigate rows and columns
+
+### Section folding
+
+The editor supports section folding, making it easier to view and edit
+notes, especially longer ones. Folds can be toggled via the Fold
+gutter or keybindings, which work whether the cursor is on the section
+heading or anywhere within the section.
+
+The Fold gutter displays chevrons for collapsible sections. Clicking a
+chevron toggles folding for that section. The Fold gutter can be enabled
+in **Settings:Editor**, the Editor **Statusbar** or the Vim mode command
+`:set [no]fold`.
+
+Folded sections are visually distinct, featuring a subtle full-width
+background, displaying the line count, and unfolding when clicked.
+
+| Mode       | Binding   | Comment
+| ----       | --------  | -------
+| default    | `C-Enter` | Toggle section fold
+| vim-normal | `za`      | Toggle section fold
+| vim-normal | `zc`      | Close section fold
+| vim-normal | `zo`      | Open section fold
+| vim-normal | `zM`      | Close all section folds
+| vim-normal | `zR`      | Open all section folds
 
 ### Syntax highlighting and concealment
 
