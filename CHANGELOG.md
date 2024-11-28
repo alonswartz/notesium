@@ -1,3 +1,40 @@
+## 0.6.2
+
+Notesium now supports **section folding** in the web/app editor, making
+it easier to view and edit your notes, especially longer ones. Folds can
+be toggled via the Fold gutter or keybindings, which work whether the
+cursor is on the section heading or anywhere within the section.
+
+Folded sections are visually distinct, featuring a subtle full-width
+background, displaying the line count, and unfolding when clicked.
+
+Fixed:
+
+- Web/App: Sidepanel - support capitalized labels in labelQuery filter.
+- Web/App: Sidepanel - deduplicate labels for detailed view and searchStr.
+- Web/App: Sidepanel - use deduplicated linked notes over note links.
+
+Added:
+
+- Web/App: Fold - section folding support in Editor.
+- Web/App: Fold - fold-marker with header text and line count.
+- Web/App: Fold - fold-marker with full-width subtle background.
+- Web/App: Fold - fold-marker readonly when folded, click to unfold.
+- Web/App: Fold - toggle keybinding for section folds (`C-Enter`).
+- Web/App: Fold - vimmode keybindings (`za zo zc zR zM`).
+- Web/App: Fold - scanUp on folding (cursor on header or in section).
+- Web/App: FoldGutter - displays collapsible sections, click to toggle.
+- Web/App: FoldGutter - vimMode command to set `[no]fold`.
+- Web/App: FoldGutter - state setting in **Settings:Editor**.
+- Web/App: FoldGutter - state toggle in **StatusBar**.
+
+- Web/App: Sidepanel - include finder list-links icon in labelTree labels.
+
+Changed:
+
+- Web/App: Note sidebar - removed editor options included in Statusbar.
+- Web/App: Vendor - upgraded to `alonswartz/notesium-cm5` v5.65.18-2.
+
 ## 0.6.1
 
 This release focuses on enhancements to the web/app editor,
