@@ -29,7 +29,7 @@
 > BASE URL
 
 ```shell
-BASE_URL="http://locahost:PORT/api"
+BASE_URL="http://localhost:PORT/api"
 ```
 
 Notesium `web` provides a REST API, accepts JSON encoded requests and
