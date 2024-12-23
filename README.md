@@ -102,6 +102,7 @@ It aspires and is designed to:
 - **Lines**
     - Perform a full text search across all notes in the entire system.
     - Optionally prefix each line with the note title for context.
+    - Supports line filtering queries with AND, OR, and NOT conditionals.
 - **Stats**
     - View counts of notes, labels, orphans, links, lines, words, etc.
 - **Web**
@@ -281,6 +282,7 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Prefix each line with note title
+    --filter=QUERY  Filter lines by query: AND (space), OR (|), NOT (!)
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns

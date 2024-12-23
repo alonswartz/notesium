@@ -30,6 +30,7 @@ Commands:
   lines             Print all lines of notes (ie. fulltext search)
     --color         Color code prefix using ansi escape sequences
     --prefix=title  Prefix each line with note title
+    --filter=QUERY  Filter lines by query: AND (space), OR (|), NOT (!)
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
@@ -76,6 +77,7 @@ type linksOptions struct {
 type linesOptions struct {
 	color  Color
 	prefix string
+	filter string
 }
 
 type statsOptions struct {
@@ -217,6 +219,8 @@ func parseOptions(args []string) (Command, error) {
 				opts.color = defaultColor()
 			case opt == "--prefix=title":
 				opts.prefix = "title"
+			case strings.HasPrefix(opt, "--filter="):
+				opts.filter = strings.TrimPrefix(opt, "--filter=")
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
