@@ -260,10 +260,20 @@ func notesiumLines(dir string, opts linesOptions, w io.Writer) {
 				if line == "" {
 					continue
 				}
-				if opts.prefix == "title" {
-					if title == "" && strings.HasPrefix(line, "# ") {
-						title = strings.TrimPrefix(line, "# ")
+				if opts.prefix == "title" && title == "" && strings.HasPrefix(line, "# ") {
+					title = strings.TrimPrefix(line, "# ")
+				}
+				if opts.filter != "" {
+					matches, err := evaluateFilterQuery(opts.filter, line)
+					if err != nil {
+						fmt.Fprintf(w, "Error: %v\n", err)
+						continue
 					}
+					if !matches {
+						continue
+					}
+				}
+				if opts.prefix == "title" {
 					fmt.Fprintf(w, "%s:%d: %s%s%s %s\n", filename, lineNumber, opts.color.Code, title, opts.color.Reset, line)
 				} else {
 					fmt.Fprintf(w, "%s:%d: %s\n", filename, lineNumber, line)
