@@ -77,3 +77,16 @@ setup_file() {
     [ "${#lines[@]}" -eq 1 ]
     assert_line "64214a1d.md:5: richard feynman [quantum mechanics](64214930.md), the theory of quantum electrodynamics,"
 }
+
+@test "lines: filter quoted vs non-quoted" {
+    run notesium lines --filter='theory of quantum'
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 2 ]
+    assert_line "64214a1d.md:5: [quantum mechanics](64214930.md), the theory of quantum electrodynamics,"
+    assert_line "64218088.md:7: to the development of the theory of [quantum mechanics](64214930.md)."
+
+    run notesium lines --filter='"theory of quantum"'
+    [ $status -eq 0 ]
+    [ "${#lines[@]}" -eq 1 ]
+    assert_line "64214a1d.md:5: [quantum mechanics](64214930.md), the theory of quantum electrodynamics,"
+}
