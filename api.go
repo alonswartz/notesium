@@ -230,7 +230,7 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 			return
 		}
 
-		if !info.ModTime().UTC().Equal(noteDelete.LastMtime.UTC()) {
+		if !info.ModTime().Truncate(time.Second).UTC().Equal(noteDelete.LastMtime.Truncate(time.Second).UTC()) {
 			respondWithError(w, "Refusing to delete. File changed on disk.", http.StatusConflict)
 			return
 		}
