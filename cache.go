@@ -85,7 +85,7 @@ func readNote(dir string, filename string) (*Note, error) {
 	if err != nil {
 		return nil, fmt.Errorf("could not get file info: %s", err)
 	}
-	mtime := info.ModTime()
+	mtime := info.ModTime().Truncate(time.Second)
 
 	hexTime := strings.TrimSuffix(filename, ".md")
 	unixTime, err := strconv.ParseInt(hexTime, 16, 64)
