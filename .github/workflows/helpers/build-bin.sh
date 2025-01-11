@@ -51,11 +51,17 @@ main() {
 
     case "$2" in
         all)                    _build_binary linux amd64;
+                                _build_binary linux arm64;
                                 _build_binary darwin amd64;
-                                _build_binary windows amd64;;
+                                _build_binary darwin arm64;
+                                _build_binary windows amd64;
+                                _build_binary windows arm64;;
         linux-amd64)            _build_binary linux amd64;;
+        linux-arm64)            _build_binary linux arm64;;
         darwin-amd64)           _build_binary darwin amd64;;
+        darwin-arm64)           _build_binary darwin arm64;;
         windows-amd64)          _build_binary windows amd64;;
+        windows-arm64)          _build_binary windows arm64;;
         *)                      fatal "unrecognized os-arch: $2";;
     esac
 
