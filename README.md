@@ -288,6 +288,7 @@ Commands:
     --table         Format as table with whitespace delimited columns
   web               Start web server
     --webroot=PATH  Path to web root to serve (default: embedded webroot)
+    --mount=DIR:URI Additional directory to serve under webroot (experimental)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)

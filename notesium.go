@@ -371,6 +371,11 @@ func notesiumWeb(dir string, opts webOptions) {
 		apiRaw(dir, w, r)
 	}))
 
+	for uri, srcDir := range opts.mounts {
+		mountfs := http.Dir(srcDir)
+		http.Handle(uri, http.StripPrefix(uri, heartbeatH(http.FileServer(mountfs))))
+	}
+
 	var idleStopMsg string
 	if opts.heartbeat {
 		idleStopMsg = " (stop-on-idle enabled)"

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -36,6 +37,7 @@ Commands:
     --table         Format as table with whitespace delimited columns
   web               Start web server
     --webroot=PATH  Path to web root to serve (default: embedded webroot)
+    --mount=DIR:URI Additional directory to serve under webroot (experimental)
     --open-browser  Launch default web browser with web server URL
     --stop-on-idle  Automatically stop when no activity is detected
     --port=INT      Port for web server to listen on (default: random)
@@ -93,6 +95,7 @@ type webOptions struct {
 	launchBrowser bool
 	readOnly      bool
 	check         bool
+	mounts        map[string]string
 }
 
 type extractOptions struct {
@@ -250,6 +253,7 @@ func parseOptions(args []string) (Command, error) {
 		opts.readOnly = true
 		opts.webroot = "embedded"
 		opts.check = true
+		opts.mounts = make(map[string]string)
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
@@ -274,6 +278,18 @@ func parseOptions(args []string) (Command, error) {
 				opts.check = false
 			case opt == "--writable":
 				opts.readOnly = false
+			case strings.HasPrefix(opt, "--mount="):
+				mountStr := strings.TrimPrefix(opt, "--mount=")
+				mountPattern := regexp.MustCompile(`^(.+?):(/[a-zA-Z0-9-_]+/)$`)
+				matches := mountPattern.FindStringSubmatch(mountStr)
+				if matches == nil {
+					return Command{}, fmt.Errorf("mount format mismatch: expected '%s'", mountPattern.String())
+				}
+				srcAbs, err := getAbsDir(matches[1])
+				if err != nil {
+					return Command{}, fmt.Errorf("mount source %v: %s", err, srcAbs)
+				}
+				opts.mounts[matches[2]] = srcAbs
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
