@@ -253,7 +253,12 @@ func parseOptions(args []string) (Command, error) {
 		for _, opt := range args[1:] {
 			switch {
 			case strings.HasPrefix(opt, "--webroot="):
-				opts.webroot = strings.TrimPrefix(opt, "--webroot=")
+				webrootStr := strings.TrimPrefix(opt, "--webroot=")
+				webrootAbs, err := getAbsDir(webrootStr)
+				if err != nil {
+					return Command{}, fmt.Errorf("webroot %v: %s", err, webrootAbs)
+				}
+				opts.webroot = webrootAbs
 			case opt == "--open-browser":
 				opts.launchBrowser = true
 			case opt == "--stop-on-idle":
@@ -272,20 +277,6 @@ func parseOptions(args []string) (Command, error) {
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}
-		}
-		if opts.webroot != "embedded" {
-			webrootAbs, err := filepath.Abs(opts.webroot)
-			if err != nil {
-				return Command{}, fmt.Errorf("failed to get absolute path: %v", err)
-			}
-			webrootInfo, err := os.Stat(webrootAbs)
-			if err != nil {
-				return Command{}, fmt.Errorf("webroot does not exist: %v", err)
-			}
-			if !webrootInfo.IsDir() {
-				return Command{}, fmt.Errorf("webroot is not a directory: %v", err)
-			}
-			opts.webroot = webrootAbs
 		}
 		cmd.Options = opts
 		return cmd, nil
@@ -330,22 +321,29 @@ func getNotesiumDir() (string, error) {
 		}
 		dir = filepath.Join(home, "notes")
 	}
+	absDir, err := getAbsDir(dir)
+	if err != nil {
+		return "", fmt.Errorf("NOTESIUM_DIR %v: %s", err, absDir)
+	}
+	return absDir, nil
+}
+
+func getAbsDir(dir string) (string, error) {
 	absDir, err := filepath.Abs(dir)
 	if err != nil {
-		return "", err
+		return dir, fmt.Errorf("failed to resolve absolute path: %v", err)
 	}
 	realDir, err := filepath.EvalSymlinks(absDir)
 	if err != nil {
-		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", absDir)
+		return absDir, fmt.Errorf("does not exist")
 	}
 	info, err := os.Stat(realDir)
 	if err != nil {
-		return "", fmt.Errorf("NOTESIUM_DIR does not exist: %s", realDir)
+		return realDir, fmt.Errorf("does not exist")
 	}
 	if !info.IsDir() {
-		return "", fmt.Errorf("NOTESIUM_DIR is not a directory: %s", realDir)
+		return realDir, fmt.Errorf("is not a directory")
 	}
-
 	return realDir, nil
 }
 
