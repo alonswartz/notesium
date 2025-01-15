@@ -208,31 +208,34 @@ executable permissions and available in your `PATH`.
 
 ```bash
 # Example for Linux 64-bit
-curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-linux-amd64
+arch=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-linux-$arch
 curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt
 sha256sum --check --ignore-missing checksums.txt && rm checksums.txt
-chmod +x notesium-linux-amd64
-mv notesium-linux-amd64 $HOME/.local/bin/notesium
+chmod +x notesium-linux-$arch
+mv notesium-linux-$arch $HOME/.local/bin/notesium
 ```
 
 ```bash
 # Example for macOS 64-bit
-curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-darwin-amd64
+arch=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
+curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/notesium-darwin-$arch
 curl -sLO https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt
 shasum -a 256 -c checksums.txt --ignore-missing && rm checksums.txt
-chmod +x notesium-darwin-amd64
-mv notesium-darwin-amd64 $HOME/bin/notesium
+chmod +x notesium-darwin-$arch
+mv notesium-darwin-$arch $HOME/bin/notesium
 ```
 
 ```powershell
 # Example for Windows 64-bit (in PowerShell)
-Invoke-WebRequest -Uri "https://github.com/alonswartz/notesium/releases/latest/download/notesium-windows-amd64.exe" -OutFile "./notesium-windows-amd64.exe"
+$arch = if ($ENV:PROCESSOR_ARCHITECTURE -eq "AMD64") { "amd64" } elseif ($ENV:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { throw "Unsupported architecture: $ENV:PROCESSOR_ARCHITECTURE" }
+Invoke-WebRequest -Uri "https://github.com/alonswartz/notesium/releases/latest/download/notesium-windows-$arch.exe" -OutFile "./notesium-windows-$arch.exe"
 Invoke-WebRequest -Uri "https://github.com/alonswartz/notesium/releases/latest/download/checksums.txt" -OutFile "./checksums.txt"
-$hash = Get-FileHash -Path "./notesium-windows-amd64.exe" -Algorithm SHA256
+$hash = Get-FileHash -Path "./notesium-windows-$arch.exe" -Algorithm SHA256
 $checksums = Get-Content "./checksums.txt"
 if ($checksums -match $hash.Hash) { Write-Output "Checksum verified"; Remove-Item "./checksums.txt" } else { Write-Error "Checksum verification failed!" }
 New-Item -ItemType Directory -Path "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps" -Force
-Move-Item -Path "./notesium-windows-amd64.exe" -Destination "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\notesium.exe"
+Move-Item -Path "./notesium-windows-$arch.exe" -Destination "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\notesium.exe"
 ```
 
 Or build from source.
