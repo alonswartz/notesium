@@ -454,7 +454,7 @@ Key    | Type     | Comment
 ---    | ----     | -------
 color  | `bool`   | Color code prefix using ansi escape sequences
 prefix | `string` | Prefix each line with note title (title)
-filter | `string` | Filter lines by query `AND (space), OR (|), NOT (!)`
+filter | `string` | Filter lines by query `AND (space), OR (\|), NOT (!)`
 
 #### Returns
 
