@@ -1,3 +1,33 @@
+## 0.6.3
+
+This release introduces a new **lines** `--filter` option with support
+for AND, OR, and NOT conditionals. It also implements tokenization for
+quoted terms, enabling more advanced and flexible queries directly
+on the CLI and via the API.
+
+The **web** command now includes an experimental `--mount` option,
+making it easier to serve additional directories under the webroot, such
+as the experimental [Notesium-GPT](https://github.com/alonswartz/notesium-gpt) *addon*, which leverages the new lines
+filter via the API for enhanced functionality.
+
+Additionally, **arm64 builds** are now included in the CI/CD pipeline,
+expanding compatibility to more systems. The installation examples in
+the README have been updated to dynamically detect the architecture for
+the appropriate build.
+
+Added:
+
+- CLI: Web - mount option to serve additional directories under webroot.
+- CLI: Lines - filter query option with AND, OR, and NOT conditionals.
+- CI/CD: Github Actions workflows - build and publish for arm64 architecture.
+
+Changed:
+
+- API: Updated spec `api/raw/lines` with new filter option.
+- Cache: Note mtime truncation to remove milliseconds.
+- Readme: Install examples updated to detect architecture dynamically.
+- Options: Improved absolute directory path handling and validation.
+
 ## 0.6.2
 
 Notesium now supports **section folding** in the web/app editor, making
