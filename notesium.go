@@ -334,11 +334,9 @@ func notesiumStats(dir string, opts statsOptions, w io.Writer) {
 }
 
 func notesiumFinder(dir string, opts finderOptions) {
-	optsInput := []string{
-		"list",
-		"--color",
-		"--prefix=label",
-		"--sort=alpha",
+	inputCmd, err := parseOptions(opts.input)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	optsFzf := []string{
@@ -354,11 +352,6 @@ func notesiumFinder(dir string, opts finderOptions) {
 		"--no-separator",
 	}
 
-	inputCmd, err := parseOptions(optsInput)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	inputChan := make(chan string)
 	outputChan := make(chan string)
 
@@ -369,6 +362,10 @@ func notesiumFinder(dir string, opts finderOptions) {
 		switch inputCmd.Name {
 		case "list":
 			notesiumList(dir, inputCmd.Options.(listOptions), writer)
+		case "links":
+			notesiumLinks(dir, inputCmd.Options.(linksOptions), writer)
+		case "lines":
+			notesiumLines(dir, inputCmd.Options.(linesOptions), writer)
 		default:
 			log.Fatal("input command not supported: ", inputCmd.Name)
 		}

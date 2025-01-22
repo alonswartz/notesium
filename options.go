@@ -35,6 +35,8 @@ Commands:
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
+  finder            Start finder (interactive filter selection TUI)
+    -- CMD [OPTS]   Input (default: list --color --prefix=label --sort=alpha)
   web               Start web server
     --webroot=PATH  Path to web root to serve (default: embedded webroot)
     --mount=DIR:URI Additional directory to serve under webroot (experimental)
@@ -83,6 +85,7 @@ type linesOptions struct {
 }
 
 type finderOptions struct {
+	input []string
 }
 
 type statsOptions struct {
@@ -235,7 +238,22 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "finder":
-		cmd.Options = finderOptions{}
+		opts := finderOptions{}
+		opts.input = []string{"list", "--color", "--prefix=label", "--sort=alpha"}
+		for i, opt := range args[1:] {
+			if opt == "--" {
+				opts.input = args[i+2:]
+				if len(opts.input) == 0 {
+					return Command{}, fmt.Errorf("input command not specified")
+				}
+				break
+			}
+			switch {
+			default:
+				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
+			}
+		}
+		cmd.Options = opts
 		return cmd, nil
 
 	case "stats":
