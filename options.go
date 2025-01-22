@@ -36,6 +36,7 @@ Commands:
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
   finder            Start finder (interactive filter selection TUI)
+    --prompt=STR    Set custom prompt text
     -- CMD [OPTS]   Input (default: list --color --prefix=label --sort=alpha)
   web               Start web server
     --webroot=PATH  Path to web root to serve (default: embedded webroot)
@@ -85,7 +86,8 @@ type linesOptions struct {
 }
 
 type finderOptions struct {
-	input []string
+	input  []string
+	prompt string
 }
 
 type statsOptions struct {
@@ -249,6 +251,8 @@ func parseOptions(args []string) (Command, error) {
 				break
 			}
 			switch {
+			case strings.HasPrefix(opt, "--prompt="):
+				opts.prompt = strings.TrimPrefix(opt, "--prompt=")
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
 			}

@@ -350,6 +350,7 @@ func notesiumFinder(dir string, opts finderOptions) {
 		"--no-height",
 		"--no-scrollbar",
 		"--no-separator",
+		fmt.Sprintf("--prompt=%s> ", opts.prompt),
 	}
 
 	inputChan := make(chan string)
