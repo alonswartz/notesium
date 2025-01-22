@@ -60,6 +60,8 @@ func main() {
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions), os.Stdout)
 	case "finder":
 		notesiumFinder(notesiumDir, cmd.Options.(finderOptions))
+	case "cat":
+		notesiumCat(notesiumDir, cmd.Options.(catOptions))
 	case "web":
 		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
 	case "extract":
@@ -353,6 +355,24 @@ func notesiumFinder(dir string, opts finderOptions) {
 		fmt.Sprintf("--prompt=%s> ", opts.prompt),
 	}
 
+	if opts.preview {
+		executablePath, err := os.Executable()
+		if err != nil {
+			log.Fatalf("error resolving executable path: %v", err)
+		}
+
+		executablePath, err = filepath.EvalSymlinks(executablePath)
+		if err != nil {
+			log.Fatalf("error resolving symlinked executable path: %v", err)
+		}
+
+		optsFzf = append(optsFzf,
+			"--bind=ctrl-/:toggle-preview",
+			"--preview-window=+{2}-/2",
+			fmt.Sprintf("--preview=%s cat {}", executablePath),
+		)
+	}
+
 	inputChan := make(chan string)
 	outputChan := make(chan string)
 
@@ -384,6 +404,15 @@ func notesiumFinder(dir string, opts finderOptions) {
 		fmt.Fprintf(os.Stderr, "Error running fzf: %v\n", err)
 	}
 	os.Exit(code)
+}
+
+func notesiumCat(dir string, opts catOptions) {
+	path := filepath.Join(dir, opts.filename)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	fmt.Print(string(content))
 }
 
 func notesiumWeb(dir string, opts webOptions) {
