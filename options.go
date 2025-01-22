@@ -82,6 +82,9 @@ type linesOptions struct {
 	filter string
 }
 
+type finderOptions struct {
+}
+
 type statsOptions struct {
 	color Color
 	table bool
@@ -229,6 +232,10 @@ func parseOptions(args []string) (Command, error) {
 			}
 		}
 		cmd.Options = opts
+		return cmd, nil
+
+	case "finder":
+		cmd.Options = finderOptions{}
 		return cmd, nil
 
 	case "stats":

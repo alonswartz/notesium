@@ -58,6 +58,8 @@ func main() {
 		notesiumLines(notesiumDir, cmd.Options.(linesOptions), os.Stdout)
 	case "stats":
 		notesiumStats(notesiumDir, cmd.Options.(statsOptions), os.Stdout)
+	case "finder":
+		notesiumFinder(notesiumDir, cmd.Options.(finderOptions))
 	case "web":
 		notesiumWeb(notesiumDir, cmd.Options.(webOptions))
 	case "extract":
@@ -329,6 +331,61 @@ func notesiumStats(dir string, opts statsOptions, w io.Writer) {
 	fmt.Fprintf(w, keyFormat+" %d\n", "lines", lines)
 	fmt.Fprintf(w, keyFormat+" %d\n", "words", words)
 	fmt.Fprintf(w, keyFormat+" %d\n", "chars", chars)
+}
+
+func notesiumFinder(dir string, opts finderOptions) {
+	optsInput := []string{
+		"list",
+		"--color",
+		"--prefix=label",
+		"--sort=alpha",
+	}
+
+	optsFzf := []string{
+		"--ansi",
+		"--exact",
+		"--no-sort",
+		"--delimiter=:",
+		"--with-nth=3..",
+		"--reverse",
+		"--border",
+		"--no-height",
+		"--no-scrollbar",
+		"--no-separator",
+	}
+
+	inputCmd, err := parseOptions(optsInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	inputChan := make(chan string)
+	outputChan := make(chan string)
+
+	go func() {
+		defer close(inputChan)
+		writer := &channelWriter{ch: inputChan}
+
+		switch inputCmd.Name {
+		case "list":
+			notesiumList(dir, inputCmd.Options.(listOptions), writer)
+		default:
+			log.Fatal("input command not supported: ", inputCmd.Name)
+		}
+	}()
+
+	go func() {
+		defer close(outputChan)
+		for output := range outputChan {
+			fmt.Printf(output)
+		}
+	}()
+
+	code, err := runFinder(inputChan, outputChan, optsFzf)
+	if code != 0 && code != 130 && err != nil {
+		fmt.Fprintf(os.Stderr, "Error running fzf: %v\n", err)
+	}
+	os.Exit(code)
 }
 
 func notesiumWeb(dir string, opts webOptions) {
