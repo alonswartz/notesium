@@ -408,11 +408,12 @@ func notesiumFinder(dir string, opts finderOptions) {
 
 func notesiumCat(dir string, opts catOptions) {
 	path := filepath.Join(dir, opts.filename)
-	content, err := os.ReadFile(path)
+	file, err := os.Open(path)
 	if err != nil {
-		log.Fatalf("%v\n", err)
+		log.Fatalf("Error opening file: %v\n", err)
 	}
-	fmt.Print(string(content))
+	defer file.Close()
+	renderMarkdown(file, os.Stdout)
 }
 
 func notesiumWeb(dir string, opts webOptions) {
