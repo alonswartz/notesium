@@ -14,6 +14,7 @@ const (
 	ansiItalic     = "\033[3m"
 	ansiLink       = "\033[34m"
 	ansiCodeBlock  = "\033[33m"
+	ansiInlineCode = "\033[33m"
 	ansiBlockQuote = "\033[36m"
 	ansiListMarker = "\033[36m"
 	ansiReset      = "\033[0m"
@@ -25,6 +26,7 @@ var (
 	reItalicAlt      = regexp.MustCompile(`_(.*?)_`)
 	reUnorderedList  = regexp.MustCompile(`^(\s*[-+*]) `)
 	reOrderedList    = regexp.MustCompile(`^(\s*\d+\.) `)
+	reInlineCode     = regexp.MustCompile("`(.*?)`")
 	reLinkPlain      = regexp.MustCompile(`(?:https?://|www\.)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/[^\s]*)?`)
 	reLinkMarkdown   = regexp.MustCompile(`\[(.[^]]*?)\]\((.[^)]*?)\)`)
 )
@@ -64,6 +66,16 @@ func highlightLine(line string, inCodeBlock *bool) string {
 		return ansiBlockQuote + line + ansiReset
 	}
 
+	// Inline code
+	matches := reInlineCode.FindAllStringSubmatchIndex(line, -1)
+	if len(matches) > 0 {
+		return highlightLineWithInlineCode(line, matches)
+	}
+
+	return highlightString(line)
+}
+
+func highlightString(line string) string {
 	// Links
 	line = highlightLink(line, reLinkMarkdown, ansiLink)
 	line = highlightRegex(line, reLinkPlain, ansiLink, 0)
@@ -99,4 +111,32 @@ func highlightLink(line string, re *regexp.Regexp, ansiCode string) string {
 		}
 		return match
 	})
+}
+
+func highlightLineWithInlineCode(line string, matches [][]int) string {
+	var builder strings.Builder
+	prevIndex := 0
+
+	for _, match := range matches {
+		start, end := match[0], match[1]
+		groupStart, groupEnd := match[2], match[3]
+
+		// Handle text before inline code
+		if start > prevIndex {
+			builder.WriteString(highlightString(line[prevIndex:start]))
+		}
+
+		builder.WriteString(ansiInlineCode)
+		builder.WriteString(line[groupStart:groupEnd])
+		builder.WriteString(ansiReset)
+
+		prevIndex = end
+	}
+
+	// Handle text after inline code
+	if prevIndex < len(line) {
+		builder.WriteString(highlightString(line[prevIndex:]))
+	}
+
+	return builder.String()
 }
