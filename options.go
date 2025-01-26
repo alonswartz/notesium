@@ -93,7 +93,8 @@ type finderOptions struct {
 }
 
 type catOptions struct {
-	filename string
+	filename   string
+	lineNumber int
 }
 
 type statsOptions struct {
@@ -335,14 +336,20 @@ func parseOptions(args []string) (Command, error) {
 		return cmd, nil
 
 	case "cat":
+		opts := catOptions{}
+		opts.lineNumber = 0
 		if len(args) != 2 {
 			return Command{}, fmt.Errorf("filename not specified or too many arguments")
 		}
-		filename := args[1]
-		if colonIndex := strings.Index(filename, ":"); colonIndex != -1 {
-			filename = filename[:colonIndex]
+
+		parts := strings.Split(args[1], ":")
+		opts.filename = parts[0]
+		if len(parts) > 1 {
+			if num, err := strconv.Atoi(parts[1]); err == nil && num > 0 {
+				opts.lineNumber = num
+			}
 		}
-		opts := catOptions{filename: filename}
+
 		cmd.Options = opts
 		return cmd, nil
 

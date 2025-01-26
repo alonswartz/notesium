@@ -413,7 +413,7 @@ func notesiumCat(dir string, opts catOptions) {
 		log.Fatalf("Error opening file: %v\n", err)
 	}
 	defer file.Close()
-	renderMarkdown(file, os.Stdout)
+	renderMarkdown(file, os.Stdout, opts.lineNumber)
 }
 
 func notesiumWeb(dir string, opts webOptions) {
