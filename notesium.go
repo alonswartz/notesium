@@ -344,14 +344,16 @@ func notesiumFinder(dir string, opts finderOptions) {
 	optsFzf := []string{
 		"--ansi",
 		"--exact",
-		"--no-sort",
-		"--delimiter=:",
-		"--with-nth=3..",
-		"--reverse",
 		"--border",
+		"--reverse",
+		"--no-sort",
 		"--no-height",
 		"--no-scrollbar",
 		"--no-separator",
+		"--pointer=>",
+		"--delimiter=:",
+		"--with-nth=3..",
+		"--color=bg:8,bg+:0,fg:12,fg+:12,hl:11,hl+:3,pointer:9,info:3",
 		fmt.Sprintf("--prompt=%s> ", opts.prompt),
 	}
 
