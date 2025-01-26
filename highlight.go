@@ -17,6 +17,7 @@ const (
 	ansiInlineCode = "\033[33m"
 	ansiBlockQuote = "\033[36m"
 	ansiListMarker = "\033[36m"
+	ansiLineBg     = "\033[40m"
 	ansiReset      = "\033[0m"
 )
 var (
@@ -29,15 +30,20 @@ var (
 	reInlineCode     = regexp.MustCompile("`(.*?)`")
 	reLinkPlain      = regexp.MustCompile(`(?:https?://|www\.)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/[^\s]*)?`)
 	reLinkMarkdown   = regexp.MustCompile(`\[(.[^]]*?)\]\((.[^)]*?)\)`)
+	reAnsi           = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+	reReset          = regexp.MustCompile(`\x1b\[0m`)
 )
 
-func renderMarkdown(reader io.Reader, writer io.Writer) {
+func renderMarkdown(reader io.Reader, writer io.Writer, lineNumber int) {
 	inCodeBlock := false
 	scanner := bufio.NewScanner(reader)
 
-	for scanner.Scan() {
+	for lineIndex := 1; scanner.Scan(); lineIndex++ {
 		line := scanner.Text()
 		highlightedLine := highlightLine(line, &inCodeBlock)
+		if lineNumber > 0 && lineNumber == lineIndex {
+			highlightedLine = highlightLineWithBackground(highlightedLine)
+		}
 		fmt.Fprintln(writer, highlightedLine)
 	}
 
@@ -139,4 +145,23 @@ func highlightLineWithInlineCode(line string, matches [][]int) string {
 	}
 
 	return builder.String()
+}
+
+
+func highlightLineWithBackground(highlightedLine string) string {
+	// apply bg after resets to handle segments
+	highlightedLine = reReset.ReplaceAllStringFunc(highlightedLine, func(reset string) string {
+		return reset + ansiLineBg
+	})
+
+	// apply padding
+	termWidth := 79
+	visibleChars := len(reAnsi.ReplaceAllString(highlightedLine, ""))
+	requiredPadding := termWidth - visibleChars
+	if requiredPadding > 0 {
+		padding := strings.Repeat(" ", requiredPadding)
+		highlightedLine += ansiLineBg + padding
+	}
+
+	return ansiLineBg + highlightedLine + ansiReset
 }
