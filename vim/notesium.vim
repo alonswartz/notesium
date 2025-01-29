@@ -100,9 +100,10 @@ command! -nargs=* NotesiumList
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': {'width': 0.85, 'height': 0.85} })
 
-command! -nargs=* NotesiumLinks
+command! -bang -nargs=* NotesiumLinks
   \ let s:is_note = expand("%:t") =~# '^[0-9a-f]\{8\}\.md$' |
-  \ let s:args = <q-args> . (s:is_note ? ' ' . expand("%:t") : '') |
+  \ let s:filename = ("<bang>" == "!" && s:is_note) ? expand("%:t") : '' |
+  \ let s:args = <q-args> . (!empty(s:filename) ? ' ' . s:filename : '') |
   \ call notesium#finder({
   \   'input': 'links ' . join(map(split(s:args), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumLinks' . (&columns > 79 ? ' --preview' : ''),
@@ -157,7 +158,7 @@ nnoremap <Leader>nw :NotesiumWeekly<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
-nnoremap <Leader>nk :NotesiumLinks --color<CR>
+nnoremap <Leader>nk :NotesiumLinks! --color<CR>
 nnoremap <Leader>ns :NotesiumLines --prefix=title --color<CR>
 nnoremap <silent> <Leader>nW :NotesiumWeb<CR>
 
