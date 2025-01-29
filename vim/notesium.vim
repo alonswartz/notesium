@@ -164,12 +164,16 @@ nnoremap <Leader>nd :NotesiumDaily<CR>
 nnoremap <Leader>nw :NotesiumWeekly<CR>
 nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
 nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
-nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
+nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006/Week%V<CR>
 nnoremap <Leader>nk :NotesiumLinks! --color<CR>
 nnoremap <Leader>ns :NotesiumLines --prefix=title --color<CR>
 nnoremap <silent> <Leader>nW :NotesiumWeb<CR>
 
-" overrides for journal
+" overrides
+if g:notesium_weekstart ==# 'sunday'
+  nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006/Week%U<CR>
+endif
+
 if $NOTESIUM_DIR =~ '**/journal/*'
   nnoremap <Leader>nl :NotesiumList --prefix=label --sort=mtime --color<CR>
 endif
