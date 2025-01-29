@@ -106,11 +106,12 @@ command! -bang -nargs=* NotesiumLinks
   \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
 
-command! -bang -nargs=* NotesiumSearch
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium lines '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
+command! -nargs=* NotesiumSearch
+  \ call notesium#finder({
+  \   'input': 'lines ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
+  \   'options': '--prompt=NotesiumSearch' . (&columns > 79 ? ' --preview' : ''),
+  \   'callback': function('notesium#finder_callback_editfile'),
+  \   'window': {'width': 0.85, 'height': 0.85} })
 
 command! -bang -nargs=* NotesiumDaily
   \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
