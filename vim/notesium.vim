@@ -89,10 +89,6 @@ endfunction
 command! NotesiumNew
   \ execute ":e" system("notesium new")
 
-command! NotesiumWeb
-  \ let s:options = "--stop-on-idle --open-browser" |
-  \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
-
 command! -nargs=* NotesiumInsertLink
   \ call notesium#finder({
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
@@ -157,6 +153,16 @@ command! -nargs=* NotesiumWeekly
   \   let s:weekEndStr = strftime('%a %b %d', s:weekBegEpoch + (6 * 86400)) |
   \   let s:title = printf('# %s (%s - %s)', s:yearWeekStr, s:weekBegStr, s:weekEndStr) |
   \   call setline(1, s:title) |
+  \ endif
+
+command! NotesiumWeb
+  \ let s:args = "--stop-on-idle --open-browser" |
+  \ if has('unix') |
+  \   execute ":silent !nohup notesium web ".s:args." > /dev/null 2>&1 &" |
+  \ elseif has('win32') || has('win64') |
+  \   execute ":silent !powershell -Command \"Start-Process -NoNewWindow notesium -ArgumentList 'web ".s:args."'\"" |
+  \ else |
+  \   throw "Unsupported platform" |
   \ endif
 
 " Notesium mappings {{{1
