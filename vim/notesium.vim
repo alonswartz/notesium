@@ -1,21 +1,28 @@
 " vim:foldmethod=marker
 
-let $NOTESIUM_DIR = trim(system("notesium home"))
+" Notesium configuration {{{1
+" ----------------------------------------------------------------------------
 
-if !exists('g:notesium_mappings')
+if !exists('g:notesium_mappings') || empty(g:notesium_mappings)
   let g:notesium_mappings = 1
 endif
 
-if !exists('g:notesium_weekstart')
+if !exists('g:notesium_weekstart') || empty(g:notesium_weekstart)
   let g:notesium_weekstart = 'monday'
 endif
+
+if !exists('g:notesium_bin') || empty(g:notesium_bin)
+  let g:notesium_bin = 'notesium'
+endif
+
+let $NOTESIUM_DIR = trim(system(g:notesium_bin . ' home'))
 
 " Notesium finder {{{1
 " ----------------------------------------------------------------------------
 
 function! notesium#finder(config) abort
   " Prepare command
-  let l:cmd = 'notesium finder ' . get(a:config, 'options', '')
+  let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
   let l:cmd .= ' -- ' . get(a:config, 'input', '')
 
   " Set window dimensions
@@ -87,7 +94,7 @@ endfunction
 " ----------------------------------------------------------------------------
 
 command! NotesiumNew
-  \ execute ":e" system("notesium new")
+  \ execute ":e" system(g:notesium_bin . ' new')
 
 command! -nargs=* NotesiumInsertLink
   \ call notesium#finder({
@@ -122,7 +129,7 @@ command! -nargs=* NotesiumLines
 
 command! -nargs=* NotesiumDaily
   \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
-  \ let s:output = system('notesium new --verbose --ctime='.s:cdate.'T00:00:00') |
+  \ let s:output = system(g:notesium_bin.' new --verbose --ctime='.s:cdate.'T00:00:00') |
   \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
   \ execute 'edit ' . s:filepath |
   \ if getline(1) =~ '^\s*$' |
@@ -137,7 +144,7 @@ command! -nargs=* NotesiumWeekly
   \   throw "Invalid g:notesium_weekstart: " . g:notesium_weekstart |
   \ endif |
   \ let s:date = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
-  \ let s:output = system('notesium new --verbose --ctime='.s:date.'T00:00:01') |
+  \ let s:output = system(g:notesium_bin.' new --verbose --ctime='.s:date.'T00:00:01') |
   \ let s:epoch = str2nr(matchstr(s:output, 'epoch:\zs[^\n]*')) |
   \ let s:day = strftime('%u', s:epoch) |
   \ let s:diff = (s:day - s:startOfWeek + 7) % 7 |
@@ -160,9 +167,9 @@ command! -nargs=* NotesiumWeb
   \ let s:q_args = filter(split(<q-args>), 'index(s:r_args, v:val) == -1') + s:r_args |
   \ let s:args = join(map(s:q_args, 'shellescape(v:val)'), ' ') |
   \ if has('unix') |
-  \   execute ":silent !nohup notesium web ".s:args." > /dev/null 2>&1 &" |
+  \   execute ":silent !nohup ".g:notesium_bin." web ".s:args." > /dev/null 2>&1 &" |
   \ elseif has('win32') || has('win64') |
-  \   execute ":silent !powershell -Command \"Start-Process -NoNewWindow notesium -ArgumentList 'web ".s:args."'\"" |
+  \   execute ":silent !powershell -Command \"Start-Process -NoNewWindow ".g:notesium_bin." -ArgumentList 'web ".s:args."'\"" |
   \ else |
   \   throw "Unsupported platform" |
   \ endif
