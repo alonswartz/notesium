@@ -79,7 +79,7 @@ endfunction
 " Notesium commands {{{1
 " ----------------------------------------------------------------------------
 
-autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ notesium#finder({
+autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <buffer> <expr> [[ notesium#finder({
   \ 'input': 'list --sort=mtime',
   \ 'options': '--prompt=NotesiumInsertLink',
   \ 'callback': function('notesium#finder_callback_insertlink'),
