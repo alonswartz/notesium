@@ -1,5 +1,83 @@
+" vim:foldmethod=marker
+
 let $NOTESIUM_DIR = trim(system("notesium home"))
 let $NOTESIUM_WEEKSTART = 1 "0 Sunday, 1 Monday, ...
+
+" Notesium finder {{{1
+" ----------------------------------------------------------------------------
+
+function! notesium#finder(config) abort
+  " Prepare command
+  let l:cmd = 'notesium finder ' . get(a:config, 'options', '')
+  let l:cmd .= ' -- ' . get(a:config, 'input', '')
+
+  " Set window dimensions
+  let l:width = float2nr(&columns * get(a:config['window'], 'width', 0.85))
+  let l:height = float2nr(&lines * get(a:config['window'], 'height', 0.85))
+  let l:opts = {
+    \ 'relative': 'editor',
+    \ 'style': 'minimal',
+    \ 'row': (&lines - l:height) / 2,
+    \ 'col': (&columns - l:width) / 2,
+    \ 'width': l:width,
+    \ 'height': l:height }
+
+  " Create buffer and floating window
+  highlight link NormalFloat Normal
+  let l:buf = nvim_create_buf(v:false, v:true)
+  let l:win = nvim_open_win(l:buf, v:true, l:opts)
+
+  " Make sure we're in normal mode and start finder
+  call feedkeys("\<Esc>", 'n')
+  call termopen(l:cmd, {
+    \ 'on_exit': {
+    \   job_id, exit_code, _ ->
+    \   notesium#finder_finalize(exit_code, l:buf, a:config['callback']) }})
+
+  " Focus the terminal and switch to insert mode
+  call nvim_set_current_win(l:win)
+  call feedkeys('i', 'n')
+endfunction
+
+function! notesium#finder_finalize(exit_code, buf, callback) abort
+  " Capture buffer output, cleanup and validate
+  let l:output = trim(join(getbufline(a:buf, 1, '$'), "\n"))
+  if bufexists(a:buf)
+    execute 'bwipeout!' a:buf
+  endif
+  if empty(l:output) || a:exit_code == 130
+    return
+  endif
+  if a:exit_code != 0
+    echoerr printf("Finder error (%d): %s", a:exit_code, l:output)
+    return
+  endif
+
+  " Parse output (filename:linenumber:text) and pass to callback
+  let l:parts = split(l:output, ':', 3)
+  if len(l:parts) < 3
+    echoerr "Invalid finder output: " . l:output
+    return
+  endif
+  call a:callback(l:parts[0], l:parts[1], trim(l:parts[2]))
+endfunction
+
+" Notesium finder callbacks {{{1
+" ----------------------------------------------------------------------------
+
+function! notesium#finder_callback_editfile(filename, linenumber, text) abort
+  let l:file_path = fnamemodify($NOTESIUM_DIR, ':p') . a:filename
+  execute 'edit' fnameescape(l:file_path)
+  execute a:linenumber . 'normal! zz'
+endfunction
+
+function! notesium#finder_callback_insertlink(filename, linenumber, text) abort
+  let l:link = printf("[%s](%s)", a:text, a:filename)
+  call feedkeys("a" . l:link, 'n')
+endfunction
+
+" Notesium commands {{{1
+" ----------------------------------------------------------------------------
 
 autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
   \ 'source': 'notesium list --sort=mtime',
@@ -62,6 +140,9 @@ command! -bang -nargs=* NotesiumWeekly
   \   let s:title = printf('# %s (%s - %s)', s:yearWeekStr, s:weekBegStr, s:weekEndStr) |
   \   call setline(1, s:title) |
   \ endif
+
+" Notesium mappings {{{1
+" ----------------------------------------------------------------------------
 
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nd :NotesiumDaily<CR>
