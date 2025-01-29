@@ -155,8 +155,10 @@ command! -nargs=* NotesiumWeekly
   \   call setline(1, s:title) |
   \ endif
 
-command! NotesiumWeb
-  \ let s:args = "--stop-on-idle --open-browser" |
+command! -nargs=* NotesiumWeb
+  \ let s:r_args = ["--stop-on-idle", "--open-browser"] |
+  \ let s:q_args = filter(split(<q-args>), 'index(s:r_args, v:val) == -1') + s:r_args |
+  \ let s:args = join(map(s:q_args, 'shellescape(v:val)'), ' ') |
   \ if has('unix') |
   \   execute ":silent !nohup notesium web ".s:args." > /dev/null 2>&1 &" |
   \ elseif has('win32') || has('win64') |
