@@ -86,10 +86,10 @@ endfunction
 " Notesium commands {{{1
 " ----------------------------------------------------------------------------
 
-command! -bang NotesiumNew
+command! NotesiumNew
   \ execute ":e" system("notesium new")
 
-command! -bang NotesiumWeb
+command! NotesiumWeb
   \ let s:options = "--stop-on-idle --open-browser" |
   \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
 
@@ -124,7 +124,7 @@ command! -nargs=* NotesiumLines
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': {'width': 0.85, 'height': 0.85} })
 
-command! -bang -nargs=* NotesiumDaily
+command! -nargs=* NotesiumDaily
   \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
   \ let s:output = system('notesium new --verbose --ctime='.s:cdate.'T00:00:00') |
   \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
