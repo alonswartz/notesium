@@ -100,11 +100,12 @@ command! -nargs=* NotesiumList
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': {'width': 0.85, 'height': 0.85} })
 
-command! -bang -nargs=* NotesiumLinks
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
+command! -nargs=* NotesiumLinks
+  \ call notesium#finder({
+  \   'input': 'links ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
+  \   'options': '--prompt=NotesiumLinks' . (&columns > 79 ? ' --preview' : ''),
+  \   'callback': function('notesium#finder_callback_editfile'),
+  \   'window': {'width': 0.85, 'height': 0.85} })
 
 command! -nargs=* NotesiumLines
   \ call notesium#finder({
