@@ -92,11 +92,12 @@ command! -bang NotesiumWeb
   \ let s:options = "--stop-on-idle --open-browser" |
   \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
 
-command! -bang -nargs=* NotesiumList
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium list '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
+command! -nargs=* NotesiumList
+  \ call notesium#finder({
+  \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
+  \   'options': '--prompt=NotesiumList' . (&columns > 79 ? ' --preview' : ''),
+  \   'callback': function('notesium#finder_callback_editfile'),
+  \   'window': {'width': 0.85, 'height': 0.85} })
 
 command! -bang -nargs=* NotesiumLinks
   \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
