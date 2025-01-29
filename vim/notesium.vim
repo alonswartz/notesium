@@ -1,7 +1,10 @@
 " vim:foldmethod=marker
 
 let $NOTESIUM_DIR = trim(system("notesium home"))
-let $NOTESIUM_WEEKSTART = 1 "0 Sunday, 1 Monday, ...
+
+if !exists('g:notesium_weekstart')
+  let g:notesium_weekstart = 'monday'
+endif
 
 " Notesium finder {{{1
 " ----------------------------------------------------------------------------
@@ -127,12 +130,16 @@ command! -bang -nargs=* NotesiumDaily
   \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', s:epoch)) |
   \ endif
 
-command! -bang -nargs=* NotesiumWeekly
+command! -nargs=* NotesiumWeekly
+  \ let s:daysMap = {'sunday': 0, 'monday': 1, 'tuesday': 2,'wednesday': 3, 'thursday': 4, 'friday': 5, 'saturday': 6} |
+  \ let s:startOfWeek = get(s:daysMap, g:notesium_weekstart, -1) |
+  \ if s:startOfWeek == -1 |
+  \   throw "Invalid g:notesium_weekstart: " . g:notesium_weekstart |
+  \ endif |
   \ let s:date = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
   \ let s:output = system('notesium new --verbose --ctime='.s:date.'T00:00:01') |
   \ let s:epoch = str2nr(matchstr(s:output, 'epoch:\zs[^\n]*')) |
   \ let s:day = strftime('%u', s:epoch) |
-  \ let s:startOfWeek = empty($NOTESIUM_WEEKSTART) ? 1 : $NOTESIUM_WEEKSTART |
   \ let s:diff = (s:day - s:startOfWeek + 7) % 7 |
   \ let s:weekBegEpoch = s:epoch - (s:diff * 86400) |
   \ let s:weekBegDate = strftime('%Y-%m-%d', s:weekBegEpoch) |
