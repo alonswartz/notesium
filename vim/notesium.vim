@@ -79,18 +79,19 @@ endfunction
 " Notesium commands {{{1
 " ----------------------------------------------------------------------------
 
-autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <buffer> <expr> [[ notesium#finder({
-  \ 'input': 'list --sort=mtime',
-  \ 'options': '--prompt=NotesiumInsertLink',
-  \ 'callback': function('notesium#finder_callback_insertlink'),
-  \ 'window': {'width': 0.5, 'height': 0.5} })
-
 command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
 
 command! -bang NotesiumWeb
   \ let s:options = "--stop-on-idle --open-browser" |
   \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
+
+command! -nargs=* NotesiumInsertLink
+  \ call notesium#finder({
+  \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
+  \   'options': '--prompt=NotesiumInsertLink',
+  \   'callback': function('notesium#finder_callback_insertlink'),
+  \   'window': {'width': 0.5, 'height': 0.5} })
 
 command! -nargs=* NotesiumList
   \ call notesium#finder({
@@ -145,6 +146,7 @@ command! -bang -nargs=* NotesiumWeekly
 " Notesium mappings {{{1
 " ----------------------------------------------------------------------------
 
+autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <buffer> <expr> [[ execute(':NotesiumInsertLink --sort=mtime')
 nnoremap <Leader>nn :NotesiumNew<CR>
 nnoremap <Leader>nd :NotesiumDaily<CR>
 nnoremap <Leader>nw :NotesiumWeekly<CR>
