@@ -106,10 +106,10 @@ command! -bang -nargs=* NotesiumLinks
   \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
   \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
 
-command! -nargs=* NotesiumSearch
+command! -nargs=* NotesiumLines
   \ call notesium#finder({
   \   'input': 'lines ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
-  \   'options': '--prompt=NotesiumSearch' . (&columns > 79 ? ' --preview' : ''),
+  \   'options': '--prompt=NotesiumLines' . (&columns > 79 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': {'width': 0.85, 'height': 0.85} })
 
@@ -156,7 +156,7 @@ nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
 nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
 nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
 nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
-nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
+nnoremap <Leader>ns :NotesiumLines --prefix=title --color<CR>
 nnoremap <silent> <Leader>nW :NotesiumWeb<CR>
 
 " overrides for journal
