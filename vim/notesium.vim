@@ -79,11 +79,11 @@ endfunction
 " Notesium commands {{{1
 " ----------------------------------------------------------------------------
 
-autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
-  \ 'source': 'notesium list --sort=mtime',
-  \ 'options': '+s -d : --with-nth 3.. --prompt "NotesiumInsertLink> "',
-  \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
-  \ 'window': {'width': 0.5, 'height': 0.5}})
+autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ notesium#finder({
+  \ 'input': 'list --sort=mtime',
+  \ 'options': '--prompt=NotesiumInsertLink',
+  \ 'callback': function('notesium#finder_callback_insertlink'),
+  \ 'window': {'width': 0.5, 'height': 0.5} })
 
 command! -bang NotesiumNew
   \ execute ":e" system("notesium new")
