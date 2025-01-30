@@ -16,20 +16,39 @@ func (cw *channelWriter) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func runFinder(inputChan chan string, outputChan chan string, opts []string) (int, error) {
+func runFinder(inputChan chan string, opts []string) ([]string, int, error) {
 	options, err := fzf.ParseOptions(false, opts)
 	if err != nil {
-		return 2, fmt.Errorf("fzf error: %w", err)
+		return nil, 2, fmt.Errorf("fzf error: %w", err)
 	}
+
+	outputChan := make(chan string)
+	resultChan := make(chan struct {
+		code int
+		err  error
+	}, 1)
 
 	options.Input = inputChan
 	options.Output = outputChan
 
-	code, err := fzf.Run(options)
-	if err != nil {
-		return code, fmt.Errorf("error running fzf: %w", err)
+	go func() {
+		code, runErr := fzf.Run(options)
+		close(outputChan)
+
+		resultChan <- struct {
+			code int
+			err  error
+		}{code, runErr}
+
+		close(resultChan)
+	}()
+
+	var lines []string
+	for line := range outputChan {
+		lines = append(lines, line)
 	}
 
-	return code, nil
+	result := <-resultChan
+	return lines, result.code, result.err
 }
 
