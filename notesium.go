@@ -376,8 +376,6 @@ func notesiumFinder(dir string, opts finderOptions) {
 	}
 
 	inputChan := make(chan string)
-	outputChan := make(chan string)
-
 	go func() {
 		defer close(inputChan)
 		writer := &channelWriter{ch: inputChan}
@@ -394,16 +392,12 @@ func notesiumFinder(dir string, opts finderOptions) {
 		}
 	}()
 
-	go func() {
-		defer close(outputChan)
-		for output := range outputChan {
-			fmt.Printf(output)
-		}
-	}()
-
-	code, err := runFinder(inputChan, outputChan, optsFzf)
+	results, code, err := runFinder(inputChan, optsFzf)
 	if code != 0 && code != 130 && err != nil {
 		fmt.Fprintf(os.Stderr, "Error running fzf: %v\n", err)
+	}
+	for _, line := range results {
+		fmt.Print(line)
 	}
 	os.Exit(code)
 }
