@@ -138,7 +138,10 @@ command! -nargs=* NotesiumInsertLink
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumInsertLink',
   \   'callback': function('notesium#finder_callback_insertlink'),
-  \   'window': {'width': 0.5, 'height': 0.5} })
+  \   'window': {
+  \     'width': (&columns > 79 ? 0.5 : 0.85),
+  \     'height': (&columns > 79 ? 0.5 : 0.85)
+  \   } })
 
 command! -nargs=* NotesiumList
   \ call notesium#finder({
