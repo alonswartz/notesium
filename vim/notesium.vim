@@ -15,6 +15,14 @@ if !exists('g:notesium_bin') || empty(g:notesium_bin)
   let g:notesium_bin = 'notesium'
 endif
 
+if !exists('g:notesium_window') || empty(g:notesium_window)
+  let g:notesium_window = {'width': 0.85, 'height': 0.85}
+endif
+
+if !exists('g:notesium_window_small') || empty(g:notesium_window_small)
+  let g:notesium_window_small = {'width': 0.5, 'height': 0.5}
+endif
+
 function! notesium#get_notesium_dir() abort
   let l:output = systemlist(g:notesium_bin . ' home')
   if empty(l:output) || v:shell_error
@@ -37,8 +45,8 @@ if has('nvim')
     let l:cmd .= ' -- ' . get(a:config, 'input', '')
 
     " Set window dimensions
-    let l:width = float2nr(&columns * get(a:config['window'], 'width', 0.85))
-    let l:height = float2nr(&lines * get(a:config['window'], 'height', 0.85))
+    let l:width = float2nr(&columns * get(a:config['window'], 'width', 1))
+    let l:height = float2nr(&lines * get(a:config['window'], 'height', 1))
     let l:opts = {
       \ 'relative': 'editor',
       \ 'style': 'minimal',
@@ -138,17 +146,14 @@ command! -nargs=* NotesiumInsertLink
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumInsertLink',
   \   'callback': function('notesium#finder_callback_insertlink'),
-  \   'window': {
-  \     'width': (&columns > 79 ? 0.5 : 0.85),
-  \     'height': (&columns > 79 ? 0.5 : 0.85)
-  \   } })
+  \   'window': (&columns > 79 ? g:notesium_window_small : g:notesium_window) })
 
 command! -nargs=* NotesiumList
   \ call notesium#finder({
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumList' . (&columns > 79 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
-  \   'window': {'width': 0.85, 'height': 0.85} })
+  \   'window': g:notesium_window })
 
 command! -bang -nargs=* NotesiumLinks
   \ let s:is_note = expand("%:t") =~# '^[0-9a-f]\{8\}\.md$' |
@@ -158,14 +163,14 @@ command! -bang -nargs=* NotesiumLinks
   \   'input': 'links ' . join(map(split(s:args), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumLinks' . (&columns > 79 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
-  \   'window': {'width': 0.85, 'height': 0.85} })
+  \   'window': g:notesium_window })
 
 command! -nargs=* NotesiumLines
   \ call notesium#finder({
   \   'input': 'lines ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumLines' . (&columns > 79 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
-  \   'window': {'width': 0.85, 'height': 0.85} })
+  \   'window': g:notesium_window })
 
 command! -nargs=* NotesiumDaily
   \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
