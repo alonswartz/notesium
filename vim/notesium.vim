@@ -88,8 +88,28 @@ if has('nvim')
 
 else
 
-  echoerr "Error: Notesium currently requires Neovim"
-  finish
+  function! notesium#finder(config) abort
+    " Prepare the command
+    let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
+    let l:cmd .= ' -- ' . get(a:config, 'input', '')
+
+    " Start the finder
+    let l:output = system(l:cmd)
+    redraw!
+    if empty(l:output) || v:shell_error
+      return
+    endif
+
+    " Parse output (filename:linenumber:text) and pass to callback
+    let l:parts = split(l:output, ':', 3)
+    if len(l:parts) < 3
+        echoerr "Invalid finder output: " . l:output
+        return
+    endif
+
+    let l:text = substitute(l:parts[2], '^\s*\(.\{-}\)\s*\n*$', '\1', '')
+    silent! call a:config['callback'](l:parts[0], l:parts[1], l:text)
+  endfunction
 
 endif
 
