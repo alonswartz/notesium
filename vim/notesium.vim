@@ -29,60 +29,69 @@ let $NOTESIUM_DIR = notesium#get_notesium_dir()
 " Notesium finder {{{1
 " ----------------------------------------------------------------------------
 
-function! notesium#finder(config) abort
-  " Prepare command
-  let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
-  let l:cmd .= ' -- ' . get(a:config, 'input', '')
+if has('nvim')
 
-  " Set window dimensions
-  let l:width = float2nr(&columns * get(a:config['window'], 'width', 0.85))
-  let l:height = float2nr(&lines * get(a:config['window'], 'height', 0.85))
-  let l:opts = {
-    \ 'relative': 'editor',
-    \ 'style': 'minimal',
-    \ 'row': (&lines - l:height) / 2,
-    \ 'col': (&columns - l:width) / 2,
-    \ 'width': l:width,
-    \ 'height': l:height }
+  function! notesium#finder(config) abort
+    " Prepare command
+    let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
+    let l:cmd .= ' -- ' . get(a:config, 'input', '')
 
-  " Create buffer and floating window
-  highlight link NormalFloat Normal
-  let l:buf = nvim_create_buf(v:false, v:true)
-  let l:win = nvim_open_win(l:buf, v:true, l:opts)
+    " Set window dimensions
+    let l:width = float2nr(&columns * get(a:config['window'], 'width', 0.85))
+    let l:height = float2nr(&lines * get(a:config['window'], 'height', 0.85))
+    let l:opts = {
+      \ 'relative': 'editor',
+      \ 'style': 'minimal',
+      \ 'row': (&lines - l:height) / 2,
+      \ 'col': (&columns - l:width) / 2,
+      \ 'width': l:width,
+      \ 'height': l:height }
 
-  " Start the finder
-  call termopen(l:cmd, {
-    \ 'on_exit': {
-    \   job_id, exit_code, _ ->
-    \   notesium#finder_finalize(exit_code, l:buf, a:config['callback']) }})
+    " Create buffer and floating window
+    highlight link NormalFloat Normal
+    let l:buf = nvim_create_buf(v:false, v:true)
+    let l:win = nvim_open_win(l:buf, v:true, l:opts)
 
-  " Focus the terminal and switch to insert mode
-  call nvim_set_current_win(l:win)
-  call feedkeys('i', 'n')
-endfunction
+    " Start the finder
+    call termopen(l:cmd, {
+      \ 'on_exit': {
+      \   job_id, exit_code, _ ->
+      \   notesium#finder_finalize(exit_code, l:buf, a:config['callback']) }})
 
-function! notesium#finder_finalize(exit_code, buf, callback) abort
-  " Capture buffer output, cleanup and validate
-  let l:output = trim(join(getbufline(a:buf, 1, '$'), "\n"))
-  if bufexists(a:buf)
-    execute 'bwipeout!' a:buf
-  endif
-  if empty(l:output) || a:exit_code == 130
-    return
-  endif
-  if a:exit_code != 0
-    echoerr printf("Finder error (%d): %s", a:exit_code, l:output)
-    return
-  endif
+    " Focus the terminal and switch to insert mode
+    call nvim_set_current_win(l:win)
+    call feedkeys('i', 'n')
+  endfunction
 
-  " Parse output (filename:linenumber:text) and pass to callback
-  let l:parts = split(l:output, ':', 3)
-  if len(l:parts) < 3
-    echoerr "Invalid finder output: " . l:output
-    return
-  endif
-  call a:callback(l:parts[0], l:parts[1], trim(l:parts[2]))
-endfunction
+  function! notesium#finder_finalize(exit_code, buf, callback) abort
+    " Capture buffer output, cleanup and validate
+    let l:output = trim(join(getbufline(a:buf, 1, '$'), "\n"))
+    if bufexists(a:buf)
+      execute 'bwipeout!' a:buf
+    endif
+    if empty(l:output) || a:exit_code == 130
+      return
+    endif
+    if a:exit_code != 0
+      echoerr printf("Finder error (%d): %s", a:exit_code, l:output)
+      return
+    endif
+
+    " Parse output (filename:linenumber:text) and pass to callback
+    let l:parts = split(l:output, ':', 3)
+    if len(l:parts) < 3
+      echoerr "Invalid finder output: " . l:output
+      return
+    endif
+    call a:callback(l:parts[0], l:parts[1], trim(l:parts[2]))
+  endfunction
+
+else
+
+  echoerr "Error: Notesium currently requires Neovim"
+  finish
+
+endif
 
 " Notesium finder callbacks {{{1
 " ----------------------------------------------------------------------------
