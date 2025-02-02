@@ -41,8 +41,7 @@ function! notesium#finder(config) abort
   let l:buf = nvim_create_buf(v:false, v:true)
   let l:win = nvim_open_win(l:buf, v:true, l:opts)
 
-  " Make sure we're in normal mode and start finder
-  call feedkeys("\<Esc>", 'n')
+  " Start the finder
   call termopen(l:cmd, {
     \ 'on_exit': {
     \   job_id, exit_code, _ ->
@@ -87,7 +86,7 @@ endfunction
 
 function! notesium#finder_callback_insertlink(filename, linenumber, text) abort
   let l:link = printf("[%s](%s)", a:text, a:filename)
-  call feedkeys("a" . l:link, 'n')
+  call feedkeys((mode() == 'i' ? '' : 'a') . l:link, 'n')
 endfunction
 
 " Notesium commands {{{1
@@ -178,7 +177,7 @@ command! -nargs=* NotesiumWeb
 " ----------------------------------------------------------------------------
 
 if g:notesium_mappings
-  autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <buffer> <expr> [[ execute(':NotesiumInsertLink --sort=mtime')
+  autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <buffer> [[ <Esc>:NotesiumInsertLink --sort=mtime<CR>
   nnoremap <Leader>nn :NotesiumNew<CR>
   nnoremap <Leader>nd :NotesiumDaily<CR>
   nnoremap <Leader>nw :NotesiumWeekly<CR>
