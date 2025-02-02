@@ -15,7 +15,16 @@ if !exists('g:notesium_bin') || empty(g:notesium_bin)
   let g:notesium_bin = 'notesium'
 endif
 
-let $NOTESIUM_DIR = trim(system(g:notesium_bin . ' home'))
+function! notesium#get_notesium_dir() abort
+  let l:output = systemlist(g:notesium_bin . ' home')
+  if empty(l:output) || v:shell_error
+    echoerr "Failed to get NOTESIUM_DIR - " . join(l:output, "\n")
+    return ''
+  endif
+  return l:output[0]
+endfunction
+
+let $NOTESIUM_DIR = notesium#get_notesium_dir()
 
 " Notesium finder {{{1
 " ----------------------------------------------------------------------------
