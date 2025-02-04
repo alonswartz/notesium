@@ -19,6 +19,20 @@ __notesium_complete() {
 
     # handle options with equals. COMP_WORDBREAKS is global.
     _get_comp_words_by_ref -n = cur prev
+
+    if [[ "${COMP_WORDS[1]}" == "finder" ]]; then
+        if [[ "${prev}" == "--" ]]; then
+            words="$(echo -e "list\nlinks\nlines")"
+        else
+            for ((i = 1; i < ${#COMP_WORDS[@]} - 1; i++)); do
+                if [[ "${COMP_WORDS[i]}" == "--" ]]; then
+                    words="$(__notesium_opts "${COMP_WORDS[i+1]}")"
+                    break
+                fi
+            done
+        fi
+    fi
+
     case ${cur} in
         --prefix=*|--sort=*)
             prev="${cur%%=*}="
