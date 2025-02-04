@@ -55,12 +55,14 @@ It aspires and is designed to:
     - [Section folding](#section-folding)
     - [Syntax highlighting and concealment](#syntax-highlighting-and-concealment)
 - [Vim](#vim)
-    - [Example integration](#example-integration)
+    - [Setup](#setup)
+    - [Configuration](#configuration)
+    - [Commands](#commands)
     - [Keybindings](#keybindings-1)
-    - [Fzf search syntax](#fzf-search-syntax)
+    - [Finder search syntax](#finder-search-syntax)
     - [Related Vim settings](#related-vim-settings)
 - [Custom URI protocol](#custom-uri-protocol)
-    - [Example integration](#example-integration-1)
+    - [Example integration](#example-integration)
     - [Handler registration](#handler-registration)
 - [Design assumptions and rationale](#design-assumptions-and-rationale)
     - [Filenames are 8 hexidecimal digits](#filenames-are-8-hexidecimal-digits)
@@ -511,130 +513,84 @@ of the formatting characters is supported.
 
 ## Vim
 
-Notesium does not supply a Vim plugin, it is up to the user to write
-their own Vim commands and configure keybindings. That said, below are
-some fairly generic commands, with preferences configured in the
-keybindings.
+Notesium provides a Vim/Neovim plugin that integrates with the Notesium
+CLI, particularily the `finder` (interactive filter selection TUI with
+syntax highlighted preview).
 
-- Dependencies: [fzf](https://github.com/junegunn/fzf) and [fzf.vim](https://github.com/junegunn/fzf.vim).
-- Recommended: [bat](https://github.com/sharkdp/bat) for syntax highlighting in the preview.
+- Depends: [Notesium CLI](#cli) (0.6.4 or above)
 - Recommended: [vim-markdown](https://github.com/preservim/vim-markdown) for general markdown goodness.
 - Recommended: [goyo.vim](https://github.com/junegunn/goyo.vim) and [lightlight.vim](https://github.com/junegunn/limelight.vim) for distraction free writing.
 
-### Example integration
+### Setup
+
+To install the plugin, add the repository to your plugin manager and
+point its runtime path to the `vim` directory. For example:
 
 ```vim
-let $NOTESIUM_DIR = trim(system("notesium home"))
-let $NOTESIUM_WEEKSTART = 1 "0 Sunday, 1 Monday, ...
-
-autocmd BufRead,BufNewFile $NOTESIUM_DIR/*.md inoremap <expr> [[ fzf#vim#complete({
-  \ 'source': 'notesium list --sort=mtime',
-  \ 'options': '+s -d : --with-nth 3.. --prompt "NotesiumInsertLink> "',
-  \ 'reducer': {l->"[". split(l[0],':1: ')[1] ."](".split(l[0],':')[0].")"},
-  \ 'window': {'width': 0.5, 'height': 0.5}})
-
-command! -bang NotesiumNew
-  \ execute ":e" system("notesium new")
-
-command! -bang NotesiumWeb
-  \ let s:options = "--stop-on-idle --open-browser" |
-  \ execute ":silent !nohup notesium web ".s:options." > /dev/null 2>&1 &"
-
-command! -bang -nargs=* NotesiumList
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '+s -d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium list '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
-
-command! -bang -nargs=* NotesiumLinks
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium links '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
-
-command! -bang -nargs=* NotesiumSearch
-  \ let s:spec = {'dir': $NOTESIUM_DIR, 'options': '-d : --with-nth 3..'} |
-  \ call fzf#vim#grep(
-  \   'notesium lines '.join(map(split(<q-args>), 'shellescape(v:val)'), ' '), 0,
-  \   &columns > 79 ? fzf#vim#with_preview(s:spec, 'right', 'ctrl-/') : s:spec, <bang>0)
-
-command! -bang -nargs=* NotesiumDaily
-  \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
-  \ let s:output = system('notesium new --verbose --ctime='.s:cdate.'T00:00:00') |
-  \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
-  \ execute 'edit ' . s:filepath |
-  \ if getline(1) =~ '^\s*$' |
-  \   let s:epoch = matchstr(s:output, 'epoch:\zs[^\n]*') |
-  \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', s:epoch)) |
-  \ endif
-
-command! -bang -nargs=* NotesiumWeekly
-  \ let s:date = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
-  \ let s:output = system('notesium new --verbose --ctime='.s:date.'T00:00:01') |
-  \ let s:epoch = str2nr(matchstr(s:output, 'epoch:\zs[^\n]*')) |
-  \ let s:day = strftime('%u', s:epoch) |
-  \ let s:startOfWeek = empty($NOTESIUM_WEEKSTART) ? 1 : $NOTESIUM_WEEKSTART |
-  \ let s:diff = (s:day - s:startOfWeek + 7) % 7 |
-  \ let s:weekBegEpoch = s:epoch - (s:diff * 86400) |
-  \ let s:weekBegDate = strftime('%Y-%m-%d', s:weekBegEpoch) |
-  \ let s:output = system('notesium new --verbose --ctime='.s:weekBegDate.'T00:00:01') |
-  \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
-  \ execute 'edit ' . s:filepath |
-  \ if getline(1) =~ '^\s*$' |
-  \   let s:weekFmt = s:startOfWeek == 0 ? '%U' : '%V' |
-  \   let s:yearWeekStr = strftime('%G: Week' . s:weekFmt, s:weekBegEpoch) |
-  \   let s:weekBegStr = strftime('%a %b %d', s:weekBegEpoch) |
-  \   let s:weekEndStr = strftime('%a %b %d', s:weekBegEpoch + (6 * 86400)) |
-  \   let s:title = printf('# %s (%s - %s)', s:yearWeekStr, s:weekBegStr, s:weekEndStr) |
-  \   call setline(1, s:title) |
-  \ endif
-
-nnoremap <Leader>nn :NotesiumNew<CR>
-nnoremap <Leader>nd :NotesiumDaily<CR>
-nnoremap <Leader>nw :NotesiumWeekly<CR>
-nnoremap <Leader>nl :NotesiumList --prefix=label --sort=alpha --color<CR>
-nnoremap <Leader>nm :NotesiumList --prefix=mtime --sort=mtime --color<CR>
-nnoremap <Leader>nc :NotesiumList --prefix=ctime --sort=ctime --color --date=2006-01<CR>
-nnoremap <Leader>nb :NotesiumLinks --incoming <C-R>=expand("%:t")<CR><CR>
-nnoremap <Leader>nk :NotesiumLinks --color <C-R>=expand("%:t")<CR><CR>
-nnoremap <Leader>ns :NotesiumSearch --prefix=title --color<CR>
-nnoremap <silent> <Leader>nW :NotesiumWeb<CR>
-
-" overrides for journal
-if $NOTESIUM_DIR =~ '**/journal/*'
-  nnoremap <Leader>nl :NotesiumList --prefix=label --sort=mtime --color<CR>
-endif
+" init.vim or .vimrc
+Plug 'alonswartz/notesium', { 'rtp': 'vim' }
 ```
+
+```lua
+-- init.lua
+Plug('alonswartz/notesium', { ['rtp'] = 'vim' })
+```
+
+### Configuration
+
+| Setting                   | Type      | Comment
+| -------                   | ----      | -------
+| `g:notesium_bin`          | `string`  | Binary name or path (default: `notesium`)
+| `g:notesium_mappings`     | `boolean` | Enable(1) or disable(0) mappings (default: `1`)
+| `g:notesium_weekstart`    | `string`  | First day of the week (default: `monday`)
+| `g:notesium_window`       | `dict`    | Finder (`{'width': 0.85, 'height': 0.85}`)
+| `g:notesium_window_small` | `dict`    | InsertLink Finder (`{'width': 0.5, 'height': 0.5}`)
+
+Note: `g:notesium_bin` must be set prior to the plugin being sourced.
+
+### Commands
+
+| Command               | Arguments    | Comment
+| -------               | ---------    | -------
+| `:NotesiumNew`        | None         | Open new note for editing
+| `:NotesiumDaily`      | `YYYY-MM-DD` | Open new or existing daily note
+| `:NotesiumWeekly`     | `YYYY-MM-DD` | Open new or existing weekly note
+| `:NotesiumList`       | list --opts  | Finder: Notes list
+| `:NotesiumLinks!`     | links --opts | Finder: Links related to active note
+| `:NotesiumLinks`      | links --opts | Finder: All notes links
+| `:NotesiumLines`      | lines --opts | Finder: All notes lines
+| `:NotesiumInsertLink` | list --opts  | Finder: Insert selected note link
+| `:NotesiumWeb`        | web --opts   | Starts web server
+
+Note: `NotesiumWeekly` depends on `g:notesium_weekstart`.
 
 ### Keybindings
 
-| Mode   | Binding           | Comment
-| ----   | -------           | -------
-| insert | `[[`              | Opens note list, insert selection as markdown formatted link
-| normal | `<Leader>nn`      | Opens new note for editing
-| normal | `<Leader>nd`      | Opens new or existing daily note
-| normal | `<Leader>nw`      | Opens new or existing weekly note
-| normal | `<Leader>nl`      | List with prefixed label, sorted alphabetically (mtime if journal)
-| normal | `<Leader>nm`      | List with prefixed date modified, sorted by mtime
-| normal | `<Leader>nc`      | List with prefixed date created in custom format, sorted by ctime
-| normal | `<Leader>nb`      | List all notes linking to this note (backlinks)
-| normal | `<Leader>nk`      | List all links related to this note
-| normal | `<Leader>ns`      | Full text search
-| normal | `<Leader>nW`      | Opens browser with web view (auto stop webserver on idle)
-| fzf    | `C-k` `C-j`       | Move up and down in fzf window
-| fzf    | `Enter`           | Open selection
-| fzf    | `C-t` `C-x` `C-v` | Open selection in new tab, split, vertical split
-| fzf    | `C-/`             | Toggle preview
-| fzf    | `Shift-Tab`       | Multiple selection
-| normal | `ge`              | Open the link under the cursor (vim-markdown)
-| normal | `[[` `]]`         | Jump back and forward between headings (vim-markdown)
+| Mode   | Binding      | Comment
+| ----   | -------      | -------
+| insert | `[[`         | Opens note list, insert selection as markdown formatted link
+| normal | `<Leader>nn` | Opens new note for editing
+| normal | `<Leader>nd` | Opens new or existing daily note
+| normal | `<Leader>nw` | Opens new or existing weekly note
+| normal | `<Leader>nl` | List with prefixed label, sorted alphabetically (mtime if journal)
+| normal | `<Leader>nm` | List with prefixed date modified, sorted by mtime
+| normal | `<Leader>nc` | List with prefixed date created (YYYY/WeekXX), sorted by ctime
+| normal | `<Leader>nk` | List all links related to active note (or all if none)
+| normal | `<Leader>ns` | Full text search with prefixed note title
+| normal | `<Leader>nW` | Opens browser with embedded web/app (auto stop webserver on idle)
+| finder | `C-j` `↓`    | Select next entry (down)
+| finder | `C-k` `↑`    | Select previous entry (up)
+| finder | `C-/`        | Toggle preview
+| finder | `Enter`      | Submit selected entry
+| finder | `Esc`        | Dismiss finder
+| normal | `ge`         | Open the link under the cursor (vim-markdown)
+| normal | `[[` `]]`    | Jump back and forward between headings (vim-markdown)
 
-### Fzf search syntax
+### Finder search syntax
 
 | Token        | Match Type                 | Comment
 | -----        | ----------                 | -------
-| `sbtrkt`     | fuzzy-match                | Items that fuzzy match `sbtrkt`
-| `'word`      | exact-match                | Items that include `word`
+| `word`       | exact-match                | Items that include `word`
 | `^word`      | prefix exact-match         | Items that start with `word`
 | `word$`      | suffix exact-match         | Items that end with `word`
 | `!word`      | inverse exact-match        | Items that do not include `word`
@@ -642,27 +598,11 @@ endif
 | `!word$`     | inverse suffix exact-match | Items that do not end with `word`
 | `foo bar`    | multiple exact match (AND) | Items that include both `foo` AND `bar`
 | `foo \| bar` | multiple exact match (OR)  | Items that include either `foo` OR `bar`
+| `'sbtrkt`    | fuzzy-match                | Items that fuzzy match `sbtrkt`
 
 ### Related Vim settings
 
 ```vim
-" junegunn/fzf.vim
-let $FZF_DEFAULT_OPTS="--reverse --filepath-word --no-separator --no-scrollbar "
-let g:fzf_buffers_jump = 1
-let g:fzf_layout = { 'window': { 'width': 0.85, 'height': 0.85 } }
-let g:fzf_colors = {
-    \ 'fg':      ['fg', 'Normal'],
-    \ 'bg':      ['bg', 'Normal'],
-    \ 'hl':      ['fg', 'Comment'],
-    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-    \ 'hl+':     ['fg', 'Statement'],
-    \ 'info':    ['fg', 'PreProc'],
-    \ 'pointer': ['fg', 'Exception'],
-    \ 'marker':  ['fg', 'Keyword'],
-    \ 'spinner': ['fg', 'Label'],
-    \ 'header':  ['fg', 'Comment'] }
-
 " preservim/vim-markdown
 let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_folding_level = 2
