@@ -107,6 +107,10 @@ It aspires and is designed to:
     - Supports line filtering queries with AND, OR, and NOT conditionals.
 - **Stats**
     - View counts of notes, labels, orphans, links, lines, words, etc.
+- **Finder**
+    - Interactive filter selection TUI.
+    - Supports List, Links and Lines commands and their options as input.
+    - Optional preview window with syntax highlighting and concealment.
 - **Web**
     - Completely self-contained and runs locally.
     - Create and edit notes with web based editor (optional vim-mode).
@@ -291,6 +295,10 @@ Commands:
   stats             Print statistics
     --color         Color code using ansi escape sequences
     --table         Format as table with whitespace delimited columns
+  finder            Start finder (interactive filter selection TUI)
+    --preview       Display note preview (toggle with ctrl-/)
+    --prompt=STR    Set custom prompt text
+    -- CMD [OPTS]   Input (default: list --color --prefix=label --sort=alpha)
   web               Start web server
     --webroot=PATH  Path to web root to serve (default: embedded webroot)
     --mount=DIR:URI Additional directory to serve under webroot (experimental)
@@ -814,4 +822,4 @@ PAUSE=y bats tests/list.bats --tap
 
 The MIT License (MIT)
 
-Copyright (c) 2023-2024 Alon Swartz
+Copyright (c) 2023-2025 Alon Swartz
