@@ -85,13 +85,14 @@ if has('nvim')
       return
     endif
 
-    " Parse output (filename:linenumber:text) and pass to callback
-    let l:parts = split(l:output, ':', 3)
+    " Parse output (filename:linenumber: text) and pass to callback
+    let l:parts = split(l:output, ':')
     if len(l:parts) < 3
       echoerr "Invalid finder output: " . l:output
       return
     endif
-    call a:callback(l:parts[0], l:parts[1], trim(l:parts[2]))
+    let l:text = trim(join(l:parts[2:], ':'))
+    call a:callback(l:parts[0], l:parts[1], l:text)
   endfunction
 
 else
@@ -108,14 +109,14 @@ else
       return
     endif
 
-    " Parse output (filename:linenumber:text) and pass to callback
-    let l:parts = split(l:output, ':', 3)
+    " Parse output (filename:linenumber: text) and pass to callback
+    let l:parts = split(l:output, ':')
     if len(l:parts) < 3
         echoerr "Invalid finder output: " . l:output
         return
     endif
-
-    let l:text = substitute(l:parts[2], '^\s*\(.\{-}\)\s*\n*$', '\1', '')
+    let l:text = join(l:parts[2:], ':')
+    let l:text = substitute(l:text, '^\_s\+\|\_s\+$', '', 'g')
     silent! call a:config['callback'](l:parts[0], l:parts[1], l:text)
   endfunction
 
