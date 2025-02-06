@@ -522,53 +522,51 @@ of the formatting characters is supported.
 ## Vim
 
 Notesium provides a Vim/Neovim plugin that integrates with the Notesium
-CLI, particularily the `finder` (interactive filter selection TUI with
-syntax highlighted preview).
+CLI, particularily the `finder` command providing and interactive filter
+selection TUI with syntax highlighted preview.
 
-- Depends: [Notesium CLI](#cli) (0.6.4 or above)
+- Depends: [notesium](#cli) (0.6.4 or above)
 - Recommended: [vim-markdown](https://github.com/preservim/vim-markdown) for general markdown goodness.
-- Recommended: [goyo.vim](https://github.com/junegunn/goyo.vim) and [lightlight.vim](https://github.com/junegunn/limelight.vim) for distraction free writing.
+- Recommended: [goyo.vim](https://github.com/junegunn/goyo.vim) and [limelight.vim](https://github.com/junegunn/limelight.vim) for distraction free writing.
 
 ### Setup
 
 To install the plugin, add the repository to your plugin manager and
-point its runtime path to the `vim` directory. For example:
+point its runtime path to the `'vim'` directory. For example:
 
-```vim
+```
 " init.vim or .vimrc
 Plug 'alonswartz/notesium', { 'rtp': 'vim' }
-```
 
-```lua
 -- init.lua
 Plug('alonswartz/notesium', { ['rtp'] = 'vim' })
 ```
 
 ### Configuration
 
-| Setting                   | Type      | Comment
-| -------                   | ----      | -------
-| `g:notesium_bin`          | `string`  | Binary name or path (default: `notesium`)
-| `g:notesium_mappings`     | `boolean` | Enable(1) or disable(0) mappings (default: `1`)
-| `g:notesium_weekstart`    | `string`  | First day of the week (default: `monday`)
-| `g:notesium_window`       | `dict`    | Finder (`{'width': 0.85, 'height': 0.85}`)
-| `g:notesium_window_small` | `dict`    | InsertLink Finder (`{'width': 0.5, 'height': 0.5}`)
+| Setting                   | Comment                          | Default
+| -------                   | -------                          | -------
+| `g:notesium_bin`          | Binary name or path              | `notesium`
+| `g:notesium_mappings`     | Enable(1) or disable(0) mappings | `1`
+| `g:notesium_weekstart`    | First day of the week            | `monday`
+| `g:notesium_window`       | Finder Default                   | `{'width': 0.85, 'height': 0.85}`
+| `g:notesium_window_small` | Finder InsertLink                | `{'width': 0.50, 'height': 0.50}`
 
-Note: `g:notesium_bin` must be set prior to the plugin being sourced.
+Note: These settings should be set prior to the plugin being sourced.
 
 ### Commands
 
-| Command               | Arguments    | Comment
-| -------               | ---------    | -------
-| `:NotesiumNew`        | None         | Open new note for editing
-| `:NotesiumDaily`      | `YYYY-MM-DD` | Open new or existing daily note
-| `:NotesiumWeekly`     | `YYYY-MM-DD` | Open new or existing weekly note
-| `:NotesiumList`       | list --opts  | Finder: Notes list
-| `:NotesiumLinks!`     | links --opts | Finder: Links related to active note
-| `:NotesiumLinks`      | links --opts | Finder: All notes links
-| `:NotesiumLines`      | lines --opts | Finder: All notes lines
-| `:NotesiumInsertLink` | list --opts  | Finder: Insert selected note link
-| `:NotesiumWeb`        | web --opts   | Starts web server
+| Command                           | Comment
+| -------                           | -------
+| `:NotesiumNew`                    | Open new `note` for editing
+| `:NotesiumDaily [YYYY-MM-DD]`     | Open new or existing daily `note`
+| `:NotesiumWeekly [YYYY-MM-DD]`    | Open new or existing weekly `note`
+| `:NotesiumList [LIST_OPTS]`       | Open finder: list of notes
+| `:NotesiumLines [LINES_OPTS]`     | Open finder: lines of all notes
+| `:NotesiumLinks [LINKS_OPTS]`     | Open finder: links of all notes
+| `:NotesiumLinks! [LINKS_OPTS]`    | Open finder: links of the active `note`
+| `:NotesiumInsertLink [LIST_OPTS]` | Open finder: insert selection as markdown link
+| `:NotesiumWeb [WEB_OPTS]`         | Start web server, open browser (stop on idle)
 
 Note: `NotesiumWeekly` depends on `g:notesium_weekstart`.
 
@@ -580,9 +578,9 @@ Note: `NotesiumWeekly` depends on `g:notesium_weekstart`.
 | normal | `<Leader>nn` | Opens new note for editing
 | normal | `<Leader>nd` | Opens new or existing daily note
 | normal | `<Leader>nw` | Opens new or existing weekly note
-| normal | `<Leader>nl` | List with prefixed label, sorted alphabetically (mtime if journal)
+| normal | `<Leader>nl` | List with prefixed label, sorted alphabetically; mtime if journal
 | normal | `<Leader>nm` | List with prefixed date modified, sorted by mtime
-| normal | `<Leader>nc` | List with prefixed date created (YYYY/WeekXX), sorted by ctime
+| normal | `<Leader>nc` | List with prefixed date created `(YYYY/WeekXX)`, sorted by ctime
 | normal | `<Leader>nk` | List all links related to active note (or all if none)
 | normal | `<Leader>ns` | Full text search with prefixed note title
 | normal | `<Leader>nW` | Opens browser with embedded web/app (auto stop webserver on idle)
@@ -619,9 +617,9 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_toc_autofit = 1
 let g:vim_markdown_conceal_code_blocks = 0
-
 let g:markdown_fenced_languages = ['json', 'sh', 'shell=bash']
 hi def link mkdHeading htmlH1
+
 autocmd FileType markdown setlocal conceallevel=2
 ```
 
