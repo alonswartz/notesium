@@ -1,0 +1,123 @@
+notesium.txt	             Notesium Vim Plugin        Last change: Feb 06 2025
+TABLE OF CONTENTS                                        *notesium* *notesium-toc*
+==============================================================================
+
+  Notesium         |notesium|
+    Setup          |notesium-setup|
+    Configuration  |notesium-config|
+    Commands       |notesium-commands|
+    Mappings       |notesium-mappings|
+    Finder         |notesium-finder|
+    License        |notesium-license|
+
+NOTESIUM                                                              *notesium*
+==============================================================================
+
+Notesium - A simple yet powerful system for networked thought.
+>
+  Writing does not make intellectual endeavours easier, it makes them
+  possible. Deepen understanding, insight, and allow for structure to emerge
+  organically by linking notes. 
+<
+See the {Website}{1} and {GitHub}{2} repository for more details.
+
+                                    {1} https://www.notesium.com
+                                    {2} https://github.com/alonswartz/notesium
+
+SETUP                                                           *notesium-setup*
+==============================================================================
+
+The Notesium Vim plugin provides an interface for interacting with Notesium
+from within Vim/NeoVim, and therefore requires the `notesium` binary to be
+installed.
+
+To install the plugin, add the repository to your plugin manager and
+point its runtime path to the `'vim'` directory. For example:
+>
+  " init.vim or .vimrc
+  Plug 'alonswartz/notesium', { 'rtp': 'vim' }
+
+  -- init.lua
+  Plug('alonswartz/notesium', { ['rtp'] = 'vim' })
+<
+Note: The plugin depends on notesium 0.6.4 or above.
+
+CONFIGURATION                                                  *notesium-config*
+==============================================================================
+
+`g:notesium_bin`           Binary name or path                          `notesium`
+`g:notesium_mappings`      Enable(1) or disable(0) mappings                    `1`
+`g:notesium_weekstart`     First day of the week                          `monday`
+`g:notesium_window`        Finder Default        `{'width': 0.85, 'height': 0.85}`
+`g:notesium_window_small`  Finder InsertLink     `{'width': 0.50, 'height': 0.50}`
+
+Note: These settings should be set prior to the plugin being sourced.
+
+COMMANDS                                                     *notesium-commands*
+==============================================================================
+
+`:NotesiumNew`                    Open new `note` for editing
+`:NotesiumDaily [YYYY-MM-DD]`     Open new or existing daily `note`
+`:NotesiumWeekly [YYYY-MM-DD]`    Open new or existing weekly `note`
+`:NotesiumList [LIST_OPTS]`       Open finder: list of notes
+`:NotesiumLines [LINES_OPTS]`     Open finder: lines of all notes
+`:NotesiumLinks [LINKS_OPTS]`     Open finder: links of all notes
+`:NotesiumLinks! [LINKS_OPTS]`    Open finder: links of the active `note`
+`:NotesiumInsertLink [LIST_OPTS]` Open finder: insert selection as markdown link
+`:NotesiumWeb [WEB_OPTS]`         Start web server, open browser (stop on idle)
+
+Note: `NotesiumWeekly` depends on `g:notesium_weekstart`.
+
+MAPPINGS                                                     *notesium-mappings*
+==============================================================================
+
+INSERT MODE
+
+`[[`           Opens `note` list, insert selection as markdown formatted link
+
+NORMAL MODE
+
+`<Leader>nn`   Opens new `note` for editing
+`<Leader>nd`   Opens new or existing daily `note`
+`<Leader>nw`   Opens new or existing weekly `note`
+`<Leader>nl`   List with prefixed label, sorted alphabetically; mtime if journal
+`<Leader>nm`   List with prefixed date modified, sorted by mtime
+`<Leader>nc`   List with prefixed date created `(YYYY/WeekXX)`, sorted by ctime
+`<Leader>nk`   List all links related to active `note` (or all if none)
+`<Leader>ns`   Full text search with prefixed `note` title
+`<Leader>nW`   Opens browser with embedded web/app (auto stop webserver on idle)
+
+Note: The mappings can be enabled/disabled via `g:notesium_mappings`.
+
+FINDER                                                         *notesium-finder*
+==============================================================================
+
+KEYBINDINGS
+
+`C-j`          Select next entry (down)
+`C-k`          Select previous entry (up)
+`C-/`          Toggle preview
+`Enter`        Submit selected entry
+`Esc`          Dismiss finder
+
+SEARCH SYNTAX
+
+`word`         Exact-match                 Items that include `word`
+`^word`        Prefix exact-match          Items that start with `word`
+`word$`        Suffix exact-match          Items that end with `word`
+`!word`        Inverse exact-match         Items that do not include `word`
+`!^word`       Inverse prefix exact-match  Items that do not start with `word`
+`!word$`       Inverse suffix exact-match  Items that do not end with `word`
+`foo bar`      Multiple exact match (AND)  Items that include both `foo` AND `bar`
+`foo | bar`    Multiple exact match (OR)   Items that include either `foo` OR `bar`
+`'sbtrkt`      Fuzzy-match                 Items that fuzzy match `sbtrkt`
+
+LICENSE                                                       *notesium-license*
+==============================================================================
+
+The MIT License (MIT)
+
+Copyright (c) 2023-2025 Alon Swartz
+
+==============================================================================
+vim:tw=78:sw=2:ts=2:ft=help:nowrap:
