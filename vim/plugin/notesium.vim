@@ -3,6 +3,10 @@
 " Notesium configuration {{{1
 " ----------------------------------------------------------------------------
 
+if !exists('g:notesium_bin') || empty(g:notesium_bin)
+  let g:notesium_bin = 'notesium'
+endif
+
 if !exists('g:notesium_mappings') || empty(g:notesium_mappings)
   let g:notesium_mappings = 1
 endif
@@ -11,16 +15,17 @@ if !exists('g:notesium_weekstart') || empty(g:notesium_weekstart)
   let g:notesium_weekstart = 'monday'
 endif
 
-if !exists('g:notesium_bin') || empty(g:notesium_bin)
-  let g:notesium_bin = 'notesium'
-endif
-
 if !exists('g:notesium_window') || empty(g:notesium_window)
   let g:notesium_window = {'width': 0.85, 'height': 0.85}
 endif
 
 if !exists('g:notesium_window_small') || empty(g:notesium_window_small)
   let g:notesium_window_small = {'width': 0.5, 'height': 0.5}
+endif
+
+if !executable(g:notesium_bin)
+  echoerr "notesium_bin not found: " . g:notesium_bin
+  finish
 endif
 
 function! notesium#get_notesium_dir() abort
@@ -177,7 +182,7 @@ command! -nargs=* NotesiumDaily
   \ let s:cdate = empty(<q-args>) ? strftime('%Y-%m-%d') : <q-args> |
   \ let s:output = system(g:notesium_bin.' new --verbose --ctime='.s:cdate.'T00:00:00') |
   \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
-  \ execute 'edit ' . s:filepath |
+  \ execute 'edit' fnameescape(s:filepath) |
   \ if getline(1) =~ '^\s*$' |
   \   let s:epoch = matchstr(s:output, 'epoch:\zs[^\n]*') |
   \   call setline(1, '# ' . strftime('%b %d, %Y (%A)', s:epoch)) |
@@ -198,7 +203,7 @@ command! -nargs=* NotesiumWeekly
   \ let s:weekBegDate = strftime('%Y-%m-%d', s:weekBegEpoch) |
   \ let s:output = system('notesium new --verbose --ctime='.s:weekBegDate.'T00:00:01') |
   \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
-  \ execute 'edit ' . s:filepath |
+  \ execute 'edit' fnameescape(s:filepath) |
   \ if getline(1) =~ '^\s*$' |
   \   let s:weekFmt = s:startOfWeek == 0 ? '%U' : '%V' |
   \   let s:yearWeekStr = strftime('%G: Week' . s:weekFmt, s:weekBegEpoch) |
