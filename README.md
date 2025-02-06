@@ -179,28 +179,29 @@ It aspires and is designed to:
 <br/>
 
 *[Vim] List: prefixed with associated labels and sorted alphabetically*
-![image: vim prefixed label](https://www.notesium.com/images/screenshot-1681733208.png)
+![image: vim prefixed label](https://www.notesium.com/images/screenshot-1738853845.png)
 <br/>
 
 *[Vim] List: prefixed with modification date and sorted per modification time*
-![image: vim prefixed mtime](https://www.notesium.com/images/screenshot-1681733355.png)
+![image: vim prefixed mtime](https://www.notesium.com/images/screenshot-1738854202.png)
 <br/>
 
 *[Vim] Links: display all links*
-![image: vim links all](https://www.notesium.com/images/screenshot-1681733482.png)
+![image: vim links all](https://www.notesium.com/images/screenshot-1738854280.png)
 <br/>
 
 *[Vim] Links: display links related to the current note*
-![image: vim links related](https://www.notesium.com/images/screenshot-1681733712.png)
+![image: vim links related](https://www.notesium.com/images/screenshot-1738854409.png)
 <br/>
 
 *[Vim] Links: link insertion triggered by `[[`*
-![image: vim link insertion](https://www.notesium.com/images/screenshot-1681734183.png)
+![image: vim link insertion](https://www.notesium.com/images/screenshot-1738854615.png)
 <br/>
 
 *[Vim] Lines: full text search (light theme)*
-![image: vim full text search light](https://www.notesium.com/images/screenshot-1681734555.png)
+![image: vim full text search light](https://www.notesium.com/images/screenshot-1738854816.png)
 <br/>
+
 
 ## CLI
 
@@ -558,13 +559,13 @@ Note: These settings should be set prior to the plugin being sourced.
 
 | Command                           | Comment
 | -------                           | -------
-| `:NotesiumNew`                    | Open new `note` for editing
-| `:NotesiumDaily [YYYY-MM-DD]`     | Open new or existing daily `note`
-| `:NotesiumWeekly [YYYY-MM-DD]`    | Open new or existing weekly `note`
+| `:NotesiumNew`                    | Open new note for editing
+| `:NotesiumDaily [YYYY-MM-DD]`     | Open new or existing daily note
+| `:NotesiumWeekly [YYYY-MM-DD]`    | Open new or existing weekly note
 | `:NotesiumList [LIST_OPTS]`       | Open finder: list of notes
 | `:NotesiumLines [LINES_OPTS]`     | Open finder: lines of all notes
 | `:NotesiumLinks [LINKS_OPTS]`     | Open finder: links of all notes
-| `:NotesiumLinks! [LINKS_OPTS]`    | Open finder: links of the active `note`
+| `:NotesiumLinks! [LINKS_OPTS]`    | Open finder: links of the active note
 | `:NotesiumInsertLink [LIST_OPTS]` | Open finder: insert selection as markdown link
 | `:NotesiumWeb [WEB_OPTS]`         | Start web server, open browser (stop on idle)
 
