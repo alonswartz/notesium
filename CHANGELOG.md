@@ -1,3 +1,70 @@
+## 0.6.4
+
+This release introduces the **finder** command, a built-in interactive
+filtering and selection tool powered by the excellent **fzf engine**. It
+enhances the CLI with flexible input handling and syntax-highlighted
+previews, making it easier to search and navigate notes efficiently. The
+finder works great as a standalone tool but becomes even more powerful
+when integrated with other tools, such as Vim.
+
+Regarding Vim, Notesium now has a **Vim/Neovim plugin**, replacing the
+previous example integration. The new plugin is easier to set up,
+removes dependencies on `fzf`, `fzf.vim`, and `bat`, and seamlessly
+integrates with the `finder` command. It is more robust, offers greater
+flexibility, and enhances compatibility with both Vim and Neovim.
+
+This release **is backwards compatible**, but users transitioning from
+the example Vim integration should review the notable changes below and
+the updated documentation.
+
+Added:
+
+- Finder: Native interactive filter and selection TUI (embedded `fzf`).
+- Finder: Input specified via end-of-options unix convention (`-- CMD [OPTS]`).
+- Finder: Input supports List, Links, Links commands and their options.
+- Finder: Input default `list --color --prefix=label --sort=alpha`.
+- Finder: Preview with syntax highlighting and lineno support (`cat` command).
+- Finder: Preview toggle with `Ctrl-/`.
+- Finder: Configurable custom prompt.
+- Completion: Updated to support Finder end-of-options.
+
+- Cat: Markdown syntax highlighting and concealment.
+- Cat: Highlight - `header codeblock code blockquote plainlink listmarker`.
+- Cat: Highlight and Concealment - `bold italic markdownlink`.
+- Cat: Line number highlight.
+
+- Vim: Brand new Vim/Neovim plugin, installable via plugin managers.
+- Vim: Integrates with Finder (removing dependency on `fzf`, `fzf.vim`, `bat`).
+- Vim: Supports Neovim floating windows, with fallback for Vim without `term`.
+- Vim: Auto enable/disable preview based on terminal width.
+- Vim: Auto adjust window size for link-insertion based on terminal width.
+- Vim: Documentation accessible via `:help notesium[-section]`.
+- Vim: Settings - `g:notesium_(bin|mappings|weekstart|window|window_small)`.
+- Vim: Commands - `Notesium(New|Daily|Weekly|List|Links|Lines|Web|InsertLink)`.
+- Vim: Mappings - `<Leader>(nn|nd|nw|nl|nm|nc|nk|ns|nW)`, `[[`.
+
+Changed:
+
+- Readme: Updated to include Finder command.
+- Readme: Vim example integration replaced with new Vim/Neovim Plugin.
+- Readme: Vim screenshots updated using new Vim/Neovim Plugin.
+
+**Vim plugin vs. Vim example integration**:
+
+- Fixed: Links filename enumeration, bang support.
+- Fixed: InsertLink autocmd localized to buffer.
+- Fixed: InsertLink auto adjust window size based on terminal width.
+- Fixed: `<Leader>nc` adheres to g:notesium_weekstart.
+- Fixed: NotesiumWeb now supports custom and required arguments.
+- Added: NotesiumWeb windows support via powershell.
+- Added: g:notesium_bin to override hardcoded assumed `notesium`.
+- Added: Callbacks for `editfile` and `insertlink`.
+- Added: Plugin documentation accessible via `:help notesium[-section]`.
+- Changed: NOTESIUM_WEEKSTART (int) replaced with g:notesium_weekstart (str).
+- Changed: NotesiumSearch has been renamed to NotesiumLines.
+- Removed: `<Leader>nb` is not included in the plugin mappings.
+- Removed: Dependencies on `fzf`, `fzf.vim` or a highlight tool such as `bat`.
+
 ## 0.6.3
 
 This release introduces a new **lines** `--filter` option with support
