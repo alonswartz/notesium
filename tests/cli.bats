@@ -77,6 +77,6 @@ teardown_file() {
     run notesium home
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "/tmp/notesium-test-corpus" ]
+    [ "${lines[0]}" == "$(realpath /tmp/notesium-test-corpus)" ]
 }
 
