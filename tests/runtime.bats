@@ -4,10 +4,15 @@ load helpers.sh
 
 _curl_jq() { curl -qs http://localhost:8881/${1} | jq -r "${2}" ; }
 
+_os_arch() {
+    uname -sm | tr A-Z a-z | sed 's/ /\//;s/x86_64/amd64/;s/aarch64/arm64/'
+}
+
 setup_file() {
     command -v jq >/dev/null
     command -v curl >/dev/null
     export NOTESIUM_DIR="$BATS_TEST_DIRNAME/fixtures"
+    export EXPECTED_PLATFORM="$(_os_arch)"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
     [ "$(pgrep -x notesium)" == "" ]
 }
@@ -31,7 +36,7 @@ setup_file() {
     run _curl_jq 'api/runtime' '.platform'
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == "linux/amd64" ]
+    [ "${lines[0]}" == "$EXPECTED_PLATFORM" ]
 }
 
 @test "runtime: web" {

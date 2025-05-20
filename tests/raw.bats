@@ -4,10 +4,15 @@ load helpers.sh
 
 _curl()    { curl -qs "http://localhost:8881/${1}" ; }
 
+_os_arch() {
+    uname -sm | tr A-Z a-z | sed 's/ /\//;s/x86_64/amd64/;s/aarch64/arm64/'
+}
+
 setup_file() {
     command -v curl >/dev/null
     export TZ="UTC"
     export NOTESIUM_DIR="$BATS_TEST_DIRNAME/fixtures"
+    export EXPECTED_PLATFORM="$(_os_arch)"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
     [ "$(pgrep -x notesium)" == "" ]
 }
@@ -121,7 +126,7 @@ setup_file() {
     [[ "${lines[0]}" =~ "version:" ]]
     [[ "${lines[1]}" =~ "gitversion:v" ]]
     [[ "${lines[2]}" =~ "buildtime:" ]]
-    [[ "${lines[3]}" =~ "platform:linux/amd64" ]]
+    [[ "${lines[3]}" =~ "platform:$EXPECTED_PLATFORM" ]]
 }
 
 @test "api/raw: no command specified error" {
