@@ -17,8 +17,13 @@ _mock_latest_release() {
     echo -en "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ${#response}\r\n\r\n${response}" | nc -C -l -s 127.0.0.1 -p 8882 -q 1 -w 5
 }
 
+_os_arch() {
+    uname -sm | tr A-Z a-z | sed 's/ /\//;s/x86_64/amd64/;s/aarch64/arm64/'
+}
+
 setup_file() {
     export TZ="UTC"
+    export EXPECTED_PLATFORM="$(_os_arch)"
     command -v go >/dev/null
     command -v nc >/dev/null
     [ -e "/tmp/notesium-test-version" ] && exit 1
@@ -102,7 +107,7 @@ teardown_file() {
     [ "${lines[0]}" == 'version:0.1.2' ]
     [ "${lines[1]}" == 'gitversion:v0.1.2-0-g1234567' ]
     [ "${lines[2]}" == 'buildtime:2024-01-02T01:02:03Z' ]
-    [ "${lines[3]}" == 'platform:linux/amd64' ]
+    [ "${lines[3]}" == "platform:$EXPECTED_PLATFORM" ]
 }
 
 @test "version: check - older" {
@@ -111,7 +116,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'A new release is available: 0.1.3 (2024-02-02 01:02)' ]
     [ "${lines[2]}" == 'https://github.com/alonswartz/notesium/releases' ]
 }
@@ -122,14 +127,14 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'A new release is available: 0.1.3 (2024-02-02 01:02)' ]
     [ "${lines[2]}" == 'https://github.com/alonswartz/notesium/releases' ]
     assert_line 'comparison:-1'
     assert_line 'version:0.1.2'
     assert_line 'gitversion:v0.1.2-0-g1234567'
     assert_line 'buildtime:2024-01-02T01:02:03Z'
-    assert_line 'platform:linux/amd64'
+    assert_line "platform:$EXPECTED_PLATFORM"
     assert_line 'latest.version:0.1.3'
     assert_line 'latest.published:2024-02-02T01:02:03Z'
     assert_line 'latest.release:https://github.com/alonswartz/notesium/releases/tag/v0.1.3'
@@ -141,7 +146,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using the latest version' ]
     assert_line 'comparison:0'
 }
@@ -152,7 +157,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using a newer version than latest: 0.1.1' ]
     assert_line 'comparison:1'
 }
@@ -163,7 +168,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2+2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2+2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'A new release is available: 0.1.3 (2024-02-02 01:02)' ]
     assert_line 'comparison:-1'
     assert_line 'version:0.1.2+2'
@@ -176,7 +181,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2+2 (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2+2 ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using the latest version' ]
     assert_line 'comparison:0'
     assert_line 'version:0.1.2+2'
@@ -189,7 +194,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.1.2-2-g1234567-dirty version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.1.2+2-dirty (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.1.2+2-dirty ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using the latest version' ]
     assert_line 'comparison:0'
     assert_line 'version:0.1.2+2-dirty'
@@ -202,7 +207,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.2.0-beta (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.2.0-beta ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'A new release is available: 0.2.0 (2024-02-02 01:02)' ]
     assert_line 'comparison:-1'
     assert_line 'version:0.2.0-beta'
@@ -215,7 +220,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.2.0-beta (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.2.0-beta ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using a newer version than latest: 0.1.2' ]
     assert_line 'comparison:1'
     assert_line 'version:0.2.0-beta'
@@ -228,7 +233,7 @@ teardown_file() {
     run /tmp/notesium-test-version/v0.2.1-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
-    [ "${lines[0]}" == 'Notesium 0.2.1-beta (linux/amd64)' ]
+    [ "${lines[0]}" == "Notesium 0.2.1-beta ($EXPECTED_PLATFORM)" ]
     [ "${lines[1]}" == 'You are using the latest version' ]
     assert_line 'comparison:0'
     assert_line 'version:0.2.1-beta'
