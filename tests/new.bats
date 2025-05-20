@@ -16,7 +16,7 @@ teardown_file() {
     run notesium new
     echo "$output"
     [ $status -eq 0 ]
-    [ "$(dirname $output)" == "/tmp/notesium-test-corpus" ]
+    [ "$(dirname $output)" == "$(realpath /tmp/notesium-test-corpus)" ]
 }
 
 @test "new: basename is 8 chars plus .md extension" {
@@ -48,7 +48,7 @@ teardown_file() {
     run notesium new --ctime=2023-01-16T05:05:00 --verbose
     echo "$output"
     [ "${#lines[@]}" -eq 5 ]
-    [ "${lines[0]}" == "path:/tmp/notesium-test-corpus/63c4dafc.md" ]
+    [ "${lines[0]}" == "path:$(realpath /tmp/notesium-test-corpus/63c4dafc.md)" ]
     [ "${lines[1]}" == "filename:63c4dafc.md" ]
     [ "${lines[2]}" == "epoch:1673845500" ]
     [ "${lines[3]}" == "ctime:2023-01-16T05:05:00+00:00" ]
