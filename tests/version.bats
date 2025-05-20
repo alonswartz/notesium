@@ -8,13 +8,16 @@ _gobuild() {
     go build -o /tmp/notesium-test-version/$gitversion -ldflags "
         -X main.gitversion=$gitversion \
         -X main.buildtime=2024-01-02T01:02:03Z \
-        -X main.latestReleaseUrl=http://127.0.0.1:8882"
+        -X main.latestReleaseUrl=http://127.0.0.1:8882/latest.json"
 }
 
 _mock_latest_release() {
     tagname="$1"
-    response='{"tag_name": "'$tagname'", "html_url": "https://github.com/alonswartz/notesium/releases/tag/'$tagname'", "published_at": "2024-02-02T01:02:03Z"}'
-    echo -en "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: ${#response}\r\n\r\n${response}" | nc -C -l -s 127.0.0.1 -p 8882 -q 1 -w 5
+    jq -n --arg tag "$tagname" '{
+        tag_name: $tag,
+        html_url: "https://github.com/alonswartz/notesium/releases/tag/\($tag)",
+        published_at: "2024-02-02T01:02:03Z"
+    }' > /tmp/notesium-test-version/latest.json
 }
 
 _os_arch() {
@@ -25,9 +28,12 @@ setup_file() {
     export TZ="UTC"
     export EXPECTED_PLATFORM="$(_os_arch)"
     command -v go >/dev/null
-    command -v nc >/dev/null
+    command -v jq >/dev/null
+    [ "$(pgrep -x notesium)" == "" ]
     [ -e "/tmp/notesium-test-version" ] && exit 1
     run mkdir /tmp/notesium-test-version
+    export NOTESIUM_DIR="/tmp/notesium-test-version"
+    export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
 }
 
 teardown_file() {
@@ -36,6 +42,7 @@ teardown_file() {
     run rm /tmp/notesium-test-version/v0.1.2-2-g1234567-dirty
     run rm /tmp/notesium-test-version/v0.2.0-beta-0-g1234567
     run rm /tmp/notesium-test-version/v0.2.1-beta-0-g1234567
+    run rm /tmp/notesium-test-version/latest.json
     run rmdir /tmp/notesium-test-version
 }
 
@@ -79,20 +86,21 @@ teardown_file() {
     [ $status -eq 0 ]
     [ "${lines[0]}" == '0.1.2' ]
 }
+
 @test "version: default - patched" {
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '0.1.2+2' ]
-
 }
+
 @test "version: default - patched and dirty" {
     run /tmp/notesium-test-version/v0.1.2-2-g1234567-dirty version
     echo "$output"
     [ $status -eq 0 ]
     [ "${lines[0]}" == '0.1.2+2-dirty' ]
-
 }
+
 @test "version: default - beta" {
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version
     echo "$output"
@@ -110,9 +118,14 @@ teardown_file() {
     [ "${lines[3]}" == "platform:$EXPECTED_PLATFORM" ]
 }
 
+@test "version: check - start mock release server" {
+    # mis-using notesium to act as a mock release server
+    run notesium web --port=8882 --stop-on-idle --webroot=$NOTESIUM_DIR &
+    echo "$output"
+}
+
 @test "version: check - older" {
-    run _mock_latest_release "v0.1.3" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.3"
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check
     echo "$output"
     [ $status -eq 0 ]
@@ -122,8 +135,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - older" {
-    run _mock_latest_release "v0.1.3" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.3"
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -141,8 +153,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - match" {
-    run _mock_latest_release "v0.1.2" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.2"
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -152,8 +163,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - newer" {
-    run _mock_latest_release "v0.1.1" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.1"
     run /tmp/notesium-test-version/v0.1.2-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -163,8 +173,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - older - patched" {
-    run _mock_latest_release "v0.1.3" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.3"
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -176,8 +185,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - match - patched" {
-    run _mock_latest_release "v0.1.2" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.2"
     run /tmp/notesium-test-version/v0.1.2-2-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -189,8 +197,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - match - patched and dirty" {
-    run _mock_latest_release "v0.1.2" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.2"
     run /tmp/notesium-test-version/v0.1.2-2-g1234567-dirty version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -202,8 +209,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - older - beta" {
-    run _mock_latest_release "v0.2.0" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.2.0"
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -215,8 +221,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - newer - beta" {
-    run _mock_latest_release "v0.1.2" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.1.2"
     run /tmp/notesium-test-version/v0.2.0-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -228,8 +233,7 @@ teardown_file() {
 }
 
 @test "version: check verbose - match - beta" {
-    run _mock_latest_release "v0.2.0" &
-    [ "$GITHUB_WORKSPACE" ] && run sleep 1
+    run _mock_latest_release "v0.2.0"
     run /tmp/notesium-test-version/v0.2.1-beta-0-g1234567 version --check --verbose
     echo "$output"
     [ $status -eq 0 ]
@@ -238,5 +242,21 @@ teardown_file() {
     assert_line 'comparison:0'
     assert_line 'version:0.2.1-beta'
     assert_line 'gitversion:v0.2.1-beta-0-g1234567'
+}
+
+@test "version: check - stop mock release server by sending terminate signal" {
+    # force stop otherwise bats will block until timeout (bats-core/issues/205)
+    run pgrep -x notesium
+    echo "$output"
+    echo "could not get pid"
+    [ $status -eq 0 ]
+
+    run kill "$(pgrep -x notesium)"
+    echo "$output"
+    [ $status -eq 0 ]
+
+    run pgrep -x notesium
+    echo "$output"
+    [ $status -eq 1 ]
 }
 
