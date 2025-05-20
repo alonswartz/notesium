@@ -24,7 +24,7 @@ _set_deterministic_mtimes() {
 setup_file() {
     command -v jq >/dev/null
     command -v curl >/dev/null
-    [ "$(pidof notesium)" == "" ]
+    [ "$(pgrep -x notesium)" == "" ]
     [ -e "/tmp/notesium-test-corpus" ] && exit 1
     run mkdir /tmp/notesium-test-corpus
     run cp $BATS_TEST_DIRNAME/fixtures/*.md /tmp/notesium-test-corpus/
@@ -56,16 +56,16 @@ teardown_file() {
 
 @test "write: stop NOT writable by sending terminate signal" {
     # force stop otherwise bats will block until timeout (bats-core/issues/205)
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     echo "could not get pid"
     [ $status -eq 0 ]
 
-    run kill "$(pidof notesium)"
+    run kill "$(pgrep -x notesium)"
     echo "$output"
     [ $status -eq 0 ]
 
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     [ $status -eq 1 ]
 }
@@ -166,16 +166,16 @@ teardown_file() {
 
 @test "write: stop by sending terminate signal" {
     # force stop otherwise bats will block until timeout (bats-core/issues/205)
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     echo "could not get pid"
     [ $status -eq 0 ]
 
-    run kill "$(pidof notesium)"
+    run kill "$(pgrep -x notesium)"
     echo "$output"
     [ $status -eq 0 ]
 
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     [ $status -eq 1 ]
 }

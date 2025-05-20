@@ -9,7 +9,7 @@ setup_file() {
     command -v curl >/dev/null
     export NOTESIUM_DIR="$BATS_TEST_DIRNAME/fixtures"
     export PATH="$(realpath $BATS_TEST_DIRNAME/../):$PATH"
-    [ "$(pidof notesium)" == "" ]
+    [ "$(pgrep -x notesium)" == "" ]
 }
 
 @test "runtime: start with custom port, stop-on-idle and no-check" {
@@ -71,16 +71,16 @@ setup_file() {
 
 @test "runtime: stop by sending terminate signal" {
     # force stop otherwise bats will block until timeout (bats-core/issues/205)
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     echo "could not get pid"
     [ $status -eq 0 ]
 
-    run kill "$(pidof notesium)"
+    run kill "$(pgrep -x notesium)"
     echo "$output"
     [ $status -eq 0 ]
 
-    run pidof notesium
+    run pgrep -x notesium
     echo "$output"
     [ $status -eq 1 ]
 }
