@@ -65,22 +65,25 @@ if has('nvim')
     let l:buf = nvim_create_buf(v:false, v:true)
     let l:win = nvim_open_win(l:buf, v:true, l:opts)
 
-    " Start the finder
-    call termopen(l:cmd, {
-      \ 'on_exit': {
-      \   job_id, exit_code, _ ->
-      \   notesium#finder_finalize(exit_code, l:buf, a:config['callback']) }})
+    " Set context and start the finder
+    let s:finder_ctx = { 'buf': l:buf, 'callback': a:config['callback'] }
+    call termopen(l:cmd, { 'on_exit': function('notesium#finder_on_exit') })
 
     " Focus the terminal and switch to insert mode
     call nvim_set_current_win(l:win)
     call feedkeys('i', 'n')
   endfunction
 
-  function! notesium#finder_finalize(exit_code, buf, callback) abort
+  function! notesium#finder_on_exit(job_id, exit_code, _signal) abort
+    " Unpack the context and cleanup
+    let l:buf = s:finder_ctx.buf
+    let l:Callback = s:finder_ctx.callback
+    unlet s:finder_ctx
+
     " Capture buffer output, cleanup and validate
-    let l:output = trim(join(getbufline(a:buf, 1, '$'), "\n"))
-    if bufexists(a:buf)
-      execute 'bwipeout!' a:buf
+    let l:output = trim(join(getbufline(l:buf, 1, '$'), "\n"))
+    if bufexists(l:buf)
+      execute 'bwipeout!' l:buf
     endif
     if empty(l:output) || a:exit_code == 130
       return
@@ -97,7 +100,7 @@ if has('nvim')
       return
     endif
     let l:text = trim(join(l:parts[2:], ':'))
-    call a:callback(l:parts[0], l:parts[1], l:text)
+    call l:Callback(l:parts[0], l:parts[1], l:text)
   endfunction
 
 else
