@@ -45,6 +45,9 @@ let $NOTESIUM_DIR = notesium#get_notesium_dir()
 if has('nvim')
 
   function! notesium#finder(config) abort
+    " Set light or dark theme
+    let $NOTESIUM_FINDER_THEME = &background
+
     " Prepare command
     let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
     let l:cmd .= ' -- ' . get(a:config, 'input', '')
@@ -106,6 +109,9 @@ if has('nvim')
 else
 
   function! notesium#finder(config) abort
+    " Set light or dark theme
+    let $NOTESIUM_FINDER_THEME = &background
+
     " Prepare the command
     let l:cmd = g:notesium_bin . ' finder ' . get(a:config, 'options', '')
     let l:cmd .= ' -- ' . get(a:config, 'input', '')

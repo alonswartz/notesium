@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -17,9 +18,16 @@ const (
 	ansiInlineCode = "\033[33m"
 	ansiBlockQuote = "\033[36m"
 	ansiListMarker = "\033[36m"
-	ansiLineBg     = "\033[40m"
 	ansiReset      = "\033[0m"
 )
+var ansiLineBg = func() string {
+	switch os.Getenv("NOTESIUM_FINDER_THEME") {
+	case "light":
+		return "\033[48;5;7m"
+	default:
+		return "\033[40m"
+	}
+}()
 var (
 	reBold           = regexp.MustCompile(`\*\*(.*?)\*\*`)
 	reBoldAlt        = regexp.MustCompile(`__(.*?)__`)

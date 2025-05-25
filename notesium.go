@@ -341,6 +341,15 @@ func notesiumFinder(dir string, opts finderOptions) {
 		log.Fatal(err)
 	}
 
+	theme := os.Getenv("NOTESIUM_FINDER_THEME")
+	var fzfColor string
+	switch theme {
+	case "light":
+		fzfColor = "bg:15,bg+:7,fg:241,fg+:241,hl:4,hl+:2,pointer:9,info:6"
+	default:
+		fzfColor = "bg:8,bg+:0,fg:12,fg+:12,hl:11,hl+:3,pointer:9,info:3"
+	}
+
 	optsFzf := []string{
 		"--ansi",
 		"--exact",
@@ -353,7 +362,7 @@ func notesiumFinder(dir string, opts finderOptions) {
 		"--pointer=>",
 		"--delimiter=:",
 		"--with-nth=3..",
-		"--color=bg:8,bg+:0,fg:12,fg+:12,hl:11,hl+:3,pointer:9,info:3",
+		fmt.Sprintf("--color=%s", fzfColor),
 		fmt.Sprintf("--prompt=%s> ", opts.prompt),
 	}
 
