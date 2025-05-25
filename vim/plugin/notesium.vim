@@ -201,7 +201,7 @@ command! -nargs=* NotesiumWeekly
   \ let s:diff = (s:day - s:startOfWeek + 7) % 7 |
   \ let s:weekBegEpoch = s:epoch - (s:diff * 86400) |
   \ let s:weekBegDate = strftime('%Y-%m-%d', s:weekBegEpoch) |
-  \ let s:output = system('notesium new --verbose --ctime='.s:weekBegDate.'T00:00:01') |
+  \ let s:output = system(g:notesium_bin.' new --verbose --ctime='.s:weekBegDate.'T00:00:01') |
   \ let s:filepath = matchstr(s:output, 'path:\zs[^\n]*') |
   \ execute 'edit' fnameescape(s:filepath) |
   \ if getline(1) =~ '^\s*$' |
