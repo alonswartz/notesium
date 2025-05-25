@@ -568,6 +568,7 @@ Note: These settings should be set prior to the plugin being sourced.
 | `:NotesiumLinks! [LINKS_OPTS]`    | Open finder: links of the active note
 | `:NotesiumInsertLink [LIST_OPTS]` | Open finder: insert selection as markdown link
 | `:NotesiumWeb [WEB_OPTS]`         | Start web server, open browser (stop on idle)
+| `:NotesiumDeleteNote`             | Delete current note (with verify and confirm)
 
 Note: `NotesiumWeekly` depends on `g:notesium_weekstart`.
 

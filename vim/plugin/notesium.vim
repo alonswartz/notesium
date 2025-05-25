@@ -150,11 +150,98 @@ function! notesium#finder_callback_insertlink(filename, linenumber, text) abort
   call feedkeys((mode() == 'i' ? '' : 'a') . l:link, 'n')
 endfunction
 
+" Notesium note deletion {{{1
+" ----------------------------------------------------------------------------
+
+function! notesium#delete_note_check_file(filepath, filename, bufnr) abort
+  if !filereadable(a:filepath)
+    throw "The file does not exist:\n" . a:filepath
+  endif
+  if !(a:filename =~# '^[0-9a-f]\{8\}\.md$')
+    throw "The file does not match the filename format: " . a:filename
+  endif
+endfunction
+
+function! notesium#delete_note_check_buffer(filepath, filename, bufnr) abort
+  if a:bufnr == -1
+    throw "The file is not associated with an active buffer: " . a:filepath
+  endif
+  if getbufvar(a:bufnr, '&modified')
+    throw "The file has unsaved changes. Save or discard before deleting."
+  endif
+
+  let l:buflines = getbufline(a:bufnr, 1, '$')
+  let l:filelines = readfile(a:filepath)
+  if l:buflines ==# [''] | let l:buflines = [] | endif
+  if empty(l:filelines) | let l:filelines = [] | endif
+  if l:buflines !=# l:filelines
+    throw "The file on disk differs from the loaded buffer."
+  endif
+endfunction
+
+function! notesium#delete_note_check_path(filepath, filename, bufnr) abort
+  let l:expected = fnamemodify(expand($NOTESIUM_DIR) . '/' . a:filename, ':p')
+  let l:expected = simplify(resolve(l:expected))
+  let l:current = simplify(resolve(a:filepath))
+  if l:current !=# l:expected
+    throw join([
+      \ 'The file is not located in the expected path per NOTESIUM_DIR.',
+      \ 'Expected: ' . l:expected,
+      \ 'Current:  ' . l:current
+      \ ], "\n")
+  endif
+endfunction
+
+function! notesium#delete_note_check_links(filepath, filename, bufnr) abort
+  let l:cmd = g:notesium_bin.' links ' . shellescape(a:filename) . ' --incoming'
+  let l:output = systemlist(l:cmd)
+  if v:shell_error || !empty(l:output)
+    let l:reason = v:shell_error
+      \ ? 'Failed to check for IncomingLinks'
+      \ : 'Refusing to delete. Note has IncomingLinks'
+    throw l:reason . ":\n" . join(l:output, "\n")
+  endif
+endfunction
+
+function! notesium#delete_note() abort
+  let l:filepath = expand('%:p')
+  let l:filename = fnamemodify(l:filepath, ':t')
+  let l:bufnr = bufnr(l:filepath)
+
+  try
+    call notesium#delete_note_check_file(l:filepath, l:filename, l:bufnr)
+    call notesium#delete_note_check_buffer(l:filepath, l:filename, l:bufnr)
+    call notesium#delete_note_check_path(l:filepath, l:filename, l:bufnr)
+    call notesium#delete_note_check_links(l:filepath, l:filename, l:bufnr)
+  catch /^.*/
+    echoerr v:exception
+    return
+  endtry
+
+  " User confirmation
+  let l:info = getbufline(l:bufnr, 1)[0] . "\n" . l:filepath
+  if confirm("Delete note?\n" . l:info, "&Yes\n&No", 2) != 1
+    echo "User aborted"
+    return
+  endif
+
+  " Proceed with deletion
+  if delete(l:filepath) != 0
+    echoerr "Failed to delete file: " . l:filepath
+    return
+  endif
+  execute 'bdelete!' l:bufnr
+  echo "Deleted: " . l:filepath
+endfunction
+
 " Notesium commands {{{1
 " ----------------------------------------------------------------------------
 
 command! NotesiumNew
   \ execute ":e" system(g:notesium_bin . ' new')
+
+command! NotesiumDeleteNote
+  \ call notesium#delete_note()
 
 command! -nargs=* NotesiumInsertLink
   \ call notesium#finder({
