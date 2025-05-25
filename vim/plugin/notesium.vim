@@ -155,12 +155,12 @@ command! -nargs=* NotesiumInsertLink
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
   \   'options': '--prompt=NotesiumInsertLink',
   \   'callback': function('notesium#finder_callback_insertlink'),
-  \   'window': (&columns > 79 ? g:notesium_window_small : g:notesium_window) })
+  \   'window': (&columns > 89 ? g:notesium_window_small : g:notesium_window) })
 
 command! -nargs=* NotesiumList
   \ call notesium#finder({
   \   'input': 'list ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
-  \   'options': '--prompt=NotesiumList' . (&columns > 79 ? ' --preview' : ''),
+  \   'options': '--prompt=NotesiumList' . (&columns > 89 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': g:notesium_window })
 
@@ -170,14 +170,14 @@ command! -bang -nargs=* NotesiumLinks
   \ let s:args = <q-args> . (!empty(s:filename) ? ' ' . s:filename : '') |
   \ call notesium#finder({
   \   'input': 'links ' . join(map(split(s:args), 'shellescape(v:val)'), ' '),
-  \   'options': '--prompt=NotesiumLinks' . (&columns > 79 ? ' --preview' : ''),
+  \   'options': '--prompt=NotesiumLinks' . (&columns > 89 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': g:notesium_window })
 
 command! -nargs=* NotesiumLines
   \ call notesium#finder({
   \   'input': 'lines ' . join(map(split(<q-args>), 'shellescape(v:val)'), ' '),
-  \   'options': '--prompt=NotesiumLines' . (&columns > 79 ? ' --preview' : ''),
+  \   'options': '--prompt=NotesiumLines' . (&columns > 89 ? ' --preview' : ''),
   \   'callback': function('notesium#finder_callback_editfile'),
   \   'window': g:notesium_window })
 
