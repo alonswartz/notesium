@@ -64,8 +64,10 @@ if has('nvim')
       \ 'height': l:height }
 
     " Create buffer and floating window
+    " Set filetype=fzf to avoid vim-tmux-navigator intercepting <C-j>/<C-k>
     highlight link NormalFloat Normal
     let l:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_option(l:buf, 'filetype', 'fzf')
     let l:win = nvim_open_win(l:buf, v:true, l:opts)
 
     " Set context and start the finder
