@@ -76,7 +76,7 @@ if has('nvim')
 
     " Focus the terminal and switch to insert mode
     call nvim_set_current_win(l:win)
-    call feedkeys('i', 'n')
+    call nvim_command('startinsert')
   endfunction
 
   function! notesium#finder_on_exit(job_id, exit_code, _signal) abort
