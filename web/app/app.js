@@ -12,7 +12,7 @@ var t = `
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :notes=notes :activeTabId=activeTabId :previousTabId=previousTabId
-        @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
+        @tab-activate="activateTab" @note-close="closeNote" @note-move="moveNote" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
@@ -56,8 +56,7 @@ export default {
   data() {
     return {
       notes: [],
-      activeTabId: '',
-      previousTabId: '',
+      tabHistory: [],
       finderUri: '',
       finderQuery: '',
       showGraph: false,
@@ -81,12 +80,12 @@ export default {
       this.showFinder = false;
       this.finderQuery = '';
       if (value === null) {
-        this.resetActiveTabId();
+        this.refocusActiveTab();
       } else {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {
           note.Linenum = value.Linenum;
-          this.activateNote(value.Filename);
+          this.activateTab(value.Filename);
         } else {
           this.fetchNote(value.Filename, value.Linenum);
         }
@@ -99,7 +98,7 @@ export default {
           note.Linenum = linenum;
           const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeTabId) : -1;
           (index === -1) ? this.notes.push(note) : this.notes.splice(index + 1, 0, note);
-          this.activateNote(note.Filename);
+          this.activateTab(note.Filename);
         })
         .catch(e => {
           this.addAlert({type: 'error', title: 'Error fetching note', body: e.Error, sticky: true})
@@ -137,7 +136,7 @@ export default {
           }
 
           this.notes[index] = note;
-          this.activateNote(note.Filename);
+          this.activateTab(note.Filename);
 
           // track lastSave to force sidepanel refresh
           this.lastSave = note.Mtime;
@@ -215,7 +214,7 @@ export default {
           if (noteInfo.exists === "true") { this.openNote(noteInfo.filename, 1); return; }
 
           const index = this.notes.findIndex(note => note.Filename === noteInfo.filename);
-          if (index !== -1) { this.activateNote(noteInfo.filename); return; }
+          if (index !== -1) { this.activateTab(noteInfo.filename); return; }
 
           const ghost = {
             Filename: noteInfo.filename,
@@ -227,7 +226,7 @@ export default {
             ghost: true,
           };
           this.notes.push(ghost);
-          this.activateNote(ghost.Filename);
+          this.activateTab(ghost.Filename);
         })
         .catch(e => {
           this.addAlert({type: 'error', title: 'Error retrieving new note metadata', body: e.Error, sticky: true});
@@ -262,23 +261,25 @@ export default {
       const index = this.notes.findIndex(note => note.Filename === filename);
       if (index !== -1) {
         this.notes[index].Linenum = linenum;
-        this.activateNote(filename);
+        this.activateTab(filename);
       } else {
         this.fetchNote(filename, linenum, true);
       }
     },
-    activateNote(filename) {
-      if (filename !== this.activeTabId) {
-        this.previousTabId = this.activeTabId;
-        this.activeTabId = filename;
-      }
+    activateTab(tabId) {
+      if (tabId == this.activeTabId) return;
+      this.tabHistory = this.tabHistory.filter(id => id !== tabId);
+      this.tabHistory.push(tabId);
     },
-    resetActiveTabId() {
-      if (this.activeTabId) {
-        const af = this.activeTabId;
-        this.activeTabId = '';
-        this.$nextTick(() => { this.activeTabId = af; });
-      }
+    refocusActiveTab() {
+      // required for cancelled keybind and finder
+      if (!this.activeTabId) return;
+      const tabId = this.activeTabId;
+      this.tabHistory = this.tabHistory.filter(id => id !== tabId);
+      this.$nextTick(() => { this.activateTab(tabId) });
+    },
+    closeTab(tabId) {
+      this.tabHistory = this.tabHistory.filter(id => id !== tabId);
     },
     async closeNote(filename, confirmIfModified = true) {
       const index = this.notes.findIndex(note => note.Filename === filename);
@@ -293,25 +294,7 @@ export default {
       }
 
       this.notes.splice(index, 1);
-      const notesLength = this.notes.length;
-      switch(notesLength) {
-        case 0:
-          this.activeTabId = '';
-          this.previousTabId = '';
-          break;
-        case 1:
-          this.activeTabId = this.notes[0].Filename;
-          this.previousTabId = '';
-          break;
-        default:
-          const lastFilename = this.notes.at(-1).Filename;
-          if (filename == this.activeTabId) {
-            const previousExists = this.notes.some(note => note.Filename === this.previousTabId);
-            this.activeTabId = previousExists ? this.previousTabId : lastFilename;
-          }
-          this.previousTabId = (this.activeTabId !== lastFilename) ? lastFilename : this.notes.at(-2).Filename;
-          break;
-      }
+      this.closeTab(filename);
     },
     moveNote(filename, newIndex) {
       const index = this.notes.findIndex(note => note.Filename === filename);
@@ -372,7 +355,7 @@ export default {
         setTimeout(() => {
           if (this.keySequence.length > 0) {
             this.keySequence = [];
-            this.resetActiveTabId();
+            this.refocusActiveTab();
           }
         }, 2000);
         return;
@@ -458,6 +441,14 @@ export default {
           if (runtime.web["daily-version-check"]) this.handleCheckVersion('start');
         })
         .catch(e => { console.error(e); });
+    },
+  },
+  computed: {
+    activeTabId() {
+      return this.tabHistory[this.tabHistory.length - 1] || '';
+    },
+    previousTabId() {
+      return this.tabHistory[this.tabHistory.length - 2] || '';
     },
   },
   mounted() {
