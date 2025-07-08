@@ -12,7 +12,7 @@ var t = `
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
       <NavTabs :tabs=tabs :activeTabId=activeTabId :previousTabId=previousTabId :notes=notes
-        @tab-activate="activateTab" @tab-move="moveTab" @note-close="closeNote" />
+        @tab-activate="activateTab" @tab-move="moveTab" @tab-close="closeTab" @note-close="closeNote" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="tabs.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
@@ -98,7 +98,7 @@ export default {
         .then(note => {
           note.Linenum = linenum;
           this.notes.push(note);
-          this.addTab(note.Filename, insertAfterActive);
+          this.addTab('note', note.Filename, insertAfterActive);
           this.activateTab(note.Filename);
         })
         .catch(e => {
@@ -227,7 +227,7 @@ export default {
             ghost: true,
           };
           this.notes.push(ghost);
-          this.addTab(ghost.Filename);
+          this.addTab('note', ghost.Filename);
           this.activateTab(ghost.Filename);
         })
         .catch(e => {
@@ -268,12 +268,13 @@ export default {
         this.fetchNote(filename, linenum, true);
       }
     },
-    addTab(tabId, insertAfterActive = false) {
-      const index = this.tabs.findIndex(t => t === this.activeTabId);
+    addTab(tabType, tabId, insertAfterActive = false) {
+      const tab = {type: tabType, id: tabId}
+      const index = this.tabs.findIndex(t => t.id === this.activeTabId);
       if (insertAfterActive && index !== -1) {
-        this.tabs.splice(index + 1, 0, tabId);
+        this.tabs.splice(index + 1, 0, tab);
       } else {
-        this.tabs.push(tabId);
+        this.tabs.push(tab);
       }
     },
     activateTab(tabId) {
@@ -289,12 +290,12 @@ export default {
       this.$nextTick(() => { this.activateTab(tabId) });
     },
     moveTab(tabId, newIndex) {
-      const index = this.tabs.findIndex(t => t === tabId);
+      const index = this.tabs.findIndex(t => t.id === tabId);
       if (index === -1) return;
       this.tabs.splice(newIndex, 0, this.tabs.splice(index, 1)[0]);
     },
     closeTab(tabId) {
-      const index = this.tabs.findIndex(t => t === tabId);
+      const index = this.tabs.findIndex(t => t.id === tabId);
       if (index !== -1) this.tabs.splice(index, 1);
       this.tabHistory = this.tabHistory.filter(id => id !== tabId);
     },
@@ -392,9 +393,9 @@ export default {
             break;
           case `${leaderKey} KeyN KeyK`:
             this.keySequence = [];
-            this.activeTabId
-              ? this.openFinder('/api/raw/links?color=true&filename=' + this.activeTabId)
-              : this.openFinder('/api/raw/links?color=true');
+            const tab = this.tabs.find(t => t.id === this.activeTabId);
+            const extraParams = tab?.type === 'note' ? `&filename=${tab.id}` : '';
+            this.openFinder('/api/raw/links?color=true' + extraParams);
             break;
           case `${leaderKey} KeyN KeyS`:
             this.keySequence = [];
