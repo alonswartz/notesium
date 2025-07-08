@@ -91,7 +91,7 @@ import Icon from './icon.js'
 import GraphD3 from './graph-d3.js'
 export default {
   components: { Pane, Icon, GraphD3 },
-  props: ['activeFilename', 'lastSave'],
+  props: ['activeTabId', 'lastSave'],
   emits: ['note-open'],
   data() {
     return {
@@ -141,7 +141,7 @@ export default {
         const queryWords = this.query.toLowerCase().split(' ');
         return this.graphData.nodes.filter(node => queryWords.every(queryWord => node.title.toLowerCase().includes(queryWord))).map(node => node.id);
       }
-      return (this.display.emphasizeActive.value && this.activeFilename) ? [this.activeFilename] : null;
+      return (this.display.emphasizeActive.value && this.activeTabId) ? [this.activeTabId] : null;
     },
   },
   created() {

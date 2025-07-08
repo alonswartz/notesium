@@ -1,7 +1,7 @@
 var t = `
 <div class="flex flex-nowrap max-w-full w-full h-9 overflow-x-hidden items-center content-center px-2 mr-6">
   <template v-for="note, index in notes" :key="note.Filename">
-    <div :class="(note.Filename == activeFilename) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
+    <div :class="(note.Filename == activeTabId) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
       <svg class="absolute right-0 bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 7 A 7 7 0 0 0 7 0 L 7 7 Z"></path></svg>
     </div>
     <div @click="$emit('note-activate', note.Filename)"
@@ -11,7 +11,7 @@ var t = `
       @dragover.prevent
       @dragfinish.prevent
       :title="note.Title + ' (' + note.Filename + ')'"
-      :class="(note.Filename == activeFilename) ? 'bg-gray-50 text-gray-800' : 'hover:bg-gray-100/75 hover:text-gray-700 text-gray-500'"
+      :class="(note.Filename == activeTabId) ? 'bg-gray-50 text-gray-800' : 'hover:bg-gray-100/75 hover:text-gray-700 text-gray-500'"
       class="flex rounded-t-lg justify-between basis-52 truncate text-xs h-full items-center pl-3 pr-2 cursor-pointer">
       <span class="truncate pt-px">
         <span v-show="note.isModified" class="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-2"></span>
@@ -21,7 +21,7 @@ var t = `
         <Icon name="mini-x-mark" size="h-4 w-4" />
       </span>
     </div>
-    <div :class="(note.Filename == activeFilename) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
+    <div :class="(note.Filename == activeTabId) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
       <svg class="absolute bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 0 A 7 7 0 0 0 7 7 L 0 7 Z"></path></svg>
     </div>
 
@@ -35,7 +35,7 @@ var t = `
       :class="(dragOver === index) ? 'basis-52 truncate bg-gray-400 text-white text-xs pl-3 pr-2' : ''"
       class="flex z-50 h-full justify-between items-center text-gray-500">
     </span>
-    <span v-else :class="(note.Filename != activeFilename) ? 'text-gray-300' : 'text-transparent'" class="z-1 -mr-1">|</span>
+    <span v-else :class="(note.Filename != activeTabId) ? 'text-gray-300' : 'text-transparent'" class="z-1 -mr-1">|</span>
   </template>
 </div>
 `
@@ -43,7 +43,7 @@ var t = `
 import Icon from './icon.js'
 export default {
   components: { Icon },
-  props: ['notes', 'activeFilename', 'activeFilenamePrevious'],
+  props: ['notes', 'activeTabId', 'previousTabId'],
   emits: ['note-activate', 'note-close', 'note-move'],
   data() {
     return {
@@ -65,13 +65,13 @@ export default {
       if (event.target.tagName !== 'BODY') return
 
       if (event.ctrlKey && event.code == 'Digit6') {
-        this.activeFilenamePrevious && this.$emit('note-activate', this.activeFilenamePrevious);
+        this.previousTabId && this.$emit('note-activate', this.previousTabId);
         event.preventDefault();
         return;
       }
 
       if (event.ctrlKey && (event.code == 'KeyH' || event.code == 'KeyL')) {
-        const index = this.notes.findIndex(note => note.Filename === this.activeFilename);
+        const index = this.notes.findIndex(note => note.Filename === this.activeTabId);
         if (index === -1) return;
         const movement = event.code === 'KeyL' ? 1 : -1;
         const newIndex = (index + movement + this.notes.length) % this.notes.length;

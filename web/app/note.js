@@ -37,7 +37,7 @@ import Finder from './finder.js'
 import Icon from './icon.js'
 export default {
   components: { NoteSidebar, NoteStatusbar, Finder, Icon },
-  props: ['note', 'activeFilename'],
+  props: ['note', 'activeTabId'],
   emits: ['note-open', 'note-close', 'note-save', 'note-delete', 'finder-open'],
   data() {
     return {
@@ -180,7 +180,7 @@ export default {
       });
     },
     handleKeyPress(event) {
-      if (event.target.tagName !== 'BODY' || this.note.Filename !== this.activeFilename) return;
+      if (event.target.tagName !== 'BODY' || this.note.Filename !== this.activeTabId) return;
       if (event.ctrlKey && event.code === 'KeyS') {
         this.handleSave();
         event.preventDefault();
@@ -322,7 +322,7 @@ export default {
     document.removeEventListener('keydown', this.handleKeyPress);
   },
   watch: {
-    'activeFilename': function(newVal) { if (this.$notesiumState.editorVimMode && this.note.Filename == newVal) this.$nextTick(() => { this.cm.focus(); }); },
+    'activeTabId': function(newVal) { if (this.$notesiumState.editorVimMode && this.note.Filename == newVal) this.$nextTick(() => { this.cm.focus(); }); },
     'note.Linenum': function(newVal) { this.lineNumberHL(newVal); if (this.$notesiumState.editorVimMode) this.$nextTick(() => { this.cm.focus(); }); },
     'note.Mtime': function() { this.cm.doc.markClean(); },
     '$notesiumState.editorLineWrapping': function(newVal) { this.cm.setOption("lineWrapping", newVal); },

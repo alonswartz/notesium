@@ -7,16 +7,16 @@ var t = `
   <SidePanel v-if="$notesiumState.showLabelsPanel || $notesiumState.showNotesPanel"
     :lastSave="lastSave" @note-open="openNote" @note-new="newNote" @finder-open="openFinder" />
 
-  <GraphPanel v-if="$notesiumState.showGraphPanel" :lastSave=graphPanelWatcher :activeFilename=activeFilename @note-open="openNote" />
+  <GraphPanel v-if="$notesiumState.showGraphPanel" :lastSave=graphPanelWatcher :activeTabId=activeTabId @note-open="openNote" />
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
-      <NavTabs :notes=notes :activeFilename=activeFilename :activeFilenamePrevious=activeFilenamePrevious
+      <NavTabs :notes=notes :activeTabId=activeTabId :previousTabId=previousTabId
         @note-activate="activateNote" @note-close="closeNote" @note-move="moveNote" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
       <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
-      <Note v-show="note.Filename == activeFilename" :note=note v-for="note in notes" :key="note.Filename" :activeFilename=activeFilename
+      <Note v-show="note.Filename == activeTabId" :note=note v-for="note in notes" :key="note.Filename" :activeTabId=activeTabId
         @note-open="openNote" @note-close="closeNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
     </main>
   </div>
@@ -56,8 +56,8 @@ export default {
   data() {
     return {
       notes: [],
-      activeFilename: '',
-      activeFilenamePrevious: '',
+      activeTabId: '',
+      previousTabId: '',
       finderUri: '',
       finderQuery: '',
       showGraph: false,
@@ -81,7 +81,7 @@ export default {
       this.showFinder = false;
       this.finderQuery = '';
       if (value === null) {
-        this.resetActiveFilename();
+        this.resetActiveTabId();
       } else {
         const note = this.notes.find(note => note.Filename === value.Filename);
         if (note) {
@@ -97,7 +97,7 @@ export default {
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           note.Linenum = linenum;
-          const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeFilename) : -1;
+          const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeTabId) : -1;
           (index === -1) ? this.notes.push(note) : this.notes.splice(index + 1, 0, note);
           this.activateNote(note.Filename);
         })
@@ -268,16 +268,16 @@ export default {
       }
     },
     activateNote(filename) {
-      if (filename !== this.activeFilename) {
-        this.activeFilenamePrevious = this.activeFilename;
-        this.activeFilename = filename;
+      if (filename !== this.activeTabId) {
+        this.previousTabId = this.activeTabId;
+        this.activeTabId = filename;
       }
     },
-    resetActiveFilename() {
-      if (this.activeFilename) {
-        const af = this.activeFilename;
-        this.activeFilename = '';
-        this.$nextTick(() => { this.activeFilename = af; });
+    resetActiveTabId() {
+      if (this.activeTabId) {
+        const af = this.activeTabId;
+        this.activeTabId = '';
+        this.$nextTick(() => { this.activeTabId = af; });
       }
     },
     async closeNote(filename, confirmIfModified = true) {
@@ -296,20 +296,20 @@ export default {
       const notesLength = this.notes.length;
       switch(notesLength) {
         case 0:
-          this.activeFilename = '';
-          this.activeFilenamePrevious = '';
+          this.activeTabId = '';
+          this.previousTabId = '';
           break;
         case 1:
-          this.activeFilename = this.notes[0].Filename;
-          this.activeFilenamePrevious = '';
+          this.activeTabId = this.notes[0].Filename;
+          this.previousTabId = '';
           break;
         default:
           const lastFilename = this.notes.at(-1).Filename;
-          if (filename == this.activeFilename) {
-            const previousExists = this.notes.some(note => note.Filename === this.activeFilenamePrevious);
-            this.activeFilename = previousExists ? this.activeFilenamePrevious : lastFilename;
+          if (filename == this.activeTabId) {
+            const previousExists = this.notes.some(note => note.Filename === this.previousTabId);
+            this.activeTabId = previousExists ? this.previousTabId : lastFilename;
           }
-          this.activeFilenamePrevious = (this.activeFilename !== lastFilename) ? lastFilename : this.notes.at(-2).Filename;
+          this.previousTabId = (this.activeTabId !== lastFilename) ? lastFilename : this.notes.at(-2).Filename;
           break;
       }
     },
@@ -372,7 +372,7 @@ export default {
         setTimeout(() => {
           if (this.keySequence.length > 0) {
             this.keySequence = [];
-            this.resetActiveFilename();
+            this.resetActiveTabId();
           }
         }, 2000);
         return;
@@ -397,8 +397,8 @@ export default {
             break;
           case `${leaderKey} KeyN KeyK`:
             this.keySequence = [];
-            this.activeFilename
-              ? this.openFinder('/api/raw/links?color=true&filename=' + this.activeFilename)
+            this.activeTabId
+              ? this.openFinder('/api/raw/links?color=true&filename=' + this.activeTabId)
               : this.openFinder('/api/raw/links?color=true');
             break;
           case `${leaderKey} KeyN KeyS`:
