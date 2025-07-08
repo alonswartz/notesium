@@ -4,7 +4,7 @@ var t = `
     <div :class="(note.Filename == activeTabId) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
       <svg class="absolute right-0 bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 7 A 7 7 0 0 0 7 0 L 7 7 Z"></path></svg>
     </div>
-    <div @click="$emit('note-activate', note.Filename)"
+    <div @click="$emit('tab-activate', note.Filename)"
       draggable="true"
       @dragstart="dragStart(index, $event)"
       @dragend="dragTab = dragOver = null"
@@ -44,7 +44,7 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['notes', 'activeTabId', 'previousTabId'],
-  emits: ['note-activate', 'note-close', 'note-move'],
+  emits: ['tab-activate', 'note-close', 'note-move'],
   data() {
     return {
       dragTab: null,
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     dragStart(index, event) {
-      this.$emit('note-activate', this.notes[index].Filename)
+      this.$emit('tab-activate', this.notes[index].Filename)
       this.dragTab = index;
       event.dataTransfer.dropEffect = 'move';
     },
@@ -65,7 +65,7 @@ export default {
       if (event.target.tagName !== 'BODY') return
 
       if (event.ctrlKey && event.code == 'Digit6') {
-        this.previousTabId && this.$emit('note-activate', this.previousTabId);
+        this.previousTabId && this.$emit('tab-activate', this.previousTabId);
         event.preventDefault();
         return;
       }
@@ -75,7 +75,7 @@ export default {
         if (index === -1) return;
         const movement = event.code === 'KeyL' ? 1 : -1;
         const newIndex = (index + movement + this.notes.length) % this.notes.length;
-        this.$emit('note-activate', this.notes[newIndex].Filename);
+        this.$emit('tab-activate', this.notes[newIndex].Filename);
         event.preventDefault();
         return;
       }
