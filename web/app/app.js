@@ -11,11 +11,11 @@ var t = `
 
   <div class="flex flex-col h-full w-full overflow-x-auto">
     <nav class="flex bg-gray-200 text-gray-800">
-      <NavTabs :notes=notes :activeTabId=activeTabId :previousTabId=previousTabId
-        @tab-activate="activateTab" @note-close="closeNote" @note-move="moveNote" />
+      <NavTabs :tabs=tabs :activeTabId=activeTabId :previousTabId=previousTabId :notes=notes
+        @tab-activate="activateTab" @tab-move="moveTab" @note-close="closeNote" />
     </nav>
     <main class="h-full overflow-hidden bg-gray-50">
-      <Empty v-if="notes.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
+      <Empty v-if="tabs.length == 0" @note-new="newNote" @note-daily="dailyNote" @finder-open="openFinder" @graph-open="showGraph=true" />
       <Note v-show="note.Filename == activeTabId" :note=note v-for="note in notes" :key="note.Filename" :activeTabId=activeTabId
         @note-open="openNote" @note-close="closeNote" @note-save="saveNote" @note-delete="deleteNote" @finder-open="openFinder" />
     </main>
@@ -56,6 +56,7 @@ export default {
   data() {
     return {
       notes: [],
+      tabs: [],
       tabHistory: [],
       finderUri: '',
       finderQuery: '',
@@ -96,8 +97,8 @@ export default {
         .then(r => r.ok ? r.json() : r.json().then(e => Promise.reject(e)))
         .then(note => {
           note.Linenum = linenum;
-          const index = insertAfterActive ? this.notes.findIndex(note => note.Filename === this.activeTabId) : -1;
-          (index === -1) ? this.notes.push(note) : this.notes.splice(index + 1, 0, note);
+          this.notes.push(note);
+          this.addTab(note.Filename, insertAfterActive);
           this.activateTab(note.Filename);
         })
         .catch(e => {
@@ -226,6 +227,7 @@ export default {
             ghost: true,
           };
           this.notes.push(ghost);
+          this.addTab(ghost.Filename);
           this.activateTab(ghost.Filename);
         })
         .catch(e => {
@@ -266,6 +268,14 @@ export default {
         this.fetchNote(filename, linenum, true);
       }
     },
+    addTab(tabId, insertAfterActive = false) {
+      const index = this.tabs.findIndex(t => t === this.activeTabId);
+      if (insertAfterActive && index !== -1) {
+        this.tabs.splice(index + 1, 0, tabId);
+      } else {
+        this.tabs.push(tabId);
+      }
+    },
     activateTab(tabId) {
       if (tabId == this.activeTabId) return;
       this.tabHistory = this.tabHistory.filter(id => id !== tabId);
@@ -278,7 +288,14 @@ export default {
       this.tabHistory = this.tabHistory.filter(id => id !== tabId);
       this.$nextTick(() => { this.activateTab(tabId) });
     },
+    moveTab(tabId, newIndex) {
+      const index = this.tabs.findIndex(t => t === tabId);
+      if (index === -1) return;
+      this.tabs.splice(newIndex, 0, this.tabs.splice(index, 1)[0]);
+    },
     closeTab(tabId) {
+      const index = this.tabs.findIndex(t => t === tabId);
+      if (index !== -1) this.tabs.splice(index, 1);
       this.tabHistory = this.tabHistory.filter(id => id !== tabId);
     },
     async closeNote(filename, confirmIfModified = true) {
@@ -295,11 +312,6 @@ export default {
 
       this.notes.splice(index, 1);
       this.closeTab(filename);
-    },
-    moveNote(filename, newIndex) {
-      const index = this.notes.findIndex(note => note.Filename === filename);
-      if (index === -1) return;
-      this.notes.splice(newIndex, 0, this.notes.splice(index, 1)[0]);
     },
     addAlert({type, title, body, sticky = false}) {
       this.alerts.push({type, title, body, sticky, id: Date.now().toString(36)});
