@@ -17,7 +17,7 @@ var t = `
         <span v-show="tab.isModified" class="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-2"></span>
         <span v-text="tab.title"></span>
       </span>
-      <span @click.stop="$emit('note-close', tab.id)" class="hover:bg-gray-300 hover:rounded-full">
+      <span @click.stop="handleClose(tab.id, tab.type)" class="hover:bg-gray-300 hover:rounded-full">
         <Icon name="mini-x-mark" size="h-4 w-4" />
       </span>
     </div>
@@ -43,7 +43,7 @@ import Icon from './icon.js'
 export default {
   components: { Icon },
   props: ['tabs', 'activeTabId', 'previousTabId', 'notes'],
-  emits: ['tab-activate', 'tab-move', 'note-close'],
+  emits: ['tab-activate', 'tab-move', 'tab-close', 'note-close'],
   data() {
     return {
       dragTab: null,
@@ -52,16 +52,23 @@ export default {
   },
   methods: {
     dragStart(index, event) {
-      this.$emit('tab-activate', this.tabs[index])
+      this.$emit('tab-activate', this.tabs[index].id)
       this.dragTab = index;
       event.dataTransfer.dropEffect = 'move';
     },
     dragDrop(index) {
       index = (index > this.dragTab) ? index : index + 1;
-      this.$emit('tab-move', this.tabs[this.dragTab], index);
+      this.$emit('tab-move', this.tabs[this.dragTab].id, index);
     },
     isActive(tabId) {
       return this.activeTabId == tabId;
+    },
+    handleClose(tabId, tabType) {
+      if (tabType === 'note') {
+        this.$emit('note-close', tabId);
+        return;
+      }
+      this.$emit('tab-close', tabId);
     },
     handleKeyPress(event) {
       if (event.target.tagName !== 'BODY') return
@@ -73,11 +80,11 @@ export default {
       }
 
       if (event.ctrlKey && (event.code == 'KeyH' || event.code == 'KeyL')) {
-        const index = this.tabs.findIndex(t => t === this.activeTabId);
+        const index = this.tabs.findIndex(t => t.id === this.activeTabId);
         if (index === -1) return;
         const movement = event.code === 'KeyL' ? 1 : -1;
         const newIndex = (index + movement + this.tabs.length) % this.tabs.length;
-        this.$emit('tab-activate', this.tabs[newIndex]);
+        this.$emit('tab-activate', this.tabs[newIndex].id);
         event.preventDefault();
         return;
       }
@@ -85,14 +92,17 @@ export default {
   },
   computed: {
     getTabs() {
-      return this.tabs.map(tabId => {
-        const note = this.notes.find(n => n.Filename === tabId);
-        return {
-          id: tabId,
-          title: note.Title,
-          titleHover: `${note.Title} (${note.Filename})`,
-          isModified: note.isModified || false,
-        };
+      return this.tabs.map(tab => {
+        if (tab.type === 'note') {
+          const note = this.notes.find(n => n.Filename === tab.id);
+          return {
+            id: tab.id,
+            type: tab.type,
+            title: note.Title,
+            titleHover: `${note.Title} (${note.Filename})`,
+            isModified: note.isModified || false,
+          };
+        }
       });
     },
   },
