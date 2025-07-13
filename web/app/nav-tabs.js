@@ -4,12 +4,13 @@ var t = `
     <div :class="isActive(tab.id) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
       <svg class="absolute right-0 bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 7 A 7 7 0 0 0 7 0 L 7 7 Z"></path></svg>
     </div>
-    <div @click="$emit('tab-activate', tab.id)"
+    <div
+      @click="$emit('tab-activate', tab.id)"
       draggable="true"
-      @dragstart="dragStart(index, $event)"
-      @dragend="dragTab = dragOver = null"
-      @dragover.prevent
-      @dragfinish.prevent
+      @dragstart="onDragStart(index)"
+      @dragover.prevent="onDragOver(index)"
+      @drop="onDrop"
+      @dragend="onDragEnd"
       :title="tab.titleHover"
       :class="isActive(tab.id) ? 'bg-gray-50 text-gray-800' : 'hover:bg-gray-100/75 hover:text-gray-700 text-gray-500'"
       class="flex rounded-t-lg justify-between basis-52 truncate text-xs h-full items-center pl-3 pr-2 cursor-pointer">
@@ -24,17 +25,7 @@ var t = `
     <div :class="isActive(tab.id) ? 'text-gray-50' : 'text-transparent'" class="relative h-full">
       <svg class="absolute bottom-0" fill="currentColor" width="7" height="7"><path d="M 0 0 A 7 7 0 0 0 7 7 L 0 7 Z"></path></svg>
     </div>
-    <span
-      v-if="(dragTab != null && dragTab != index && index != dragTab - 1)"
-      v-text="dragOver === index ? getTabs[dragTab].title : '|'"
-      @dragenter="dragOver = index"
-      @dragleave="dragOver = null"
-      @drop.prevent="dragDrop(index)"
-      @dragover.prevent
-      :class="{'basis-52 truncate bg-gray-400 text-white text-xs pl-3 pr-2': (dragOver === index)}"
-      class="flex z-50 h-full justify-between items-center text-gray-500">
-    </span>
-    <span v-else :class="!isActive(tab.id) ? 'text-gray-300' : 'text-transparent'" class="z-1 -mr-1">|</span>
+    <span :class="!isActive(tab.id) ? 'text-gray-300' : 'text-transparent'" class="z-1 -mr-1">|</span>
   </template>
 </div>
 `
@@ -46,19 +37,25 @@ export default {
   emits: ['tab-activate', 'tab-move', 'tab-close', 'note-close'],
   data() {
     return {
-      dragTab: null,
-      dragOver: null,
+      dragIndex: null,
     }
   },
   methods: {
-    dragStart(index, event) {
+    onDragStart(index) {
       this.$emit('tab-activate', this.tabs[index].id)
-      this.dragTab = index;
-      event.dataTransfer.dropEffect = 'move';
+      this.dragIndex = index;
     },
-    dragDrop(index) {
-      index = (index > this.dragTab) ? index : index + 1;
-      this.$emit('tab-move', this.tabs[this.dragTab].id, index);
+    onDragOver(overIndex) {
+      if (this.dragIndex === null || this.dragIndex === overIndex) return;
+
+      this.$emit('tab-move', this.tabs[this.dragIndex].id, overIndex);
+      this.dragIndex = overIndex;
+    },
+    onDrop() {
+      this.dragIndex = null;
+    },
+    onDragEnd() {
+      this.dragIndex = null;
     },
     isActive(tabId) {
       return this.activeTabId == tabId;
