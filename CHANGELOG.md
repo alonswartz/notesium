@@ -1,3 +1,46 @@
+## 0.6.5
+
+This release includes improvements to the **Vim/Neovim plugin**,
+introducing support for **note deletion** with verification and
+confirmation, along with enhanced finder and terminal behavior.
+
+The embedded web/app's **tab management** has been rewritten to provide
+a smoother and more intuitive user experience, while also laying the
+groundwork for upcoming features such as **asset support** and
+side-by-side **tab-groups**.
+
+Fixed:
+
+- Vim: Fix weekly notesium invocation to use `g:notesium_bin`.
+- Vim: Use startinsert for reliable finder terminal mode entry.
+- Vim: Set finder `filetype=fzf` to avoid vim-tmux-navigator interception.
+
+- Web/App: Tabs - support moving a tab to the first position.
+- Web/App: Layout fixes and improvements.
+
+Added:
+
+- Vim: Note deletion with verification checks and user confirmation.
+- Vim/Finder: Support `notesium_finder_theme` (light/dark).
+
+Changed:
+
+- Vim: Increase columns minimum for Finder preview.
+- Vim: Refactor finder terminal open to avoid using a lambda.
+
+- Web/App: Tabs - improve and simplify tab tracking via tabHistory stack.
+- Web/App: Tabs - decouple open tabs and ordering from notes array.
+- Web/App: Tabs - generalize tab structure to support non-note types.
+- Web/App: Tabs - apply and visually reflect tab reordering during drag.
+- Web/App: Tabs - animate tab reordering for visual clarity.
+
+- Tests: Use realpath when performing absolute path verification.
+- Tests: Replace pidof with pgrep for macOS compatibility.
+- Tests: Determine expected platform instead of hardcoding.
+- Tests: Use `notesium web` instead of netcat for mock release server.
+
+- CI/CD: GitHub Actions workflows - bump go version to match dev environment.
+
 ## 0.6.4
 
 This release introduces the **finder** command, a built-in interactive
