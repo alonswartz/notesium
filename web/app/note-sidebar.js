@@ -5,7 +5,7 @@ var t = `
   <div class="flex gap-x-5 gap-y-2 p-2 border-b sticky top-0 z-10 bg-white">
     <button type="button" :disabled="!note.isModified" @click="$emit('note-save')"
       :class="note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
-      class="w-28 rounded px-2 pt-2 pb-1 text-xs shadow-sm">Save</button>
+      class="w-28 rounded px-2 py-1.5 text-xs shadow-sm">Save</button>
     <div class="flex gap-x-5 gap-y-2 mt-0 ml-auto items-center justify-center">
       <span title="links" @click="$emit('finder-open', '/api/raw/links?color=true&filename=' + note.Filename)"
         class="cursor-pointer text-gray-400 hover:text-gray-700">
@@ -69,7 +69,7 @@ var t = `
   </dl>
 
   <div class="m-2 overflow-hidden rounded-lg bg-gray-50 pl-4 pr-2 py-3">
-    <div class="flex justify-between mt-1 mb-2 text-sm">
+    <div class="flex justify-between items-center mt-1 mb-2 text-sm">
       <h3 class="leading-6 font-semibold tracking-tight text-gray-700">Links incoming</h3>
       <span class="text-gray-400 mr-2" v-text="countIncomingLinks"></span>
     </div>
@@ -77,7 +77,7 @@ var t = `
       :title="link.Title" :filename="link.Filename" :linenum="link.LineNumber" :key="link.Filename + link.LineNumber"
       @note-open="(...args) => $emit('note-open', ...args)" />
 
-    <div class="flex justify-between mt-4 mb-2 text-sm">
+    <div class="flex justify-between items-center mt-4 mb-2 text-sm">
       <h3 class="leading-6 font-semibold tracking-tight text-gray-700">Links outgoing</h3>
       <span class="text-gray-400 mr-2" v-text="countOutgoingLinks"></span>
     </div>

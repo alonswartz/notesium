@@ -40,7 +40,7 @@ var t = `
           </span>
         </div>
         <div>
-          <details class="flex w-full flex-none cursor-pointer [&_svg]:open:rotate-90">
+          <details class="w-full cursor-pointer [&_svg]:open:rotate-90">
             <summary class="flex py-1 px-2 items-center justify-items-center justify-between hover:cursor-pointer focus:outline-none">
               <span class="text-sm font-medium leading-6 text-gray-700">display</span>
               <span class="text-gray-400 -mr-px"><Icon name="chevron-right" size="h-5 w-5" /></span>
@@ -53,7 +53,7 @@ var t = `
               </li>
             </ul>
           </details>
-          <details class="flex w-full flex-none [&_svg]:open:rotate-90">
+          <details class="w-full cursor-pointer [&_svg]:open:rotate-90">
             <summary class="flex py-1 px-2 items-center justify-items-center justify-between hover:cursor-pointer focus:outline-none">
               <span class="text-sm font-medium leading-6 text-gray-700">forces</span>
               <span class="text-gray-400 -mr-px"><Icon name="chevron-right" size="h-5 w-5" /></span>
@@ -61,7 +61,7 @@ var t = `
             <ul class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
               <li v-for="(option, key) in forces" :key="key"
                 class="items-center justify-items-center justify-between block p-2 pr-0">
-                <div class="flex items-center justify-between">
+                <div class="w-full flex items-center justify-between">
                   <span v-text="option.title"></span>
                   <span v-text="option.value"></span>
                 </div>

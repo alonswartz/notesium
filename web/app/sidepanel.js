@@ -206,7 +206,7 @@ var t = `
       </li>
       <li v-for="note in filteredNotes" :key="note.Filename"
         @click="$emit('note-open', note.Filename)"
-        class="group flex justify-between py-1 pl-4 pr-2 cursor-pointer rounded-r-2xl text-gray-900 hover:bg-indigo-50
+        class="group flex justify-between items-center py-1 pl-4 pr-2 cursor-pointer rounded-r-2xl text-gray-900 hover:bg-indigo-50
                dark:text-gray-400 dark:hover:bg-gray-600">
         <div class="text-sm leading-6 overflow-hidden truncate" v-text="note.Title" :title="note.Title"></div>
         <div class="hidden group-hover:block text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 -mr-1 pr-1"

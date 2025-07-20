@@ -13,7 +13,7 @@ var t = `
   <div v-if="!$notesiumState.showNoteSidebar || note.ghost" class="absolute right-0 mt-2 mr-4 h-7 z-10 inline-flex items-center">
     <button type="button" :disabled="!this.note.isModified" @click="handleSave()"
       :class="this.note.isModified ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-300 text-gray-400'"
-      class="rounded px-10 pt-2 pb-1 text-xs">Save</button>
+      class="rounded px-10 py-1.5 text-xs">Save</button>
     <span v-if="!note.ghost" title="sidebar" @click="$notesiumState.showNoteSidebar=true"
       class="ml-2 cursor-pointer text-gray-400 hover:text-gray-600">
       <Icon name="outline-information-circle" size="h-5 w-5" />
