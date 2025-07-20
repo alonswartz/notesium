@@ -52,7 +52,7 @@ var t = `
                 <ul v-show="showSettingsForces" class="mt-1 ml-px px-2 text-xs leading-6 text-gray-700">
                   <li v-for="(option, key) in forces" :key="key"
                     class="items-center justify-items-center justify-between block rounded-md py-2 pr-2 pl-8">
-                    <div class="flex items-center justify-between">
+                    <div class="w-full flex items-center justify-between">
                       <span v-text="option.title"></span>
                       <span v-text="option.value"></span>
                     </div>

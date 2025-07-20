@@ -68,7 +68,7 @@ var t = `
         </div>
         <template v-for="(val, key) in runtime" :key="key">
           <template v-if="typeof val === 'object' && val !== null">
-            <details class="text-xs flex w-full flex-none bg-gray-50">
+            <details class="text-xs flex w-full flex-col bg-gray-50">
               <summary class="flex w-full pl-6 pr-5 py-2 flex-none items-center justify-between hover:bg-gray-100 hover:cursor-pointer focus:outline-none">
                 <dt class="text-xs font-medium leading-6 text-gray-900" v-text="key"></dt>
                 <dd><Icon name="chevron-right" size="h-4 w-4" /></dd>
@@ -89,7 +89,7 @@ var t = `
           </template>
         </template>
 
-        <details class="text-xs flex w-full flex-none bg-gray-50">
+        <details class="text-xs flex w-full flex-col bg-gray-50">
           <summary class="flex w-full pl-6 pr-5 py-2 flex-none items-center justify-between hover:bg-gray-100 hover:cursor-pointer focus:outline-none">
             <dt class="text-xs font-medium leading-6 text-gray-900">state</dt>
             <dd><Icon name="chevron-right" size="h-4 w-4" /></dd>
