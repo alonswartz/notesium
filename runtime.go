@@ -16,7 +16,7 @@ type BuildInfo struct {
 	GitVersion       string `json:"gitversion"`
 	Buildtime        string `json:"buildtime"`
 	GoVersion        string `json:"goversion"`
-	LatestReleaseUrl string `json:"latest-release-url"`
+	LatestReleaseURL string `json:"latest-release-url"`
 }
 
 type MemoryInfo struct {
@@ -55,7 +55,7 @@ func GetRuntimeInfo(dir string, webOpts webOptions) RuntimeResponse {
 			GitVersion:       gitversion,
 			Buildtime:        buildtime,
 			GoVersion:        runtime.Version(),
-			LatestReleaseUrl: latestReleaseUrl,
+			LatestReleaseURL: latestReleaseURL,
 		},
 		Memory: MemoryInfo{
 			MemoryAlloc:      bytesToHumanReadable(memStats.Alloc),

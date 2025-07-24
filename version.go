@@ -12,12 +12,12 @@ import (
 // 1:semver (2:major 3:minor 4:patch 5:prerelease 6:prereleaseV) 7:commits 8:hash 9:dirty
 var gitVersionRegex = regexp.MustCompile(`^v((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(alpha|beta|rc)(?:\.(0|[1-9]\d*))?)?)-(0|[1-9]\d*)-g([0-9a-fA-F]+)(-dirty)?$`)
 
-var latestReleaseUrl = "https://api.github.com/repos/alonswartz/notesium/releases/latest"
+var latestReleaseURL = "https://api.github.com/repos/alonswartz/notesium/releases/latest"
 
 type releaseInfo struct {
 	Version     string `json:"-"`
 	TagName     string `json:"tag_name"`
-	HtmlUrl     string `json:"html_url"`
+	HTMLURL     string `json:"html_url"`
 	PublishedAt string `json:"published_at"`
 }
 
@@ -43,7 +43,7 @@ func getVersion(gitVersion string) string {
 func getLatestReleaseInfo() (releaseInfo, error) {
 	var release releaseInfo
 
-	req, err := http.NewRequest("GET", latestReleaseUrl, nil)
+	req, err := http.NewRequest("GET", latestReleaseURL, nil)
 	if err != nil {
 		return release, fmt.Errorf("error creating request: %s", err)
 	}
@@ -66,7 +66,7 @@ func getLatestReleaseInfo() (releaseInfo, error) {
 		return release, fmt.Errorf("error decoding response: %s", err)
 	}
 
-	if release.TagName == "" || release.HtmlUrl == "" || release.PublishedAt == "" {
+	if release.TagName == "" || release.HTMLURL == "" || release.PublishedAt == "" {
 		return release, fmt.Errorf("missing required field in response")
 	}
 
