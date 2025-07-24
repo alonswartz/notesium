@@ -42,8 +42,8 @@ func getSortedNotes(sortBy string) []*Note {
 
 func sortLinesByField(lines []string, separator string, fieldIndex int) {
 	sort.Slice(lines, func(i, j int) bool {
-		sub_i := strings.SplitN(lines[i], separator, fieldIndex+1)[fieldIndex]
-		sub_j := strings.SplitN(lines[j], separator, fieldIndex+1)[fieldIndex]
-		return sub_i < sub_j
+		subI := strings.SplitN(lines[i], separator, fieldIndex+1)[fieldIndex]
+		subJ := strings.SplitN(lines[j], separator, fieldIndex+1)[fieldIndex]
+		return subI < subJ
 	})
 }
