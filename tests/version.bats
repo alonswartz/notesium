@@ -8,7 +8,7 @@ _gobuild() {
     go build -o /tmp/notesium-test-version/$gitversion -ldflags "
         -X main.gitversion=$gitversion \
         -X main.buildtime=2024-01-02T01:02:03Z \
-        -X main.latestReleaseUrl=http://127.0.0.1:8882/latest.json"
+        -X main.latestReleaseURL=http://127.0.0.1:8882/latest.json"
 }
 
 _mock_latest_release() {

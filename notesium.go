@@ -565,7 +565,7 @@ func notesiumVersion(opts versionOptions, w io.Writer) {
 			fmt.Fprintf(w, "platform:%s/%s\n", runtime.GOOS, runtime.GOARCH)
 			fmt.Fprintf(w, "latest.version:%s\n", latest.Version)
 			fmt.Fprintf(w, "latest.published:%s\n", latest.PublishedAt)
-			fmt.Fprintf(w, "latest.release:%s\n", latest.HtmlUrl)
+			fmt.Fprintf(w, "latest.release:%s\n", latest.HTMLURL)
 		}
 		return
 	}
