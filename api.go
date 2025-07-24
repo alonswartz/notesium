@@ -249,7 +249,7 @@ func apiNote(dir string, w http.ResponseWriter, r *http.Request, readOnly bool) 
 		noteCache = nil
 		populateCache(dir)
 
-		response := map[string]interface{}{
+		response := map[string]any{
 			"Filename": filename,
 			"Deleted":  true,
 		}
