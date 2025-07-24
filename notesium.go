@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -241,7 +240,7 @@ func notesiumLinks(dir string, opts linksOptions, w io.Writer) {
 }
 
 func notesiumLines(dir string, opts linesOptions, w io.Writer) {
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("Could not read directory: %s\n", err)
 	}
