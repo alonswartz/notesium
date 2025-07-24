@@ -58,7 +58,7 @@ Environment:
 
 type Command struct {
 	Name    string
-	Options interface{}
+	Options any
 }
 
 type newOptions struct {
