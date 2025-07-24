@@ -272,10 +272,10 @@ func parseOptions(args []string) (Command, error) {
 	case "stats":
 		opts := statsOptions{}
 		for _, opt := range args[1:] {
-			switch {
-			case opt == "--color":
+			switch opt {
+			case "--color":
 				opts.color = defaultColor()
-			case opt == "--table":
+			case "--table":
 				opts.table = true
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
@@ -356,10 +356,10 @@ func parseOptions(args []string) (Command, error) {
 	case "version":
 		opts := versionOptions{}
 		for _, opt := range args[1:] {
-			switch {
-			case opt == "--verbose":
+			switch opt {
+			case "--verbose":
 				opts.verbose = true
-			case opt == "--check":
+			case "--check":
 				opts.check = true
 			default:
 				return Command{}, fmt.Errorf("unrecognized option: %s", opt)
