@@ -64,9 +64,8 @@ func evaluateFilterQuery(query string, input string) (bool, error) {
 				}
 			}
 			matches = matches && orMatch
-		} else if strings.HasPrefix(token, "!") {
+		} else if term, ok := strings.CutPrefix(token, "!"); ok {
 			// NOT logic
-			term := strings.TrimPrefix(token, "!")
 			if strings.Contains(input, term) {
 				matches = false
 				break
