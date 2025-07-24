@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,8 +41,7 @@ func populateCache(dir string) {
 	}
 
 	noteCache = make(map[string]*Note)
-
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("could not read directory: %s\n", err)
 	}
